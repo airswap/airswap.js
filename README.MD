@@ -1,4 +1,4 @@
-# AirSwap Libraries
+# AirSwap.js
 
 This repo contains modules that have proven to be useful throughout our airswap services. 
 
