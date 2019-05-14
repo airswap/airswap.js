@@ -1,0 +1,12 @@
+**/node_modules
+plugin.sketchplugin/**
+yarn-error.log
+lib/**/*
+build-storybook/**/*
+**/.DS_Store
+.cache
+.idea
+coverage/**/*
+docs/**/*
+docs.zip
+examples

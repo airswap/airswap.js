@@ -1,0 +1,12 @@
+{
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true
+  },
+  "source": {
+    "include": ["src"],
+    "exclude": ["node_modules", "src/blockCruncher", "src/test"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  }
+}
