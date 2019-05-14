@@ -15,7 +15,7 @@ const {
   getMinedFillOrder,
   getTransactionReceiptsFillOrder,
   getErrorMiningFillOrder,
-} = makeEthersTxnsSelectors('fillOrder', 'airswapExchange')
+} = makeEthersTxnsSelectors('fillOrder', 'swapLegacy')
 
 export const selectors = {
   getSubmittingFillOrder,

@@ -3,7 +3,7 @@ import _ from 'lodash'
 import BigNumber from 'bignumber.js/bignumber'
 import { createSelector } from 'reselect'
 import { selectors as erc20Selectors } from '../erc20/redux'
-import { selectors as airswapExchangeSelectors } from '../airswapExchange/redux'
+import { selectors as swapLegacySelectors } from '../swapLegacy/redux'
 import { selectors as tokenSelectors } from '../tokens/redux'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
 import { selectors as apiSelectors } from '../api/redux'
@@ -31,8 +31,8 @@ import * as types from '../tcombTypes'
  * @returns {wallet.TransactionHistoryItem}
  */
 const getTransactionHistory = createSelector(
-  airswapExchangeSelectors.getTransactionsFillOrder,
-  airswapExchangeSelectors.getTransactionReceiptsFillOrder,
+  swapLegacySelectors.getTransactionsFillOrder,
+  swapLegacySelectors.getTransactionReceiptsFillOrder,
   erc20Selectors.getTransactionsApproveToken,
   erc20Selectors.getTransactionReceiptsApproveToken,
   erc20Selectors.getTransactionWrapWeth,
