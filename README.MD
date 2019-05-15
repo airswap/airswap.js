@@ -31,7 +31,7 @@ If a selctor starts with `make`, it will return a function that takes a paramate
 
 ## License (GNU)
 
-AirSwap for Developers, API Documentation and Examples
+AirSwap.js
 
 Copyright (C) 2019 AirSwap
 
