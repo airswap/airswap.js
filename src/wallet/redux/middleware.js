@@ -110,7 +110,6 @@ const finishWalletAction = (store, actionType, params) =>
 // usually used for mobile wallets
 function connectWeb3(store, walletType = 'web3') {
   const availableWallets = walletSelectors.getAvailableWalletState(store.getState())
-  debugger
   if (!availableWallets[walletType]) {
     store.dispatch(errorConnectingWallet(`${walletType} not detected in browser.`))
     return
