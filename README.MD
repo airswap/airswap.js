@@ -31,7 +31,7 @@ If a selctor starts with `make`, it will return a function that takes a paramate
 
 ## License (APACHE)
 
-Copyright 2019 AirSwap
+Copyright 2019 Swap Holdings Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
