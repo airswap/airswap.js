@@ -29,7 +29,7 @@ const HDW = (state = defaultState, action) => {
     case 'LOADED_HDW_ACCOUNTS':
       return {
         ...state,
-        accounts: [...state.accounts, ...action.accounts],
+        accounts: action.accounts,
         loadingHDWAccounts: false,
       }
     case 'ERROR_CONNECTING_TO_WALLET':
