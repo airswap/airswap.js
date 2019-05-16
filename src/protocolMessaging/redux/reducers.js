@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import { makeGetReadableOrder } from '../../tokens/redux/reducers'
-import { selectors as airswapExchangeSelectors } from '../../airswapExchange/redux'
+import { selectors as swapLegacySelectors } from '../../swapLegacy/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as fiatSelectors } from '../../fiat/redux'
@@ -389,7 +389,7 @@ const {
   getMinedFillOrder,
   getTransactionReceiptsFillOrder,
   getErrorMiningFillOrder,
-} = airswapExchangeSelectors
+} = swapLegacySelectors
 
 const getCurrentFrameBestOrderExecution = createSelector(
   getCurrentFrameSelectedOrder,

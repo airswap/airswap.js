@@ -4,6 +4,7 @@ import Portis from '@portis/web3'
 import { ethers } from 'ethers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
+import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage } from '../../utils/transformations'
 import { abis, PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK } from '../../constants'
@@ -108,6 +109,11 @@ const finishWalletAction = (store, actionType, params) =>
 // catch all connection function that will try to connect to any web3 wallet
 // usually used for mobile wallets
 function connectWeb3(store, walletType = 'web3') {
+  const availableWallets = walletSelectors.getAvailableWalletState(store.getState())
+  if (!availableWallets[walletType]) {
+    store.dispatch(errorConnectingWallet(`${walletType} not detected in browser.`))
+    return
+  }
   if (window.ethereum) {
     window.ethereum.isMetaMask = true
     window.ethereum
@@ -175,7 +181,8 @@ const detectWeb3Wallets = store => {
       let isAvailable = false
       switch (type) {
         case 'metamask':
-          isAvailable = !!window.web3.currentProvider.isMetaMask && !isMobile.any
+          isAvailable =
+            !!window.web3.currentProvider.isMetaMask && !isMobile.any && !window.web3.currentProvider.isEQLWallet
           break
         case 'trust':
           isAvailable = !!window.web3.currentProvider.isTrust
@@ -198,6 +205,9 @@ const detectWeb3Wallets = store => {
             window.web3 &&
             window.web3.currentProvider &&
             window.web3.currentProvider.isConnected()
+          break
+        case 'equal':
+          isAvailable = !!window.web3.currentProvider.isEQLWallet
           break
         default:
           isAvailable = false
@@ -225,19 +235,24 @@ export default function walletMiddleware(store) {
         } else {
           action.reject('wallet not initialized')
         }
+        next(action)
         break
       case 'CLEAR_WALLET':
         signer = undefined
+        next(action)
         break
       case 'KEYSPACE_INIT_ERROR':
         signer = undefined
         store.dispatch(errorConnectingWallet(action.error))
+        next(action)
         break
       case 'ERROR_CONNECTING_ROUTER':
         signer = undefined
         store.dispatch(errorConnectingWallet(action.error))
+        next(action)
         break
       case 'CONNECT_WALLET':
+        next(action)
         switch (action.walletType) {
           case 'metamask':
             connectWeb3(store, 'metamask')
@@ -266,7 +281,7 @@ export default function walletMiddleware(store) {
         }
         break
       default:
+        next(action)
     }
-    return next(action)
   }
 }

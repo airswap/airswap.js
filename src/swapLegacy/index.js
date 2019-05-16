@@ -1,14 +1,14 @@
 const ethers = require('ethers')
 const { EXCHANGE_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
 
-function getAirSwapExchangeContract(signer) {
+function getSwapLegacyContract(signer) {
   return new ethers.Contract(EXCHANGE_CONTRACT_ADDRESS, abis[EXCHANGE_CONTRACT_ADDRESS], signer)
 }
 
 window.bignumberify = ethers.utils.bigNumberify
 
 function fillOrder(order, signer) {
-  const contract = getAirSwapExchangeContract(signer)
+  const contract = getSwapLegacyContract(signer)
   return contract.fill(
     order.makerAddress,
     order.makerAmount,

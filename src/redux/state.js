@@ -2,14 +2,13 @@ import _ from 'lodash'
 import * as tokens from '../tokens/redux'
 import * as wallet from '../wallet/redux'
 import * as deltaBalances from '../deltaBalances/redux'
-import * as reserves from '../reserves/redux'
 import * as events from '../events/redux'
 import * as api from '../api/redux'
 import * as erc20 from '../erc20/redux'
 import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
 import * as protocolMessaging from '../protocolMessaging/redux'
-import * as airswapExchange from '../airswapExchange/redux'
+import * as swapLegacy from '../swapLegacy/redux'
 import * as gas from '../gas/redux'
 import * as fiat from '../fiat/redux'
 import * as hdw from '../HDW/redux'
@@ -21,14 +20,13 @@ const state = {
   tokens,
   wallet,
   deltaBalances,
-  reserves,
   events,
   api,
   erc20,
   keySpace,
   dexIndex,
   protocolMessaging,
-  airswapExchange,
+  swapLegacy,
   gas,
   fiat,
   hdw,

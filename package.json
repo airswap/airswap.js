@@ -1,12 +1,11 @@
 {
-  "name": "AirSwap.js",
-  "version": "1.0.0",
+  "name": "airswap.js",
+  "version": "0.0.1",
   "description": "Services for AirSwap applications",
   "main": "index.js",
   "repository": "https://github.com/airswap/AirSwap.js",
-  "author": "AirSwap <team@airswap.io>",
-  "license": "none",
-  "private": true,
+  "author": "Sam Walker <sam.walker@fluidity.io>",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
