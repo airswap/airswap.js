@@ -41,7 +41,7 @@ jobs:
           at: ~/repo
       - run:
           name: Install NPM non-interactive
-          command: npm install -g npm-login-noninteractive
+          command: sudo npm install -g npm-login-noninteractive
       - run:
           name: Set up the npm user
           command: npm-login-noninteractive
