@@ -7,7 +7,7 @@ const TIMEOUT = 12000
 
 // Class Constructor
 // ----------------
-class Router {
+class Messenger {
   // * `privateKey`: `string` - ethereum private key with `"0x"` prepended
   // * `infuraKey`: `string` - infura API key
   // * `nodeAddress`: `string` - optionally specify a geth/parity node instead of using infura
@@ -213,7 +213,7 @@ class Router {
     if (!makerTokens || !takerTokens) {
       throw new Error('missing arguments makerTokens or takerTokens')
     }
-    const payload = Router.makeRPC('findIntents', {
+    const payload = Messenger.makeRPC('findIntents', {
       makerTokens,
       takerTokens,
       role,
@@ -225,14 +225,14 @@ class Router {
   // * parameter `address` is a lowercased Ethereum address to fetch intents for
   // * returns a `Promise` which is resolved with an array of intents set by a specific address
   getIntents(address) {
-    const payload = Router.makeRPC('getIntents', { address })
+    const payload = Messenger.makeRPC('getIntents', { address })
     return new Promise((resolve, reject) => this.call(INDEXER_ADDRESS, payload, resolve, reject))
   }
 
   // Call `setIntents` on the indexer with an array of trade `intent` objects.
   // * returns a `Promise` with the indexer response. Passes `'OK'` if succcessful.
   setIntents(intents) {
-    const payload = Router.makeRPC('setIntents', {
+    const payload = Messenger.makeRPC('setIntents', {
       address: this.address.toLowerCase(),
       intents,
     })
@@ -250,7 +250,7 @@ class Router {
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getOrder', {
+    const payload = Messenger.makeRPC('getOrder', {
       makerToken,
       takerToken,
       takerAddress: this.address.toLowerCase(),
@@ -271,7 +271,7 @@ class Router {
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getQuote', {
+    const payload = Messenger.makeRPC('getQuote', {
       makerToken,
       takerToken,
       makerAmount: makerAmount ? String(makerAmount) : null,
@@ -286,7 +286,7 @@ class Router {
 
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getMaxQuote', {
+    const payload = Messenger.makeRPC('getMaxQuote', {
       makerToken,
       takerToken,
     })
@@ -300,7 +300,7 @@ class Router {
     }
     return Promise.all(
       intents.map(({ makerAddress, makerToken, takerToken }) => {
-        const payload = Router.makeRPC('getOrder', {
+        const payload = Messenger.makeRPC('getOrder', {
           makerToken,
           takerToken,
           takerAddress: this.address.toLowerCase(),
@@ -315,4 +315,4 @@ class Router {
   }
 }
 
-module.exports = Router
+module.exports = Messenger
