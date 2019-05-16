@@ -27,4 +27,43 @@ function fillOrder(order, signer) {
   )
 }
 
-module.exports = { fillOrder }
+function signOrder(order, signer) {
+  const { makerAddress, makerAmount, makerToken, takerAddress, takerAmount, takerToken, expiration, nonce } = order
+  const types = [
+    'address', // makerAddress
+    'uint256', // makerAmount
+    'address', // makerToken
+    'address', // takerAddress
+    'uint256', // takerAmount
+    'address', // takertoken
+    'uint256', // expiration
+    'uint256', // nonce
+  ]
+  const hashedOrder = ethers.utils.solidityKeccak256(types, [
+    makerAddress,
+    makerAmount,
+    makerToken,
+    takerAddress,
+    takerAmount,
+    takerToken,
+    expiration,
+    nonce,
+  ])
+
+  const signedMsg = signer.signMessage(ethers.utils.arrayify(hashedOrder))
+  const sig = ethers.utils.splitSignature(signedMsg)
+
+  return {
+    makerAddress,
+    makerAmount,
+    makerToken,
+    takerAddress,
+    takerAmount,
+    takerToken,
+    expiration,
+    nonce,
+    ...sig,
+  }
+}
+
+module.exports = { fillOrder, signOrder }
