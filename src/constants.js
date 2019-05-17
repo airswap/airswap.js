@@ -194,7 +194,7 @@ const SLS_PGP_URL = _.includes(['development', 'sandbox'], ENV)
   ? `https://pgp.${ENV}.airswap.io`
   : 'https://pgp.airswap.io'
 
-const GAS_URL = 'https://s3.amazonaws.com/ethgasstation.production.airswap.io/ethgasAPI.json'
+const GAS_URL = 'https://ethgasstation.airswap.io/ethgasAPI.json'
 /**
  * @constant
  * @memberOf gas
