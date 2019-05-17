@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const reserveContract = require('instant-on-chain-maker-contract/build/contracts/ChainMaker.json')
 const ERC20abi = require('human-standard-token-abi')
 const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
@@ -7,7 +6,6 @@ const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/Swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
-const dindexerABI = require('./abis/dindexerABI.json')
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
@@ -149,16 +147,6 @@ const INFURA_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const DINDEXER_ADDRESS = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return '0xd5ba300c899dae3823e990461094e4a2f1879b2f'
-    case MAIN_ID:
-      return ''
-    default:
-  }
-})(NETWORK)
-
 const INDEXER_ADDRESS = ETH_ADDRESS
 
 const baseAbis = {
@@ -168,7 +156,6 @@ const baseAbis = {
   [SWAP_LEGACY_CONTRACT_ADDRESS]: swapLegacy.abi,
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
-  [DINDEXER_ADDRESS]: dindexerABI,
 }
 
 const abis = new Proxy(baseAbis, {
@@ -177,10 +164,6 @@ const abis = new Proxy(baseAbis, {
     return target[name] || ERC20abi
   },
 })
-
-const RESERVE_CONTRACT_ABI = reserveContract.abi
-const RESERVE_CONTRACT_BYTECODE = reserveContract.bytecode
-const RESERVE_CONTRACT_DEPLOYED_BYTECODE = reserveContract.deployedBytecode
 
 const TOKEN_APPROVAL_AMOUNT = '90071992547409910000000000'
 
@@ -287,14 +270,10 @@ module.exports = {
   AIRSWAP_GETH_NODE_ADDRESS,
   INFURA_GETH_NODE,
   abis,
-  RESERVE_CONTRACT_ABI,
-  RESERVE_CONTRACT_BYTECODE,
-  RESERVE_CONTRACT_DEPLOYED_BYTECODE,
   TOKEN_APPROVAL_AMOUNT,
   TOKEN_APPROVAL_CHECK_AMOUNT,
   BASE_ASSET_TOKENS_SYMBOLS,
   MAX_DISPLAY_DECIMALS,
-  DINDEXER_ADDRESS,
   ERC20abi,
   REACT_APP_SERVER_URL,
   AIRSWAP_API_URL,
