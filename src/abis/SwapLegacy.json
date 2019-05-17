@@ -1,5 +1,5 @@
 {
-  "contract_name": "Exchange",
+  "contract_name": "SwapLegacy",
   "abi": [
     {
       "constant": false,

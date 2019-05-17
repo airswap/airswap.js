@@ -93,7 +93,6 @@
     "greenlet": "^1.0.1",
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "^2.0.0",
-    "instant-on-chain-maker-contract": "ssh://git@github.com:airswap/onchain-maker-contract#1eaeaebd7a474972036cd9ceeb208a2756050096",
     "ipfs-mini": "^1.1.5",
     "ismobilejs": "^0.5.1",
     "isomorphic-fetch": "^2.2.1",
