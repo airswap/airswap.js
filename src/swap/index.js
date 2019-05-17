@@ -7,9 +7,16 @@ function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
 }
 
-function swap(order, signer) {
+function swap(order, signature, signer) {
   const contract = getSwapContract(signer)
-  return contract.swap(
+  return contract.swap(order, signature, {
+    value: ethers.utils.bigNumberify(order.taker.token === ETH_ADDRESS ? order.taker.param : 0),
+  })
+}
+
+function swapSimple(order, signer) {
+  const contract = getSwapContract(signer)
+  return contract.swapSimple(
     order.id,
     order.makerWallet,
     order.makerParam,
@@ -32,7 +39,7 @@ function cancel(ids, signer) {
   return contract.cancel(ids)
 }
 
-function sign(order, signer) {
+function signSimple(order, signer) {
   const { id, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
   const hashedOrder = ethers.utils.solidityKeccak256(
     ['bytes1', 'address', 'uint256', 'address', 'uint256', 'address', 'address', 'uint256', 'address', 'uint256'],
@@ -66,4 +73,4 @@ function sign(order, signer) {
   }
 }
 
-module.exports = { swap, cancel, sign }
+module.exports = { swap, swapSimple, cancel, signSimple }
