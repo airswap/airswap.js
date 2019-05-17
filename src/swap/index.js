@@ -48,11 +48,11 @@ function signSimple(order, signer) {
       SWAP_CONTRACT_ADDRESS,
       id,
       makerWallet,
-      makerParam,
-      makerToken,
+      makerParam, // erc20 AMOUNT of tokens or erc721 ID of NFT
+      makerToken, // erc20 token contract address OR nft contract address
       takerWallet,
-      takerParam,
-      takerToken,
+      takerParam, // erc20 AMOUNT of tokens or erc721 ID of NFT
+      takerToken, // erc20 token contract address OR nft contract address
       expiry,
     ],
   )
