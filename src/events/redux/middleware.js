@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import * as ethers from 'ethers'
-import { abis, EXCHANGE_CONTRACT_ADDRESS, AIRSWAP_GETH_NODE_ADDRESS } from '../../constants'
+import { abis, SWAP_LEGACY_CONTRACT_ADDRESS, AIRSWAP_GETH_NODE_ADDRESS } from '../../constants'
 import { makeMiddlewareEventFn, makeEventActionTypes } from '../../utils/redux/templates/event'
 import { selectors } from './reducers'
 import * as gethRead from '../../utils/gethRead'
 
-const exchangeABI = abis[EXCHANGE_CONTRACT_ADDRESS]
+const exchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
 const abiInterface = new ethers.utils.Interface(exchangeABI)
 const { topic } = abiInterface.events.Filled
 
@@ -25,7 +25,7 @@ const gotBlocks = blocks => ({
 export default function eventsMiddleware(store) {
   provider.getBlockNumber().then(block => {
     const params = {
-      contractAddress: EXCHANGE_CONTRACT_ADDRESS,
+      contractAddress: SWAP_LEGACY_CONTRACT_ADDRESS,
       abi: exchangeABI,
       topic,
       fromBlock: block - 7000, // 24 hour volume is a subset of these blocks, filtered in reducer selectors
