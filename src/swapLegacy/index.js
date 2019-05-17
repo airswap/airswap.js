@@ -27,7 +27,7 @@ function fillOrder(order, signer) {
   )
 }
 
-function signOrder(order, signer) {
+async function signOrder(order, signer) {
   const { makerAddress, makerAmount, makerToken, takerAddress, takerAmount, takerToken, expiration, nonce } = order
   const types = [
     'address', // makerAddress
@@ -50,7 +50,7 @@ function signOrder(order, signer) {
     nonce,
   ])
 
-  const signedMsg = signer.signMessage(ethers.utils.arrayify(hashedOrder))
+  const signedMsg = await signer.signMessage(ethers.utils.arrayify(hashedOrder))
   const sig = ethers.utils.splitSignature(signedMsg)
 
   return {
