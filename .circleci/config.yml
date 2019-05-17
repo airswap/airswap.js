@@ -1,0 +1,65 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@0.1.1
+  datadog: airswap/datadog@volatile
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.9.1
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run: npm install
+      #- run:
+      #    name: Run tests
+      #    command: npm test
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install NPM non-interactive
+          command: sudo npm install -g npm-login-noninteractive
+      - run:
+          name: Set up the npm user
+          command: npm-login-noninteractive
+      - run:
+          name: Publish package
+          command: npm publish
+      - slack/status
+      - datadog/deploy
+
+workflows:
+  test-deploy:
+    jobs:
+      - test
+      - deploy:
+          context: NPM_Publish
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
