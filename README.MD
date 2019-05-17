@@ -5,85 +5,45 @@ Useful JavaScript modules for Web3 and AirSwap network developers.
 ## Quick Start
 
 ```
-yarn add airswap
+yarn add airswap.js
 ```
-
-## Popular Modules
 
 ### DexIndex Prices
 [DexIndex](https://dexindex.io) is a price aggregator for decentralized trading venues.
 
 ```JavaScript
-import { fetchDexIndexPrices } from `@airswap/dexIndex`
+import { fetchDexIndexPrices } from `airswap.js/src/dexIndex`
 const prices = await fetchDexIndexPrices({ side, amount, symbol })
 ```
 
 ### Token Metadata
-ERC20 tokens often have metadata associated with them beyond what's on the smart contract.
+ERC20 token metadata like images and descriptions.
 
 ```JavaScript
-import { fetchDexIndexPrices } from `@airswap/dexIndex`
-const prices = await fetchDexIndexPrices({ side, amount, symbol })
+import { fetchTokens } from `airswap.js/src/tokens`
+const tokens = await fetchTokens()
 ```
 
-### Hardware Wallets
-Wallets like Ledger and Trezor can be challenging to work with so we've created handy modules.
+### Token Balances
+Fetch many balances or allowances for many addresses in a single call.
 
 ```JavaScript
-import { fetchDexIndexPrices } from `@airswap/ledger`
-const prices = await fetchDexIndexPrices({ side, amount, symbol })
+import { getManyBalancesManyAddresses } from `airswap.js/src/deltaBalances`
 ```
 
 ### Atomic Swaps
 Perform a token swap between parties for both ERC20 and ERC721 (NFT) tokens.
+The new Swap contract lives on Rinkeby at `0x4E25e972AF14942d119275453CD2DB93B320607c` and Kovan at `0x909Af82a14e78d1e8a187D88E6BBA8874f657ef5`. Learn more about the [Swap Protocol](https://swap.tech/whitepaper) and [Swap Contract](https://github.com/airswap/swap-contract).
 
 ```JavaScript
-import { fillOrder } from `@airswap/swapLegacy`
-const prices = await fillOrder(order, signer)
+import { swapSimple } from `airswap.js/src/swap`
+const result = swapSimple({ id, makerWallet, makerParam, makerToken,
+  takerWallet, takerParam, takerToken,
+  expiry, v, r, s })
 ```
 
-## Using with Ethereum
-
-When interacting with wallets for signatures or transactions, AirSwap.js uses the ethers libraries to manage "signers".
-
-...
-
-## Using with Redux
-There is very little redux written in this repo, the vast majority of the redux is implemented through redux templates. The `middleware.js` file is the window to the top-level `index.js` submodule. A redux application should only access the functionality in the library through actions, selectors, & containers
-
-### Actions
-[Actions](https://redux.js.org/basics/actions) are fired to send data from your application to your store.
-
-### Reducers
-...
-
-### Middleware
-...
-
-### Selectors
-[Selectors](https://github.com/reduxjs/reselect) are convenient and efficient ways to read application state.
-
-In general, if a selector starts with `get` it will return a constant value. If a selector name begins with `make`, it will return a function that takes an argument and return a constant value. Selectors live inside of reducers.
-
-### Example
-
-```
-import { unwrapWeth } from '@airswap/erc20/redux/actions'
-```
-
-```
-import { selectors as walletSelectors } from '@airswap/libraries/src/wallet/redux/reducers'
-
-const {
-  getIsWalletUnwrappingWeth
-} = walletSelectors
-
-const mapStateToProps = (state: *) => {
-  return {
-    isWalletUnwrappingWeth: getIsWalletUnwrappingWeth(state)
-  }
-}
-```
+## Using Ethers
+Ethereum wallet interactions often take a "signer" as a parameter. [Learn more about Ethers and signers](https://github.com/ethers-io/ethers.js/).
 
 ## Module Structure
 The top-level `index.js` includes the majority of the application code. It should be isomorphic to be used easily in both NodeJS and browser based applications. The `redux` folder includes the actions, reducers, and middleware in use by the module.
@@ -97,17 +57,6 @@ The top-level `index.js` includes the majority of the application code. It shoul
 │   ├── middleware.js
 └── └── reducers.js
 ```
-
-## Contributing
-
-...
-
-## Scripts
-
-| Command | Description |
-| :--- | :--- |
-| `yarn test` | ... |
-| `yarn build` | ... |
 
 ## License (Apache-2.0)
 
