@@ -7,7 +7,7 @@ function getSwapLegacyContract(signer) {
 
 window.bignumberify = ethers.utils.bigNumberify
 
-function fillOrder(order, signer) {
+function fillOrder(order, signer, params = {}) {
   const contract = getSwapLegacyContract(signer)
   return contract.fill(
     order.makerAddress,
@@ -23,6 +23,7 @@ function fillOrder(order, signer) {
     order.s,
     {
       value: ethers.utils.bigNumberify(order.takerToken === ETH_ADDRESS ? order.takerAmount : 0),
+      ...params,
     },
   )
 }
