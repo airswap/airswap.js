@@ -6,7 +6,7 @@ import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import {
   WETH_CONTRACT_ADDRESS,
-  EXCHANGE_CONTRACT_ADDRESS,
+  SWAP_LEGACY_CONTRACT_ADDRESS,
   keyspaceDefaultSeedFn,
   keyspaceSignatureTextFn,
 } from '../../constants'
@@ -213,7 +213,7 @@ const getIsWalletApprovingToken = createSelector(
 const getIsWalletFillingOrder = createSelector(
   getWalletAction,
   ({ actionType, params }) =>
-    actionType === 'sendTransaction' && params.to === EXCHANGE_CONTRACT_ADDRESS && params.name === 'fill',
+    actionType === 'sendTransaction' && params.to === SWAP_LEGACY_CONTRACT_ADDRESS && params.name === 'fill',
 )
 
 export const selectors = {

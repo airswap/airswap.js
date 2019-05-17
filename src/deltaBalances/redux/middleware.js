@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as apiSelectors } from '../../api/redux'
-import { EXCHANGE_CONTRACT_ADDRESS } from '../../constants'
+import { SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
@@ -23,7 +23,7 @@ function loadBalancesForAddresses(addresses, store) {
 
 function loadAllowancesForAddresses(addresses, store) {
   const tokens = apiSelectors.getAvailableTokenAddresses(store.getState())
-  getManyAllowancesManyAddresses(tokens, addresses, EXCHANGE_CONTRACT_ADDRESS).then(results => {
+  getManyAllowancesManyAddresses(tokens, addresses, SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
     store.dispatch(gotTokenApprovals(results))
   })
 }
@@ -42,7 +42,7 @@ function loadMakerBalancesAndAddresses(store) {
     getManyBalancesManyAddresses(makerTokens, [makerAddress]).then(results => {
       store.dispatch(gotTokenBalances(results))
     })
-    getManyAllowancesManyAddresses(makerTokens, [makerAddress], EXCHANGE_CONTRACT_ADDRESS).then(results => {
+    getManyAllowancesManyAddresses(makerTokens, [makerAddress], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
       store.dispatch(gotTokenApprovals(results))
     })
   })

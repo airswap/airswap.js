@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Services for AirSwap applications",
   "main": "index.js",
   "repository": "https://github.com/airswap/AirSwap.js",

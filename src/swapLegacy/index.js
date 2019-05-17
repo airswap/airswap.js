@@ -1,8 +1,8 @@
 const ethers = require('ethers')
-const { EXCHANGE_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
+const { SWAP_LEGACY_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
 
 function getSwapLegacyContract(signer) {
-  return new ethers.Contract(EXCHANGE_CONTRACT_ADDRESS, abis[EXCHANGE_CONTRACT_ADDRESS], signer)
+  return new ethers.Contract(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], signer)
 }
 
 window.bignumberify = ethers.utils.bigNumberify
