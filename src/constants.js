@@ -14,17 +14,8 @@ const ENV =
   process.env.REACT_APP_SERVER_ENV ||
   process.env.ENV ||
   process.env.STAGE ||
-  process.env.STORYBOOK_AIRSWAP_ENV
-
-const environments = ['development', 'staging', 'sandbox', 'production']
-
-if (!ENV) {
-  if (typeof window !== 'undefined') {
-    throw new Error(`REACT_APP_ENVIRONMENT environment variable must be set to one of: ${environments.join(', ')}`)
-  } else {
-    throw new Error(`ENV environment variable must be set to one of: ${environments.join(', ')}`)
-  }
-}
+  process.env.STORYBOOK_AIRSWAP_ENV ||
+  'production'
 
 const MAIN_ID = 1
 const RINKEBY_ID = 4
