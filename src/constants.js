@@ -14,7 +14,7 @@ const ENV =
   process.env.ENV ||
   process.env.STAGE ||
   process.env.STORYBOOK_AIRSWAP_ENV ||
-  'development'
+  'production'
 
 const MAIN_ID = 1
 const RINKEBY_ID = 4
