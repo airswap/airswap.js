@@ -7,7 +7,7 @@ const {
   ERC20abi,
   AIRSWAP_GETH_NODE_ADDRESS,
   abis,
-  EXCHANGE_CONTRACT_ADDRESS,
+  SWAP_LEGACY_CONTRACT_ADDRESS,
   RESERVE_CONTRACT_ABI,
 } = require('../constants')
 const { getLogs } = require('../utils/gethRead')
@@ -105,9 +105,9 @@ function fetchReserveLogs(reserveAddress, eventName, fromBlock, toBlock) {
 }
 
 function fetchExchangeLogs(eventName, fromBlock, toBlock) {
-  const abiInterface = new ethers.utils.Interface(abis[EXCHANGE_CONTRACT_ADDRESS])
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
   const topic = eventName ? abiInterface.events[eventName].topic : null
-  return fetchLogs(EXCHANGE_CONTRACT_ADDRESS, abis[EXCHANGE_CONTRACT_ADDRESS], topic, fromBlock, toBlock)
+  return fetchLogs(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], topic, fromBlock, toBlock)
 }
 
 function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {

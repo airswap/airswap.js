@@ -5,7 +5,8 @@ const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
 const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
-const exchange = require('./abis/Exchange.json')
+const swap = require('./abis/Swap.json')
+const swapLegacy = require('./abis/SwapLegacy.json')
 const dindexerABI = require('./abis/dindexerABI.json')
 
 const ENV =
@@ -40,7 +41,12 @@ const NAME_MAPPING = {
   [KOVAN_ID]: 'kovan',
 }
 
-const EXCHANGE_CONTRACT_MAPPING = {
+const SWAP_CONTRACT_MAPPING = {
+  [MAIN_ID]: '0x0000000000000000000000000000000000000000',
+  [RINKEBY_ID]: '0x0000000000000000000000000000000000000000',
+}
+
+const SWAP_LEGACY_CONTRACT_MAPPING = {
   [MAIN_ID]: '0x8fd3121013a07c57f0d69646e86e7a4880b467b7',
   [RINKEBY_ID]: '0x07fc7c43d8168a2730344e5cf958aaecc3b42b41',
 }
@@ -62,7 +68,9 @@ const NETWORK = (N => {
 
 const NETWORK_NAME = NAME_MAPPING[NETWORK]
 
-const EXCHANGE_CONTRACT_ADDRESS = EXCHANGE_CONTRACT_MAPPING[NETWORK]
+const SWAP_CONTRACT_ADDRESS = SWAP_CONTRACT_MAPPING[NETWORK]
+
+const SWAP_LEGACY_CONTRACT_ADDRESS = SWAP_LEGACY_CONTRACT_MAPPING[NETWORK]
 
 const AST_CONTRACT_ADDRESS = (N => {
   switch (N) {
@@ -164,7 +172,8 @@ const INDEXER_ADDRESS = ETH_ADDRESS
 const baseAbis = {
   [WETH_CONTRACT_ADDRESS]: wethAbi,
   [AST_CONTRACT_ADDRESS]: astAbi.abi,
-  [EXCHANGE_CONTRACT_ADDRESS]: exchange.abi,
+  [SWAP_CONTRACT_ADDRESS]: swap.abi,
+  [SWAP_LEGACY_CONTRACT_ADDRESS]: swapLegacy.abi,
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
   [DINDEXER_ADDRESS]: dindexerABI,
@@ -273,10 +282,10 @@ module.exports = {
   KOVAN_ID,
   NETWORK_MAPPING,
   NAME_MAPPING,
-  EXCHANGE_CONTRACT_MAPPING,
+  SWAP_LEGACY_CONTRACT_MAPPING,
   NETWORK,
   NETWORK_NAME,
-  EXCHANGE_CONTRACT_ADDRESS,
+  SWAP_LEGACY_CONTRACT_ADDRESS,
   AST_CONTRACT_ADDRESS,
   PGP_CONTRACT_ADDRESS,
   ETH_ADDRESS,
