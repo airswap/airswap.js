@@ -8,6 +8,9 @@ Useful JavaScript modules for Web3 and AirSwap network developers.
 yarn add airswap.js
 ```
 
+## Examples
+For more complete examples and a demo web app, see the [AirSwap.js-examples](https://github.com/airswap/AirSwap.js-examples) repository.
+
 ### DexIndex Prices
 [DexIndex](https://dexindex.io) is a price aggregator for decentralized trading venues.
 
