@@ -22,7 +22,7 @@ function swap(order, signer) {
     order.r,
     order.s,
     {
-      value: ethers.utils.bigNumberify(order.takerToken === ETH_ADDRESS ? order.takerAmount : 0),
+      value: ethers.utils.bigNumberify(order.takerToken === ETH_ADDRESS ? order.takerParam : 0),
     },
   )
 }
