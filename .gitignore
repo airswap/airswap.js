@@ -1,11 +1,9 @@
-**/node_modules
-plugin.sketchplugin/**
+node_modules/
+coverage/
+docs/
+lib/
+
 yarn-error.log
-lib/**/*
-build-storybook/**/*
-**/.DS_Store
+.DS_Store
 .cache
 .idea
-coverage/**/*
-docs/**/*
-docs.zip
