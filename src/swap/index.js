@@ -39,7 +39,7 @@ function cancel(ids, signer) {
   return contract.cancel(ids)
 }
 
-function signSimple(order, signer) {
+async function signSimple(order, signer) {
   const { id, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
   const hashedOrder = ethers.utils.solidityKeccak256(
     ['bytes1', 'address', 'uint256', 'address', 'uint256', 'address', 'address', 'uint256', 'address', 'uint256'],
@@ -57,7 +57,7 @@ function signSimple(order, signer) {
     ],
   )
 
-  const signedMsg = signer.signMessage(ethers.utils.arrayify(hashedOrder))
+  const signedMsg = await signer.signMessage(ethers.utils.arrayify(hashedOrder))
   const sig = ethers.utils.splitSignature(signedMsg)
 
   return {
