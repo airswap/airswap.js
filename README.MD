@@ -15,7 +15,7 @@ For more complete examples and a demo web app, see the [AirSwap.js-examples](htt
 [DexIndex](https://dexindex.io) is a price aggregator for decentralized trading venues.
 
 ```JavaScript
-import { fetchDexIndexPrices } from `airswap.js/src/dexIndex`
+import { fetchDexIndexPrices } from 'airswap.js/src/dexIndex'
 const prices = await fetchDexIndexPrices({ side, amount, symbol })
 ```
 
@@ -23,7 +23,7 @@ const prices = await fetchDexIndexPrices({ side, amount, symbol })
 ERC20 token metadata like images and descriptions.
 
 ```JavaScript
-import { fetchTokens } from `airswap.js/src/tokens`
+import { fetchTokens } from 'airswap.js/src/tokens'
 const tokens = await fetchTokens()
 ```
 
@@ -31,7 +31,7 @@ const tokens = await fetchTokens()
 Fetch many balances or allowances for many addresses in a single call.
 
 ```JavaScript
-import { getManyBalancesManyAddresses } from `airswap.js/src/deltaBalances`
+import { getManyBalancesManyAddresses } from 'airswap.js/src/deltaBalances'
 ```
 
 ### Atomic Swaps
@@ -39,7 +39,7 @@ Perform a token swap between parties for both ERC20 and ERC721 (NFT) tokens.
 The new Swap contract lives on Rinkeby at `0x4E25e972AF14942d119275453CD2DB93B320607c` and Kovan at `0x909Af82a14e78d1e8a187D88E6BBA8874f657ef5`. Learn more about the [Swap Protocol](https://swap.tech/whitepaper) and [Swap Contract](https://github.com/airswap/swap-contract).
 
 ```JavaScript
-import { swapSimple } from `airswap.js/src/swap`
+import { swapSimple } from 'airswap.js/src/swap'
 const result = swapSimple({ id, makerWallet, makerParam, makerToken,
   takerWallet, takerParam, takerToken,
   expiry, v, r, s })
