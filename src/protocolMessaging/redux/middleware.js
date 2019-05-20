@@ -297,9 +297,9 @@ export default function routerMiddleware(store) {
     // }))
     // const currentFrameSelectedOrder = protocolMessagingSelectors.getCurrentFrameSelectedOrder(state)
     // if (currentFrameSelectedOrder) {
-    //  console.log('selected order', currentFrameSelectedOrder)
-    console.log('current frame state', protocolMessagingSelectors.getCurrentFrameState(state))
-    //  console.log('state props ', protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(state))
+    //   console.log('selected order', currentFrameSelectedOrder)
+    //   console.log('current frame state', protocolMessagingSelectors.getCurrentFrameState(state))
+    //   console.log('state props ', protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(state))
     // } else if (orderIds.length) {
     //   console.log(JSON.stringify(orderIds, null, 2))
     // }

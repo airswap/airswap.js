@@ -435,7 +435,6 @@ const getCurrentFrameBestOrderExecution = createSelector(
       },
       v => v[orderId],
     )
-    console.log(vals)
     return vals
   },
 )
