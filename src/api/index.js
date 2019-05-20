@@ -22,7 +22,7 @@ function fetchRouterConnectedUsers() {
 
 function fetchIndexerIntents() {
   return new Promise((resolve, reject) => {
-    fetch(`${AIRSWAP_API_URL}intents`, {
+    fetch(`${AIRSWAP_API_URL}intents/expanded`, {
       method: 'get',
       mode: 'cors',
     })
@@ -30,20 +30,7 @@ function fetchIndexerIntents() {
         if (!response.ok) {
           reject(response.statusText)
         }
-        return response.json().then(intents => [
-          ..._.reduce(
-            intents,
-            (set, intent) => {
-              const expandedIntents = intent.addresses.map(makerAddress => ({
-                makerAddress,
-                makerToken: intent.makerToken,
-                takerToken: intent.takerToken,
-              }))
-              return [...set, ...expandedIntents]
-            },
-            [],
-          ),
-        ])
+        return response.json().then(intents => intents.map(intent => ({ ...intent, makerAddress: intent.address })))
       })
       .then(resolve)
   })
