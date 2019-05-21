@@ -8,7 +8,6 @@ const {
   AIRSWAP_GETH_NODE_ADDRESS,
   abis,
   SWAP_LEGACY_CONTRACT_ADDRESS,
-  RESERVE_CONTRACT_ABI,
 } = require('../constants')
 const { getLogs } = require('../utils/gethRead')
 
@@ -98,12 +97,6 @@ async function fetchAndPollLogs(successCallback, failureCallback, contractAddres
     .catch(e => failureCallback(e))
 }
 
-function fetchReserveLogs(reserveAddress, eventName, fromBlock, toBlock) {
-  const abiInterface = new ethers.utils.Interface(RESERVE_CONTRACT_ABI)
-  const topic = eventName ? abiInterface.events[eventName].topic : null
-  return fetchLogs(reserveAddress, RESERVE_CONTRACT_ABI, topic, fromBlock, toBlock)
-}
-
 function fetchExchangeLogs(eventName, fromBlock, toBlock) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
   const topic = eventName ? abiInterface.events[eventName].topic : null
@@ -160,4 +153,4 @@ function processNewBlock(block) {
   })
 }
 
-export { fetchLogs, pollLogs, fetchAndPollLogs, fetchReserveLogs, fetchExchangeLogs, fetchERC20Logs }
+export { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs }
