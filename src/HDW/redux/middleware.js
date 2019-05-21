@@ -94,6 +94,9 @@ export default function HDWMiddleware(store) {
       case 'CANCEL_HDW_INITIALIZATION':
         reject('Wallet initialization cancelled.')
         break
+      case 'ERROR_CONNECTING_WALLET':
+        store.dispatch(actions.cancelHDWInitialization())
+        break
       default:
     }
     return next(action)

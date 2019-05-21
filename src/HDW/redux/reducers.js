@@ -16,6 +16,11 @@ const HDW = (state = defaultState, action) => {
         ...defaultState,
         initializing: true,
       }
+    case 'CANCEL_HDW_INITIALIZATION':
+      return {
+        ...state,
+        initializing: false,
+      }
     case 'CONFIRM_HDW_PATH':
       return {
         ...state,
