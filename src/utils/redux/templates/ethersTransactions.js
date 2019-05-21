@@ -23,7 +23,7 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
   try {
     txn = await transactionFn(store, action)
   } catch (err) {
-    store.dispatch(errorSubmitting(formatErrorMessage(err, uniqueId)))
+    store.dispatch(errorSubmitting(formatErrorMessage(err), uniqueId))
     return
   }
   const formattedTxn = stringBNValues(txn)
@@ -52,9 +52,9 @@ const ETHERS_TXNS_REDUCERS = {
   errorSubmitting: {
     defaultState: {},
     switch: {
-      submitting: ({ id }, state) => ({ ...state, [id]: '' }),
+      submitting: ({ id }, state) => ({ ...state, [id]: false }),
       errorSubmitting: ({ error, id }, state) => ({ ...state, [id]: error }),
-      submitted: ({ id }, state) => ({ ...state, [id]: '' }),
+      submitted: ({ id }, state) => ({ ...state, [id]: false }),
     },
   },
   mining: {
