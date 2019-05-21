@@ -10,7 +10,7 @@ import EthereumTx from 'ethereumjs-tx'
 import { NETWORK, AIRSWAP_GETH_NODE_ADDRESS } from '../constants'
 
 const getLedgerAccount = async subPath => {
-  const transport = await TransportU2F.create()
+  const transport = await TransportU2F.create(10000, 10000)
   const eth = new AppEth(transport)
   const path = `${subPath}`
   const addressPromise = eth.getAddress(path, false, true)
@@ -22,7 +22,7 @@ const getLedgerAccount = async subPath => {
 
 const makeLedgerProvider = async path => {
   const engine = new ProviderEngine()
-  const getTransport = () => TransportU2F.create()
+  const getTransport = () => TransportU2F.create(10000, 10000)
   const ledger = createLedgerSubprovider(getTransport, {
     networkId: NETWORK,
     accountsLength: 1,
@@ -114,6 +114,7 @@ function createLedgerSubprovider(getTransport, options) {
     const dPath = addressToPathMap[msgData.from]
     if (!dPath) throw new Error(`address unknown '${msgData.from}'`)
     const transport = await getTransport()
+
     try {
       const eth = new AppEth(transport)
 
@@ -139,6 +140,7 @@ function createLedgerSubprovider(getTransport, options) {
     const dPath = addressToPathMap[txData.from]
     if (!dPath) throw new Error(`address unknown '${txData.from}'`)
     const transport = await getTransport()
+
     try {
       const eth = new AppEth(transport)
       const tx = new EthereumTx(txData)
@@ -173,6 +175,8 @@ function createLedgerSubprovider(getTransport, options) {
     }
   }
 
+  const ledgerTimeout = 3000
+
   const subprovider = new HookedWalletSubprovider({
     getAccounts: callback => {
       getAccounts()
@@ -180,18 +184,49 @@ function createLedgerSubprovider(getTransport, options) {
         .catch(err => callback(err, null))
     },
     signPersonalMessage: (txData, callback) => {
+      let timedOut
+      let finished
+
+      window.setTimeout(() => {
+        timedOut = true
+        if (!finished) callback(`Ledger ${ledgerTimeout / 1000} second timeout reached`, null)
+      }, ledgerTimeout)
+
       signPersonalMessage(txData)
         .then(res => {
-          callback(null, res)
+          if (!timedOut) {
+            callback(null, res)
+            finished = true
+          }
         })
         .catch(err => {
-          callback(err, null)
+          if (!timedOut) {
+            callback(err, null)
+            finished = true
+          }
         })
     },
     signTransaction: (txData, callback) => {
+      let timedOut
+      let finished
+      window.setTimeout(() => {
+        timedOut = true
+        if (!finished) callback(`Ledger ${ledgerTimeout / 1000} second timeout reached`, null)
+      }, ledgerTimeout)
+
       signTransaction(txData)
-        .then(res => callback(null, res))
-        .catch(err => callback(err, null))
+        .then(res => {
+          if (!timedOut) {
+            callback(null, res)
+            finished = true
+          }
+        })
+        .catch(err => {
+          if (!timedOut) {
+            callback(err, null)
+            finished = true
+          }
+        })
     },
   })
 
