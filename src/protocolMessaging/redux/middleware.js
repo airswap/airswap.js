@@ -217,6 +217,20 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 
 async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken, takerAmount } = action.query
+
+  if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount)) {
+    const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
+    const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
+    try {
+      const order = Order(
+        await router.getOrder(intent.makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
+      )
+      return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   try {
     const order = Order(await router.getOrder(intent.makerAddress, { takerAmount, makerToken, takerToken }))
     return store.dispatch(gotOrderResponse(order, action.stackId))
@@ -298,7 +312,7 @@ export default function routerMiddleware(store) {
     // const currentFrameSelectedOrder = protocolMessagingSelectors.getCurrentFrameSelectedOrder(state)
     // if (currentFrameSelectedOrder) {
     //   console.log('selected order', currentFrameSelectedOrder)
-    //   console.log('current frame state', protocolMessagingSelectors.getCurrentFrameState(state))
+    //   console.log('getCurrentFrameAllOrderResponses', protocolMessagingSelectors.getCurrentFrameAllOrderResponses(state))
     //   console.log('state props ', protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(state))
     // } else if (orderIds.length) {
     //   console.log(JSON.stringify(orderIds, null, 2))
