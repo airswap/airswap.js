@@ -14,8 +14,8 @@ let publicKey
 let chainCode
 let walletType
 let path
-let resolve
-let reject
+let resolveHDW
+let rejectHDW
 
 const getHWDAddresses = (store, start) => {
   const hdk = new HDKey()
@@ -54,8 +54,8 @@ export default function HDWMiddleware(store) {
         offset = 0
         walletType = action.walletType
         path = action.path || defaultHDWPaths[walletType]
-        resolve = action.resolve
-        reject = action.reject
+        resolveHDW = action.resolve
+        rejectHDW = action.reject
         store.dispatch({
           type: 'GET_HDW_CHAIN_KEY',
           walletType,
@@ -66,7 +66,7 @@ export default function HDWMiddleware(store) {
             getHWDAddresses(store, offset)
           },
           reject: err => {
-            reject(err)
+            rejectHDW(err)
           },
         })
         break
@@ -85,17 +85,21 @@ export default function HDWMiddleware(store) {
         store.dispatch(actions.initializeHDW(walletType, action.path))
         break
       case 'CONFIRM_HDW_PATH':
-        resolve({
+        resolveHDW({
           path: _.trimStart(action.path, 'm/'),
           address: addressMapping[action.path],
           walletType,
         })
         break
       case 'CANCEL_HDW_INITIALIZATION':
-        reject('Wallet initialization cancelled.')
+        if (rejectHDW) {
+          rejectHDW('Wallet initialization cancelled.')
+        }
         break
       case 'ERROR_CONNECTING_WALLET':
-        store.dispatch(actions.cancelHDWInitialization())
+        if (resolveHDW) {
+          store.dispatch(actions.cancelHDWInitialization())
+        }
         break
       default:
     }
