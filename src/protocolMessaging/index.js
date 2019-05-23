@@ -260,6 +260,7 @@ class Router {
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
       ...order,
       v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
+      expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
     }))
   }
 
