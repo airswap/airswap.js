@@ -110,7 +110,7 @@ const finishWalletAction = (store, actionType, params) =>
 // usually used for mobile wallets
 function connectWeb3(store, walletType = 'web3') {
   const availableWallets = walletSelectors.getAvailableWalletState(store.getState())
-  if (!availableWallets[walletType]) {
+  if (!availableWallets[walletType] && walletType !== 'web3') {
     store.dispatch(errorConnectingWallet(`${walletType} not detected in browser.`))
     return
   }
@@ -131,6 +131,8 @@ function connectWeb3(store, walletType = 'web3') {
     const addressPromise = signer.getAddress()
     addressPromise.then(address => store.dispatch(connectedWallet(walletType, address.toLowerCase())))
   } else {
+    alert(window.ethereum)
+    alert(window.web3)
     store.dispatch(errorConnectingWallet('No enabled web3 found in browser'))
   }
 }

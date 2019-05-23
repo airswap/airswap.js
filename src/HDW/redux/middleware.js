@@ -97,7 +97,9 @@ export default function HDWMiddleware(store) {
         }
         break
       case 'ERROR_CONNECTING_WALLET':
-        store.dispatch(actions.cancelHDWInitialization())
+        if (resolveHDW) {
+          store.dispatch(actions.cancelHDWInitialization())
+        }
         break
       default:
     }
