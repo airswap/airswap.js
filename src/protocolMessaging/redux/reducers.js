@@ -323,7 +323,12 @@ const getCurrentFrameAllOrderResponses = createSelector(
 const getCurrentFrameSelectedOrder = createSelector(
   getCurrentFrameAllOrderResponses,
   getCurrentFrameSelectedOrderId,
-  (orders, orderId) => _.find(orders, order => getOrderId(order) === orderId),
+  makeGetBestOrder,
+  (orders, orderId, getBestOrder) => {
+    const selectedOrder = _.find(orders, order => getOrderId(order) === orderId)
+    if (!selectedOrder) return selectedOrder
+    return getBestOrder([selectedOrder])
+  },
 )
 
 /**
@@ -466,9 +471,9 @@ const getCurrentFrameState = createSelector(
     if (currentFrameBestOrderExecution.miningFillOrder) return 'miningBestOrder'
     if (currentFrameNoPeersFound) return 'noPeersFound'
     if (currentFrameSelectedOrder) return 'selectedOrder'
+    if (currentFrameBestLowBalanceOrder) return 'bestLowBalanceOrder'
     if (currentFrameBestOrder) return 'bestOrder'
     if (currentFrameBestAlternativeOrder) return 'bestAlternativeOrder'
-    if (currentFrameBestLowBalanceOrder) return 'bestLowBalanceOrder'
     if (currentFrameBestQuote) return 'bestQuote'
     if (currentFrameBestAlternativeQuote) return 'bestAlternativeQuote'
     if (currentFrameQuerying) return 'querying'
