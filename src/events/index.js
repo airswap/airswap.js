@@ -1,5 +1,3 @@
-const HttpProvider = require('ethjs-provider-http')
-const BlockTracker = require('eth-block-tracker')
 const _ = require('lodash')
 const ethers = require('ethers')
 const {
@@ -9,7 +7,7 @@ const {
   abis,
   SWAP_LEGACY_CONTRACT_ADDRESS,
 } = require('../constants')
-const { getLogs } = require('../utils/gethRead')
+const { getLogs, BlockTracker } = require('../utils/gethRead')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
@@ -17,10 +15,20 @@ const queries = {}
 
 async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
   const toBlockOverride = toBlock || (await provider.getBlockNumber())
-  const fromBlockOverride = fromBlock || Number(toBlockOverride) - 250 // default is around 1 day of blocks
+  const fromBlockOverride = fromBlock || Number(toBlockOverride) - 7000 // default is around 1 day of blocks
+
+  let topicParam
+  if (topic) {
+    if (_.isArray(topic)) {
+      topicParam = topic
+    } else {
+      topicParam = [topic]
+    }
+  }
+
   const query = {
     address: contractAddress || undefined,
-    topics: topic ? [topic] : undefined,
+    topics: topicParam,
   }
 
   let logs
@@ -37,13 +45,21 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
     return
   }
 
-  return parseEventLogs(logs, abi)
+  return parseEventLogs(logs)
 }
 
-function parseEventLogs(logs, abi) {
-  const abiInterface = new ethers.utils.Interface(abi)
+const abiInterfaces = {}
+
+function parseEventLogs(logs) {
   return _.compact(
     logs.map(log => {
+      let abiInterface
+      if (abiInterfaces[log.address]) {
+        abiInterface = abiInterfaces[log.address]
+      } else {
+        abiInterface = new ethers.utils.Interface(abis[log.address.toLowerCase()])
+        abiInterfaces[log.address] = abiInterface
+      }
       let parsedLog
       try {
         parsedLog = abiInterface.parseLog(log)
@@ -71,6 +87,7 @@ function parseEventLogs(logs, abi) {
         },
         ...{ name, signature, topic },
         values: formattedLogValues,
+        parsedLogValues,
       }
     }),
   )
@@ -109,6 +126,27 @@ function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {
   return fetchLogs(contractAddress, ERC20abi, topic, fromBlock, toBlock)
 }
 
+async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
+  const erc20ABIInterface = new ethers.utils.Interface(ERC20abi)
+  const addressTopics = addresses.map(address =>
+    _.last(erc20ABIInterface.events.Transfer.encodeTopics([address.toLowerCase()])),
+  )
+
+  const fromTopics = [erc20ABIInterface.events.Transfer.topic, addressTopics, null]
+  const toTopics = [erc20ABIInterface.events.Transfer.topic, null, addressTopics]
+  const events = _.flatten(
+    await Promise.all([
+      fetchLogs(null, ERC20abi, fromTopics, fromBlock, toBlock),
+      fetchLogs(null, ERC20abi, toTopics, fromBlock, toBlock),
+    ]),
+  )
+  return _.uniqBy(
+    events,
+    ({ parsedLogValues, transactionHash }) =>
+      `${transactionHash}${parsedLogValues[0]}${parsedLogValues[1]}${parsedLogValues[2]}`, // generates unique id for transfer event, since one transactionHash can have multiple transfers
+  )
+}
+
 // EXAMPLES
 //
 // ** fetch all ERC20 Approvals **
@@ -125,32 +163,38 @@ function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {
 // fetchExchangeLogs()
 //   .then(console.log)
 //   .catch(console.log)
+//
+// ** fetch global ERC20 transfer events for eth addresses passed in  **
+//  fetchGlobalERC20Transfers(['0xDead0717B16b9F56EB6e308E4b29230dc0eEE0B6', '0x1550d41be3651686e1aeeea073d8d403d0bd2e30'])
+//   .then(console.log)
+//   .catch(console.log)
 
-const httpProvider = new HttpProvider(AIRSWAP_GETH_NODE_ADDRESS)
-const blockTracker = new BlockTracker({
-  provider: httpProvider,
-  syncingTimeout: 20 * 60 * 1e3,
-})
-
-blockTracker.on('block', block => processNewBlock(block))
-blockTracker.start()
+const blockTracker = new BlockTracker(block => processNewBlock(block)) //eslint-disable-line
 
 function processNewBlock(block) {
-  const blockNumber = parseInt(block.number, 16)
+  const blockNumber = block.number
   const fromBlock = blockNumber
   const toBlock = blockNumber
-  _.mapValues(queries, async ({ query: { contractAddress, abi, topic }, successCallback, failureCallback }) => {
-    if (
-      contractAddress &&
-      !_.find(block.transactions, ({ to }) => (to || '').toLowerCase() === contractAddress.toLowerCase())
-    ) {
-      return
-    }
 
-    fetchLogs(contractAddress, abi, topic, fromBlock, toBlock)
-      .then(logs => successCallback(logs))
-      .catch(e => failureCallback(e))
+  _.mapValues(queries, async query => {
+    if (_.isObject(query)) {
+      const {
+        query: { contractAddress, abi, topic },
+        successCallback,
+        failureCallback,
+      } = query
+      if (
+        contractAddress &&
+        !_.find(block.transactions, ({ to }) => (to || '').toLowerCase() === contractAddress.toLowerCase())
+      ) {
+        return
+      }
+
+      fetchLogs(contractAddress, abi, topic, fromBlock, toBlock)
+        .then(logs => successCallback(logs))
+        .catch(e => failureCallback(e))
+    }
   })
 }
 
-export { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs }
+export { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs, fetchGlobalERC20Transfers }

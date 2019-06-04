@@ -261,6 +261,10 @@ class Router {
       ...order,
       v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
       expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
+      makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
+      takerAddress: (order.takerAddress || '').toLowerCase(),
+      makerToken: (order.makerToken || '').toLowerCase(),
+      takerToken: (order.takerToken || '').toLowerCase(),
     }))
   }
 
