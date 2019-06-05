@@ -160,6 +160,7 @@ class Router {
           try {
             payload = JSON.parse(event.data)
             message = payload.message && JSON.parse(payload.message)
+            payload.message = message
           } catch (e) {
             console.error('Error parsing payload', e, payload)
           }
