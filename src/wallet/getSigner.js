@@ -31,11 +31,6 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
           result.finally(() => finishWalletAction(propKey, args))
           return result
         }
-      } else if (propKey === 'getAddress') {
-        return function(...args) {
-          const result = target[propKey].apply(this, args)
-          return result
-        }
       }
       return target[propKey]
     },

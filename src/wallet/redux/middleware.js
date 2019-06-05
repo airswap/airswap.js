@@ -2,7 +2,6 @@ import _ from 'lodash'
 import isMobile from 'ismobilejs'
 import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
-import Web3 from 'web3'
 import { ethers } from 'ethers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
@@ -167,14 +166,11 @@ function connectPortis(store) {
 function connectFortmatic(store) {
   const fm = new Fortmatic(FORTMATIC_ID)
   const provider = fm.getProvider()
-  window.provider = provider
   provider.enable().then(() => {
-    signer = getSigner({ web3Provider: provider }, walletActions) // need to tell ethers.js this is metamask because this line will cause bugs otherwise https://github.com/ethers-io/ethers.js/blob/061b0eae1d4c570aedd9bee1971afa43fcdae1a6/src.ts/providers/web3-provider.ts#L61
+    signer = getSigner({ web3Provider: provider }, walletActions)
     const addressPromise = signer.getAddress()
-    window.addressPromise = addressPromise
     addressPromise
       .then(address => {
-        debugger
         store.dispatch(connectedWallet('fortmatic', address.toLowerCase()))
       })
       .catch(e => store.dispatch(errorConnectingWallet(e)))
