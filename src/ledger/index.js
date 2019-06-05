@@ -1,13 +1,13 @@
-import _ from 'lodash'
-import ProviderEngine from 'web3-provider-engine'
-import RpcSubprovider from 'web3-provider-engine/subproviders/rpc'
-import AppEth from '@ledgerhq/hw-app-eth/lib/Eth'
-import TransportU2F from '@ledgerhq/hw-transport-u2f'
-import HookedWalletSubprovider from 'web3-provider-engine/subproviders/hooked-wallet'
-import stripHexPrefix from 'strip-hex-prefix'
-import EthereumTx from 'ethereumjs-tx'
+const _ = require('lodash')
+const ProviderEngine = require('web3-provider-engine')
+const RpcSubprovider = require('web3-provider-engine/subproviders/rpc')
+const AppEth = require('@ledgerhq/hw-app-eth/lib/Eth')
+const TransportU2F = require('@ledgerhq/hw-transport-u2f')
+const HookedWalletSubprovider = require('web3-provider-engine/subproviders/hooked-wallet')
+const stripHexPrefix = require('strip-hex-prefix')
+const EthereumTx = require('ethereumjs-tx')
 
-import { NETWORK, AIRSWAP_GETH_NODE_ADDRESS } from '../constants'
+const { NETWORK, AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
 
 const getLedgerAccount = async subPath => {
   const transport = await TransportU2F.create(10000, 10000)
@@ -233,4 +233,4 @@ function createLedgerSubprovider(getTransport, options) {
   return subprovider
 }
 
-export { getLedgerAccount, makeLedgerProvider }
+module.exports = { getLedgerAccount, makeLedgerProvider }

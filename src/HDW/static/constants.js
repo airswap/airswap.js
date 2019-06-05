@@ -4,4 +4,4 @@ const defaultHDWPaths = {
   trezor: "m/44'/60'/0'/0",
 }
 
-export { defaultHDWPaths }
+module.exports = { defaultHDWPaths }

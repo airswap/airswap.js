@@ -1,7 +1,7 @@
-import _ from 'lodash'
-import t from 'tcomb-validation'
-import validator from 'validator'
-import { GAS_LEVELS, FIAT_CURRENCIES } from './constants'
+const _ = require('lodash')
+const t = require('tcomb-validation')
+const validator = require('validator')
+const { GAS_LEVELS, FIAT_CURRENCIES } = require('./constants')
 
 function isAddress(str) {
   return /^0x[a-f0-9]{40}$/.test(str)
@@ -86,4 +86,4 @@ const gasLevel = t.refinement(t.String, s => _.includes(GAS_LEVELS, s))
 
 const Currency = t.refinement(t.String, s => _.includes(Object.keys(FIAT_CURRENCIES), s))
 
-export { Address, Query, CheckoutFrame, gasLevel, Currency, Quote, Order }
+module.exports = { Address, Query, CheckoutFrame, gasLevel, Currency, Quote, Order }

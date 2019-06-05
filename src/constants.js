@@ -251,6 +251,16 @@ const NODESMITH_KEY = process.env.REACT_APP_NODESMITH_KEY || process.env.NODESMI
 const NODESMITH_URL = `wss://ethereum.api.nodesmith.io/v1/${NETWORK_NAME ||
   'mainnet'}/jsonrpc/ws?apiKey=${NODESMITH_KEY}`
 
+const FORTMATIC_ID = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'pk_test_8514D52FEE94B0E1'
+    case MAIN_ID:
+      return 'pk_live_C61C451FE2415771'
+    default:
+  }
+})(NETWORK)
+
 module.exports = {
   ENV,
   MAIN_ID,
@@ -297,4 +307,5 @@ module.exports = {
   MAKER_STATS_URL,
   NODESMITH_KEY,
   NODESMITH_URL,
+  FORTMATIC_ID,
 }

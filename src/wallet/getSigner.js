@@ -46,7 +46,7 @@ function getSigner(params, walletActions = {}) {
     return traceMethodCalls(new ethers.Wallet(privateKey, provider), walletActions)
   } else {
     let networkVersion
-    if (web3Provider.isPortis || web3Provider.isLedger) {
+    if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {
       networkVersion = NETWORK
     } else {
       networkVersion = Number(web3Provider.send({ method: 'net_version' }).result)
