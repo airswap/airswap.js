@@ -1,5 +1,5 @@
-import { ethers } from 'ethers/index'
-import { abis } from '../constants'
+const { ethers } = require('ethers')
+const { abis } = require('../constants')
 
 const _ = require('lodash')
 const BigNumber = require('bignumber.js')
@@ -7,12 +7,12 @@ const BigNumber = require('bignumber.js')
 BigNumber.config({ ERRORS: false })
 BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
 
-export function parseAmount(amount, precision) {
+function parseAmount(amount, precision) {
   const num = new BigNumber(Math.max(0, Number(amount)))
   return Number(num.toFixed(precision, BigNumber.ROUND_FLOOR))
 }
 
-export function formatErrorMessage(error) {
+function formatErrorMessage(error) {
   if (_.isObject(error) && error.message) {
     return error.message.split('\n')[0] // sometimes metamask returns stacktraces and this removes them
   } else if (_.isString(error)) {
@@ -21,15 +21,15 @@ export function formatErrorMessage(error) {
   return ''
 }
 
-export function lowerCaseStringsInObject(obj) {
+function lowerCaseStringsInObject(obj) {
   return _.mapValues(obj, v => (v.toLowerCase ? v.toLowerCase() : v))
 }
 
-export function stringBNValues(obj) {
+function stringBNValues(obj) {
   return _.mapValues(obj, v => (v && v._ethersType === 'BigNumber' ? v.toString() : v)) // eslint_disable_line
 }
 
-export function getParsedInputFromTransaction(transaction) {
+function getParsedInputFromTransaction(transaction) {
   const to = transaction.to.toLowerCase()
   const contractInterface = new ethers.utils.Interface(abis[to])
   const { data } = transaction
@@ -42,7 +42,7 @@ export function getParsedInputFromTransaction(transaction) {
   return { name, parameters, formattedETHValue: value }
 }
 
-export function getTransactionDescription(transaction, tokensByAddress, getReadableOrder) {
+function getTransactionDescription(transaction, tokensByAddress, getReadableOrder) {
   if (_.isEmpty(tokensByAddress)) {
     return ''
   }
@@ -67,7 +67,7 @@ export function getTransactionDescription(transaction, tokensByAddress, getReada
   }
 }
 
-export function getTransactionTextStatus(transactionReceipt) {
+function getTransactionTextStatus(transactionReceipt) {
   let textStatus = ''
   let eventStatus = ''
   const status = _.get(transactionReceipt, 'status')
@@ -113,4 +113,14 @@ export function getTransactionTextStatus(transactionReceipt) {
     textStatus,
     eventStatus,
   }
+}
+
+module.exports = {
+  parseAmount,
+  formatErrorMessage,
+  lowerCaseStringsInObject,
+  stringBNValues,
+  getParsedInputFromTransaction,
+  getTransactionDescription,
+  getTransactionTextStatus,
 }
