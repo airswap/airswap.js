@@ -160,6 +160,7 @@ class Router {
           try {
             payload = JSON.parse(event.data)
             message = payload.message && JSON.parse(payload.message)
+            payload.message = message
           } catch (e) {
             console.error('Error parsing payload', e, payload)
           }
@@ -171,7 +172,7 @@ class Router {
           if (message.method) {
             // Another peer is invoking a method.
             if (this.RPC_METHOD_ACTIONS[message.method]) {
-              this.RPC_METHOD_ACTIONS[message.method](message)
+              this.RPC_METHOD_ACTIONS[message.method](payload)
             }
           } else if (message.id) {
             // We have received a response from a method call.
