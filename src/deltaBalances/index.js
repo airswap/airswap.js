@@ -51,7 +51,7 @@ async function getAirSwapTokenAllowancesForManyAddresses(addresses, spender) {
   return getManyAllowancesManyAddresses(tokenMetadata.tokenAddresses, addresses, spender)
 }
 
-export {
+module.exports = {
   getManyBalancesManyAddresses,
   getManyAllowancesManyAddresses,
   getAirSwapTokenBalancesForManyAddresses,

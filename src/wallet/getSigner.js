@@ -31,6 +31,11 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
           result.finally(() => finishWalletAction(propKey, args))
           return result
         }
+      } else if (propKey === 'getAddress') {
+        return function(...args) {
+          const result = target[propKey].apply(this, args)
+          return result
+        }
       }
       return target[propKey]
     },
@@ -46,7 +51,7 @@ function getSigner(params, walletActions = {}) {
     return traceMethodCalls(new ethers.Wallet(privateKey, provider), walletActions)
   } else {
     let networkVersion
-    if (web3Provider.isPortis || web3Provider.isLedger) {
+    if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {
       networkVersion = NETWORK
     } else {
       networkVersion = Number(web3Provider.send({ method: 'net_version' }).result)

@@ -1,13 +1,15 @@
 import _ from 'lodash'
 import isMobile from 'ismobilejs'
 import Portis from '@portis/web3'
+import Fortmatic from 'fortmatic'
+import Web3 from 'web3'
 import { ethers } from 'ethers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage } from '../../utils/transformations'
-import { abis, PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK } from '../../constants'
+import { abis, PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
 import { web3WalletTypes } from '../static/constants'
 import { getLedgerProvider } from '../../ledger/redux/actions'
 import { initializeHDW } from '../../HDW/redux/actions'
@@ -162,6 +164,23 @@ function connectPortis(store) {
   portis.showPortis()
 }
 
+function connectFortmatic(store) {
+  const fm = new Fortmatic(FORTMATIC_ID)
+  const provider = fm.getProvider()
+  window.provider = provider
+  provider.enable().then(() => {
+    signer = getSigner({ web3Provider: provider }, walletActions) // need to tell ethers.js this is metamask because this line will cause bugs otherwise https://github.com/ethers-io/ethers.js/blob/061b0eae1d4c570aedd9bee1971afa43fcdae1a6/src.ts/providers/web3-provider.ts#L61
+    const addressPromise = signer.getAddress()
+    window.addressPromise = addressPromise
+    addressPromise
+      .then(address => {
+        debugger
+        store.dispatch(connectedWallet('fortmatic', address.toLowerCase()))
+      })
+      .catch(e => store.dispatch(errorConnectingWallet(e)))
+  })
+}
+
 const detectWeb3Wallets = store => {
   const available = _.get(store.getState(), 'wallet.available')
   const { web3Enabled } = available
@@ -262,6 +281,9 @@ export default function walletMiddleware(store) {
             break
           case 'portis':
             connectPortis(store)
+            break
+          case 'fortmatic':
+            connectFortmatic(store)
             break
           case 'equal':
             connectWeb3(store, 'equal')

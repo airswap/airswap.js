@@ -30,7 +30,6 @@
     "eslint-plugin-jsx-a11y": "6.0.3",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "7.5.1",
-    "eth-block-tracker": "^2.3.0",
     "flow-bin": "^0.76.0",
     "gh-pages": "^1.2.0",
     "jest": "^23.6.0",
@@ -90,6 +89,7 @@
     "ethers": "^4.0.23",
     "ethjs-provider-http": "^0.1.6",
     "eventsource": "^1.0.7",
+    "fortmatic": "^0.7.4",
     "greenlet": "^1.0.1",
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "^2.0.0",
@@ -115,6 +115,7 @@
     "tcomb-validation": "^3.4.1",
     "uuid4": "^1.1.4",
     "validator": "^10.11.0",
+    "web3": "^1.0.0-beta.55",
     "web3-provider-engine": "^15.0.0"
   }
 }
