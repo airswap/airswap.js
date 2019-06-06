@@ -1,4 +1,4 @@
-import _ from 'lodash'
+const _ = require('lodash')
 
 function isValidOrder(order) {
   if (!_.isObject(order)) return false
@@ -48,4 +48,4 @@ function getOrderId(order) {
   return `${makerAddress}${makerAmount}${makerToken}${takerAddress}${takerAmount}${takerToken}${expiration}${nonce}${r}${s}${v}`
 }
 
-export { isValidOrder, getOrderId }
+module.exports = { isValidOrder, getOrderId }

@@ -197,4 +197,4 @@ function processNewBlock(block) {
   })
 }
 
-export { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs, fetchGlobalERC20Transfers }
+module.exports = { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs, fetchGlobalERC20Transfers }

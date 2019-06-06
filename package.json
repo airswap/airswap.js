@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -30,7 +30,6 @@
     "eslint-plugin-jsx-a11y": "6.0.3",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "7.5.1",
-    "eth-block-tracker": "^2.3.0",
     "flow-bin": "^0.76.0",
     "gh-pages": "^1.2.0",
     "jest": "^23.6.0",
@@ -90,6 +89,7 @@
     "ethers": "^4.0.23",
     "ethjs-provider-http": "^0.1.6",
     "eventsource": "^1.0.7",
+    "fortmatic": "^0.7.4",
     "greenlet": "^1.0.1",
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "^2.0.0",
