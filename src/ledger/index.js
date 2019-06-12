@@ -1,16 +1,16 @@
 const _ = require('lodash')
 const ProviderEngine = require('web3-provider-engine')
 const RpcSubprovider = require('web3-provider-engine/subproviders/rpc')
-const AppEth = require('@ledgerhq/hw-app-eth/lib/Eth')
-const TransportU2F = require('@ledgerhq/hw-transport-u2f')
+const { default: AppEth } = require('@ledgerhq/hw-app-eth/lib/Eth')
+const { default: TransportU2F } = require('@ledgerhq/hw-transport-u2f')
 const HookedWalletSubprovider = require('web3-provider-engine/subproviders/hooked-wallet')
 const stripHexPrefix = require('strip-hex-prefix')
 const EthereumTx = require('ethereumjs-tx')
-
 const { NETWORK, AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
 
 const getLedgerAccount = async subPath => {
   const transport = await TransportU2F.create(10000, 10000)
+
   const eth = new AppEth(transport)
   const path = `${subPath}`
   const addressPromise = eth.getAddress(path, false, true)
@@ -175,7 +175,7 @@ function createLedgerSubprovider(getTransport, options) {
     }
   }
 
-  const ledgerTimeout = 3000
+  const ledgerTimeout = 30000
 
   const subprovider = new HookedWalletSubprovider({
     getAccounts: callback => {

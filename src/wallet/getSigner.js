@@ -1,4 +1,7 @@
+const _ = require('lodash')
+const uuid = require('uuid')
 const ethers = require('ethers')
+const ethUtil = require('ethereumjs-util')
 const { AIRSWAP_GETH_NODE_ADDRESS, NETWORK, NETWORK_MAPPING } = require('../constants')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
@@ -27,9 +30,43 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
         propKey === 'signMessage'
       ) {
         return function(...args) {
-          const result = target[propKey].apply(this, args)
-          result.finally(() => finishWalletAction(propKey, args))
-          return result
+          const addressPromise = new Promise((resolve, reject) =>
+            target.provider._sendAsync({ id: uuid(), method: 'eth_accounts' }, (err, resp) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(_.first(_.get(resp, 'result')))
+              }
+            }),
+          )
+
+          return addressPromise.then(from => {
+            const msg = ethUtil.bufferToHex(new Buffer(_.first(args), 'utf8'))
+            const params = [msg, from]
+            const result = new Promise((resolve, reject) =>
+              target.provider._sendAsync({ id: uuid(), method: 'personal_sign', params }, (err, resp) => {
+                if (err) {
+                  reject(err)
+                } else {
+                  resolve(_.get(resp, 'result'))
+                }
+              }),
+            )
+            result.finally(() => finishWalletAction(propKey, args))
+            return result
+          })
+        }
+      } else if (typeof target[propKey] === 'function' && propKey === 'getAddress') {
+        return function() {
+          return new Promise((resolve, reject) =>
+            target.provider._sendAsync({ id: uuid(), method: 'eth_accounts' }, (err, resp) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(_.first(_.get(resp, 'result')))
+              }
+            }),
+          )
         }
       }
       return target[propKey]
@@ -58,7 +95,9 @@ function getSigner(params, walletActions = {}) {
 
     const tempProvider = new ethers.providers.Web3Provider(web3Provider)
     const signer = tempProvider.getSigner()
-    return traceMethodCalls(signer, walletActions)
+    const s = traceMethodCalls(signer, walletActions)
+    window.s = s
+    return s
   }
 }
 
