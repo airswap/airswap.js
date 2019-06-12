@@ -95,9 +95,7 @@ function getSigner(params, walletActions = {}) {
 
     const tempProvider = new ethers.providers.Web3Provider(web3Provider)
     const signer = tempProvider.getSigner()
-    const s = traceMethodCalls(signer, walletActions)
-    window.s = s
-    return s
+    return traceMethodCalls(signer, walletActions)
   }
 }
 
