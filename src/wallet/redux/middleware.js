@@ -167,7 +167,6 @@ function connectFortmatic(store) {
   const fm = new Fortmatic(FORTMATIC_ID)
   const provider = fm.getProvider()
   provider.enable().then(() => {
-    provider.isMetamask = true //eslint-disable-line
     signer = getSigner({ web3Provider: provider }, walletActions)
     const addressPromise = signer.getAddress()
     addressPromise
