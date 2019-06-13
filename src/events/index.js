@@ -7,7 +7,8 @@ const {
   abis,
   SWAP_LEGACY_CONTRACT_ADDRESS,
 } = require('../constants')
-const { getLogs, BlockTracker } = require('../utils/gethRead')
+const BlockTracker = require('../utils/blockTracker')
+const { getLogs } = require('../utils/gethRead')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
