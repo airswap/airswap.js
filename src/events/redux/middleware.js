@@ -3,8 +3,9 @@ import * as ethers from 'ethers'
 import { abis, SWAP_LEGACY_CONTRACT_ADDRESS, ERC20abi } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
+import { selectors as apiSelectors } from '../../api/redux'
+
 import * as gethRead from '../../utils/gethRead'
-import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { buildGlobalERC20TransfersTopics, fetchExchangeLogs, fetchLogs } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
 
@@ -27,11 +28,11 @@ const initPollExchangeFills = _.once(store => {
 const pollERC20Transfers = store => {
   const state = store.getState()
   const block = blockTrackerSelectors.getLatestBlock(state)
-  const address = getConnectedWalletAddress(state)
-  if (!address) {
+  const addresses = apiSelectors.getTrackedAddresses(state)
+  if (!addresses.length) {
     return null
   }
-  const { fromTopics, toTopics } = buildGlobalERC20TransfersTopics([address])
+  const { fromTopics, toTopics } = buildGlobalERC20TransfersTopics(addresses)
 
   Promise.all([
     fetchLogs(null, ERC20abi, fromTopics, block.number, block.number),
@@ -61,11 +62,13 @@ export default function eventsMiddleware(store) {
         })
         break
       case 'GOT_BLOCK':
+        // check for new airswap fills on each new block
         fetchExchangeLogs('Filled', action.block.number, action.block.number).then(logs => {
           if (logs && logs.length) {
             store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(logs))
           }
         })
+        // check for erc20 transfers on each new block
         pollERC20Transfers(store, action.block)
         break
       default:

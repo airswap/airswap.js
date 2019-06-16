@@ -77,7 +77,6 @@ const getTransactionHistory = createSelector(
         timestamp: tx.timestamp,
       }
     })
-    console.log('transactions', transactions)
     return transactions
   },
 )

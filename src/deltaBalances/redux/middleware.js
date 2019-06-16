@@ -89,6 +89,19 @@ export default function balancesMiddleware(store) {
         const addresses = _.keys(reduceERC20LogsToTokenAddressMap(logs))
         loadBalancesForAddresses(addresses, store)
         break
+      case 'GOT_BLOCK':
+        const trackedAddresses = apiSelectors.getTrackedAddresses(state)
+        const blockAddresses = _.reduce(
+          action.block.transactions,
+          (addressesAccumulator, { to, from }) =>
+            _.uniq(_.compact([(to || '').toLowerCase(), (from || '').toLowerCase(), ...addressesAccumulator])),
+          [],
+        )
+        const addressesToUpdate = _.intersection(trackedAddresses, blockAddresses)
+        if (addressesToUpdate.length) {
+          loadBalancesForAddresses(addressesToUpdate, store)
+        }
+        break
       default:
     }
     if (apiSelectors.getAvailableTokenAddresses(state).length && !makerBalancesInitialized) {
