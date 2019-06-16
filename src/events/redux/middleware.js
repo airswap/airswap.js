@@ -20,7 +20,7 @@ const initPollExchangeFills = _.once(store => {
     SWAP_LEGACY_CONTRACT_ADDRESS,
     exchangeABI,
     abiInterface.events.Filled.topic,
-    block.number - 7000,
+    block.number - 7000, // 7000 is to include 24 hours worth of transactions, extra is included to cover variable block times (currently around 5000 transactions per day)
     block.number,
   ).then(logs => store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(logs)))
 })
