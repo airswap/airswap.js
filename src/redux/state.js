@@ -13,6 +13,7 @@ import * as gas from '../gas/redux'
 import * as fiat from '../fiat/redux'
 import * as hdw from '../HDW/redux'
 import * as ledger from '../ledger/redux'
+import * as blockTracker from '../blockTracker/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -31,6 +32,7 @@ const state = {
   fiat,
   hdw,
   ledger,
+  blockTracker,
 }
 
 const middleware = _.map(_.values(state), 'middleware')
