@@ -6,7 +6,9 @@ import { getOrderId } from '../../utils/order'
 async function fillOrder(store, action) {
   const signer = await store.dispatch(getSigner())
   const { order } = action
-  return Airswap.fillOrder(order, signer)
+  const fill = Airswap.fillOrder(order, signer)
+
+  return fill
 }
 
 export default function walletMiddleware(store) {
