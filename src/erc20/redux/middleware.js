@@ -1,12 +1,10 @@
+import uuid from 'uuid'
 import { getSigner } from '../../wallet/redux/actions'
 import {
   makeMiddlewareEthersTransactionsFn,
   makeEthersTxnsActionTypes,
 } from '../../utils/redux/templates/ethersTransactions'
-import {
-  makeMiddlewareEthersTransactionFn,
-  makeEthersTxnActionTypes,
-} from '../../utils/redux/templates/ethersTransaction'
+
 import * as ERC20 from '../index'
 import {
   getAllAllowancesForConnectedAddress,
@@ -39,15 +37,15 @@ export default function walletMiddleware(store) {
         store.dispatch(getAllAllowancesForConnectedAddress())
         break
       case 'WRAP_WETH':
-        makeMiddlewareEthersTransactionFn(wrapWeth, 'wrapWeth', store, action)
+        makeMiddlewareEthersTransactionsFn(wrapWeth, 'wrapWeth', store, action, uuid())
         break
-      case makeEthersTxnActionTypes('wrapWeth').mined:
+      case makeEthersTxnsActionTypes('wrapWeth').mined:
         store.dispatch(getAllBalancesForConnectedAddress())
         break
       case 'UNWRAP_WETH':
-        makeMiddlewareEthersTransactionFn(unwrapWeth, 'unwrapWeth', store, action)
+        makeMiddlewareEthersTransactionsFn(unwrapWeth, 'unwrapWeth', store, action, uuid())
         break
-      case makeEthersTxnActionTypes('unwrapWeth').mined:
+      case makeEthersTxnsActionTypes('unwrapWeth').mined:
         store.dispatch(getAllBalancesForConnectedAddress())
         break
       default:

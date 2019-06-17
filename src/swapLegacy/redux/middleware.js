@@ -1,9 +1,5 @@
 import { getSigner } from '../../wallet/redux/actions'
-import {
-  makeMiddlewareEthersTransactionsFn,
-  makeEthersTxnsActionTypes,
-} from '../../utils/redux/templates/ethersTransactions'
-import { getAllBalancesForConnectedAddress } from '../../deltaBalances/redux/actions'
+import { makeMiddlewareEthersTransactionsFn } from '../../utils/redux/templates/ethersTransactions'
 import * as Airswap from '../index'
 import { getOrderId } from '../../utils/order'
 
@@ -18,9 +14,6 @@ export default function walletMiddleware(store) {
     switch (action.type) {
       case 'FILL_ORDER':
         makeMiddlewareEthersTransactionsFn(fillOrder, 'fillOrder', store, action, getOrderId(action.order))
-        break
-      case makeEthersTxnsActionTypes('fillOrder').mined:
-        store.dispatch(getAllBalancesForConnectedAddress())
         break
       default:
     }

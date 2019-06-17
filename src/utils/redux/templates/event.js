@@ -1,9 +1,6 @@
 // HTTP ASYNC FETCH REDUX GENERATORS
 import _ from 'lodash'
-import { formatErrorMessage } from '../../transformations'
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
-import { fetchAndPollLogs } from '../../../events'
-import { lookupBlockByTimestamp } from '../../ethereumDatetime'
 
 const EVENT_ACTIONS = [
   { action: 'getting' },
@@ -13,22 +10,6 @@ const EVENT_ACTIONS = [
 
 export const makeEventFetchingActionsCreators = name => makeActionCreators(EVENT_ACTIONS, name)
 export const makeEventActionTypes = name => makeActionTypes(EVENT_ACTIONS, name)
-
-export const makeMiddlewareEventFn = async (params, name, store) => {
-  const { fromBlock, timestamp, contractAddress, abi, topic } = params
-  let block
-  if (timestamp && !fromBlock) {
-    block = await lookupBlockByTimestamp(timestamp)
-  } else if (fromBlock) {
-    block = fromBlock
-  }
-  const { getting, got, errorGetting } = makeEventFetchingActionsCreators(name)
-  const successCallback = logs => store.dispatch(got(logs))
-  const failureCallback = e => store.dispatch(errorGetting(formatErrorMessage(e)))
-
-  fetchAndPollLogs(successCallback, failureCallback, contractAddress, abi, topic, block)
-  store.dispatch(getting())
-}
 
 const EVENT_REDUCERS = {
   attemptedGetting: {
