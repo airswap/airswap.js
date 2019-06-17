@@ -7,7 +7,6 @@ const {
   abis,
   SWAP_LEGACY_CONTRACT_ADDRESS,
 } = require('../constants')
-const BlockTracker = require('../utils/blockTracker')
 const { getLogs } = require('../utils/gethRead')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
@@ -106,15 +105,6 @@ async function pollLogs(successCallback, failureCallback, contractAddress, abi, 
   }
 }
 
-async function fetchAndPollLogs(successCallback, failureCallback, contractAddress, abi, topic, fromBlock) {
-  fetchLogs(contractAddress, abi, topic, fromBlock)
-    .then(batchLogs => {
-      successCallback(batchLogs)
-      pollLogs(successCallback, failureCallback, contractAddress, abi, topic)
-    })
-    .catch(e => failureCallback(e))
-}
-
 function fetchExchangeLogs(eventName, fromBlock, toBlock) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
   const topic = eventName ? abiInterface.events[eventName].topic : null
@@ -127,7 +117,7 @@ function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {
   return fetchLogs(contractAddress, ERC20abi, topic, fromBlock, toBlock)
 }
 
-async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
+function buildGlobalERC20TransfersTopics(addresses) {
   const erc20ABIInterface = new ethers.utils.Interface(ERC20abi)
   const addressTopics = addresses.map(address =>
     _.last(erc20ABIInterface.events.Transfer.encodeTopics([address.toLowerCase()])),
@@ -135,10 +125,24 @@ async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
 
   const fromTopics = [erc20ABIInterface.events.Transfer.topic, addressTopics, null]
   const toTopics = [erc20ABIInterface.events.Transfer.topic, null, addressTopics]
+  return { fromTopics, toTopics }
+}
+
+async function fetchGlobalERC20TransfersFrom(addresses, fromBlock, toBlock) {
+  const { fromTopics } = buildGlobalERC20TransfersTopics(addresses)
+  return fetchLogs(null, ERC20abi, fromTopics, fromBlock, toBlock)
+}
+
+async function fetchGlobalERC20TransfersTo(addresses, fromBlock, toBlock) {
+  const { toTopics } = buildGlobalERC20TransfersTopics(addresses)
+  return fetchLogs(null, ERC20abi, toTopics, fromBlock, toBlock)
+}
+
+async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
   const events = _.flatten(
     await Promise.all([
-      fetchLogs(null, ERC20abi, fromTopics, fromBlock, toBlock),
-      fetchLogs(null, ERC20abi, toTopics, fromBlock, toBlock),
+      fetchGlobalERC20TransfersFrom(addresses, fromBlock, toBlock),
+      fetchGlobalERC20TransfersTo(addresses, fromBlock, toBlock),
     ]),
   )
   return _.uniqBy(
@@ -170,32 +174,11 @@ async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
 //   .then(console.log)
 //   .catch(console.log)
 
-const blockTracker = new BlockTracker(block => processNewBlock(block)) //eslint-disable-line
-
-function processNewBlock(block) {
-  const blockNumber = block.number
-  const fromBlock = blockNumber
-  const toBlock = blockNumber
-
-  _.mapValues(queries, async query => {
-    if (_.isObject(query)) {
-      const {
-        query: { contractAddress, abi, topic },
-        successCallback,
-        failureCallback,
-      } = query
-      if (
-        contractAddress &&
-        !_.find(block.transactions, ({ to }) => (to || '').toLowerCase() === contractAddress.toLowerCase())
-      ) {
-        return
-      }
-
-      fetchLogs(contractAddress, abi, topic, fromBlock, toBlock)
-        .then(logs => successCallback(logs))
-        .catch(e => failureCallback(e))
-    }
-  })
+module.exports = {
+  fetchLogs,
+  pollLogs,
+  fetchExchangeLogs,
+  fetchERC20Logs,
+  fetchGlobalERC20Transfers,
+  buildGlobalERC20TransfersTopics,
 }
-
-module.exports = { fetchLogs, pollLogs, fetchAndPollLogs, fetchExchangeLogs, fetchERC20Logs, fetchGlobalERC20Transfers }

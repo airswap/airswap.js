@@ -1,10 +1,9 @@
 import { combineReducers } from 'redux'
-import { makeEthersTxnReducer, makeEthersTxnSelectors } from '../../utils/redux/templates/ethersTransaction'
 import { makeEthersTxnsReducer, makeEthersTxnsSelectors } from '../../utils/redux/templates/ethersTransactions'
 
 const approveToken = makeEthersTxnsReducer('approveToken')
-const wrapWeth = makeEthersTxnReducer('wrapWeth')
-const unwrapWeth = makeEthersTxnReducer('unwrapWeth')
+const wrapWeth = makeEthersTxnsReducer('wrapWeth')
+const unwrapWeth = makeEthersTxnsReducer('unwrapWeth')
 
 export default combineReducers({
   approveToken,
@@ -26,21 +25,21 @@ const {
   getSubmittingWrapWeth,
   getErrorSubmittingWrapWeth,
   getMiningWrapWeth,
-  getTransactionWrapWeth,
+  getTransactionsWrapWeth,
   getMinedWrapWeth,
-  getTransactionReceiptWrapWeth,
+  getTransactionReceiptsWrapWeth,
   getErrorMiningWrapWeth,
-} = makeEthersTxnSelectors('wrapWeth', 'erc20')
+} = makeEthersTxnsSelectors('wrapWeth', 'erc20')
 
 const {
   getSubmittingUnwrapWeth,
   getErrorSubmittingUnwrapWeth,
   getMiningUnwrapWeth,
-  getTransactionUnwrapWeth,
+  getTransactionsUnwrapWeth,
   getMinedUnwrapWeth,
-  getTransactionReceiptUnwrapWeth,
+  getTransactionReceiptsUnwrapWeth,
   getErrorMiningUnwrapWeth,
-} = makeEthersTxnSelectors('unwrapWeth', 'erc20')
+} = makeEthersTxnsSelectors('unwrapWeth', 'erc20')
 
 export const selectors = {
   getSubmittingApproveToken,
@@ -53,15 +52,15 @@ export const selectors = {
   getSubmittingWrapWeth,
   getErrorSubmittingWrapWeth,
   getMiningWrapWeth,
-  getTransactionWrapWeth,
+  getTransactionsWrapWeth,
   getMinedWrapWeth,
-  getTransactionReceiptWrapWeth,
+  getTransactionReceiptsWrapWeth,
   getErrorMiningWrapWeth,
   getSubmittingUnwrapWeth,
   getErrorSubmittingUnwrapWeth,
   getMiningUnwrapWeth,
-  getTransactionUnwrapWeth,
+  getTransactionsUnwrapWeth,
   getMinedUnwrapWeth,
-  getTransactionReceiptUnwrapWeth,
+  getTransactionReceiptsUnwrapWeth,
   getErrorMiningUnwrapWeth,
 }

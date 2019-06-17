@@ -5,35 +5,13 @@ import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import { makeEventReducer, makeEventSelectors } from '../../utils/redux/templates/event'
 import { makeGetReadableOrder, makeParseByToken } from '../../tokens/redux/reducers'
+import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 
 const exchangeFills = makeEventReducer('exchangeFills')
 
-function blocks(state = {}, action) {
-  switch (action.type) {
-    case 'GOT_BLOCK':
-      return {
-        ...state,
-        [action.block.number]: action.block,
-      }
-    case 'GOT_BLOCKS':
-      const blockNumbers = _.map(action.blocks, 'number')
-      return {
-        ...state,
-        ..._.zipObject(blockNumbers, action.blocks),
-      }
-    default:
-      return state
-  }
-}
+export default combineReducers({ exchangeFills })
 
-export default combineReducers({
-  exchangeFills,
-  blocks,
-})
-
-const getEvents = state => state.events
-const getBlocks = createSelector(getEvents, events => events.blocks)
-const getBlockNumbers = createSelector(getBlocks, b => _.map(_.values(b), 'number'))
+const getEvents = state => state.events //eslint-disable-line
 
 const {
   getAttemptedGettingExchangeFills,
@@ -74,7 +52,7 @@ const {
 const getFormattedExchangeFills = createSelector(
   getFetchedExchangeFills,
   makeGetReadableOrder,
-  getBlocks,
+  blockTrackerSelectors.getBlocks,
   (events, getReadableOrder, blockObj) =>
     events.map(({ transactionHash, blockNumber, values }) => ({
       transactionHash,
@@ -113,5 +91,4 @@ export const selectors = {
   getFormattedExchangeFills24Hour,
   get24HourVolume,
   get24HourLargestTrade,
-  getBlockNumbers,
 }

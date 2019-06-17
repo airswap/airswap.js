@@ -8,6 +8,7 @@ import { makeHTTPReducer, makeHTTPSelectors } from '../../utils/redux/templates/
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as eventSelectors } from '../../events/redux'
 import { lowerCaseStringsInObject } from '../../utils/transformations'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 const connectedUsers = makeHTTPReducer('connectedUsers')
 const indexerIntents = makeHTTPReducer('indexerIntents')
@@ -225,6 +226,12 @@ const makeGet24HourTradesByTokenPair = createSelector(
   },
 )
 
+const getTrackedAddresses = createSelector(
+  getConnectedWalletAddress,
+  getConnectedMakerAddressesWithIndexerIntents,
+  (walletAddress, makerAddresses) => _.uniq(_.compact([walletAddress, ...makerAddresses])),
+)
+
 export const selectors = {
   getAttemptedGettingConnectedUsers,
   getGettingConnectedUsers,
@@ -258,4 +265,5 @@ export const selectors = {
   makeGet24HourTradesByTokenPair,
   getFormattedQuotes,
   getMaxQuotes,
+  getTrackedAddresses,
 }

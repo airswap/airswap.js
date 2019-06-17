@@ -35,10 +35,10 @@ const getTransactionHistory = createSelector(
   swapLegacySelectors.getTransactionReceiptsFillOrder,
   erc20Selectors.getTransactionsApproveToken,
   erc20Selectors.getTransactionReceiptsApproveToken,
-  erc20Selectors.getTransactionWrapWeth,
-  erc20Selectors.getTransactionReceiptWrapWeth,
-  erc20Selectors.getTransactionUnwrapWeth,
-  erc20Selectors.getTransactionReceiptUnwrapWeth,
+  erc20Selectors.getTransactionsWrapWeth,
+  erc20Selectors.getTransactionReceiptsWrapWeth,
+  erc20Selectors.getTransactionsUnwrapWeth,
+  erc20Selectors.getTransactionReceiptsUnwrapWeth,
   tokenSelectors.getTokensByAddress,
   tokenSelectors.makeGetReadableOrder,
   (
@@ -47,23 +47,23 @@ const getTransactionHistory = createSelector(
     approveTransactions,
     approveReceipts,
     wrapTransaction,
-    wrapTransactionsReceipt,
+    wrapTransactionsReceipts,
     unwrapTransaction,
-    unwrapTransactionsReceipt,
+    unwrapTransactionsReceipts,
     tokensByAddress,
     getReadableOrder,
   ) => {
     const receipts = _.compact([
       ..._.values(fillReceipts),
       ..._.values(approveReceipts),
-      wrapTransaction,
-      unwrapTransaction,
+      ..._.values(wrapTransactionsReceipts),
+      ..._.values(unwrapTransactionsReceipts),
     ])
     const transactions = _.compact([
       ..._.values(fillTransactions),
       ..._.values(approveTransactions),
-      wrapTransaction,
-      unwrapTransaction,
+      ..._.values(wrapTransaction),
+      ..._.values(unwrapTransaction),
     ]).map(tx => {
       const transactionReceipt = _.find(receipts, { transactionHash: tx.hash })
       const { textStatus, eventStatus } = getTransactionTextStatus(transactionReceipt)

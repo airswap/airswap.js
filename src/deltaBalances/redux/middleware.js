@@ -3,6 +3,7 @@ import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '..
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as apiSelectors } from '../../api/redux'
 import { SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
+import { makeEventActionTypes } from '../../utils/redux/templates/event'
 
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
@@ -51,6 +52,21 @@ function loadMakerBalancesAndAddresses(store) {
 let makerBalancesInitialized = false
 let addressBalancesInitialized = false
 
+function reduceERC20LogsToTokenAddressMap(logs) {
+  return _.reduce(
+    logs,
+    (obj, log) => {
+      const tokenAddress = log.address
+      const address1 = log.parsedLogValues['0']
+      const address2 = log.parsedLogValues['1']
+      obj[address1] = _.isArray(obj[address1]) ? _.uniq([...obj[address1], tokenAddress]) : [tokenAddress] //eslint-disable-line
+      obj[address2] = _.isArray(obj[address2]) ? _.uniq([...obj[address2], tokenAddress]) : [tokenAddress] //eslint-disable-line
+      return obj
+    },
+    {},
+  )
+}
+
 export default function balancesMiddleware(store) {
   return next => action => {
     const state = store.getState()
@@ -67,6 +83,24 @@ export default function balancesMiddleware(store) {
         break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
         loadAllowancesForAddresses([address], store)
+        break
+      case makeEventActionTypes('erc20Transfers').got:
+        const logs = _.get(action, 'response', [])
+        const addresses = _.keys(reduceERC20LogsToTokenAddressMap(logs))
+        loadBalancesForAddresses(addresses, store)
+        break
+      case 'GOT_BLOCK':
+        const trackedAddresses = apiSelectors.getTrackedAddresses(state)
+        const blockAddresses = _.reduce(
+          action.block.transactions,
+          (addressesAccumulator, { to, from }) =>
+            _.uniq(_.compact([(to || '').toLowerCase(), (from || '').toLowerCase(), ...addressesAccumulator])),
+          [],
+        )
+        const addressesToUpdate = _.intersection(trackedAddresses, blockAddresses)
+        if (addressesToUpdate.length) {
+          loadBalancesForAddresses(addressesToUpdate, store)
+        }
         break
       default:
     }
