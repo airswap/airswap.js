@@ -15,6 +15,7 @@ const abiInterface = new ethers.utils.Interface(exchangeABI)
 const initPollExchangeFills = _.once(store => {
   const state = store.getState()
   const block = blockTrackerSelectors.getLatestBlock(state)
+
   fetchLogs(
     SWAP_LEGACY_CONTRACT_ADDRESS,
     exchangeABI,
