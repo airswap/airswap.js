@@ -15,7 +15,6 @@ const abiInterface = new ethers.utils.Interface(exchangeABI)
 const initPollExchangeFills = _.once(store => {
   const state = store.getState()
   const block = blockTrackerSelectors.getLatestBlock(state)
-
   fetchLogs(
     SWAP_LEGACY_CONTRACT_ADDRESS,
     exchangeABI,
@@ -25,9 +24,8 @@ const initPollExchangeFills = _.once(store => {
   ).then(logs => store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(logs)))
 })
 
-const pollERC20Transfers = store => {
+const pollERC20Transfers = (store, block) => {
   const state = store.getState()
-  const block = blockTrackerSelectors.getLatestBlock(state)
   const addresses = apiSelectors.getTrackedAddresses(state)
   if (!addresses.length) {
     return null
