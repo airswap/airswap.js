@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
