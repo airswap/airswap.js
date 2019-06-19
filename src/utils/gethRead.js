@@ -46,18 +46,18 @@ async function send({ method, params }) {
   return ethersProvider.send(method, params)
 }
 
-function fetchBlock(blockNumber) {
+function fetchBlock(blockNumber, includeFullTransactions = true) {
   const method = {
     method: 'eth_getBlockByNumber',
-    params: [ethers.utils.hexlify(blockNumber), true], // [hex block number, include full transactions boolean]
+    params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
   }
   return send(method).then(parseBlock)
 }
 
-function fetchLatestBlock() {
+function fetchLatestBlock(includeFullTransactions = true) {
   const method = {
     method: 'eth_getBlockByNumber',
-    params: ['latest', true], // [hex block number, include full transactions boolean]
+    params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
   }
   return send(method).then(parseBlock)
 }
@@ -75,6 +75,9 @@ function parseBlock(block) {
 }
 
 function parseTransaction(transaction) {
+  if (_.isString(transaction)) {
+    return transaction
+  }
   const numberFields = _.mapValues(_.pick(transaction, ['gas', 'gasPrice', 'transactionIndex', 'value']), hexToInt)
   return {
     ...transaction,
