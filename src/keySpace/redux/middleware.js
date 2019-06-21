@@ -28,8 +28,7 @@ async function initialzeKeySpace(store) {
 export default function keySpaceMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'CONNECTED_WALLET':
-        store.dispatch({ type: 'INITIALIZE_KEYSPACE' })
+      case 'INITIALIZE_KEYSPACE':
         initialzeKeySpace(store)
           .then(() => {
             store.dispatch({ type: 'KEYSPACE_READY' })

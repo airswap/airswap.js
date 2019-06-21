@@ -7,18 +7,18 @@ import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as protocolMessagingSelectors } from './reducers'
 import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
-import { getKeySpace } from '../../keySpace/redux/actions'
+// import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ESAN_MAKER_ADDRESS, ETH_ADDRESS } from '../../constants'
+import { ETH_ADDRESS } from '../../constants'
 import { Quote, Order } from '../../tcombTypes'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
   const signer = await store.dispatch(getSigner())
-  const keySpace = await store.dispatch(getKeySpace())
+  // const keySpace = await store.dispatch(getKeySpace())
   const address = await signer.getAddress()
-  const messageSigner = message => keySpace.sign(message)
-  const config = { messageSigner, address, keyspace: true }
+  // const messageSigner = message => keySpace.sign(message)
+  const config = { address }
   router = new Router(config)
   return router.connect()
 }
@@ -73,8 +73,8 @@ const allIntentsResolved = stackId => ({
 
 const orderFetchingTimeout = 3000 // 3 seconds
 
-function intentSupportsQuotes(intent) {
-  return intent.makerAddress === ESAN_MAKER_ADDRESS
+function intentSupportsQuotes({ supportedMethods }) {
+  return _.intersection(supportedMethods, ['getQuote', 'getMaxQuote']).length === 2
 }
 
 function isMakerSide(query) {
@@ -270,7 +270,7 @@ export default function routerMiddleware(store) {
   return next => action => {
     const state = store.getState()
     switch (action.type) {
-      case 'KEYSPACE_READY':
+      case 'CONNECTED_WALLET':
         const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
         routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
         break
