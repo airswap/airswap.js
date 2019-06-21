@@ -100,8 +100,10 @@ function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) 
 
 async function getOrderTakerTokenWithQuotes(intent, store, action) {
   const { makerToken, takerToken, takerAmount } = action.query
-  const quotePromise = router.getQuote(intent.makerAddress, { takerAmount, makerToken, takerToken })
-  const maxQuotePromise = router.getMaxQuote(intent.makerAddress, { makerToken, takerToken })
+  const makerAddress = intent.connectionAddress || intent.makerAddress
+
+  const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken })
   let maxQuote
   let quote
   try {
@@ -126,7 +128,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
       const order = Order(
-        await router.getOrder(intent.makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
+        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
       )
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
@@ -138,7 +140,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
   if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount)) {
     try {
       const order = Order(
-        await router.getOrder(intent.makerAddress, { takerAmount: maxQuote.takerAmount, makerToken, takerToken }),
+        await router.getOrder(makerAddress, { takerAmount: maxQuote.takerAmount, makerToken, takerToken }),
       )
       return store.dispatch(gotAlternativeOrderResponse(order, action.stackId))
     } catch (e) {
@@ -147,7 +149,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
   }
 
   try {
-    const order = Order(await router.getOrder(intent.makerAddress, { takerAmount, makerToken, takerToken }))
+    const order = Order(await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken }))
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -158,9 +160,10 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
 async function getOrderMakerTokenWithQuotes(intent, store, action) {
   const { makerToken, takerToken, makerAmount } = action.query
+  const makerAddress = intent.connectionAddress || intent.makerAddress
 
-  const quotePromise = router.getQuote(intent.makerAddress, { makerAmount, makerToken, takerToken })
-  const maxQuotePromise = router.getMaxQuote(intent.makerAddress, { makerToken, takerToken })
+  const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken })
   let maxQuote
   let quote
   try {
@@ -185,7 +188,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
       const order = Order(
-        await router.getOrder(intent.makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
+        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
       )
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
@@ -197,7 +200,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount)) {
     try {
       const order = Order(
-        await router.getOrder(intent.makerAddress, { makerAmount: maxQuote.makerAmount, makerToken, takerToken }),
+        await router.getOrder(makerAddress, { makerAmount: maxQuote.makerAmount, makerToken, takerToken }),
       )
       return store.dispatch(gotAlternativeOrderResponse(order, action.stackId))
     } catch (e) {
@@ -206,7 +209,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   }
 
   try {
-    const order = Order(await router.getOrder(intent.makerAddress, { makerAmount, makerToken, takerToken }))
+    const order = Order(await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken }))
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -217,13 +220,14 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 
 async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken, takerAmount } = action.query
+  const makerAddress = intent.connectionAddress || intent.makerAddress
 
   if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
       const order = Order(
-        await router.getOrder(intent.makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
+        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
       )
       return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
     } catch (e) {
@@ -232,7 +236,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
   }
 
   try {
-    const order = Order(await router.getOrder(intent.makerAddress, { takerAmount, makerToken, takerToken }))
+    const order = Order(await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken }))
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -243,8 +247,10 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 
 async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken, makerAmount } = action.query
+  const makerAddress = intent.connectionAddress || intent.makerAddress
+
   try {
-    const order = Order(await router.getOrder(intent.makerAddress, { makerAmount, makerToken, takerToken }))
+    const order = Order(await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken }))
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
