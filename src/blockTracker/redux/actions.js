@@ -15,6 +15,15 @@ export const gotBlock = block => ({
   }),
 })
 
+export const gotLatestBlock = block => ({
+  type: 'GOT_LATEST_BLOCK',
+  block: trimBlockForLocalStorage({
+    ...block,
+    timestamp: ethers.utils.bigNumberify(block.timestamp).toNumber(),
+    number: ethers.utils.bigNumberify(block.number).toNumber(),
+  }),
+})
+
 export const gotBlocks = blocks => ({
   type: 'GOT_BLOCKS',
   blocks: blocks.map(block =>
