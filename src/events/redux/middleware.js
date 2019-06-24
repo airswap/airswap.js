@@ -74,7 +74,6 @@ export default function eventsMiddleware(store) {
           const fillsTxIds = _.map(eventSelectors.getFetchedExchangeFills(store.getState()), 'transactionHash')
           const newFills = _.filter(logs, ({ transactionHash }) => !_.includes(fillsTxIds, transactionHash))
           if (logs && logs.length) {
-            console.log('newFills', logs, newFills)
             store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(newFills))
           }
         })
