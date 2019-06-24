@@ -1,8 +1,8 @@
 import BlockTracker from '../index'
-import { gotBlock } from './actions'
+import { gotLatestBlock } from './actions'
 
 export default function blockTrackerMiddleware(store) {
-  const blockTracker = new BlockTracker(block => store.dispatch(gotBlock(block))) //eslint-disable-line
+  const blockTracker = new BlockTracker(block => store.dispatch(gotLatestBlock(block))) //eslint-disable-line
   return next => action => {
     switch (action.type) {
       default:
