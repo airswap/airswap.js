@@ -3,6 +3,7 @@ import { getSigner } from '../../wallet/redux/actions'
 import { formatErrorMessage } from '../../utils/transformations'
 import { selectors } from './reducers'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
+import { selectors as protocolMessagingSelectors } from '../../protocolMessaging/redux/reducers'
 
 let keySpace
 
@@ -28,6 +29,11 @@ async function initialzeKeySpace(store) {
 export default function keySpaceMiddleware(store) {
   return next => action => {
     switch (action.type) {
+      case 'CONNECTED_WALLET':
+        if (protocolMessagingSelectors.getRouterRequireAuth(store.getState())) {
+          store.dispatch({ type: 'INITIALIZE_KEYSPACE' })
+        }
+        break
       case 'INITIALIZE_KEYSPACE':
         initialzeKeySpace(store)
           .then(() => {

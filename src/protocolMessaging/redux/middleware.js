@@ -275,10 +275,19 @@ export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
     const state = store.getState()
+
     switch (action.type) {
       case 'CONNECTED_WALLET':
-        const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
-        routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
+        if (!protocolMessagingSelectors.getRouterRequireAuth(state)) {
+          const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
+          routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
+        }
+        break
+      case 'KEYSPACE_READY':
+        if (protocolMessagingSelectors.getRouterRequireAuth(state)) {
+          const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
+          routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
+        }
         break
       case 'SET_CHECKOUT_FRAME_QUERY':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
