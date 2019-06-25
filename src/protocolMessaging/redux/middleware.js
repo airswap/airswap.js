@@ -7,7 +7,7 @@ import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as protocolMessagingSelectors } from './reducers'
 import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
-// import { getKeySpace } from '../../keySpace/redux/actions'
+import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
 import { ETH_ADDRESS } from '../../constants'
 import { Quote, Order } from '../../tcombTypes'
@@ -15,10 +15,17 @@ import { Quote, Order } from '../../tcombTypes'
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
   const signer = await store.dispatch(getSigner())
-  // const keySpace = await store.dispatch(getKeySpace())
   const address = await signer.getAddress()
-  // const messageSigner = message => keySpace.sign(message)
-  const config = { address }
+  let config
+  const requireAuthentication = protocolMessagingSelectors.getRouterRequireAuth(store.getState())
+  if (requireAuthentication) {
+    const keySpace = await store.dispatch(getKeySpace())
+    const messageSigner = message => keySpace.sign(message)
+    config = { address, keyspace: true, messageSigner, requireAuthentication }
+  } else {
+    config = { address, requireAuthentication }
+  }
+
   router = new Router(config)
   return router.connect()
 }
