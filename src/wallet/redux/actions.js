@@ -26,9 +26,10 @@ export const clearWallet = () => ({
   type: 'CLEAR_WALLET',
 })
 
-export const connectWallet = walletType => ({
+export const connectWallet = (walletType, requireAuth = true) => ({
   type: 'CONNECT_WALLET',
   walletType,
+  requireAuth,
 })
 
 export const getSigner = makePromiseAction({
