@@ -22,8 +22,9 @@ class Router {
     this.requireAuthentication = requireAuthentication
 
     const keyspaceSnippet = keyspace ? 'use_pgp=true&' : ''
+    const prefix = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
     // Set the websocket url based on environment
-    this.socketUrl = `wss:${REACT_APP_SERVER_URL}websocket${requireAuthentication ? '' : '/nochallenge'}${`?${
+    this.socketUrl = `${prefix}${REACT_APP_SERVER_URL}websocket${requireAuthentication ? '' : '/nochallenge'}${`?${
       requireAuthentication ? keyspaceSnippet : ''
     }address=${address.toLowerCase()}`}`
 

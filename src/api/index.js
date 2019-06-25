@@ -4,9 +4,11 @@ const EventSource = require('eventsource')
 const fetch = require('isomorphic-fetch')
 const { REACT_APP_SERVER_URL, AIRSWAP_API_URL, AIRSWAP_HEADLESS_API_SSE, MAKER_STATS_URL } = require('../constants')
 
+const prefix = window.location.protocol
+
 function fetchRouterConnectedUsers() {
   return new Promise((resolve, reject) => {
-    fetch(`${REACT_APP_SERVER_URL}users`, {
+    fetch(`${prefix}${REACT_APP_SERVER_URL}users`, {
       method: 'get',
       mode: 'cors',
     })
