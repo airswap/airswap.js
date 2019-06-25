@@ -26,7 +26,7 @@ export const clearWallet = () => ({
   type: 'CLEAR_WALLET',
 })
 
-export const connectWallet = (walletType, requireAuth = true) => ({
+export const connectWallet = (walletType, requireAuth = false) => ({
   type: 'CONNECT_WALLET',
   walletType,
   requireAuth,

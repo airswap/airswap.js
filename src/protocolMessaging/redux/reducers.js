@@ -110,7 +110,7 @@ const connectingRouter = (state = false, action) => {
   }
 }
 
-const routerRequireAuth = (state = true, action) => {
+const routerRequireAuth = (state = false, action) => {
   switch (action.type) {
     case 'CONNECT_WALLET':
       return action.requireAuth
