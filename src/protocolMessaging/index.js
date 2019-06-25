@@ -8,22 +8,24 @@ const TIMEOUT = 12000
 // Class Constructor
 // ----------------
 class Router {
-  // * `privateKey`: `string` - ethereum private key with `"0x"` prepended
-  // * `infuraKey`: `string` - infura API key
-  // * `nodeAddress`: `string` - optionally specify a geth/parity node instead of using infura
   // * `rpcActions`: `Object` - user defined methods; called by peers via JSON-RPC
-  // * `networkId`: `string` - which ethereum network is used; `'rinkeby'` or `'mainnet'`
+  // * `messageSigner`: `function` - a function taking the form (message) => signer.sign(message)
+  // * `address`: `string` - ethereum address of wallet using the Router
+  // * `keyspace`: `boolean` - if true, uses a keyspace messageSigner (message) => keyspace.sign(message), if false, uses an ethereum signer
+  // * `requireAuthentication`: `boolean` if authenticated, the indexer allows the setting of intents. If not, only messaging is enabled
   constructor(config) {
-    const { rpcActions = {}, messageSigner, address, keyspace } = config
+    const { rpcActions = {}, messageSigner, address, keyspace, requireAuthentication } = config
 
     // Create an ethereum wallet object for signing orders
     this.messageSigner = messageSigner
     this.address = address
+    this.requireAuthentication = requireAuthentication
 
+    const keyspaceSnippet = keyspace ? 'use_pgp=true&' : ''
     // Set the websocket url based on environment
-    this.socketUrl = `wss:${REACT_APP_SERVER_URL}websocket${
-      keyspace ? `?use_pgp=true&address=${address.toLowerCase()}` : ''
-    }`
+    this.socketUrl = `wss:${REACT_APP_SERVER_URL}websocket${requireAuthentication ? '' : '/nochallenge'}${`?${
+      requireAuthentication ? { keyspaceSnippet } : ''
+    }address=${address.toLowerCase()}`}`
 
     // Websocket authentication state
     this.isAuthenticated = false
@@ -135,7 +137,7 @@ class Router {
       // Received a message
       this.socket.onmessage = event => {
         // We are authenticating
-        if (!this.isAuthenticated) {
+        if (!this.isAuthenticated && this.requireAuthentication) {
           switch (event.data) {
             // We have completed the challenge.
             case 'ok':
@@ -151,6 +153,12 @@ class Router {
               this.messageSigner(event.data).then(signature => {
                 this.socket.send(signature)
               })
+          }
+        } else if (!this.isAuthenticated && !this.requireAuthentication) {
+          if (event.data === 'ok') {
+            this.isAuthenticated = true
+            console.log('Authentication successful')
+            resolve(event.data)
           }
         } else if (this.isAuthenticated) {
           // We are already authenticated and are receiving an RPC.

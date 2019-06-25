@@ -3,6 +3,11 @@ import _ from 'lodash'
 
 function blocks(state = {}, action) {
   switch (action.type) {
+    case 'GOT_LATEST_BLOCK':
+      return {
+        ...state,
+        [action.block.number]: action.block,
+      }
     case 'GOT_BLOCK':
       return {
         ...state,

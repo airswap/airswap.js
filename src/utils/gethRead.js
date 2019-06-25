@@ -5,25 +5,27 @@ const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
 const { NODESMITH_URL, NODESMITH_KEY, AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
 
-const nodesmithProvider = new WebSocket(NODESMITH_URL)
 const ethersProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+
 const nodesmithSupported = !!NODESMITH_KEY
-
 const callbacks = {}
-
-const nodesmithOpenPromise = new Promise(resolve => {
-  nodesmithProvider.onopen = () => {
-    resolve()
-  }
-})
-
-nodesmithProvider.onmessage = msg => {
-  const message = JSON.parse(msg.data)
-  const { resolve, reject } = callbacks[message.id]
-  if (message.error) {
-    reject(formatErrorMessage(message.error))
-  } else {
-    resolve(message.result)
+let nodesmithProvider
+let nodesmithOpenPromise
+if (nodesmithSupported) {
+  nodesmithProvider = new WebSocket(NODESMITH_URL)
+  nodesmithOpenPromise = new Promise(resolve => {
+    nodesmithProvider.onopen = () => {
+      resolve()
+    }
+  })
+  nodesmithProvider.onmessage = msg => {
+    const message = JSON.parse(msg.data)
+    const { resolve, reject } = callbacks[message.id]
+    if (message.error) {
+      reject(formatErrorMessage(message.error))
+    } else {
+      resolve(message.result)
+    }
   }
 }
 
