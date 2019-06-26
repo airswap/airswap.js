@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -17,7 +17,7 @@
     "babel-jest": "^23.6.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "bignumber.js": "^4.1.0",
-    "eslint": "4.15.0",
+    "eslint": "4.18.2",
     "eslint-config-airbnb": "^15.0.2",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-config-prettier": "^2.9.0",
