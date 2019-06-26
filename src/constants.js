@@ -171,7 +171,9 @@ const TOKEN_APPROVAL_CHECK_AMOUNT = '50071992547409910000000000'
 
 const ENV_URL_SNIPPET = ENV === 'production' ? '' : `.${ENV}`
 
-const REACT_APP_SERVER_URL = ENV_URL_SNIPPET ? `//connect${ENV_URL_SNIPPET}.airswap.io/` : `//connect.airswap-api.com/`
+const DEFAULT_SERVER_URL = ENV_URL_SNIPPET ? `//connect${ENV_URL_SNIPPET}.airswap.io/` : `//connect.airswap-api.com/`
+
+const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL || DEFAULT_SERVER_URL
 
 const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
 
