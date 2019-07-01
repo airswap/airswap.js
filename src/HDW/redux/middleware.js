@@ -82,7 +82,20 @@ export default function HDWMiddleware(store) {
         getHWDAddresses(store, offset)
         break
       case 'SET_HDW_SUBPATH':
-        store.dispatch(actions.initializeHDW(walletType, action.path))
+        path = action.path
+        store.dispatch({
+          type: 'GET_HDW_CHAIN_KEY',
+          walletType,
+          path,
+          resolve: response => {
+            publicKey = response.publicKey
+            chainCode = response.chainCode
+            getHWDAddresses(store, offset)
+          },
+          reject: err => {
+            rejectHDW(err)
+          },
+        })
         break
       case 'CONFIRM_HDW_PATH':
         resolveHDW({

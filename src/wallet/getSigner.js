@@ -30,15 +30,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
         propKey === 'signMessage'
       ) {
         return function(...args) {
-          const addressPromise = new Promise((resolve, reject) =>
-            target.provider._sendAsync({ id: uuid(), method: 'eth_accounts' }, (err, resp) => {
-              if (err) {
-                reject(err)
-              } else {
-                resolve(_.first(_.get(resp, 'result')))
-              }
-            }),
-          )
+          const addressPromise = target.getAddress()
 
           return addressPromise.then(from => {
             const msg = ethUtil.bufferToHex(new Buffer(_.first(args), 'utf8'))
@@ -55,18 +47,6 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
             result.finally(() => finishWalletAction(propKey, args))
             return result
           })
-        }
-      } else if (typeof target[propKey] === 'function' && propKey === 'getAddress') {
-        return function() {
-          return new Promise((resolve, reject) =>
-            target.provider._sendAsync({ id: uuid(), method: 'eth_accounts' }, (err, resp) => {
-              if (err) {
-                reject(err)
-              } else {
-                resolve(_.first(_.get(resp, 'result')))
-              }
-            }),
-          )
         }
       }
       return target[propKey]
