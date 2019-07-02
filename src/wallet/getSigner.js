@@ -9,7 +9,6 @@ const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
   const handler = {
     get(target, propKey) {
-      console.log('target', propKey, startWalletAction, finishWalletAction)
       if (
         startWalletAction &&
         finishWalletAction &&
