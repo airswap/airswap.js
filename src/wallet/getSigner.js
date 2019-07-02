@@ -30,6 +30,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
         propKey === 'signMessage'
       ) {
         return function(...args) {
+          startWalletAction(propKey, args)
           const addressPromise = target.getAddress()
 
           return addressPromise.then(from => {
