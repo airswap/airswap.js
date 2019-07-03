@@ -327,18 +327,6 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    // FOR TESTING SELECTED ORDER FUNCTIONALITY, WILL DELETE SOON
-    // const orderIds = protocolMessagingSelectors.getCurrentFrameAllOrderResponses(state).map(order => ({
-    //   ...selectCheckoutFrameOrder(order),
-    // }))
-    // const currentFrameSelectedOrder = protocolMessagingSelectors.getCurrentFrameSelectedOrder(state)
-    // if (currentFrameSelectedOrder) {
-    //   console.log('selected order', currentFrameSelectedOrder)
-    //   console.log('getCurrentFrameAllOrderResponses', protocolMessagingSelectors.getCurrentFrameAllOrderResponses(state))
-    //   console.log('state props ', protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(state))
-    // } else if (orderIds.length) {
-    //   console.log(JSON.stringify(orderIds, null, 2))
-    // }
     return next(action)
   }
 }
