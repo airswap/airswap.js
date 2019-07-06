@@ -9,7 +9,29 @@ const {
   TOKEN_APPROVAL_CHECK_AMOUNT,
 } = require('../constants')
 
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const { call } = require('../utils/gethRead')
+
+const provider = traceMethodCalls(new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS))
+
+// Putting this in place until ethers.js implements a proper websocket provider (https://github.com/ethers-io/ethers.js/issues/141)
+// this allows mass balance reads to be done over websocket. Keep in mind the eth_call payload can't be too big or it will crash the websocket
+function traceMethodCalls(obj) {
+  const handler = {
+    get(target, propKey) {
+      if (propKey === 'call') {
+        return async function({ to, data }) {
+          const toResolved = await to
+          const res = await call({ to: toResolved, data })
+
+          return res
+        }
+      }
+      return target[propKey]
+    },
+  }
+  return new Proxy(obj, handler)
+}
+
 const deltaBalancesContract = new ethers.Contract(
   DELTA_BALANCES_CONTRACT_ADDRESS,
   abis[DELTA_BALANCES_CONTRACT_ADDRESS],

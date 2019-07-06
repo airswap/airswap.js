@@ -263,6 +263,8 @@ const FORTMATIC_ID = (N => {
   }
 })(NETWORK)
 
+const IS_INSTANT = process.env.REACT_APP_INSTANT
+
 module.exports = {
   ENV,
   MAIN_ID,
@@ -310,4 +312,5 @@ module.exports = {
   NODESMITH_KEY,
   NODESMITH_URL,
   FORTMATIC_ID,
+  IS_INSTANT,
 }

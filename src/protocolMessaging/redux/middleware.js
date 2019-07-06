@@ -9,7 +9,7 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT } from '../../constants'
 import { Quote, Order } from '../../tcombTypes'
 
 async function initialzeRouter(store) {
@@ -285,7 +285,7 @@ export default function routerMiddleware(store) {
 
     switch (action.type) {
       case 'CONNECTED_WALLET':
-        if (!protocolMessagingSelectors.getRouterRequireAuth(state)) {
+        if (!protocolMessagingSelectors.getRouterRequireAuth(state) && IS_INSTANT) {
           const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
           routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
         }

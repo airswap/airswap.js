@@ -99,4 +99,12 @@ function hexToInt(hexInt) {
   return Number.parseInt(hexInt, 16)
 }
 
-module.exports = { fetchBlock, fetchLatestBlock, getLogs }
+async function call(txObj) {
+  const method = {
+    method: 'eth_call',
+    params: [txObj, 'latest'],
+  }
+  return send(method)
+}
+
+module.exports = { fetchBlock, fetchLatestBlock, getLogs, call }
