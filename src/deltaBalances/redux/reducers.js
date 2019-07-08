@@ -13,10 +13,7 @@ const defaultState = {}
 function balancesReducer(state = defaultState, action) {
   switch (action.type) {
     case 'GOT_TOKEN_BALANCES':
-      return {
-        ...state,
-        ...action.balances,
-      }
+      return _.merge({}, state, action.balances)
     default:
       return state
   }
@@ -25,14 +22,40 @@ function balancesReducer(state = defaultState, action) {
 function approvalsReducer(state = defaultState, action) {
   switch (action.type) {
     case 'GOT_TOKEN_ALLOWANCES':
-      return {
-        ...state,
-        ...action.approvals,
-      }
+      return _.merge({}, state, action.approvals)
     default:
       return state
   }
 }
+
+function trackedAddressesReducer(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TRACKED_ADDRESS':
+      return _.uniqBy(
+        [
+          ...state,
+          {
+            address: action.address,
+            tokenAddress: action.tokenAddress,
+          },
+        ],
+        ({ address, tokenAddress }) => `${address}${tokenAddress}`,
+      )
+    case 'ADD_TRACKED_ADDRESSES':
+      return _.uniqBy(
+        [...state, ...action.trackedAddresses],
+        ({ address, tokenAddress }) => `${address}${tokenAddress}`,
+      )
+    default:
+      return state
+  }
+}
+
+export default combineReducers({
+  balances: balancesReducer,
+  approvals: approvalsReducer,
+  trackedAddresses: trackedAddressesReducer,
+})
 
 export const getBalances = state => state.deltaBalances.balances
 
@@ -89,6 +112,27 @@ export const getConnectedApprovals = createSelector(
   (approvals, address) => approvals[address],
 )
 
+const getTrackedAddresses = state => state.deltaBalances.trackedAddresses
+
+const getTrackedTokensByAddress = createSelector(getTrackedAddresses, trackedAddresses =>
+  _.reduce(
+    trackedAddresses,
+    (obj, { address, tokenAddress }) => {
+      if (_.isArray(obj[address])) {
+        obj[address] = _.uniq([...obj[address], tokenAddress]) // eslint-disable-line
+      } else {
+        obj[address] = [tokenAddress] // eslint-disable-line
+      }
+      return obj
+    },
+    {},
+  ),
+)
+
+const getTrackedWalletAddresses = createSelector(getTrackedTokensByAddress, trackedAddresses =>
+  _.keys(trackedAddresses),
+)
+
 export const selectors = {
   getBalances,
   getBalancesFormatted,
@@ -98,9 +142,7 @@ export const selectors = {
   getConnectedApprovals,
   getConnectedBalancesInFiat,
   getConnectedBalancesInFiatUnisgned,
+  getTrackedAddresses,
+  getTrackedTokensByAddress,
+  getTrackedWalletAddresses,
 }
-
-export default combineReducers({
-  balances: balancesReducer,
-  approvals: approvalsReducer,
-})

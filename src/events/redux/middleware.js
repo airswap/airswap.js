@@ -3,7 +3,7 @@ import * as ethers from 'ethers'
 import { abis, SWAP_LEGACY_CONTRACT_ADDRESS, ERC20abi } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
-import { selectors as apiSelectors } from '../../api/redux'
+import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as eventSelectors } from './reducers'
 
 import * as gethRead from '../../utils/gethRead'
@@ -29,7 +29,7 @@ const initPollExchangeFills = _.once(store => {
 
 const pollERC20Transfers = (store, block) => {
   const state = store.getState()
-  const addresses = apiSelectors.getTrackedAddresses(state)
+  const addresses = deltaBalancesSelectors.getTrackedWalletAddresses(state)
   if (!addresses.length) {
     return null
   }

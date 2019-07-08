@@ -2,8 +2,11 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as apiSelectors } from '../../api/redux'
+import { selectors as tokenSelectors } from '../../tokens/redux'
 import { SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
+import { addTrackedAddresses } from './actions'
+import { selectors as deltaBalancesSelectors } from './reducers'
 
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
@@ -29,29 +32,6 @@ function loadAllowancesForAddresses(addresses, store) {
   })
 }
 
-function loadMakerBalancesAndAddresses(store) {
-  // without this optimization makers' allowances and balanecs were the two slowest calls in the application, each around 1MB
-  // breaking them apart like this allows for much smaller payload sizes
-  const intents = apiSelectors.getConnectedIndexerIntents(store.getState())
-  const makerAddresses = _.uniq(_.map(intents, 'makerAddress'))
-  const makerTokensByMaker = _.zipObject(makerAddresses, _.map(makerAddresses, () => []))
-  _.each(intents, ({ makerToken, makerAddress }) => {
-    makerTokensByMaker[makerAddress] = _.uniq([...makerTokensByMaker[makerAddress], makerToken])
-  })
-
-  _.mapValues(makerTokensByMaker, (makerTokens, makerAddress) => {
-    getManyBalancesManyAddresses(makerTokens, [makerAddress]).then(results => {
-      store.dispatch(gotTokenBalances(results))
-    })
-    getManyAllowancesManyAddresses(makerTokens, [makerAddress], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
-      store.dispatch(gotTokenApprovals(results))
-    })
-  })
-}
-
-let makerBalancesInitialized = false
-let addressBalancesInitialized = false
-
 function reduceERC20LogsToTokenAddressMap(logs) {
   return _.reduce(
     logs,
@@ -65,6 +45,52 @@ function reduceERC20LogsToTokenAddressMap(logs) {
     },
     {},
   )
+}
+
+function initializeTrackedAddresses(store) {
+  const state = store.getState()
+  const balances = deltaBalancesSelectors.getBalances(state)
+  const trackedAddresses = deltaBalancesSelectors.getTrackedAddresses(state)
+  const uninitializedTrackedAddresses = _.filter(trackedAddresses, ({ address, tokenAddress }) =>
+    _.isUndefined(_.get(balances, `${address}.${tokenAddress}`)),
+  )
+
+  const uninitializedTrackedTokensByAddress = _.reduce(
+    uninitializedTrackedAddresses,
+    (obj, { address, tokenAddress }) => {
+      if (_.isArray(obj[address])) {
+        obj[address] = _.uniq([...obj[address], tokenAddress]) // eslint-disable-line
+      } else {
+        obj[address] = [tokenAddress] // eslint-disable-line
+      }
+      return obj
+    },
+    {},
+  )
+  _.mapValues(uninitializedTrackedTokensByAddress, (tokens, address) => {
+    _.chunk(tokens, 30).map(tokenSubset => {
+      // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
+      getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
+        store.dispatch(gotTokenBalances(results))
+      })
+      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
+        store.dispatch(gotTokenApprovals(results))
+      })
+    })
+  })
+}
+
+function addConnectedAddressToTrackedAddresses(store) {
+  const approvedTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
+  const connectedAddress = getConnectedWalletAddress(store.getState())
+  if (approvedTokens.length && connectedAddress) {
+    const tokenAddresses = _.map(approvedTokens, 'address')
+    const trackedAddresses = tokenAddresses.map(tokenAddress => ({
+      address: connectedAddress,
+      tokenAddress,
+    }))
+    store.dispatch(addTrackedAddresses(trackedAddresses))
+  }
 }
 
 export default function balancesMiddleware(store) {
@@ -89,8 +115,8 @@ export default function balancesMiddleware(store) {
         const addresses = _.keys(reduceERC20LogsToTokenAddressMap(logs))
         loadBalancesForAddresses(addresses, store)
         break
-      case 'GOT_BLOCK':
-        const trackedAddresses = apiSelectors.getTrackedAddresses(state)
+      case 'GOT_LATEST_BLOCK':
+        const trackedAddresses = deltaBalancesSelectors.getTrackedWalletAddresses(state)
         const blockAddresses = _.reduce(
           action.block.transactions,
           (addressesAccumulator, { to, from }) =>
@@ -104,15 +130,19 @@ export default function balancesMiddleware(store) {
         break
       default:
     }
-    if (apiSelectors.getAvailableTokenAddresses(state).length && !makerBalancesInitialized) {
-      makerBalancesInitialized = true
-      loadMakerBalancesAndAddresses(store)
+    next(action)
+    // next(action) mutates the store with the action synchronously, so everything below uses the state after the action occurs
+    switch (action.type) {
+      case 'ADD_TRACKED_ADDRESSES':
+        initializeTrackedAddresses(store)
+        break
+      case 'CONNECTED_WALLET':
+        addConnectedAddressToTrackedAddresses(store)
+        break
+      case 'TOKENS_LOADED': // since we track all approved tokens for the connected address, we need to check on both CONNECTED_WALLET and TOKENS_LOADED actions
+        addConnectedAddressToTrackedAddresses(store)
+        break
+      default:
     }
-    if (apiSelectors.getAvailableTokenAddresses(state).length && address && !addressBalancesInitialized) {
-      addressBalancesInitialized = true
-      loadBalancesForAddresses([address], store)
-      loadAllowancesForAddresses([address], store)
-    }
-    return next(action)
   }
 }
