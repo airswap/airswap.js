@@ -12,13 +12,8 @@ const pinJSONToIPFSPinata = JSONBody => {
 }
 
 async function ipfsStoreJSON(obj) {
-  let storeString
+  const storeString = _.isString(obj) ? JSON.stringify(JSON.parse(obj)) : JSON.stringify(obj)
 
-  try {
-    storeString = _.isString(obj) ? JSON.stringify(JSON.parse(obj)) : JSON.stringify(obj)
-  } catch (e) {
-    return e
-  }
   return new Promise((resolve, reject) => {
     // this "resolved" syntax is required since there isn't a Promise.none()
     let resolved = 0
