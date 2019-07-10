@@ -10,7 +10,7 @@ import {
   keyspaceDefaultSeedFn,
   keyspaceSignatureTextFn,
 } from '../../constants'
-import { walletTypes } from '../static/constants'
+import { web3WalletTypes } from '../static/constants'
 
 const defaultState = {
   connectingWallet: false,
@@ -71,7 +71,7 @@ function createWalletAvailable(walletType) {
   }
 }
 
-const walletAvailable = combineReducers(_.zipObject(walletTypes, walletTypes.map(createWalletAvailable)))
+const walletAvailable = combineReducers(_.zipObject(web3WalletTypes, web3WalletTypes.map(createWalletAvailable)))
 
 const walletState = combineReducers({
   connection: walletConnection,
