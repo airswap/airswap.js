@@ -178,69 +178,61 @@ function connectFortmatic(store) {
 }
 
 const detectWeb3Wallets = store => {
-  const available = _.get(store.getState(), 'wallet.available')
-  const { web3Enabled } = available
-  const prevWalletsAvailable = _.pick(available.specific, web3WalletTypes)
+  const prevWalletsAvailable = walletSelectors.getAvailableWalletState(store.getState())
   if (window && !window.web3) {
     // No web3 wallets;
-    if (web3Enabled) {
-      store.dispatch({ type: 'DISABLE_WEB3_WALLETS' })
+    return null
+  }
+  const walletsAvailable = {}
+  web3WalletTypes.map(type => {
+    let isAvailable = false
+    switch (type) {
+      case 'metamask':
+        isAvailable =
+          !!window.web3.currentProvider.isMetaMask && !isMobile.any && !window.web3.currentProvider.isEQLWallet
+        break
+      case 'trust':
+        isAvailable = !!window.web3.currentProvider.isTrust
+        break
+      case 'cipher':
+        isAvailable = window.web3.currentProvider.constructor.name === 'CipherProvider'
+        break
+      case 'status':
+        isAvailable = !!window.web3.currentProvider.isStatus
+        break
+      case 'imtoken':
+        isAvailable = !!window.imToken
+        break
+      case 'coinbase':
+        isAvailable = !!window.web3.currentProvider.isToshi
+        break
+      case 'opera':
+        isAvailable =
+          ((!!window.opr && !!window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) &&
+          window.web3 &&
+          window.web3.currentProvider &&
+          window.web3.currentProvider.isConnected()
+        break
+      case 'equal':
+        isAvailable = !!window.web3.currentProvider.isEQLWallet
+        break
+      default:
+        isAvailable = false
     }
-  } else {
-    if (!web3Enabled) {
-      store.dispatch({ type: 'ENABLE_WEB3_WALLETS' })
-    }
-
-    const walletsAvailable = {}
-    web3WalletTypes.map(type => {
-      let isAvailable = false
-      switch (type) {
-        case 'metamask':
-          isAvailable =
-            !!window.web3.currentProvider.isMetaMask && !isMobile.any && !window.web3.currentProvider.isEQLWallet
-          break
-        case 'trust':
-          isAvailable = !!window.web3.currentProvider.isTrust
-          break
-        case 'cipher':
-          isAvailable = window.web3.currentProvider.constructor.name === 'CipherProvider'
-          break
-        case 'status':
-          isAvailable = !!window.web3.currentProvider.isStatus
-          break
-        case 'imtoken':
-          isAvailable = !!window.imToken
-          break
-        case 'coinbase':
-          isAvailable = !!window.web3.currentProvider.isToshi
-          break
-        case 'opera':
-          isAvailable =
-            ((!!window.opr && !!window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) &&
-            window.web3 &&
-            window.web3.currentProvider &&
-            window.web3.currentProvider.isConnected()
-          break
-        case 'equal':
-          isAvailable = !!window.web3.currentProvider.isEQLWallet
-          break
-        default:
-          isAvailable = false
-      }
-      walletsAvailable[type] = isAvailable
-      return walletsAvailable
+    walletsAvailable[type] = isAvailable
+    return walletsAvailable
+  })
+  if (!_.isEqual(prevWalletsAvailable, walletsAvailable)) {
+    store.dispatch({
+      type: 'SET_WALLET_AVAILABILITY',
+      wallets: walletsAvailable,
     })
-    if (!_.isEqual(prevWalletsAvailable, walletsAvailable)) {
-      store.dispatch({
-        type: 'SET_WALLET_AVAILABILITY',
-        wallets: walletsAvailable,
-      })
-    }
   }
 }
 
 export default function walletMiddleware(store) {
   detectWeb3Wallets(store)
+  window.setInterval(() => detectWeb3Wallets(store), 5000)
   walletActions = _.mapValues({ startWalletAction, finishWalletAction }, action => _.partial(action, store))
   return next => action => {
     switch (action.type) {
