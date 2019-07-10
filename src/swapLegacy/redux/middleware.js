@@ -11,6 +11,12 @@ async function fillOrder(store, action) {
   return fill
 }
 
+async function cancelOrder(store, action) {
+  const signer = await store.dispatch(getSigner())
+  const { order } = action
+  return Airswap.cancelOrder(order, signer)
+}
+
 async function signOrder(store, action) {
   const signer = await store.dispatch(getSigner())
 
@@ -28,6 +34,9 @@ export default function walletMiddleware(store) {
     switch (action.type) {
       case 'FILL_ORDER':
         makeMiddlewareEthersTransactionsFn(fillOrder, 'fillOrder', store, action, getOrderId(action.order))
+        break
+      case 'CANCEL_ORDER':
+        makeMiddlewareEthersTransactionsFn(cancelOrder, 'cancelOrder', store, action, getOrderId(action.order))
         break
       case 'SIGN_ORDER':
         signOrder(store, action)

@@ -111,6 +111,41 @@ function fetchExchangeLogs(eventName, fromBlock, toBlock) {
   return fetchLogs(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], topic, fromBlock, toBlock)
 }
 
+const swapLegacyContractCreationBlock = `0x${(4349701).toString(16)}`
+
+function fetchFilledExchangeLogsForMakerAddress(makerAddress) {
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
+  const topics = abiInterface.events.Filled.encodeTopics([makerAddress.toLowerCase()])
+  return fetchLogs(
+    SWAP_LEGACY_CONTRACT_ADDRESS,
+    abis[SWAP_LEGACY_CONTRACT_ADDRESS],
+    topics,
+    swapLegacyContractCreationBlock,
+  )
+}
+
+function fetchCanceledExchangeLogsForMakerAddress(makerAddress) {
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
+  const topics = abiInterface.events.Canceled.encodeTopics([makerAddress.toLowerCase()])
+  return fetchLogs(
+    SWAP_LEGACY_CONTRACT_ADDRESS,
+    abis[SWAP_LEGACY_CONTRACT_ADDRESS],
+    topics,
+    swapLegacyContractCreationBlock,
+  )
+}
+
+function fetchFailedExchangeLogsForMakerAddress(makerAddress) {
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_LEGACY_CONTRACT_ADDRESS])
+  const topics = abiInterface.events.Failed.encodeTopics([null, makerAddress.toLowerCase()])
+  return fetchLogs(
+    SWAP_LEGACY_CONTRACT_ADDRESS,
+    abis[SWAP_LEGACY_CONTRACT_ADDRESS],
+    topics,
+    swapLegacyContractCreationBlock,
+  )
+}
+
 function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {
   const abiInterface = new ethers.utils.Interface(ERC20abi)
   const topic = eventName ? abiInterface.events[eventName].topic : null
@@ -181,4 +216,7 @@ module.exports = {
   fetchERC20Logs,
   fetchGlobalERC20Transfers,
   buildGlobalERC20TransfersTopics,
+  fetchFilledExchangeLogsForMakerAddress,
+  fetchCanceledExchangeLogsForMakerAddress,
+  fetchFailedExchangeLogsForMakerAddress,
 }

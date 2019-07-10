@@ -28,6 +28,27 @@ function fillOrder(order, signer, params = {}) {
   )
 }
 
+function cancelOrder(order, signer, params = {}) {
+  const contract = getSwapLegacyContract(signer)
+  return contract.cancel(
+    order.makerAddress,
+    order.makerAmount,
+    order.makerToken,
+    order.takerAddress,
+    order.takerAmount,
+    order.takerToken,
+    order.expiration,
+    order.nonce,
+    order.v,
+    order.r,
+    order.s,
+    {
+      value: 0,
+      ...params,
+    },
+  )
+}
+
 async function signOrder(order, signer) {
   const { makerAddress, makerAmount, makerToken, takerAddress, takerAmount, takerToken, expiration, nonce } = order
   const types = [
@@ -67,4 +88,4 @@ async function signOrder(order, signer) {
   }
 }
 
-module.exports = { fillOrder, signOrder }
+module.exports = { fillOrder, signOrder, cancelOrder }
