@@ -7,7 +7,7 @@ import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as eventSelectors } from './reducers'
 
 import * as gethRead from '../../utils/gethRead'
-import { buildGlobalERC20TransfersTopics, fetchLogs } from '../index'
+import { buildGlobalERC20TransfersTopics, fetchLogs, fetchFilledExchangeLogsForMakerAddress } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
 
 const exchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
@@ -79,6 +79,15 @@ export default function eventsMiddleware(store) {
         })
         // check for erc20 transfers on each new block
         pollERC20Transfers(store, action.block)
+        break
+      case 'FETCH_HISTORICAL_FILLS_BY_MAKER_ADDRESS':
+        fetchFilledExchangeLogsForMakerAddress(action.makerAddress).then(logs => {
+          const fillsTxIds = _.map(eventSelectors.getFetchedExchangeFills(store.getState()), 'transactionHash')
+          const newFills = _.filter(logs, ({ transactionHash }) => !_.includes(fillsTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(newFills))
+          }
+        })
         break
       default:
     }

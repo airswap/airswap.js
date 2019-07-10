@@ -5,6 +5,11 @@ export const fillOrder = order => ({
   order,
 })
 
+export const cancelOrder = order => ({
+  type: 'CANCEL_ORDER',
+  order,
+})
+
 // EXAMPLE USAGE OF signOrder ACTION CREATOR
 // store
 //   .dispatch(
