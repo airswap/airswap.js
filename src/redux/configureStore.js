@@ -23,9 +23,14 @@ const composeEnhancers = composeWithDevTools({
   maxAge: 1000,
 })
 
-export default function configureStore(projectMiddleware = [], projectRootReducerObj, defaultState) {
+export default function configureStore(
+  projectMiddleware = [],
+  projectRootReducerObj,
+  defaultState,
+  persistedState = [],
+) {
   let engine = createEngine(storageKey)
-  engine = filter(engine, [['keySpace', 'signedSeed'], 'blockTracker'])
+  engine = filter(engine, [['keySpace', 'signedSeed'], 'blockTracker', ...persistedState])
   const persistMiddleware = storage.createMiddleware(engine, actionsBlacklist)
 
   const rootReducer = combineReducers({ ...projectRootReducerObj, ...rootReducerObj })
