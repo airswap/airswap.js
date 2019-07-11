@@ -67,6 +67,27 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
   }
 }
 
+function parseTransactionFailureEventCode(code) {
+  switch (code) {
+    case 1:
+      return 'Invalid Order'
+    case 2:
+      return 'Expired'
+    case 3:
+      return 'Already Filled'
+    case 4:
+      return 'Invalid ETH Amount'
+    case 5:
+      return 'Invalid ETH Amount'
+    case 6:
+      return 'Sender is not Taker'
+    case 7:
+      return 'Order Cancelled'
+    default:
+      return ''
+  }
+}
+
 function getTransactionTextStatus(transactionReceipt) {
   let textStatus = ''
   let eventStatus = ''
@@ -84,26 +105,7 @@ function getTransactionTextStatus(transactionReceipt) {
     textStatus = 'Failed'
   } else if (status === 1 && eventCode) {
     textStatus = 'Failed'
-    eventStatus = (N => {
-      switch (N) {
-        case 1:
-          return 'Invalid Order'
-        case 2:
-          return 'Expired'
-        case 3:
-          return 'Already Filled'
-        case 4:
-          return 'Invalid ETH Amount'
-        case 5:
-          return 'Invalid ETH Amount'
-        case 6:
-          return 'Sender is not Taker'
-        case 7:
-          return 'Order Cancelled'
-        default:
-          return ''
-      }
-    })(eventCode)
+    eventStatus = parseTransactionFailureEventCode(eventCode)
   } else if (status === 1) {
     textStatus = 'Confirmed'
   } else if (status === null) {
@@ -123,4 +125,5 @@ module.exports = {
   getParsedInputFromTransaction,
   getTransactionDescription,
   getTransactionTextStatus,
+  parseTransactionFailureEventCode,
 }

@@ -7,7 +7,13 @@ import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as eventSelectors } from './reducers'
 
 import * as gethRead from '../../utils/gethRead'
-import { buildGlobalERC20TransfersTopics, fetchLogs, fetchFilledExchangeLogsForMakerAddress } from '../index'
+import {
+  buildGlobalERC20TransfersTopics,
+  fetchLogs,
+  fetchFilledExchangeLogsForMakerAddress,
+  fetchCanceledExchangeLogsForMakerAddress,
+  fetchFailedExchangeLogsForMakerAddress,
+} from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
 
 const exchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
@@ -46,21 +52,31 @@ const pollERC20Transfers = (store, block) => {
   })
 }
 
+function fetchMissingBlocksForFetchedEvents(store, action) {
+  const fetchedBlockNumbers = blockTrackerSelectors.getBlockNumbers(store.getState())
+  const eventBlockNumbers = _.get(action, 'response', []).map(({ blockNumber }) => blockNumber)
+  const blockPromises = _.without(eventBlockNumbers, ...fetchedBlockNumbers).map(async blockNumber =>
+    gethRead.fetchBlock(blockNumber),
+  )
+
+  Promise.all(blockPromises).then(blocks => {
+    if (blocks.length) {
+      store.dispatch(gotBlocks(blocks))
+    }
+  })
+}
+
 export default function eventsMiddleware(store) {
   return next => action => {
     switch (action.type) {
       case makeEventActionTypes('exchangeFills').got:
-        const fetchedBlockNumbers = blockTrackerSelectors.getBlockNumbers(store.getState())
-        const eventBlockNumbers = _.get(action, 'response', []).map(({ blockNumber }) => blockNumber)
-        const blockPromises = _.without(eventBlockNumbers, ...fetchedBlockNumbers).map(async blockNumber =>
-          gethRead.fetchBlock(blockNumber),
-        )
-
-        Promise.all(blockPromises).then(blocks => {
-          if (blocks.length) {
-            store.dispatch(gotBlocks(blocks))
-          }
-        })
+        fetchMissingBlocksForFetchedEvents(store, action)
+        break
+      case makeEventActionTypes('exchangeCancels').got:
+        fetchMissingBlocksForFetchedEvents(store, action)
+        break
+      case makeEventActionTypes('exchangeFailures').got:
+        fetchMissingBlocksForFetchedEvents(store, action)
         break
       case 'GOT_LATEST_BLOCK':
         // check for new airswap fills on each new block
@@ -77,6 +93,35 @@ export default function eventsMiddleware(store) {
             store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(newFills))
           }
         })
+
+        fetchLogs(
+          SWAP_LEGACY_CONTRACT_ADDRESS,
+          exchangeABI,
+          abiInterface.events.Canceled.topic,
+          action.block.number - 1,
+          action.block.number,
+        ).then(logs => {
+          const cancelsTxIds = _.map(eventSelectors.getFetchedExchangeCancels(store.getState()), 'transactionHash')
+          const newCancels = _.filter(logs, ({ transactionHash }) => !_.includes(cancelsTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('exchangeCancels').got(newCancels))
+          }
+        })
+
+        fetchLogs(
+          SWAP_LEGACY_CONTRACT_ADDRESS,
+          exchangeABI,
+          abiInterface.events.Failed.topic,
+          action.block.number - 1,
+          action.block.number,
+        ).then(logs => {
+          const failuresTxIds = _.map(eventSelectors.getFetchedExchangeFailures(store.getState()), 'transactionHash')
+          const newFailures = _.filter(logs, ({ transactionHash }) => !_.includes(failuresTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('exchangeFailures').got(newFailures))
+          }
+        })
+
         // check for erc20 transfers on each new block
         pollERC20Transfers(store, action.block)
         break
@@ -86,6 +131,24 @@ export default function eventsMiddleware(store) {
           const newFills = _.filter(logs, ({ transactionHash }) => !_.includes(fillsTxIds, transactionHash))
           if (logs && logs.length) {
             store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(newFills))
+          }
+        })
+        break
+      case 'FETCH_HISTORICAL_CANCELS_BY_MAKER_ADDRESS':
+        fetchCanceledExchangeLogsForMakerAddress(action.makerAddress).then(logs => {
+          const cancelsTxIds = _.map(eventSelectors.getFetchedExchangeCancels(store.getState()), 'transactionHash')
+          const newCancels = _.filter(logs, ({ transactionHash }) => !_.includes(cancelsTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('exchangeCancels').got(newCancels))
+          }
+        })
+        break
+      case 'FETCH_HISTORICAL_FAILURES_BY_MAKER_ADDRESS':
+        fetchFailedExchangeLogsForMakerAddress(action.makerAddress).then(logs => {
+          const failuresTxIds = _.map(eventSelectors.getFetchedExchangeFailures(store.getState()), 'transactionHash')
+          const newFailures = _.filter(logs, ({ transactionHash }) => !_.includes(failuresTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('exchangeFailures').got(newFailures))
           }
         })
         break
