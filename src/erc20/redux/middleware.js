@@ -35,14 +35,12 @@ export default function walletMiddleware(store) {
         break
       case makeEthersTxnsActionTypes('approveToken').mined:
         store.dispatch(getAllAllowancesForConnectedAddress())
-        window.setTimeout(() => store.dispatch(getAllBalancesForConnectedAddress()), 4000)
         break
       case 'WRAP_WETH':
         makeMiddlewareEthersTransactionsFn(wrapWeth, 'wrapWeth', store, action, uuid())
         break
       case makeEthersTxnsActionTypes('wrapWeth').mined:
         store.dispatch(getAllBalancesForConnectedAddress())
-        window.setTimeout(() => store.dispatch(getAllBalancesForConnectedAddress()), 4000)
         break
       case 'UNWRAP_WETH':
         makeMiddlewareEthersTransactionsFn(unwrapWeth, 'unwrapWeth', store, action, uuid())
