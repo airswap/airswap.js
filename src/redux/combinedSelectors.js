@@ -33,6 +33,8 @@ import * as types from '../tcombTypes'
 const getTransactionHistory = createSelector(
   swapLegacySelectors.getTransactionsFillOrder,
   swapLegacySelectors.getTransactionReceiptsFillOrder,
+  swapLegacySelectors.getTransactionsCancelOrder,
+  swapLegacySelectors.getTransactionReceiptsCancelOrder,
   erc20Selectors.getTransactionsApproveToken,
   erc20Selectors.getTransactionReceiptsApproveToken,
   erc20Selectors.getTransactionsWrapWeth,
@@ -44,6 +46,8 @@ const getTransactionHistory = createSelector(
   (
     fillTransactions,
     fillReceipts,
+    cancelTransactions,
+    cancelReceipts,
     approveTransactions,
     approveReceipts,
     wrapTransaction,
@@ -55,12 +59,14 @@ const getTransactionHistory = createSelector(
   ) => {
     const receipts = _.compact([
       ..._.values(fillReceipts),
+      ..._.values(cancelReceipts),
       ..._.values(approveReceipts),
       ..._.values(wrapTransactionsReceipts),
       ..._.values(unwrapTransactionsReceipts),
     ])
     const transactions = _.compact([
       ..._.values(fillTransactions),
+      ..._.values(cancelTransactions),
       ..._.values(approveTransactions),
       ..._.values(wrapTransaction),
       ..._.values(unwrapTransaction),
