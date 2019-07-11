@@ -146,7 +146,9 @@ const getAvailableMarketplaceTokensByAddress = createSelector(getAvailableMarket
 /*
 TOKEN ADDRESSES
 */
-const getAvailableTokenAddresses = createSelector(getAvailableTokensByAddress, tokens => Object.keys(tokens))
+const getAvailableTokenAddresses = createSelector(getAvailableTokensByAddress, tokens =>
+  _.uniq([...ETH_BASE_ADDRESSES, ...Object.keys(tokens)]),
+)
 const getAvailableMarketplaceTokenAddresses = createSelector(getAvailableMarketplaceTokensByAddress, tokens =>
   Object.keys(tokens),
 )
