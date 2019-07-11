@@ -6,10 +6,13 @@ import { createSelector } from 'reselect'
 import { makeEventReducer, makeEventSelectors } from '../../utils/redux/templates/event'
 import { makeGetReadableOrder, makeParseByToken } from '../../tokens/redux/reducers'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
+import { parseTransactionFailureEventCode } from '../../utils/transformations'
 
 const exchangeFills = makeEventReducer('exchangeFills')
+const exchangeCancels = makeEventReducer('exchangeCancels')
+const exchangeFailures = makeEventReducer('exchangeFailures')
 
-export default combineReducers({ exchangeFills })
+export default combineReducers({ exchangeFills, exchangeCancels, exchangeFailures })
 
 const getEvents = state => state.events //eslint-disable-line
 
@@ -19,6 +22,20 @@ const {
   getErrorGettingExchangeFills,
   getFetchedExchangeFills,
 } = makeEventSelectors('exchangeFills', 'events')
+
+const {
+  getAttemptedGettingExchangeCancels,
+  getGettingExchangeCancels,
+  getErrorGettingExchangeCancels,
+  getFetchedExchangeCancels,
+} = makeEventSelectors('exchangeCancels', 'events')
+
+const {
+  getAttemptedGettingExchangeFailures,
+  getGettingExchangeFailures,
+  getErrorGettingExchangeFailures,
+  getFetchedExchangeFailures,
+} = makeEventSelectors('exchangeFailures', 'events')
 
 /**
  * @typedef {Object} FillEvent a fill that occurred on the AirSwap exchange contract, queried as a log from Geth
@@ -61,6 +78,31 @@ const getFormattedExchangeFills = createSelector(
     })),
 )
 
+const getFormattedExchangeCancels = createSelector(
+  getFetchedExchangeCancels,
+  makeGetReadableOrder,
+  blockTrackerSelectors.getBlocks,
+  (events, getReadableOrder, blockObj) =>
+    events.map(({ transactionHash, blockNumber, values }) => ({
+      transactionHash,
+      ...getReadableOrder(values),
+      timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
+    })),
+)
+
+const getFormattedExchangeFailures = createSelector(
+  getFetchedExchangeFailures,
+  makeGetReadableOrder,
+  blockTrackerSelectors.getBlocks,
+  (events, getReadableOrder, blockObj) =>
+    events.map(({ transactionHash, blockNumber, values }) => ({
+      transactionHash,
+      ...getReadableOrder(values),
+      timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
+      reason: parseTransactionFailureEventCode(Number(values.code)),
+    })),
+)
+
 /**
  * Returns a feed of fills from the last 24 Hours, with new fills appended to the array in real time (if there are any in a new on each new block).
  * @function getFormattedExchangeFills24Hour
@@ -91,4 +133,14 @@ export const selectors = {
   getFormattedExchangeFills24Hour,
   get24HourVolume,
   get24HourLargestTrade,
+  getAttemptedGettingExchangeCancels,
+  getGettingExchangeCancels,
+  getErrorGettingExchangeCancels,
+  getFetchedExchangeCancels,
+  getAttemptedGettingExchangeFailures,
+  getGettingExchangeFailures,
+  getErrorGettingExchangeFailures,
+  getFetchedExchangeFailures,
+  getFormattedExchangeCancels,
+  getFormattedExchangeFailures,
 }
