@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect'
 import _ from 'lodash'
 
-const oldestBlockLimit = 50000
-
 function withoutTransactions({ number, timestamp }) {
   return { number, timestamp }
 }
@@ -10,13 +8,10 @@ function withoutTransactions({ number, timestamp }) {
 function blocks(state = {}, action) {
   switch (action.type) {
     case 'GOT_LATEST_BLOCK':
-      return _.pickBy(
-        {
-          ...state,
-          [action.block.number]: withoutTransactions(action.block),
-        },
-        block => block.number > action.block.number - oldestBlockLimit,
-      )
+      return {
+        ...state,
+        [action.block.number]: withoutTransactions(action.block),
+      }
     case 'GOT_BLOCK':
       return {
         ...state,
