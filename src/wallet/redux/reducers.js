@@ -71,11 +71,24 @@ function createWalletAvailable(walletType) {
   }
 }
 
+function walletExpressLogin(state = {}, action) {
+  switch (action.type) {
+    case 'CONNECTED_WALLET':
+      return {
+        walletType: action.walletType,
+        address: action.address,
+      }
+    default:
+      return state
+  }
+}
+
 const walletAvailable = combineReducers(_.zipObject(web3WalletTypes, web3WalletTypes.map(createWalletAvailable)))
 
 const walletState = combineReducers({
   connection: walletConnection,
   available: walletAvailable,
+  expressLogin: walletExpressLogin,
 })
 
 const getWalletState = state => state.wallet
@@ -83,6 +96,8 @@ const getWalletState = state => state.wallet
 export const getConnectedWalletState = createSelector(getWalletState, wallet => wallet.connection)
 
 export const getAvailableWalletState = createSelector(getWalletState, wallet => wallet.available)
+
+export const getExpressLoginCredentials = createSelector(getWalletState, wallet => wallet.expressLogin)
 
 /**
  * @function getWalletType
@@ -229,6 +244,7 @@ export const selectors = {
   getIsWalletFillingOrder,
   getIsWalletConnecting,
   getAvailableWalletState,
+  getExpressLoginCredentials,
 }
 
 export default walletState

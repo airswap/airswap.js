@@ -12,6 +12,7 @@ import { abis, PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } fro
 import { web3WalletTypes } from '../static/constants'
 import { getLedgerProvider } from '../../ledger/redux/actions'
 import { initializeHDW } from '../../HDW/redux/actions'
+import { connectWallet } from './actions'
 
 export const connectedWallet = (walletType, address) => ({
   type: 'CONNECTED_WALLET',
@@ -177,7 +178,7 @@ function connectFortmatic(store) {
   })
 }
 
-const detectWeb3Wallets = store => {
+const detectWeb3Wallets = async store => {
   const prevWalletsAvailable = walletSelectors.getAvailableWalletState(store.getState())
   if (window && !window.web3) {
     // No web3 wallets;
@@ -228,10 +229,46 @@ const detectWeb3Wallets = store => {
       wallets: walletsAvailable,
     })
   }
+  return walletsAvailable
+}
+
+function attemptExpressLogin(store) {
+  const state = store.getState()
+  const availableWallets = walletSelectors.getAvailableWalletState(state)
+  const expressLoginCredentials = walletSelectors.getExpressLoginCredentials(state)
+  if (!_.some(availableWallets) || _.isEmpty(expressLoginCredentials)) {
+    // don't attempt auto-login if no wallets are currently available
+    // don't attempt auto-login if no credentials are stored
+    return
+  }
+  if (availableWallets[expressLoginCredentials.walletType]) {
+    try {
+      switch (
+        expressLoginCredentials.walletType // this switch statement allows us to write adaptors to determine wallet availability
+      ) {
+        case 'equal':
+          const res = window.ethereum.send({ method: 'eth_accounts' })
+          if ((_.first(res.result) || '').toLowerCase() === expressLoginCredentials.address) {
+            store.dispatch(connectWallet(expressLoginCredentials.walletType))
+          }
+          break
+        default:
+          window.ethereum.send('eth_accounts').then(({ result }) => {
+            if ((_.first(result) || '').toLowerCase() === expressLoginCredentials.address) {
+              store.dispatch(connectWallet(expressLoginCredentials.walletType))
+            }
+          })
+      }
+    } catch (e) {
+      console.log('Auto Log-In Failed', e)
+    }
+  }
+
+  console.log('express', availableWallets, expressLoginCredentials)
 }
 
 export default function walletMiddleware(store) {
-  detectWeb3Wallets(store)
+  detectWeb3Wallets(store).then(availableWallets => attemptExpressLogin(store, availableWallets))
   window.setInterval(() => detectWeb3Wallets(store), 5000)
   walletActions = _.mapValues({ startWalletAction, finishWalletAction }, action => _.partial(action, store))
   return next => action => {
@@ -289,6 +326,14 @@ export default function walletMiddleware(store) {
           default:
             throw new Error(`${action.walletType} walletType not expected in wallet middleware`)
         }
+        break
+      case 'SET_WALLET_AVAILABILITY':
+        next(action)
+        attemptExpressLogin(store)
+        break
+      case 'REDUX_STORAGE_LOAD':
+        next(action)
+        attemptExpressLogin(store)
         break
       default:
         next(action)

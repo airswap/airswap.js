@@ -30,7 +30,7 @@ export default function configureStore(
   persistedState = [],
 ) {
   let engine = createEngine(storageKey)
-  engine = filter(engine, [['keySpace', 'signedSeed'], 'blockTracker', ...persistedState])
+  engine = filter(engine, [['keySpace', 'signedSeed'], 'blockTracker', ['wallet', 'expressLogin'], ...persistedState])
   const persistMiddleware = storage.createMiddleware(engine, actionsBlacklist)
 
   const rootReducer = combineReducers({ ...projectRootReducerObj, ...rootReducerObj })
