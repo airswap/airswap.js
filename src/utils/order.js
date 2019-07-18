@@ -48,4 +48,12 @@ function getOrderId(order) {
   return `${makerAddress}${makerAmount}${makerToken}${takerAddress}${takerAmount}${takerToken}${expiration}${nonce}${r}${s}${v}`
 }
 
-module.exports = { isValidOrder, getOrderId }
+function getSwapSimpleOrderId(order) {
+  if (!_.isObject(order)) {
+    throw new Error('Order must be an object')
+  }
+  const { makerWallet, nonce } = order
+  return `${makerWallet}${nonce}`
+}
+
+module.exports = { isValidOrder, getOrderId, getSwapSimpleOrderId }
