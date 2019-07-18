@@ -1,28 +1,66 @@
 import { combineReducers } from 'redux'
 import { makeEthersTxnsReducer, makeEthersTxnsSelectors } from '../../utils/redux/templates/ethersTransactions'
 
-const swap = makeEthersTxnsReducer('swap')
+const fillSwapSimple = makeEthersTxnsReducer('fillSwapSimple')
+const fillSwap = makeEthersTxnsReducer('fillSwap')
+const cancelSwap = makeEthersTxnsReducer('cancelSwap')
 
 export default combineReducers({
-  swap,
+  fillSwapSimple,
+  fillSwap,
+  cancelSwap,
 })
 
 const {
-  getSubmittingSwap,
-  getErrorSubmittingSwap,
-  getMiningSwap,
-  getTransactionsSwap,
-  getMinedSwap,
-  getTransactionReceiptsSwap,
-  getErrorMiningSwap,
-} = makeEthersTxnsSelectors('swap', 'swap')
+  getSubmittingFillSwapSimple,
+  getErrorSubmittingFillSwapSimple,
+  getMiningFillSwapSimple,
+  getTransactionsFillSwapSimple,
+  getMinedFillSwapSimple,
+  getTransactionReceiptsFillSwapSimple,
+  getErrorMiningFillSwapSimple,
+} = makeEthersTxnsSelectors('fillSwapSimple', 'swap')
+
+const {
+  getSubmittingFillSwap,
+  getErrorSubmittingFillSwap,
+  getMiningFillSwap,
+  getTransactionsFillSwap,
+  getMinedFillSwap,
+  getTransactionReceiptsFillSwap,
+  getErrorMiningFillSwap,
+} = makeEthersTxnsSelectors('fillSwap', 'swap')
+
+const {
+  getSubmittingCancelSwap,
+  getErrorSubmittingCancelSwap,
+  getMiningCancelSwap,
+  getTransactionsCancelSwap,
+  getMinedCancelSwap,
+  getTransactionReceiptsCancelSwap,
+  getErrorMiningCancelSwap,
+} = makeEthersTxnsSelectors('cancelSwap', 'swap')
 
 export const selectors = {
-  getSubmittingSwap,
-  getErrorSubmittingSwap,
-  getMiningSwap,
-  getTransactionsSwap,
-  getMinedSwap,
-  getTransactionReceiptsSwap,
-  getErrorMiningSwap,
+  getSubmittingFillSwapSimple,
+  getErrorSubmittingFillSwapSimple,
+  getMiningFillSwapSimple,
+  getTransactionsFillSwapSimple,
+  getMinedFillSwapSimple,
+  getTransactionReceiptsFillSwapSimple,
+  getErrorMiningFillSwapSimple,
+  getSubmittingFillSwap,
+  getErrorSubmittingFillSwap,
+  getMiningFillSwap,
+  getTransactionsFillSwap,
+  getMinedFillSwap,
+  getTransactionReceiptsFillSwap,
+  getErrorMiningFillSwap,
+  getSubmittingCancelSwap,
+  getErrorSubmittingCancelSwap,
+  getMiningCancelSwap,
+  getTransactionsCancelSwap,
+  getMinedCancelSwap,
+  getTransactionReceiptsCancelSwap,
+  getErrorMiningCancelSwap,
 }
