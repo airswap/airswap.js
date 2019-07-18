@@ -16,7 +16,7 @@ async function fillSwapSimple(store, action) {
 async function cancelSwap(store, action) {
   const signer = await store.dispatch(getSigner())
   const { order } = action
-  return Swap.cancelSwap(order, signer)
+  return Swap.cancelSwap([order.nonce], signer)
 }
 
 async function signSwapSimple(store, action) {
@@ -47,7 +47,7 @@ export default function walletMiddleware(store) {
         store.dispatch(getAllBalancesForConnectedAddress())
         break
       case 'CANCEL_SWAP':
-        makeMiddlewareEthersTransactionsFn(cancelSwap, 'cancelOrder', store, action, getSwapSimpleOrderId(action.order))
+        makeMiddlewareEthersTransactionsFn(cancelSwap, 'cancelSwap', store, action, getSwapSimpleOrderId(action.order))
         break
       case 'SIGN_SWAP_SIMPLE':
         signSwapSimple(store, action)
