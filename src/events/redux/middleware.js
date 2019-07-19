@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import * as ethers from 'ethers'
-import { abis, SWAP_LEGACY_CONTRACT_ADDRESS, ERC20abi } from '../../constants'
+import { abis, SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS, ERC20abi } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
@@ -13,23 +13,38 @@ import {
   fetchFilledExchangeLogsForMakerAddress,
   fetchCanceledExchangeLogsForMakerAddress,
   fetchFailedExchangeLogsForMakerAddress,
+  fetchSwapFillsForMakerAddress,
+  fetchSwapCancelsForMakerAddress,
 } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
 
-const exchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
-const abiInterface = new ethers.utils.Interface(exchangeABI)
+const legacyExchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
+const exchangeABI = abis[SWAP_CONTRACT_ADDRESS]
+
+const swapLegacyABIInterface = new ethers.utils.Interface(legacyExchangeABI)
+const swapABIInterface = new ethers.utils.Interface(exchangeABI)
 
 const initPollExchangeFills = _.once(store => {
   const state = store.getState()
   const block = blockTrackerSelectors.getLatestBlock(state)
   fetchLogs(
     SWAP_LEGACY_CONTRACT_ADDRESS,
-    exchangeABI,
-    abiInterface.events.Filled.topic,
+    legacyExchangeABI,
+    swapLegacyABIInterface.events.Filled.topic,
     block.number - 7000, // 7000 is to include 24 hours worth of transactions, extra is included to cover variable block times (currently around 5000 transactions per day)
     block.number,
   ).then(logs => {
     store.dispatch(makeEventFetchingActionsCreators('exchangeFills').got(logs))
+  })
+
+  fetchLogs(
+    SWAP_CONTRACT_ADDRESS,
+    exchangeABI,
+    swapABIInterface.events.Swap.topic,
+    block.number - 7000, // 7000 is to include 24 hours worth of transactions, extra is included to cover variable block times (currently around 5000 transactions per day)
+    block.number,
+  ).then(logs => {
+    store.dispatch(makeEventFetchingActionsCreators('swapFills').got(logs))
   })
 })
 
@@ -78,12 +93,18 @@ export default function eventsMiddleware(store) {
       case makeEventActionTypes('exchangeFailures').got:
         fetchMissingBlocksForFetchedEvents(store, action)
         break
+      case makeEventActionTypes('swapFills').got:
+        fetchMissingBlocksForFetchedEvents(store, action)
+        break
+      case makeEventActionTypes('swapCancels').got:
+        fetchMissingBlocksForFetchedEvents(store, action)
+        break
       case 'GOT_LATEST_BLOCK':
         // check for new airswap fills on each new block
         fetchLogs(
           SWAP_LEGACY_CONTRACT_ADDRESS,
-          exchangeABI,
-          abiInterface.events.Filled.topic,
+          legacyExchangeABI,
+          swapLegacyABIInterface.events.Filled.topic,
           action.block.number - 1,
           action.block.number,
         ).then(logs => {
@@ -96,8 +117,8 @@ export default function eventsMiddleware(store) {
 
         fetchLogs(
           SWAP_LEGACY_CONTRACT_ADDRESS,
-          exchangeABI,
-          abiInterface.events.Canceled.topic,
+          legacyExchangeABI,
+          swapLegacyABIInterface.events.Canceled.topic,
           action.block.number - 1,
           action.block.number,
         ).then(logs => {
@@ -110,8 +131,8 @@ export default function eventsMiddleware(store) {
 
         fetchLogs(
           SWAP_LEGACY_CONTRACT_ADDRESS,
-          exchangeABI,
-          abiInterface.events.Failed.topic,
+          legacyExchangeABI,
+          swapLegacyABIInterface.events.Failed.topic,
           action.block.number - 1,
           action.block.number,
         ).then(logs => {
@@ -119,6 +140,34 @@ export default function eventsMiddleware(store) {
           const newFailures = _.filter(logs, ({ transactionHash }) => !_.includes(failuresTxIds, transactionHash))
           if (logs && logs.length) {
             store.dispatch(makeEventFetchingActionsCreators('exchangeFailures').got(newFailures))
+          }
+        })
+
+        fetchLogs(
+          SWAP_CONTRACT_ADDRESS,
+          exchangeABI,
+          swapABIInterface.events.Swap.topic,
+          action.block.number - 1,
+          action.block.number,
+        ).then(logs => {
+          const swapTxIds = _.map(eventSelectors.getFetchedSwapFills(store.getState()), 'transactionHash')
+          const newSwapFills = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('swapFills').got(newSwapFills))
+          }
+        })
+
+        fetchLogs(
+          SWAP_CONTRACT_ADDRESS,
+          exchangeABI,
+          swapABIInterface.events.Cancel.topic,
+          action.block.number - 1,
+          action.block.number,
+        ).then(logs => {
+          const swapTxIds = _.map(eventSelectors.getFetchedSwapCancels(store.getState()), 'transactionHash')
+          const newSwapCancels = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('swapCancels').got(newSwapCancels))
           }
         })
 
@@ -149,6 +198,24 @@ export default function eventsMiddleware(store) {
           const newFailures = _.filter(logs, ({ transactionHash }) => !_.includes(failuresTxIds, transactionHash))
           if (logs && logs.length) {
             store.dispatch(makeEventFetchingActionsCreators('exchangeFailures').got(newFailures))
+          }
+        })
+        break
+      case 'FETCH_HISTORICAL_SWAP_FILLS_BY_MAKER_ADDRESS':
+        fetchSwapFillsForMakerAddress(action.makerAddress).then(logs => {
+          const swapTxIds = _.map(eventSelectors.getFetchedSwapFills(store.getState()), 'transactionHash')
+          const newSwapFills = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('swapFills').got(newSwapFills))
+          }
+        })
+        break
+      case 'FETCH_HISTORICAL_SWAP_CANCELS_BY_MAKER_ADDRESS':
+        fetchSwapCancelsForMakerAddress(action.makerAddress).then(logs => {
+          const swapTxIds = _.map(eventSelectors.getFetchedSwapCancels(store.getState()), 'transactionHash')
+          const newSwapCancels = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
+          if (logs && logs.length) {
+            store.dispatch(makeEventFetchingActionsCreators('swapCancels').got(newSwapCancels))
           }
         })
         break
