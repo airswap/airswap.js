@@ -6,6 +6,7 @@ const {
   AIRSWAP_GETH_NODE_ADDRESS,
   abis,
   SWAP_LEGACY_CONTRACT_ADDRESS,
+  SWAP_CONTRACT_ADDRESS,
 } = require('../constants')
 const { getLogs } = require('../utils/gethRead')
 
@@ -131,6 +132,18 @@ function fetchFailedExchangeLogsForMakerAddress(makerAddress, fromBlock = swapLe
   return fetchLogs(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], topics, fromBlock)
 }
 
+function fetchSwapFillsForMakerAddress(makerAddress, fromBlock = 0) {
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
+  const topics = abiInterface.events.Swap.encodeTopics([null, null, makerAddress.toLowerCase()])
+  return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)
+}
+
+function fetchSwapCancelsForMakerAddress(makerAddress, fromBlock = 0) {
+  const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
+  const topics = abiInterface.events.Cancel.encodeTopics([null, makerAddress.toLowerCase()])
+  return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)
+}
+
 function fetchERC20Logs(contractAddress, eventName, fromBlock, toBlock) {
   const abiInterface = new ethers.utils.Interface(ERC20abi)
   const topic = eventName ? abiInterface.events[eventName].topic : null
@@ -204,4 +217,6 @@ module.exports = {
   fetchFilledExchangeLogsForMakerAddress,
   fetchCanceledExchangeLogsForMakerAddress,
   fetchFailedExchangeLogsForMakerAddress,
+  fetchSwapFillsForMakerAddress,
+  fetchSwapCancelsForMakerAddress,
 }

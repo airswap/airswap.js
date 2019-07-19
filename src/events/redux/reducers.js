@@ -11,8 +11,10 @@ import { parseTransactionFailureEventCode } from '../../utils/transformations'
 const exchangeFills = makeEventReducer('exchangeFills')
 const exchangeCancels = makeEventReducer('exchangeCancels')
 const exchangeFailures = makeEventReducer('exchangeFailures')
+const swapFills = makeEventReducer('swapFills')
+const swapCancels = makeEventReducer('swapCancels')
 
-export default combineReducers({ exchangeFills, exchangeCancels, exchangeFailures })
+export default combineReducers({ exchangeFills, exchangeCancels, exchangeFailures, swapFills, swapCancels })
 
 const getEvents = state => state.events //eslint-disable-line
 
@@ -36,6 +38,20 @@ const {
   getErrorGettingExchangeFailures,
   getFetchedExchangeFailures,
 } = makeEventSelectors('exchangeFailures', 'events')
+
+const {
+  getAttemptedGettingSwapFills,
+  getGettingSwapFills,
+  getErrorGettingSwapFills,
+  getFetchedSwapFills,
+} = makeEventSelectors('swapFills', 'events')
+
+const {
+  getAttemptedGettingSwapCancels,
+  getGettingSwapCancels,
+  getErrorGettingSwapCancels,
+  getFetchedSwapCancels,
+} = makeEventSelectors('swapCancels', 'events')
 
 /**
  * @typedef {Object} FillEvent a fill that occurred on the AirSwap exchange contract, queried as a log from Geth
@@ -103,6 +119,29 @@ const getFormattedExchangeFailures = createSelector(
     })),
 )
 
+const getFormattedSwapFills = createSelector(
+  getFetchedSwapFills,
+  makeGetReadableOrder,
+  blockTrackerSelectors.getBlocks,
+  (events, getReadableOrder, blockObj) =>
+    events.map(({ transactionHash, blockNumber, values }) => ({
+      transactionHash,
+      ...getReadableOrder(values),
+      timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
+    })),
+)
+
+const getFormattedSwapCancels = createSelector(
+  getFetchedSwapCancels,
+  blockTrackerSelectors.getBlocks,
+  (events, blockObj) =>
+    events.map(({ transactionHash, blockNumber, values }) => ({
+      transactionHash,
+      ...values,
+      timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
+    })),
+)
+
 /**
  * Returns a feed of fills from the last 24 Hours, with new fills appended to the array in real time (if there are any in a new on each new block).
  * @function getFormattedExchangeFills24Hour
@@ -143,4 +182,14 @@ export const selectors = {
   getFetchedExchangeFailures,
   getFormattedExchangeCancels,
   getFormattedExchangeFailures,
+  getAttemptedGettingSwapFills,
+  getGettingSwapFills,
+  getErrorGettingSwapFills,
+  getFetchedSwapFills,
+  getAttemptedGettingSwapCancels,
+  getGettingSwapCancels,
+  getErrorGettingSwapCancels,
+  getFetchedSwapCancels,
+  getFormattedSwapFills,
+  getFormattedSwapCancels,
 }

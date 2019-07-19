@@ -8,6 +8,7 @@ import * as erc20 from '../erc20/redux'
 import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
 import * as protocolMessaging from '../protocolMessaging/redux'
+import * as swap from '../swap/redux'
 import * as swapLegacy from '../swapLegacy/redux'
 import * as gas from '../gas/redux'
 import * as fiat from '../fiat/redux'
@@ -27,6 +28,7 @@ const state = {
   keySpace,
   dexIndex,
   protocolMessaging,
+  swap,
   swapLegacy,
   gas,
   fiat,
