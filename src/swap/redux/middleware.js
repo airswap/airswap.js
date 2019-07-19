@@ -23,7 +23,7 @@ async function signSwapSimple(store, action) {
   const signer = await store.dispatch(getSigner())
   Swap.signSwapSimple(mapOldOrderParamsToNewOrderFormat(action), signer)
     .then(order => {
-      action.resolve(mapNewOrderParamsToOldOrderFormat(order))
+      action.resolve(order)
     })
     .catch(err => {
       action.reject(err)
@@ -56,6 +56,7 @@ function mapOldOrderParamsToNewOrderFormat({
 }
 
 // this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
+// eslint-disable-next-line
 function mapNewOrderParamsToOldOrderFormat({
   nonce,
   makerWallet,
