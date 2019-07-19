@@ -108,6 +108,8 @@ export default function balancesMiddleware(store) {
   return next => action => {
     const state = store.getState()
     const address = getConnectedWalletAddress(state)
+    const approvedTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
+    const approvedTokenAddresses = _.map(approvedTokens, 'address')
     switch (action.type) {
       case 'GET_ALL_BALANCES_FOR_ADDRESS':
         loadBalancesForAddresses([action.address], store)
@@ -119,7 +121,14 @@ export default function balancesMiddleware(store) {
         loadBalancesForAddresses([address], store)
         break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
-        loadAllowancesForAddresses([address], store)
+        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_CONTRACT_ADDRESS).then(results => {
+          store.dispatch(gotSwapTokenApprovals(results))
+        })
+        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(
+          results => {
+            store.dispatch(gotTokenApprovals(results))
+          },
+        )
         break
       case makeEventActionTypes('erc20Transfers').got:
         const logs = _.get(action, 'response', [])
