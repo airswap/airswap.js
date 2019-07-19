@@ -1,5 +1,8 @@
 const ethers = require('ethers')
+const Web3 = require('web3')
 const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
+
+const web3 = new Web3()
 
 window.bignumberify = ethers.utils.bigNumberify
 
@@ -41,21 +44,23 @@ function cancel(ids, signer) {
 
 async function signSwapSimple(order, signer) {
   const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
-  const hashedOrder = ethers.utils.solidityKeccak256(
-    ['uint256', 'address', 'uint256', 'address', 'address', 'uint256', 'address', 'uint256'],
-    [
-      nonce,
-      makerWallet,
-      makerParam, // erc20 AMOUNT of tokens or erc721 ID of NFT
-      makerToken, // erc20 token contract address OR nft contract address
-      takerWallet,
-      takerParam, // erc20 AMOUNT of tokens or erc721 ID of NFT
-      takerToken, // erc20 token contract address OR nft contract address
-      expiry,
-    ],
+
+  const hashedOrder = web3.utils.soliditySha3(
+    // Version 0x00: Data with intended validator (verifyingContract)
+    { type: 'bytes1', value: '0x0' },
+    { type: 'address', value: SWAP_CONTRACT_ADDRESS },
+    { type: 'uint256', value: nonce },
+    { type: 'uint256', value: expiry },
+    { type: 'address', value: makerWallet },
+    { type: 'uint256', value: makerParam },
+    { type: 'address', value: makerToken },
+    { type: 'address', value: takerWallet },
+    { type: 'uint256', value: takerParam },
+    { type: 'address', value: takerToken },
   )
 
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(hashedOrder))
+
   const sig = ethers.utils.splitSignature(signedMsg)
 
   return {
