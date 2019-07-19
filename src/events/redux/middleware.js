@@ -20,6 +20,7 @@ import { gotBlocks } from '../../blockTracker/redux/actions'
 
 const legacyExchangeABI = abis[SWAP_LEGACY_CONTRACT_ADDRESS]
 const exchangeABI = abis[SWAP_CONTRACT_ADDRESS]
+
 const swapLegacyABIInterface = new ethers.utils.Interface(legacyExchangeABI)
 const swapABIInterface = new ethers.utils.Interface(exchangeABI)
 

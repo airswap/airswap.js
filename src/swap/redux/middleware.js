@@ -21,7 +21,6 @@ async function cancelSwap(store, action) {
 
 async function signSwapSimple(store, action) {
   const signer = await store.dispatch(getSigner())
-
   Swap.signSwapSimple(action, signer)
     .then(order => {
       action.resolve(order)
