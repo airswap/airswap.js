@@ -19,15 +19,16 @@ function swap(order, signature, signer) {
 
 function swapSimple(order, signer) {
   const contract = getSwapContract(signer)
+
   return contract.swapSimple(
-    order.id,
+    order.nonce,
+    order.expiry,
     order.makerWallet,
     order.makerParam,
     order.makerToken,
     order.takerWallet,
     order.takerParam,
     order.takerToken,
-    order.expiry,
     order.v,
     order.r,
     order.s,
