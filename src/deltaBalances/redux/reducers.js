@@ -28,6 +28,15 @@ function approvalsReducer(state = defaultState, action) {
   }
 }
 
+function swapApprovalsReducer(state = defaultState, action) {
+  switch (action.type) {
+    case 'GOT_SWAP_TOKEN_ALLOWANCES':
+      return _.merge({}, state, action.approvals)
+    default:
+      return state
+  }
+}
+
 function trackedAddressesReducer(state = [], action) {
   switch (action.type) {
     case 'ADD_TRACKED_ADDRESS':
@@ -54,6 +63,7 @@ function trackedAddressesReducer(state = [], action) {
 export default combineReducers({
   balances: balancesReducer,
   approvals: approvalsReducer,
+  swapApprovals: swapApprovalsReducer,
   trackedAddresses: trackedAddressesReducer,
 })
 
@@ -106,8 +116,14 @@ export const getConnectedBalancesInFiatUnisgned = createSelector(
 )
 
 export const getApprovals = state => state.deltaBalances.approvals
+export const getSwapApprovals = state => state.deltaBalances.swapApprovals
 export const getConnectedApprovals = createSelector(
   getApprovals,
+  getConnectedWalletAddress,
+  (approvals, address) => approvals[address],
+)
+export const getConnectedSwapApprovals = createSelector(
+  getSwapApprovals,
   getConnectedWalletAddress,
   (approvals, address) => approvals[address],
 )
@@ -140,6 +156,8 @@ export const selectors = {
   getConnectedBalancesFormatted,
   getApprovals,
   getConnectedApprovals,
+  getSwapApprovals,
+  getConnectedSwapApprovals,
   getConnectedBalancesInFiat,
   getConnectedBalancesInFiatUnisgned,
   getTrackedAddresses,
