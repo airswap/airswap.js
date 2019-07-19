@@ -1,4 +1,4 @@
-import { SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
+import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } from '../../constants'
 
 export const approveToken = (tokenAddress, spender) => ({
   type: 'APPROVE_TOKEN',
@@ -17,3 +17,4 @@ export const unwrapWeth = amount => ({
 })
 
 export const approveAirswapToken = tokenAddress => approveToken(tokenAddress, SWAP_LEGACY_CONTRACT_ADDRESS)
+export const approveAirswapTokenSwap = tokenAddress => approveToken(tokenAddress, SWAP_CONTRACT_ADDRESS)

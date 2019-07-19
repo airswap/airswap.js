@@ -39,14 +39,12 @@ function cancel(ids, signer) {
   return contract.cancel(ids)
 }
 
-async function signSimple(order, signer) {
-  const { id, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
+async function signSwapSimple(order, signer) {
+  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
   const hashedOrder = ethers.utils.solidityKeccak256(
-    ['bytes1', 'address', 'uint256', 'address', 'uint256', 'address', 'address', 'uint256', 'address', 'uint256'],
+    ['uint256', 'address', 'uint256', 'address', 'address', 'uint256', 'address', 'uint256'],
     [
-      '0x0',
-      SWAP_CONTRACT_ADDRESS,
-      id,
+      nonce,
       makerWallet,
       makerParam, // erc20 AMOUNT of tokens or erc721 ID of NFT
       makerToken, // erc20 token contract address OR nft contract address
@@ -61,7 +59,7 @@ async function signSimple(order, signer) {
   const sig = ethers.utils.splitSignature(signedMsg)
 
   return {
-    id,
+    nonce,
     makerWallet,
     makerParam,
     makerToken,
@@ -73,4 +71,4 @@ async function signSimple(order, signer) {
   }
 }
 
-module.exports = { swap, swapSimple, cancel, signSimple }
+module.exports = { swap, swapSimple, cancel, signSwapSimple }

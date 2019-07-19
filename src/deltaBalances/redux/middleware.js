@@ -3,7 +3,7 @@ import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '..
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as apiSelectors } from '../../api/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
+import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -11,6 +11,11 @@ import { selectors as deltaBalancesSelectors } from './reducers'
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
   balances,
+})
+
+export const gotSwapTokenApprovals = approvals => ({
+  type: 'GOT_SWAP_TOKEN_ALLOWANCES',
+  approvals,
 })
 
 export const gotTokenApprovals = approvals => ({
@@ -27,6 +32,9 @@ function loadBalancesForAddresses(addresses, store) {
 
 function loadAllowancesForAddresses(addresses, store) {
   const tokens = apiSelectors.getAvailableTokenAddresses(store.getState())
+  getManyAllowancesManyAddresses(tokens, addresses, SWAP_CONTRACT_ADDRESS).then(results => {
+    store.dispatch(gotSwapTokenApprovals(results))
+  })
   getManyAllowancesManyAddresses(tokens, addresses, SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
     store.dispatch(gotTokenApprovals(results))
   })
@@ -76,6 +84,9 @@ function initializeTrackedAddresses(store) {
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
         store.dispatch(gotTokenApprovals(results))
       })
+      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
+        store.dispatch(gotSwapTokenApprovals(results))
+      })
     })
   })
 }
@@ -97,6 +108,8 @@ export default function balancesMiddleware(store) {
   return next => action => {
     const state = store.getState()
     const address = getConnectedWalletAddress(state)
+    const approvedTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
+    const approvedTokenAddresses = _.map(approvedTokens, 'address')
     switch (action.type) {
       case 'GET_ALL_BALANCES_FOR_ADDRESS':
         loadBalancesForAddresses([action.address], store)
@@ -108,7 +121,14 @@ export default function balancesMiddleware(store) {
         loadBalancesForAddresses([address], store)
         break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
-        loadAllowancesForAddresses([address], store)
+        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_CONTRACT_ADDRESS).then(results => {
+          store.dispatch(gotSwapTokenApprovals(results))
+        })
+        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(
+          results => {
+            store.dispatch(gotTokenApprovals(results))
+          },
+        )
         break
       case makeEventActionTypes('erc20Transfers').got:
         const logs = _.get(action, 'response', [])
