@@ -21,14 +21,64 @@ async function cancelSwap(store, action) {
 
 async function signSwapSimple(store, action) {
   const signer = await store.dispatch(getSigner())
-
-  Swap.signSwapSimple(action, signer)
+  Swap.signSwapSimple(mapOldOrderParamsToNewOrderFormat(action), signer)
     .then(order => {
       action.resolve(order)
     })
     .catch(err => {
       action.reject(err)
     })
+}
+
+// this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
+function mapOldOrderParamsToNewOrderFormat({
+  nonce,
+  makerAddress,
+  makerAmount,
+  makerToken,
+  takerAddress,
+  takerAmount,
+  takerToken,
+  expiration,
+  ...rest
+}) {
+  return {
+    nonce,
+    makerWallet: makerAddress,
+    makerParam: makerAmount,
+    makerToken,
+    takerWallet: takerAddress,
+    takerParam: takerAmount,
+    takerToken,
+    expiry: expiration,
+    ...rest,
+  }
+}
+
+// this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
+// eslint-disable-next-line
+function mapNewOrderParamsToOldOrderFormat({
+  nonce,
+  makerWallet,
+  makerParam,
+  makerToken,
+  takerWallet,
+  takerParam,
+  takerToken,
+  expiry,
+  ...rest
+}) {
+  return {
+    nonce,
+    makerAddress: makerWallet,
+    makerAmount: makerParam,
+    makerToken,
+    takerAddress: takerWallet,
+    takerAmount: takerParam,
+    takerToken,
+    expiration: expiry,
+    ...rest,
+  }
 }
 
 export default function walletMiddleware(store) {
