@@ -151,6 +151,16 @@ const makeGetReadableOrder = createSelector(
     tokenMetadata.ready ? tokenMetadata.getReadableOrder(order, tokenSymbolsByAddress, fullByToken, parseByToken) : [],
 )
 
+const makeGetReadableSwapOrder = createSelector(
+  getTokensSymbolsByAddress,
+  makeFullByToken,
+  makeParseByToken,
+  (tokenSymbolsByAddress, fullByToken, parseByToken) => order =>
+    tokenMetadata.ready
+      ? tokenMetadata.getReadableSwapOrder(order, tokenSymbolsByAddress, fullByToken, parseByToken)
+      : [],
+)
+
 const makeClampValue = createSelector(makeParseBySymbol, parseBySymbol => (symbol, amount) => {
   const maxValue = 1000000
   const parsedAmount = parseBySymbol[symbol](Number(amount))
@@ -191,6 +201,7 @@ export {
   getBaseTokens,
   makeGetReadableOrder,
   makeParseByToken,
+  makeGetReadableSwapOrder,
 }
 
 export const selectors = {
@@ -215,8 +226,8 @@ export const selectors = {
   makeGetReadableOrder,
   getAirSwapApprovedTokens,
   makeParseByToken,
-  makeAtomicByToken,
   makeGetExchangeFillGasLimitByToken,
+  makeGetReadableSwapOrder,
 }
 
 export const containers = {

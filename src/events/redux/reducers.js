@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import { makeEventReducer, makeEventSelectors } from '../../utils/redux/templates/event'
-import { makeGetReadableOrder, makeParseByToken } from '../../tokens/redux/reducers'
+import { makeGetReadableSwapOrder, makeGetReadableOrder, makeParseByToken } from '../../tokens/redux/reducers'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { parseTransactionFailureEventCode } from '../../utils/transformations'
 
@@ -121,12 +121,12 @@ const getFormattedExchangeFailures = createSelector(
 
 const getFormattedSwapFills = createSelector(
   getFetchedSwapFills,
-  makeGetReadableOrder,
+  makeGetReadableSwapOrder,
   blockTrackerSelectors.getBlocks,
-  (events, getReadableOrder, blockObj) =>
+  (events, getReadableSwapOrder, blockObj) =>
     events.map(({ transactionHash, blockNumber, values }) => ({
       transactionHash,
-      ...getReadableOrder(values),
+      ...getReadableSwapOrder(values),
       timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
     })),
 )
