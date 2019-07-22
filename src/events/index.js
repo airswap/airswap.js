@@ -132,13 +132,13 @@ function fetchFailedExchangeLogsForMakerAddress(makerAddress, fromBlock = swapLe
   return fetchLogs(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], topics, fromBlock)
 }
 
-function fetchSwapFillsForMakerAddress(makerAddress, fromBlock = 0) {
+function fetchSwapFillsForMakerAddress(makerAddress, fromBlock = 1) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
   const topics = abiInterface.events.Swap.encodeTopics([null, null, makerAddress.toLowerCase()])
   return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)
 }
 
-function fetchSwapCancelsForMakerAddress(makerAddress, fromBlock = 0) {
+function fetchSwapCancelsForMakerAddress(makerAddress, fromBlock = 1) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
   const topics = abiInterface.events.Cancel.encodeTopics([null, makerAddress.toLowerCase()])
   return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)

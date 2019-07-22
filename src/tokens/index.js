@@ -184,6 +184,68 @@ class TokenMetadata {
       tokenAddress,
     }
   }
+  getReadableSwapOrder(order, tokenSymbolsByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
+    const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
+    const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
+    const tokenSymbolsByAddress = tokenSymbolsByAddressParam || this.tokenSymbolsByAddress
+    const { makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry, nonce } = order
+
+    const takerAmountFull = fullByToken({ address: takerToken }, takerParam)
+    const makerAmountFull = fullByToken({ address: makerToken }, makerParam)
+
+    const takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
+    const makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
+    const takerSymbol = tokenSymbolsByAddress[takerToken]
+    const makerSymbol = tokenSymbolsByAddress[makerToken]
+    let ethAmount = 0
+    let tokenAmount = 0
+    let ethAmountFull = 0
+    let tokenAmountFull = 0
+    let tokenSymbol = ''
+    let tokenAddress = ''
+    if (takerSymbol === 'ETH' || takerSymbol === 'WETH') {
+      ethAmount = takerAmountFormatted
+      ethAmountFull = takerAmountFull
+      tokenAmount = makerAmountFormatted
+      tokenAmountFull = makerAmountFull
+      tokenSymbol = makerSymbol
+      tokenAddress = makerToken
+    } else if (makerSymbol === 'ETH' || makerSymbol === 'WETH') {
+      ethAmount = makerAmountFormatted
+      ethAmountFull = makerAmountFull
+      tokenAmount = takerAmountFormatted
+      tokenAmountFull = takerAmountFull
+      tokenSymbol = takerSymbol
+      tokenAddress = takerToken
+    }
+    const price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+
+    return {
+      ...order,
+      takerAmountFormatted,
+      makerAmountFormatted,
+      takerSymbol,
+      makerSymbol,
+      makerAddress: makerWallet,
+      makerWallet,
+      makerToken,
+      takerAddress: takerWallet,
+      takerWallet,
+      takerToken,
+      makerAmount: makerParam,
+      makerParam,
+      takerAmount: takerParam,
+      takerParam,
+      expiration: expiry,
+      expiry,
+      nonce,
+      ethAmount,
+      price,
+      tokenSymbol,
+      tokenAmount,
+      tokenAddress,
+    }
+  }
 }
 
 module.exports = new TokenMetadata()

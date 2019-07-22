@@ -50,7 +50,7 @@ function getOrderId(order) {
 
 function getSwapSimpleOrderId(order) {
   if (!_.isObject(order)) {
-    throw new Error('Order must be an object')
+    return false
   }
   const { makerWallet, nonce } = order
   return `${makerWallet}${nonce}`

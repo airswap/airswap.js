@@ -151,8 +151,9 @@ export default function eventsMiddleware(store) {
         ).then(logs => {
           const swapTxIds = _.map(eventSelectors.getFetchedSwapFills(store.getState()), 'transactionHash')
           const newSwapFills = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
-          if (logs && logs.length) {
-            store.dispatch(makeEventFetchingActionsCreators('swapFills').got(newSwapFills))
+          if (logs && logs.length && newSwapFills.length) {
+            const newFillsAction = makeEventFetchingActionsCreators('swapFills').got(newSwapFills)
+            store.dispatch(newFillsAction)
           }
         })
 
@@ -165,7 +166,7 @@ export default function eventsMiddleware(store) {
         ).then(logs => {
           const swapTxIds = _.map(eventSelectors.getFetchedSwapCancels(store.getState()), 'transactionHash')
           const newSwapCancels = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
-          if (logs && logs.length) {
+          if (logs && logs.length && newSwapCancels.length) {
             store.dispatch(makeEventFetchingActionsCreators('swapCancels').got(newSwapCancels))
           }
         })
