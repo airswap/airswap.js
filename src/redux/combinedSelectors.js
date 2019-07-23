@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js/bignumber'
 import { createSelector } from 'reselect'
 import { selectors as erc20Selectors } from '../erc20/redux'
 import { selectors as swapLegacySelectors } from '../swapLegacy/redux'
+import { selectors as swapSelectors } from '../swap/redux'
 import { selectors as tokenSelectors } from '../tokens/redux'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
 import { selectors as apiSelectors } from '../api/redux'
@@ -35,6 +36,10 @@ const getTransactionHistory = createSelector(
   swapLegacySelectors.getTransactionReceiptsFillOrder,
   swapLegacySelectors.getTransactionsCancelOrder,
   swapLegacySelectors.getTransactionReceiptsCancelOrder,
+  swapSelectors.getTransactionsFillSwap,
+  swapSelectors.getTransactionReceiptsFillSwap,
+  swapSelectors.getTransactionsCancelSwap,
+  swapSelectors.getTransactionReceiptsCancelSwap,
   erc20Selectors.getTransactionsApproveToken,
   erc20Selectors.getTransactionReceiptsApproveToken,
   erc20Selectors.getTransactionsWrapWeth,
@@ -48,6 +53,10 @@ const getTransactionHistory = createSelector(
     fillReceipts,
     cancelTransactions,
     cancelReceipts,
+    fillSwapTransactions,
+    fillSwapReceipts,
+    cancelSwapTransactions,
+    cancelSwapReceipts,
     approveTransactions,
     approveReceipts,
     wrapTransaction,
@@ -60,6 +69,8 @@ const getTransactionHistory = createSelector(
     const receipts = _.compact([
       ..._.values(fillReceipts),
       ..._.values(cancelReceipts),
+      ..._.values(fillSwapReceipts),
+      ..._.values(cancelSwapReceipts),
       ..._.values(approveReceipts),
       ..._.values(wrapTransactionsReceipts),
       ..._.values(unwrapTransactionsReceipts),
@@ -67,6 +78,8 @@ const getTransactionHistory = createSelector(
     const transactions = _.compact([
       ..._.values(fillTransactions),
       ..._.values(cancelTransactions),
+      ..._.values(fillSwapTransactions),
+      ..._.values(cancelSwapTransactions),
       ..._.values(approveTransactions),
       ..._.values(wrapTransaction),
       ..._.values(unwrapTransaction),
