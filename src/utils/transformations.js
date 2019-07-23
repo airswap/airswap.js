@@ -91,7 +91,7 @@ function parseTransactionFailureEventCode(code) {
 function getTransactionTextStatus(transactionReceipt) {
   let textStatus = ''
   let eventStatus = ''
-  const status = _.get(transactionReceipt, 'status')
+  const status = Number(_.get(transactionReceipt, 'status'))
   if (!status) {
     textStatus = 'pending'
     return { textStatus, eventStatus }
