@@ -46,19 +46,19 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
     return
   }
 
-  return parseEventLogs(logs)
+  return parseEventLogs(logs, abi)
 }
 
 const abiInterfaces = {}
 
-function parseEventLogs(logs) {
+function parseEventLogs(logs, abi) {
   return _.compact(
     logs.map(log => {
       let abiInterface
       if (abiInterfaces[log.address]) {
         abiInterface = abiInterfaces[log.address]
       } else {
-        abiInterface = new ethers.utils.Interface(abis[log.address.toLowerCase()])
+        abiInterface = new ethers.utils.Interface(abi)
         abiInterfaces[log.address] = abiInterface
       }
       let parsedLog
@@ -66,6 +66,7 @@ function parseEventLogs(logs) {
         parsedLog = abiInterface.parseLog(log)
       } catch (e) {
         // this was added because ERC721 transactions show up under the Transfer topic but can't be parsed by the human-standard-token abi
+        console.log(e)
         return null
       }
 
