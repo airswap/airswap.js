@@ -66,7 +66,6 @@ function parseEventLogs(logs, abi) {
         parsedLog = abiInterface.parseLog(log)
       } catch (e) {
         // this was added because ERC721 transactions show up under the Transfer topic but can't be parsed by the human-standard-token abi
-        console.log(e)
         return null
       }
 
