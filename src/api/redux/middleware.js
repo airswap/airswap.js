@@ -3,7 +3,6 @@ import { makeMiddlewareHTTPFn } from '../../utils/redux/templates/http'
 import { IS_INSTANT } from '../../constants'
 import { selectors } from './reducers'
 import { addTrackedAddresses } from '../../deltaBalances/redux/actions'
-import { getTransactionHistory } from '../../redux/combinedSelectors'
 
 let connectedIntentsLength = 0
 
@@ -26,7 +25,6 @@ export default function apiMiddleware(store) {
   }
 
   return next => action => {
-    console.log('transactionHistory', getTransactionHistory(store.getState()))
     switch (action.type) {
       default:
     }
