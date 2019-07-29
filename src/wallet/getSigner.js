@@ -3,13 +3,19 @@ const uuid = require('uuid')
 const ethers = require('ethers')
 const ethUtil = require('ethereumjs-util')
 const { AIRSWAP_GETH_NODE_ADDRESS, NETWORK, NETWORK_MAPPING } = require('../constants')
+const walletTypes = require('./static/walletTypes.json')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
-function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
+function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, walletType) {
+  const supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletType }), 'supportsSignTypedData')
   const handler = {
     get(target, propKey) {
-      if (
+      if (propKey === 'walletType') {
+        return walletType
+      } else if (propKey === 'supportsSignTypedData') {
+        return supportsSignTypedData
+      } else if (
         startWalletAction &&
         finishWalletAction &&
         typeof target[propKey] === 'function' &&
@@ -49,6 +55,40 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
             return result
           })
         }
+      } else if (propKey === 'signTypedData') {
+        return function(...args) {
+          if (!supportsSignTypedData) {
+            return Promise.reject(`signTypedData not supported by ${walletType}`)
+          }
+
+          startWalletAction(propKey, args)
+          const addressPromise = target.getAddress()
+
+          return addressPromise.then(from => {
+            const data = _.first(args)
+            const result = (type => {
+              switch (type) {
+                case 'metamask':
+                  return new Promise((resolve, reject) => {
+                    window.web3.currentProvider.sendAsync(
+                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
+                      (err, resp) => {
+                        if (err) {
+                          reject(err)
+                        } else {
+                          resolve(_.get(resp, 'result'))
+                        }
+                      },
+                    )
+                  })
+                default:
+                  return Promise.reject(`signTypedData not supported by ${walletType}`)
+              }
+            })(walletType)
+            result.finally(() => finishWalletAction(propKey, args))
+            return result
+          })
+        }
       }
       return target[propKey]
     },
@@ -56,7 +96,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }) {
   return new Proxy(obj, handler)
 }
 
-function getSigner(params, walletActions = {}) {
+function getSigner(params, walletActions = {}, walletType) {
   const { privateKey, web3Provider } = params
   if (!(privateKey || web3Provider)) {
     throw new Error("must set 'privateKey' or 'web3Provider' in params")
@@ -76,7 +116,7 @@ function getSigner(params, walletActions = {}) {
 
     const tempProvider = new ethers.providers.Web3Provider(web3Provider)
     const signer = tempProvider.getSigner()
-    return traceMethodCalls(signer, walletActions)
+    return traceMethodCalls(signer, walletActions, walletType)
   }
 }
 
