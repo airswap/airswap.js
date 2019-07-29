@@ -75,7 +75,7 @@ const startWalletAction = async (store, actionType, argParams) => {
       params,
     })
 
-    let gasLimit = 160000 // a value left over frome trade-flow for all non-fills, has worked without issue
+    let gasLimit = 200000 // a value left over frome trade-flow for all non-fills, has worked without issue
     if (parsed.name === 'fill') {
       const tokens = tokenSelectors.getTokens(state)
       const order = tokenSelectors.makeGetReadableOrder(state)(parameters)
@@ -92,6 +92,13 @@ const startWalletAction = async (store, actionType, argParams) => {
       gasPrice,
     }
   } else if (actionType === 'signMessage') {
+    params = { signatureText: args }
+    store.dispatch({
+      type: 'START_WALLET_ACTION',
+      actionType,
+      params,
+    })
+  } else if (actionType === 'signTypedData') {
     params = { signatureText: args }
     store.dispatch({
       type: 'START_WALLET_ACTION',
@@ -121,7 +128,7 @@ function connectWeb3(store, walletType = 'web3') {
     window.ethereum
       .enable()
       .then(() => {
-        signer = getSigner({ web3Provider: window.ethereum }, walletActions)
+        signer = getSigner({ web3Provider: window.ethereum }, walletActions, walletType)
         const addressPromise = signer.getAddress()
         addressPromise.then(address => store.dispatch(connectedWallet(walletType, address.toLowerCase())))
       })

@@ -13,6 +13,12 @@ async function fillSwapSimple(store, action) {
   return Swap.swapSimple(order, signer)
 }
 
+async function fillSwap(store, action) {
+  const signer = await store.dispatch(getSigner())
+  const { order } = action
+  return Swap.swap(order, signer)
+}
+
 async function cancelSwap(store, action) {
   const signer = await store.dispatch(getSigner())
   const { order } = action
@@ -21,7 +27,7 @@ async function cancelSwap(store, action) {
 
 async function signSwapSimple(store, action) {
   const signer = await store.dispatch(getSigner())
-  Swap.signSwapSimple(mapOldOrderParamsToNewOrderFormat(action), signer)
+  Swap.signSwapSimple(action, signer)
     .then(order => {
       action.resolve(order)
     })
@@ -30,54 +36,24 @@ async function signSwapSimple(store, action) {
     })
 }
 
-// this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
-function mapOldOrderParamsToNewOrderFormat({
-  nonce,
-  makerAddress,
-  makerAmount,
-  makerToken,
-  takerAddress,
-  takerAmount,
-  takerToken,
-  expiration,
-  ...rest
-}) {
-  return {
-    nonce,
-    makerWallet: makerAddress,
-    makerParam: makerAmount,
-    makerToken,
-    takerWallet: takerAddress,
-    takerParam: takerAmount,
-    takerToken,
-    expiry: expiration,
-    ...rest,
-  }
-}
-
-// this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
-// eslint-disable-next-line
-function mapNewOrderParamsToOldOrderFormat({
-  nonce,
-  makerWallet,
-  makerParam,
-  makerToken,
-  takerWallet,
-  takerParam,
-  takerToken,
-  expiry,
-  ...rest
-}) {
-  return {
-    nonce,
-    makerAddress: makerWallet,
-    makerAmount: makerParam,
-    makerToken,
-    takerAddress: takerWallet,
-    takerAmount: takerParam,
-    takerToken,
-    expiration: expiry,
-    ...rest,
+async function signSwap(store, action) {
+  const signer = await store.dispatch(getSigner())
+  if (signer.supportsSignTypedData) {
+    Swap.signSwapTypedData(action, signer)
+      .then(order => {
+        action.resolve(order)
+      })
+      .catch(err => {
+        action.reject(err)
+      })
+  } else {
+    Swap.signSwap(action, signer)
+      .then(order => {
+        action.resolve(order)
+      })
+      .catch(err => {
+        action.reject(err)
+      })
   }
 }
 
@@ -93,6 +69,9 @@ export default function walletMiddleware(store) {
           getSwapSimpleOrderId(action.order),
         )
         break
+      case 'FILL_SWAP':
+        makeMiddlewareEthersTransactionsFn(fillSwap, 'fillSwap', store, action, getSwapSimpleOrderId(action.order))
+        break
       case makeEthersTxnsActionTypes('fillSwapSimple').mined:
         store.dispatch(getAllBalancesForConnectedAddress())
         break
@@ -101,6 +80,9 @@ export default function walletMiddleware(store) {
         break
       case 'SIGN_SWAP_SIMPLE':
         signSwapSimple(store, action)
+        break
+      case 'SIGN_SWAP':
+        signSwap(store, action)
         break
       default:
     }
