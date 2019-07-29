@@ -57,7 +57,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
         }
       } else if (propKey === 'signTypedData') {
         return function(...args) {
-          if (supportsSignTypedData) {
+          if (!supportsSignTypedData) {
             return Promise.reject(`signTypedData not supported by ${walletType}`)
           }
 
@@ -70,8 +70,8 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
               switch (type) {
                 case 'metamask':
                   return new Promise((resolve, reject) => {
-                    target.provider._sendAsync(
-                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, data], from },
+                    window.web3.currentProvider.sendAsync(
+                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
                       (err, resp) => {
                         if (err) {
                           reject(err)

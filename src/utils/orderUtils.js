@@ -1,7 +1,9 @@
 const ethUtil = require('ethereumjs-util')
 const abi = require('ethereumjs-abi')
-const web3 = require('web3')
-const Buffer = require('buffer')
+const Web3 = require('web3')
+const { Buffer } = require('buffer')
+
+const web3 = new Web3()
 
 const constants = {
   DOMAIN_NAME: 'SWAP',
@@ -93,4 +95,5 @@ module.exports = {
       Buffer.concat([Buffer.from('1901', 'hex'), hashDomain(verifyingContract), hashOrder(order)]),
     )
   },
+  constants,
 }

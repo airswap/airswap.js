@@ -28,6 +28,7 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
   }
   const formattedTxn = stringBNValues(txn)
   const parsedInput = getParsedInputFromTransaction(formattedTxn)
+
   store.dispatch(submitted({ ...formattedTxn, ...parsedInput, timestamp: Date.now() }, uniqueId))
   let minedTxn
 

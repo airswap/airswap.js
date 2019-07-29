@@ -1,7 +1,6 @@
 const ethers = require('ethers')
 const Web3 = require('web3')
-const { hashes, constants } = require('@airswap/order-utils')
-const ethUtil = require('ethereumjs-util')
+const { constants, getOrderHash } = require('../utils/orderUtils')
 const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
 
 const web3 = new Web3()
@@ -12,21 +11,68 @@ function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
 }
 
-function swap(order, signature, signer) {
+async function swap(orderParams, signer) {
+  const {
+    version,
+    signer: signerAddress,
+    r,
+    s,
+    v,
+    nonce,
+    makerWallet,
+    makerParam,
+    makerToken,
+    takerWallet,
+    takerParam,
+    takerToken,
+    expiry,
+  } = orderParams
+
+  const signature = {
+    version,
+    signer: signerAddress,
+    r,
+    s,
+    v,
+  }
+  const order = {
+    expiry,
+    nonce,
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
+    taker: { wallet: takerWallet.toLowerCase(), token: takerToken, param: takerParam },
+    affiliate: constants.defaults.Party,
+  }
+
   const contract = getSwapContract(signer)
+
   return contract.swap(order, signature, {
-    value: ethers.utils.bigNumberify(order.taker.token === ETH_ADDRESS ? order.taker.param : 0),
+    value: ethers.utils.bigNumberify(takerToken === ETH_ADDRESS ? takerParam : 0),
   })
 }
 
-async function signSwap(order, signer) {
-  const orderHashHex = hashes.getOrderHash(order) // See: @airswap/order-utils/src/hashes.js:60
+async function signSwap(orderParams, signer) {
+  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
+  const order = {
+    expiry,
+    nonce,
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
+    taker: {
+      wallet: takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet,
+      token: takerToken,
+      param: takerParam,
+    },
+    affiliate: constants.defaults.Party,
+  }
+
+  const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
+
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
-
+  const signerAddress = await signer.getAddress()
   const { r, s, v } = sig
   return {
-    ...order,
+    ...orderParams,
+    signer: signerAddress.toLowerCase(),
     version: '0x45', // Version 0x45: personal_sign
     r,
     s,
@@ -34,10 +80,21 @@ async function signSwap(order, signer) {
   }
 }
 
-async function signSwapTypedData(order, signer) {
+async function signSwapTypedData(orderParams, signer) {
   const DOMAIN_NAME = 'SWAP'
   const DOMAIN_VERSION = '2'
   const verifyingContract = SWAP_CONTRACT_ADDRESS
+  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
+  const order = {
+    expiry,
+    nonce,
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
+    taker: {
+      wallet: takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet,
+      token: takerToken,
+      param: takerParam,
+    },
+  }
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
     domain: {
@@ -46,14 +103,15 @@ async function signSwapTypedData(order, signer) {
       verifyingContract,
     },
     primaryType: 'Order',
-    message: order, // See: @airswap/order-utils/src/orders.js:28
+    message: order, // remove falsey values on order
   }
-
-  const sig = signer.signTypedData(data)
-  const { r, s, v } = ethUtil.fromRpcSig(sig)
+  const signerAddress = await signer.getAddress()
+  const sig = await signer.signTypedData(data)
+  const { r, s, v } = ethers.utils.splitSignature(sig)
   return {
-    ...order,
+    ...orderParams,
     version: '0x01', // Version 0x01: signTypedData
+    signer: signerAddress.toLowerCase(),
     r,
     s,
     v,

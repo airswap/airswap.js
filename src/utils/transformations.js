@@ -30,6 +30,9 @@ function stringBNValues(obj) {
 }
 
 function getParsedInputFromTransaction(transaction) {
+  if (!(transaction && transaction.to)) {
+    return {}
+  }
   const to = transaction.to.toLowerCase()
   const contractInterface = new ethers.utils.Interface(abis[to])
   const { data } = transaction
@@ -43,7 +46,7 @@ function getParsedInputFromTransaction(transaction) {
 }
 
 function getTransactionDescription(transaction, tokensByAddress, getReadableOrder) {
-  if (_.isEmpty(tokensByAddress)) {
+  if (!(transaction && transaction.to) || _.isEmpty(tokensByAddress)) {
     return ''
   }
   const to = transaction.to.toLowerCase()
