@@ -44,7 +44,6 @@ async function swap(orderParams, signer) {
   }
 
   const contract = getSwapContract(signer)
-  console.log('swap input', JSON.stringify(order, null, 2), JSON.stringify(signature, null, 2))
   return contract.swap(order, signature, {
     value: ethers.utils.bigNumberify(takerToken === ETH_ADDRESS ? takerParam : 0),
   })
@@ -106,22 +105,6 @@ async function signSwapTypedData(orderParams, signer) {
   const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
-
-  console.log('eth_signTyped_data input', JSON.stringify(data, null, 2))
-  console.log(
-    'eth_signTyped_data output',
-    JSON.stringify(
-      {
-        signer: signerAddress.toLowerCase(),
-        version: '0x45', // Version 0x45: personal_sign
-        r,
-        s,
-        v,
-      },
-      null,
-      2,
-    ),
-  )
 
   return {
     ...orderParams,
