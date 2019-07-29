@@ -98,6 +98,13 @@ const startWalletAction = async (store, actionType, argParams) => {
       actionType,
       params,
     })
+  } else if (actionType === 'signTypedData') {
+    params = { signatureText: args }
+    store.dispatch({
+      type: 'START_WALLET_ACTION',
+      actionType,
+      params,
+    })
   }
 }
 
