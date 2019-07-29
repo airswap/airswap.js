@@ -7,7 +7,8 @@
     "button": "metamask-button-icon.png",
     "web3": true,
     "mobile": false,
-    "desktop": true
+    "desktop": true,
+    "supportsSignTypedData": true
   },
   {
     "type": "ledger",

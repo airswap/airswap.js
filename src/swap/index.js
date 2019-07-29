@@ -1,5 +1,7 @@
 const ethers = require('ethers')
 const Web3 = require('web3')
+const { hashes, constants } = require('@airswap/order-utils')
+const ethUtil = require('ethereumjs-util')
 const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
 
 const web3 = new Web3()
@@ -15,6 +17,47 @@ function swap(order, signature, signer) {
   return contract.swap(order, signature, {
     value: ethers.utils.bigNumberify(order.taker.token === ETH_ADDRESS ? order.taker.param : 0),
   })
+}
+
+async function signSwap(order, signer) {
+  const orderHashHex = hashes.getOrderHash(order) // See: @airswap/order-utils/src/hashes.js:60
+  const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
+  const sig = ethers.utils.splitSignature(signedMsg)
+
+  const { r, s, v } = sig
+  return {
+    ...order,
+    version: '0x45', // Version 0x45: personal_sign
+    r,
+    s,
+    v,
+  }
+}
+
+async function signSwapTypedData(order, signer) {
+  const DOMAIN_NAME = 'SWAP'
+  const DOMAIN_VERSION = '2'
+  const verifyingContract = SWAP_CONTRACT_ADDRESS
+  const data = {
+    types: constants.types, // See: @airswap/order-utils/src/constants.js:4
+    domain: {
+      name: DOMAIN_NAME,
+      version: DOMAIN_VERSION,
+      verifyingContract,
+    },
+    primaryType: 'Order',
+    message: order, // See: @airswap/order-utils/src/orders.js:28
+  }
+
+  const sig = signer.signTypedData(data)
+  const { r, s, v } = ethUtil.fromRpcSig(sig)
+  return {
+    ...order,
+    version: '0x01', // Version 0x01: signTypedData
+    r,
+    s,
+    v,
+  }
 }
 
 function swapSimple(order, signer) {
@@ -77,4 +120,4 @@ async function signSwapSimple(order, signer) {
   }
 }
 
-module.exports = { swap, swapSimple, cancel, signSwapSimple }
+module.exports = { swap, swapSimple, cancel, signSwapSimple, signSwapTypedData, signSwap }

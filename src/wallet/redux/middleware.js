@@ -121,7 +121,7 @@ function connectWeb3(store, walletType = 'web3') {
     window.ethereum
       .enable()
       .then(() => {
-        signer = getSigner({ web3Provider: window.ethereum }, walletActions)
+        signer = getSigner({ web3Provider: window.ethereum }, walletActions, walletType)
         const addressPromise = signer.getAddress()
         addressPromise.then(address => store.dispatch(connectedWallet(walletType, address.toLowerCase())))
       })

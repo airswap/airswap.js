@@ -13,6 +13,12 @@ async function fillSwapSimple(store, action) {
   return Swap.swapSimple(order, signer)
 }
 
+async function fillSwap(store, action) {
+  const signer = await store.dispatch(getSigner())
+  const { order } = action
+  return Swap.swap(order, signer)
+}
+
 async function cancelSwap(store, action) {
   const signer = await store.dispatch(getSigner())
   const { order } = action
@@ -28,6 +34,27 @@ async function signSwapSimple(store, action) {
     .catch(err => {
       action.reject(err)
     })
+}
+
+async function signSwap(store, action) {
+  const signer = await store.dispatch(getSigner())
+  if (signer.supportsSignTypedData) {
+    Swap.signSwapTypedData(mapOldOrderParamsToNewOrderFormat(action), signer)
+      .then(order => {
+        action.resolve(order)
+      })
+      .catch(err => {
+        action.reject(err)
+      })
+  } else {
+    Swap.signSwap(mapOldOrderParamsToNewOrderFormat(action), signer)
+      .then(order => {
+        action.resolve(order)
+      })
+      .catch(err => {
+        action.reject(err)
+      })
+  }
 }
 
 // this should probably be removed eventually, but it's useful for getting end-to-end test of products under the swap migration working
@@ -93,6 +120,9 @@ export default function walletMiddleware(store) {
           getSwapSimpleOrderId(action.order),
         )
         break
+      case 'FILL_SWAP':
+        makeMiddlewareEthersTransactionsFn(fillSwap, 'fillSwap', store, action, getSwapSimpleOrderId(action.order))
+        break
       case makeEthersTxnsActionTypes('fillSwapSimple').mined:
         store.dispatch(getAllBalancesForConnectedAddress())
         break
@@ -101,6 +131,9 @@ export default function walletMiddleware(store) {
         break
       case 'SIGN_SWAP_SIMPLE':
         signSwapSimple(store, action)
+        break
+      case 'SIGN_SWAP':
+        signSwap(store, action)
         break
       default:
     }
