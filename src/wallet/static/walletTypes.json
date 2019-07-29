@@ -8,7 +8,7 @@
     "web3": true,
     "mobile": false,
     "desktop": true,
-    "supportsSignTypedData": true
+    "supportsSignTypedData": false
   },
   {
     "type": "ledger",

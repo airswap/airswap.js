@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } from '../../transformations'
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
 import { AIRSWAP_GETH_NODE_ADDRESS } from '../../../constants'
+import getRevertReason from '../../revertReason'
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
@@ -38,7 +39,13 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
     store.dispatch(errorMining(formatErrorMessage(err), uniqueId))
     return
   }
-  store.dispatch(mined(stringBNValues(minedTxn), uniqueId))
+  const formattedMinedTxn = stringBNValues(minedTxn)
+  if (formattedMinedTxn.status === 0) {
+    const reason = await getRevertReason(formattedMinedTxn.transactionHash)
+    store.dispatch(errorMining(formatErrorMessage(reason), uniqueId))
+    return
+  }
+  store.dispatch(mined(formattedMinedTxn, uniqueId))
 }
 
 const ETHERS_TXNS_REDUCERS = {

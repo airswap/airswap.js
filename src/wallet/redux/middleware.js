@@ -75,7 +75,7 @@ const startWalletAction = async (store, actionType, argParams) => {
       params,
     })
 
-    let gasLimit = 160000 // a value left over frome trade-flow for all non-fills, has worked without issue
+    let gasLimit = 200000 // a value left over frome trade-flow for all non-fills, has worked without issue
     if (parsed.name === 'fill') {
       const tokens = tokenSelectors.getTokens(state)
       const order = tokenSelectors.makeGetReadableOrder(state)(parameters)

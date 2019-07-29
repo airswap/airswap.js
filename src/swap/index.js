@@ -44,7 +44,7 @@ async function swap(orderParams, signer) {
   }
 
   const contract = getSwapContract(signer)
-
+  console.log('swap input', JSON.stringify(order, null, 2), JSON.stringify(signature, null, 2))
   return contract.swap(order, signature, {
     value: ethers.utils.bigNumberify(takerToken === ETH_ADDRESS ? takerParam : 0),
   })
@@ -65,11 +65,11 @@ async function signSwap(orderParams, signer) {
   }
 
   const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
-
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
   const signerAddress = await signer.getAddress()
   const { r, s, v } = sig
+
   return {
     ...orderParams,
     signer: signerAddress.toLowerCase(),
@@ -81,9 +81,6 @@ async function signSwap(orderParams, signer) {
 }
 
 async function signSwapTypedData(orderParams, signer) {
-  const DOMAIN_NAME = 'SWAP'
-  const DOMAIN_VERSION = '2'
-  const verifyingContract = SWAP_CONTRACT_ADDRESS
   const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
   const order = {
     expiry,
@@ -94,13 +91,14 @@ async function signSwapTypedData(orderParams, signer) {
       token: takerToken,
       param: takerParam,
     },
+    affiliate: constants.defaults.Party,
   }
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
     domain: {
-      name: DOMAIN_NAME,
-      version: DOMAIN_VERSION,
-      verifyingContract,
+      name: constants.DOMAIN_NAME,
+      version: constants.DOMAIN_VERSION,
+      verifyingContract: SWAP_CONTRACT_ADDRESS,
     },
     primaryType: 'Order',
     message: order, // remove falsey values on order
@@ -108,6 +106,23 @@ async function signSwapTypedData(orderParams, signer) {
   const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
+
+  console.log('eth_signTyped_data input', JSON.stringify(data, null, 2))
+  console.log(
+    'eth_signTyped_data output',
+    JSON.stringify(
+      {
+        signer: signerAddress.toLowerCase(),
+        version: '0x45', // Version 0x45: personal_sign
+        r,
+        s,
+        v,
+      },
+      null,
+      2,
+    ),
+  )
+
   return {
     ...orderParams,
     version: '0x01', // Version 0x01: signTypedData
