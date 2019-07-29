@@ -51,12 +51,15 @@ async function swap(orderParams, signer) {
 
 async function signSwap(orderParams, signer) {
   const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
+
+  const takerWalletAddress = takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet
+
   const order = {
     expiry,
     nonce,
     maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
     taker: {
-      wallet: takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet,
+      wallet: takerWalletAddress,
       token: takerToken,
       param: takerParam,
     },
@@ -71,6 +74,7 @@ async function signSwap(orderParams, signer) {
 
   return {
     ...orderParams,
+    takerWallet: takerWalletAddress,
     signer: signerAddress.toLowerCase(),
     version: '0x45', // Version 0x45: personal_sign
     r,
