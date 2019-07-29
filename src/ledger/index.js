@@ -111,7 +111,7 @@ function createLedgerSubprovider(getTransport, options) {
   }
 
   async function signPersonalMessage(msgData) {
-    const dPath = addressToPathMap[msgData.from]
+    const dPath = addressToPathMap[msgData.from.toLowerCase()]
     if (!dPath) throw new Error(`address unknown '${msgData.from}'`)
     const transport = await getTransport()
 

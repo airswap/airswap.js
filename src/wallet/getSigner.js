@@ -41,7 +41,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
 
           return addressPromise.then(from => {
             const msg = ethUtil.bufferToHex(new Buffer(_.first(args), 'utf8'))
-            const params = [msg, from]
+            const params = [msg, from.toLowerCase()]
             const result = new Promise((resolve, reject) =>
               target.provider._sendAsync({ id: uuid(), method: 'personal_sign', params }, (err, resp) => {
                 if (err) {
