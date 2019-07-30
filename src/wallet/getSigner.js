@@ -41,7 +41,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
 
           return addressPromise.then(from => {
             const msg = ethUtil.bufferToHex(new Buffer(_.first(args), 'utf8'))
-            const params = [msg, from]
+            const params = [msg, from.toLowerCase()]
             const result = new Promise((resolve, reject) =>
               target.provider._sendAsync({ id: uuid(), method: 'personal_sign', params }, (err, resp) => {
                 if (err) {
@@ -70,7 +70,20 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
               switch (type) {
                 case 'metamask':
                   return new Promise((resolve, reject) => {
-                    window.web3.currentProvider.sendAsync(
+                    target.provider._web3Provider.sendAsync(
+                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
+                      (err, resp) => {
+                        if (err) {
+                          reject(err)
+                        } else {
+                          resolve(_.get(resp, 'result'))
+                        }
+                      },
+                    )
+                  })
+                case 'fortmatic':
+                  return new Promise((resolve, reject) => {
+                    target.provider._web3Provider.sendAsync(
                       { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
                       (err, resp) => {
                         if (err) {
