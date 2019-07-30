@@ -36,7 +36,8 @@
     "logo": "trust-icon.png",
     "web3": true,
     "mobile": true,
-    "desktop": false
+    "desktop": false,
+    "supportsSignTypedData": false
   },
   {
     "type": "coinbase",
@@ -45,7 +46,8 @@
     "logo": "trust-icon.png",
     "web3": true,
     "mobile": true,
-    "desktop": false
+    "desktop": false,
+    "supportsSignTypedData": false
   },
   {
     "type": "cipher",
@@ -92,5 +94,27 @@
     "web3": true,
     "mobile": true,
     "desktop": false
+  },
+  {
+    "type": "fortmatic",
+    "label": "Fortmatic",
+    "button_label": "Connect using Fortmatic",
+    "logo": "",
+    "button": "",
+    "web3": false,
+    "mobile": true,
+    "desktop": true,
+    "supportsSignTypedData": true
+  },
+  {
+    "type": "portis",
+    "label": "Portis",
+    "button_label": "Connect using Portis",
+    "logo": "",
+    "button": "",
+    "web3": false,
+    "mobile": true,
+    "desktop": true,
+    "supportsSignTypedData": false // it is supposed to work, but it doesn't seem to work right
   }
 ]

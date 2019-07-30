@@ -156,6 +156,9 @@ export default function balancesMiddleware(store) {
       case 'ADD_TRACKED_ADDRESSES':
         initializeTrackedAddresses(store)
         break
+      case 'ADD_TRACKED_ADDRESS':
+        initializeTrackedAddresses(store)
+        break
       case 'CONNECTED_WALLET':
         addConnectedAddressToTrackedAddresses(store)
         break
