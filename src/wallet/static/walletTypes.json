@@ -115,6 +115,6 @@
     "web3": false,
     "mobile": true,
     "desktop": true,
-    "supportsSignTypedData": false // it is supposed to work, but it doesn't seem to work right
+    "supportsSignTypedData": false
   }
 ]
