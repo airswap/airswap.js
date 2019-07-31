@@ -47,7 +47,14 @@ jobs:
           command: npm-login-noninteractive
       - run:
           name: Publish package
-          command: npm publish
+          command: |
+            NPM_NAME=$(node -p "require('./package.json').name")
+            NPM_VERSION=$(npm view $NPM_NAME version || :)
+            LOCAL_VERSION=$(node -p "require('./package.json').version")
+            if [[ $LOCAL_VERSION != $NPM_VERSION ]]; then
+              echo "Updating NPM..." # this is where we deploy the code to npm
+              npm publish
+            fi
       - slack/status
       - datadog/deploy
 
