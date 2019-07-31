@@ -3,7 +3,7 @@ import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '..
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as apiSelectors } from '../../api/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } from '../../constants'
+import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -27,6 +27,38 @@ function loadBalancesForAddresses(addresses, store) {
   const tokens = apiSelectors.getAvailableTokenAddresses(store.getState())
   getManyBalancesManyAddresses(tokens, addresses).then(results => {
     store.dispatch(gotTokenBalances(results))
+  })
+}
+
+function loadBalancesForTokenAddressMap(tokenAddressMap, store) {
+  _.mapValues(tokenAddressMap, (tokens, address) => {
+    _.chunk(tokens, 30).map(tokenSubset => {
+      // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
+      getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
+        store.dispatch(gotTokenBalances(results))
+      })
+    })
+  })
+}
+
+function loadSwapAllowancesBalancesForTokenAddressMap(tokenAddressMap, store) {
+  _.mapValues(tokenAddressMap, (tokens, address) => {
+    _.chunk(tokens, 30).map(tokenSubset => {
+      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
+        store.dispatch(gotSwapTokenApprovals(results))
+      })
+    })
+  })
+}
+
+function loadSwapLegacyAllowancesBalancesForTokenAddressMap(tokenAddressMap, store) {
+  _.mapValues(tokenAddressMap, (tokens, address) => {
+    _.chunk(tokens, 30).map(tokenSubset => {
+      // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
+      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
+        store.dispatch(gotTokenApprovals(results))
+      })
+    })
   })
 }
 
@@ -55,6 +87,46 @@ function reduceERC20LogsToTokenAddressMap(logs) {
   )
 }
 
+function reduceSwapFillsLogsToTokenAddressMap(logs) {
+  const parsedLogs = _.reduce(
+    logs,
+    (obj, log) => {
+      const {
+        values: { makerWallet, takerWallet, makerToken, takerToken },
+      } = log
+      obj[makerWallet] = _.isArray(obj[makerWallet]) //eslint-disable-line
+        ? _.uniq([...obj[makerWallet], makerToken, takerToken])
+        : [makerToken, takerToken]
+      obj[takerWallet] = _.isArray(obj[takerWallet]) //eslint-disable-line
+        ? _.uniq([...obj[takerWallet], makerToken, takerToken])
+        : [takerToken, takerToken]
+      return obj
+    },
+    {},
+  )
+  return parsedLogs
+}
+
+function reduceBlockTransactionsToTokenAddressMap(block) {
+  const blockAddresses = _.reduce(
+    block.transactions,
+    (addressesAccumulator, { to, from }) =>
+      _.uniq(_.compact([(to || '').toLowerCase(), (from || '').toLowerCase(), ...addressesAccumulator])),
+    [],
+  )
+  return _.zipObject(blockAddresses, blockAddresses.map(() => [ETH_ADDRESS]))
+}
+
+function filterTokenAddressMapByTrackedAddresses(tokenAddressMap, store) {
+  const trackedTokensByAddress = deltaBalancesSelectors.getTrackedTokensByAddress(store.getState())
+  const mappedValues = _.mapValues(tokenAddressMap, (tokenAddresses, walletAddress) => {
+    const intersection = _.intersection(trackedTokensByAddress[walletAddress], tokenAddresses)
+    return intersection.length ? intersection : null
+  })
+  const cleanedMappedValues = _.pickBy(mappedValues, _.identity)
+  return cleanedMappedValues
+}
+
 function initializeTrackedAddresses(store) {
   const state = store.getState()
   const balances = deltaBalancesSelectors.getBalances(state)
@@ -75,20 +147,10 @@ function initializeTrackedAddresses(store) {
     },
     {},
   )
-  _.mapValues(uninitializedTrackedTokensByAddress, (tokens, address) => {
-    _.chunk(tokens, 30).map(tokenSubset => {
-      // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
-      getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
-        store.dispatch(gotTokenBalances(results))
-      })
-      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
-        store.dispatch(gotTokenApprovals(results))
-      })
-      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
-        store.dispatch(gotSwapTokenApprovals(results))
-      })
-    })
-  })
+
+  loadBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
+  loadSwapAllowancesBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
+  loadSwapLegacyAllowancesBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
 }
 
 function addConnectedAddressToTrackedAddresses(store) {
@@ -131,22 +193,25 @@ export default function balancesMiddleware(store) {
         )
         break
       case makeEventActionTypes('erc20Transfers').got:
-        const logs = _.get(action, 'response', [])
-        const addresses = _.keys(reduceERC20LogsToTokenAddressMap(logs))
-        loadBalancesForAddresses(addresses, store)
+        const erc20Logs = _.get(action, 'response', [])
+        const tokenAddressMap = filterTokenAddressMapByTrackedAddresses(
+          reduceERC20LogsToTokenAddressMap(erc20Logs),
+          store,
+        )
+        loadBalancesForTokenAddressMap(tokenAddressMap, store)
+        break
+      case makeEventActionTypes('swapFills').got:
+        const swapLogs = _.get(action, 'response', [])
+        const swapTokenAddressMap = filterTokenAddressMapByTrackedAddresses(
+          reduceSwapFillsLogsToTokenAddressMap(swapLogs),
+          store,
+        )
+        loadBalancesForTokenAddressMap(swapTokenAddressMap, store)
         break
       case 'GOT_LATEST_BLOCK':
-        const trackedAddresses = deltaBalancesSelectors.getTrackedWalletAddresses(state)
-        const blockAddresses = _.reduce(
-          action.block.transactions,
-          (addressesAccumulator, { to, from }) =>
-            _.uniq(_.compact([(to || '').toLowerCase(), (from || '').toLowerCase(), ...addressesAccumulator])),
-          [],
-        )
-        const addressesToUpdate = _.intersection(trackedAddresses, blockAddresses)
-        if (addressesToUpdate.length) {
-          loadBalancesForAddresses(addressesToUpdate, store)
-        }
+        const bts = reduceBlockTransactionsToTokenAddressMap(action.block)
+        const blockTokenAddressMap = filterTokenAddressMapByTrackedAddresses(bts, store)
+        loadBalancesForTokenAddressMap(blockTokenAddressMap, store)
         break
       default:
     }

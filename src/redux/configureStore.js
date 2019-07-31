@@ -9,6 +9,7 @@ import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
 import { middleware, rootReducerObj } from './state'
+import { waitForStateMiddleware } from '../utils/redux/waitForState'
 
 const storageKey = '@airswap_libraries'
 const qs = queryString.parse(window.location.search)
@@ -38,7 +39,9 @@ export default function configureStore(
   const store = createStore(
     reducer,
     defaultState,
-    composeEnhancers(applyMiddleware(...[thunk, persistMiddleware, ...middleware, ...projectMiddleware])),
+    composeEnhancers(
+      applyMiddleware(...[thunk, persistMiddleware, waitForStateMiddleware, ...middleware, ...projectMiddleware]),
+    ),
   )
   const load = storage.createLoader(engine)
 
