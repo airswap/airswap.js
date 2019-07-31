@@ -2,7 +2,7 @@ const { NETWORK_NAME } = require('../constants')
 
 const ethers = require('ethers')
 
-const provider = new ethers.getDefaultProvider(NETWORK_NAME || '')
+const provider = new ethers.getDefaultProvider(NETWORK_NAME || 'homestead')
 
 function hex_to_ascii(str1) {
   const hex = str1.toString()
