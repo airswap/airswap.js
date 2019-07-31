@@ -1,8 +1,8 @@
-const { AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
+const { NETWORK_NAME } = require('../constants')
 
 const ethers = require('ethers')
 
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const provider = new ethers.getDefaultProvider(NETWORK_NAME || '')
 
 function hex_to_ascii(str1) {
   const hex = str1.toString()

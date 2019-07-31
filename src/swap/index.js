@@ -5,8 +5,6 @@ const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
 
 const web3 = new Web3()
 
-window.bignumberify = ethers.utils.bigNumberify
-
 function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
 }
@@ -182,4 +180,10 @@ async function signSwapSimple(order, signer) {
   }
 }
 
-module.exports = { swap, swapSimple, cancel, signSwapSimple, signSwapTypedData, signSwap }
+function getMakerOrderStatus(makerAddress, nonce, signer) {
+  const contract = getSwapContract(signer)
+
+  return contract.makerOrderStatus(makerAddress, nonce)
+}
+
+module.exports = { swap, swapSimple, cancel, signSwapSimple, signSwapTypedData, signSwap, getMakerOrderStatus }
