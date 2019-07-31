@@ -12,7 +12,7 @@ const ETHERS_TXNS_ACTIONS = [
   { action: 'errorSubmitting', paramsKeys: ['error', 'id'] },
   { action: 'submitted', paramsKeys: ['transaction', 'id'] },
   { action: 'mined', paramsKeys: ['transactionReceipt', 'id'] },
-  { action: 'errorMining', paramsKeys: ['error', 'id'] },
+  { action: 'errorMining', paramsKeys: ['error', 'id', 'transactionReceipt'] },
 ]
 
 export const makeEthersTxnsActionsCreators = id => makeActionCreators(ETHERS_TXNS_ACTIONS, id)
@@ -42,7 +42,12 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
   const formattedMinedTxn = stringBNValues(minedTxn)
   if (formattedMinedTxn.status === 0) {
     const reason = await getRevertReason(formattedMinedTxn.transactionHash)
-    store.dispatch(errorMining(formatErrorMessage(reason), uniqueId))
+    store.dispatch(
+      errorMining(formatErrorMessage(reason) || 'Transaction Failed', uniqueId, {
+        ...formattedMinedTxn,
+        revertReason: reason,
+      }),
+    )
     return
   }
   store.dispatch(mined(formattedMinedTxn, uniqueId))
@@ -93,6 +98,7 @@ const ETHERS_TXNS_REDUCERS = {
     defaultState: {},
     switch: {
       mined: ({ transactionReceipt, id }, state) => ({ ...state, [id]: transactionReceipt }),
+      errorMining: ({ transactionReceipt, id }, state) => ({ ...state, [id]: transactionReceipt }),
     },
   },
   errorMining: {
