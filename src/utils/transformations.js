@@ -95,7 +95,7 @@ function getTransactionTextStatus(transactionReceipt) {
   let textStatus = ''
   let eventStatus = ''
   const status = Number(_.get(transactionReceipt, 'status'))
-  if (!status) {
+  if (status !== 0 && !status) {
     textStatus = 'pending'
     return { textStatus, eventStatus }
   }

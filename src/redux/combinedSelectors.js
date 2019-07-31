@@ -92,6 +92,7 @@ const getTransactionHistory = createSelector(
     ]).map(tx => {
       const transactionReceipt = _.find(receipts, { transactionHash: tx.hash })
       const { textStatus, eventStatus } = getTransactionTextStatus(transactionReceipt)
+
       return {
         transactionHash: tx.hash,
         transaction: tx,
