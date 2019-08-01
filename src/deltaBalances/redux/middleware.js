@@ -41,7 +41,7 @@ function loadBalancesForTokenAddressMap(tokenAddressMap, store) {
   })
 }
 
-function loadSwapAllowancesBalancesForTokenAddressMap(tokenAddressMap, store) {
+function loadSwapAllowancesForTokenAddressMap(tokenAddressMap, store) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, 30).map(tokenSubset => {
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
@@ -51,7 +51,7 @@ function loadSwapAllowancesBalancesForTokenAddressMap(tokenAddressMap, store) {
   })
 }
 
-function loadSwapLegacyAllowancesBalancesForTokenAddressMap(tokenAddressMap, store) {
+function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap, store) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, 30).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
@@ -149,8 +149,8 @@ function initializeTrackedAddresses(store) {
   )
 
   loadBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
-  loadSwapAllowancesBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
-  loadSwapLegacyAllowancesBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
+  loadSwapAllowancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
+  loadSwapLegacyAllowancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
 }
 
 function addConnectedAddressToTrackedAddresses(store) {
@@ -170,8 +170,7 @@ export default function balancesMiddleware(store) {
   return next => action => {
     const state = store.getState()
     const address = getConnectedWalletAddress(state)
-    const approvedTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
-    const approvedTokenAddresses = _.map(approvedTokens, 'address')
+    const connectedTokenAddressMap = _.pick(deltaBalancesSelectors.getTrackedTokensByAddress(state), [address])
     switch (action.type) {
       case 'GET_ALL_BALANCES_FOR_ADDRESS':
         loadBalancesForAddresses([action.address], store)
@@ -180,17 +179,11 @@ export default function balancesMiddleware(store) {
         loadAllowancesForAddresses([action.address], store)
         break
       case 'GET_ALL_BALANCES_FOR_CONNECTED_ADDRESS':
-        loadBalancesForAddresses([address], store)
+        loadBalancesForTokenAddressMap(connectedTokenAddressMap, store)
         break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
-        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_CONTRACT_ADDRESS).then(results => {
-          store.dispatch(gotSwapTokenApprovals(results))
-        })
-        getManyAllowancesManyAddresses(approvedTokenAddresses, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(
-          results => {
-            store.dispatch(gotTokenApprovals(results))
-          },
-        )
+        loadSwapAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
+        loadSwapLegacyAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
         break
       case makeEventActionTypes('erc20Transfers').got:
         const erc20Logs = _.get(action, 'response', [])
