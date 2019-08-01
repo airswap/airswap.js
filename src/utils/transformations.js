@@ -1,5 +1,5 @@
 const { ethers } = require('ethers')
-const { abis } = require('../constants')
+const { abis, SWAP_CONTRACT_ADDRESS } = require('../constants')
 
 const _ = require('lodash')
 const BigNumber = require('bignumber.js')
@@ -29,6 +29,45 @@ function stringBNValues(obj) {
   return _.mapValues(obj, v => (v && v._ethersType === 'BigNumber' ? v.toString() : v)) // eslint_disable_line
 }
 
+function parseSwapParameters(parameters) {
+  const { _order, _signature } = parameters
+  if (!(_order && _signature)) {
+    return parameters
+  }
+  const [
+    nonce,
+    expiry,
+    makerWallet,
+    makerToken,
+    makerParam,
+    takerWallet,
+    takerToken,
+    takerParam,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+  ] = _order.split(',')
+  const [signer, v, r, s, version] = _signature.split(',')
+  return {
+    nonce,
+    expiry,
+    makerWallet,
+    makerToken,
+    makerParam,
+    takerWallet,
+    takerToken,
+    takerParam,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+    signer,
+    v,
+    r,
+    s,
+    version,
+  }
+}
+
 function getParsedInputFromTransaction(transaction) {
   if (!(transaction && transaction.to)) {
     return {}
@@ -42,7 +81,11 @@ function getParsedInputFromTransaction(transaction) {
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
   const parameters = _.zipObject(parameterKeys, parameterValues)
   const value = ethers.utils.formatEther(transaction.value)
-  return { name, parameters, formattedETHValue: value }
+  return {
+    name,
+    parameters: to === SWAP_CONTRACT_ADDRESS ? parseSwapParameters(parameters) : parameters,
+    formattedETHValue: value,
+  }
 }
 
 function getTransactionDescription(transaction, tokensByAddress, getReadableOrder) {
