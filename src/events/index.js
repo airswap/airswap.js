@@ -14,9 +14,13 @@ const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
 const queries = {}
 
+const { hexlify, hexStripZeros } = ethers.utils
+
 async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
-  const toBlockOverride = toBlock || (await provider.getBlockNumber())
-  const fromBlockOverride = fromBlock || Number(toBlockOverride) - 7000 // default is around 1 day of blocks
+  const toBlockOverride =
+    _.isUndefined(toBlock) || _.isNull(toBlock) ? await provider.getBlockNumber() : Number(toBlock)
+  const fromBlockOverride =
+    _.isUndefined(fromBlock) || _.isNull(fromBlock) ? Number(toBlockOverride) - 7000 : Number(fromBlock) // default is around 1 day of blocks
 
   let topicParam
   if (topic) {
@@ -33,16 +37,17 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
   }
 
   let logs
+  const logParams = [
+    {
+      ...query,
+      fromBlock: hexStripZeros(hexlify(fromBlockOverride)),
+      toBlock: hexStripZeros(hexlify(toBlockOverride)),
+    },
+  ]
   try {
-    logs = await getLogs([
-      {
-        ...query,
-        fromBlock: ethers.utils.hexlify(fromBlockOverride),
-        toBlock: ethers.utils.hexlify(toBlockOverride),
-      },
-    ])
+    logs = await getLogs(logParams)
   } catch (e) {
-    console.log('error fetching logs from geth', e)
+    console.log('error fetching logs from geth', e, logParams)
     return
   }
 
@@ -132,13 +137,13 @@ function fetchFailedExchangeLogsForMakerAddress(makerAddress, fromBlock = swapLe
   return fetchLogs(SWAP_LEGACY_CONTRACT_ADDRESS, abis[SWAP_LEGACY_CONTRACT_ADDRESS], topics, fromBlock)
 }
 
-function fetchSwapFillsForMakerAddress(makerAddress, fromBlock = 1) {
+function fetchSwapFillsForMakerAddress(makerAddress, fromBlock = 0) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
   const topics = abiInterface.events.Swap.encodeTopics([null, null, makerAddress.toLowerCase()])
   return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)
 }
 
-function fetchSwapCancelsForMakerAddress(makerAddress, fromBlock = 1) {
+function fetchSwapCancelsForMakerAddress(makerAddress, fromBlock = 0) {
   const abiInterface = new ethers.utils.Interface(abis[SWAP_CONTRACT_ADDRESS])
   const topics = abiInterface.events.Cancel.encodeTopics([null, makerAddress.toLowerCase()])
   return fetchLogs(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], topics, fromBlock)
