@@ -4,6 +4,7 @@ import * as wallet from '../wallet/redux'
 import * as deltaBalances from '../deltaBalances/redux'
 import * as events from '../events/redux'
 import * as api from '../api/redux'
+import * as ens from '../ens/redux'
 import * as erc20 from '../erc20/redux'
 import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
@@ -24,6 +25,7 @@ const state = {
   deltaBalances,
   events,
   api,
+  ens,
   erc20,
   keySpace,
   dexIndex,
