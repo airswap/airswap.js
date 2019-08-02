@@ -26,7 +26,7 @@ const ens = (state = defaultState, action) => {
     case 'ENS_LOOKUP_ERROR':
       return {
         ...state,
-        initializingKeyspace: action.error,
+        error: action.error,
         isDoingLookup: false,
       }
     case 'ENS_LOOKUP_SUCCESS':
