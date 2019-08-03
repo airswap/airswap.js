@@ -3,15 +3,16 @@ const ethers = require('ethers')
 const uuid = require('uuid')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
+const { NODESMITH_URL, NODESMITH_KEY, httpProvider } = require('../constants')
 
-const ethersProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const ethersProvider = httpProvider
 
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
 let nodesmithProvider
 let nodesmithOpenPromise
-if (nodesmithSupported) {
+
+async function initializeNodesmith() {
   nodesmithProvider = new WebSocket(NODESMITH_URL)
   nodesmithOpenPromise = new Promise(resolve => {
     nodesmithProvider.onopen = () => {
@@ -27,6 +28,17 @@ if (nodesmithSupported) {
       resolve(message.result)
     }
   }
+  nodesmithProvider.onclose = evt => {
+    console.error('nodesmith websocket closed', evt)
+  }
+
+  nodesmithProvider.onerror = evt => {
+    console.error('nodesmith websocket closed', evt)
+  }
+}
+
+if (nodesmithSupported) {
+  initializeNodesmith()
 }
 
 async function send({ method, params }) {
