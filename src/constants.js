@@ -1,3 +1,4 @@
+const ethers = require('ethers')
 const _ = require('lodash')
 const ERC20abi = require('human-standard-token-abi')
 const astAbi = require('./abis/AirSwapToken_rinkeby.json')
@@ -146,6 +147,18 @@ const INFURA_GETH_NODE = (N => {
     default:
   }
 })(NETWORK)
+
+const NODESMITH_GETH_NODE = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'https://ethereum.api.nodesmith.io/v1/rinkeby/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
+    case MAIN_ID:
+      return 'https://ethereum.api.nodesmith.io/v1/mainnet/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
+    default:
+  }
+})(NETWORK)
+
+const httpProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -314,4 +327,5 @@ module.exports = {
   NODESMITH_URL,
   FORTMATIC_ID,
   IS_INSTANT,
+  httpProvider,
 }

@@ -2,8 +2,8 @@ import _ from 'lodash'
 import HDKey from 'hdkey'
 import ehdkey from 'ethereumjs-wallet/hdkey'
 import * as actions from './actions'
-import { getAllBalancesForAddress } from '../../deltaBalances/redux/actions'
-import { defaultHDWPaths } from '../static/constants'
+import { addTrackedAddress } from '../../deltaBalances/redux/actions'
+import { defaultHDWPaths, ETH_ADDRESS } from '../static/constants'
 // import { initLedger } from '../../wallet/redux/actions'
 
 const addressMapping = {}
@@ -37,7 +37,7 @@ const getHWDAddresses = (store, start) => {
       index: i,
     })
     addressMapping[aPath] = aAddress
-    store.dispatch(getAllBalancesForAddress(aAddress))
+    store.dispatch(addTrackedAddress({ address: aAddress, tokenAddress: ETH_ADDRESS }))
   }
   store.dispatch({
     type: 'LOADED_HDW_ACCOUNTS',
