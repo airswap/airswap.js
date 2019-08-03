@@ -11,7 +11,8 @@ const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
 let nodesmithProvider
 let nodesmithOpenPromise
-if (nodesmithSupported) {
+
+async function initializeNodesmith() {
   nodesmithProvider = new WebSocket(NODESMITH_URL)
   nodesmithOpenPromise = new Promise(resolve => {
     nodesmithProvider.onopen = () => {
@@ -27,6 +28,17 @@ if (nodesmithSupported) {
       resolve(message.result)
     }
   }
+  nodesmithProvider.onclose = evt => {
+    console.error('nodesmith websocket closed', evt)
+  }
+
+  nodesmithProvider.onerror = evt => {
+    console.error('nodesmith websocket closed', evt)
+  }
+}
+
+if (nodesmithSupported) {
+  initializeNodesmith()
 }
 
 async function send({ method, params }) {

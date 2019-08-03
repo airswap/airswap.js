@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
-import { selectors as apiSelectors } from '../../api/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
@@ -23,16 +22,11 @@ export const gotTokenApprovals = approvals => ({
   approvals,
 })
 
-function loadBalancesForAddresses(addresses, store) {
-  const tokens = apiSelectors.getAvailableTokenAddresses(store.getState())
-  getManyBalancesManyAddresses(tokens, addresses).then(results => {
-    store.dispatch(gotTokenBalances(results))
-  })
-}
+const websocketChunkSize = 20
 
 function loadBalancesForTokenAddressMap(tokenAddressMap, store) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
-    _.chunk(tokens, 30).map(tokenSubset => {
+    _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
       getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
         store.dispatch(gotTokenBalances(results))
@@ -43,7 +37,7 @@ function loadBalancesForTokenAddressMap(tokenAddressMap, store) {
 
 function loadSwapAllowancesForTokenAddressMap(tokenAddressMap, store) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
-    _.chunk(tokens, 30).map(tokenSubset => {
+    _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
         store.dispatch(gotSwapTokenApprovals(results))
       })
@@ -53,22 +47,12 @@ function loadSwapAllowancesForTokenAddressMap(tokenAddressMap, store) {
 
 function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap, store) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
-    _.chunk(tokens, 30).map(tokenSubset => {
+    _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
         store.dispatch(gotTokenApprovals(results))
       })
     })
-  })
-}
-
-function loadAllowancesForAddresses(addresses, store) {
-  const tokens = apiSelectors.getAvailableTokenAddresses(store.getState())
-  getManyAllowancesManyAddresses(tokens, addresses, SWAP_CONTRACT_ADDRESS).then(results => {
-    store.dispatch(gotSwapTokenApprovals(results))
-  })
-  getManyAllowancesManyAddresses(tokens, addresses, SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
-    store.dispatch(gotTokenApprovals(results))
   })
 }
 
@@ -172,12 +156,6 @@ export default function balancesMiddleware(store) {
     const address = getConnectedWalletAddress(state)
     const connectedTokenAddressMap = _.pick(deltaBalancesSelectors.getTrackedTokensByAddress(state), [address])
     switch (action.type) {
-      case 'GET_ALL_BALANCES_FOR_ADDRESS':
-        loadBalancesForAddresses([action.address], store)
-        break
-      case 'GET_ALL_ALLOWANCES_FOR_ADDRESS':
-        loadAllowancesForAddresses([action.address], store)
-        break
       case 'GET_ALL_BALANCES_FOR_CONNECTED_ADDRESS':
         loadBalancesForTokenAddressMap(connectedTokenAddressMap, store)
         break
