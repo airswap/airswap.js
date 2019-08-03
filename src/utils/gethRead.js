@@ -3,9 +3,9 @@ const ethers = require('ethers')
 const uuid = require('uuid')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
+const { NODESMITH_URL, NODESMITH_KEY, httpProvider } = require('../constants')
 
-const ethersProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const ethersProvider = httpProvider
 
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}

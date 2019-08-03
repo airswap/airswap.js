@@ -2,16 +2,11 @@ const ethers = require('ethers')
 const _ = require('lodash')
 const tokenMetadata = require('../tokens')
 
-const {
-  AIRSWAP_GETH_NODE_ADDRESS,
-  DELTA_BALANCES_CONTRACT_ADDRESS,
-  abis,
-  TOKEN_APPROVAL_CHECK_AMOUNT,
-} = require('../constants')
+const { httpProvider, DELTA_BALANCES_CONTRACT_ADDRESS, abis, TOKEN_APPROVAL_CHECK_AMOUNT } = require('../constants')
 
 const { call } = require('../utils/gethRead')
 
-const defaultProvider = traceMethodCalls(new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS))
+const defaultProvider = traceMethodCalls(httpProvider)
 
 // Putting this in place until ethers.js implements a proper websocket provider (https://github.com/ethers-io/ethers.js/issues/141)
 // this allows mass balance reads to be done over websocket. Keep in mind the eth_call payload can't be too big or it will crash the websocket
