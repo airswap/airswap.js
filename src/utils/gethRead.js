@@ -99,10 +99,10 @@ function hexToInt(hexInt) {
   return Number.parseInt(hexInt, 16)
 }
 
-async function call(txObj) {
+async function call(txObj, blockTag = 'latest') {
   const method = {
     method: 'eth_call',
-    params: [txObj, 'latest'],
+    params: [txObj, blockTag],
   }
   return send(method)
 }
