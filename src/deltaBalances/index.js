@@ -11,17 +11,17 @@ const {
 
 const { call } = require('../utils/gethRead')
 
-const provider = traceMethodCalls(new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS))
+const defaultProvider = traceMethodCalls(new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS))
 
 // Putting this in place until ethers.js implements a proper websocket provider (https://github.com/ethers-io/ethers.js/issues/141)
 // this allows mass balance reads to be done over websocket. Keep in mind the eth_call payload can't be too big or it will crash the websocket
-function traceMethodCalls(obj) {
+function traceMethodCalls(obj, blockTag = 'latest') {
   const handler = {
     get(target, propKey) {
       if (propKey === 'call') {
         return async function({ to, data }) {
           const toResolved = await to
-          const res = await call({ to: toResolved, data })
+          const res = await call({ to: toResolved, data }, blockTag)
 
           return res
         }
@@ -32,13 +32,13 @@ function traceMethodCalls(obj) {
   return new Proxy(obj, handler)
 }
 
-const deltaBalancesContract = new ethers.Contract(
-  DELTA_BALANCES_CONTRACT_ADDRESS,
-  abis[DELTA_BALANCES_CONTRACT_ADDRESS],
-  provider,
-)
+function getManyBalancesManyAddresses(tokens, addresses, provider = defaultProvider) {
+  const deltaBalancesContract = new ethers.Contract(
+    DELTA_BALANCES_CONTRACT_ADDRESS,
+    abis[DELTA_BALANCES_CONTRACT_ADDRESS],
+    provider,
+  )
 
-function getManyBalancesManyAddresses(tokens, addresses) {
   return deltaBalancesContract.allBalancesForManyAccounts(addresses, tokens).then(results => {
     const t = tokens.length
     const balances = _.map(addresses, (address, i) => {
@@ -49,7 +49,13 @@ function getManyBalancesManyAddresses(tokens, addresses) {
   })
 }
 
-function getManyAllowancesManyAddresses(tokens, addresses, spender) {
+function getManyAllowancesManyAddresses(tokens, addresses, spender, provider = defaultProvider) {
+  const deltaBalancesContract = new ethers.Contract(
+    DELTA_BALANCES_CONTRACT_ADDRESS,
+    abis[DELTA_BALANCES_CONTRACT_ADDRESS],
+    provider,
+  )
+
   return deltaBalancesContract.allAllowancesForManyAccounts(addresses, spender, tokens).then(results => {
     const t = tokens.length
     const allAllowances = _.map(addresses, (address, i) => {
@@ -78,4 +84,5 @@ module.exports = {
   getManyAllowancesManyAddresses,
   getAirSwapTokenBalancesForManyAddresses,
   getAirSwapTokenAllowancesForManyAddresses,
+  traceMethodCalls,
 }
