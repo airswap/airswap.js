@@ -47,6 +47,8 @@ async function swap(orderParams, signer) {
   })
 }
 
+const { kind } = constants.defaults.Party
+
 async function signSwap(orderParams, signer) {
   const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
 
@@ -55,11 +57,12 @@ async function signSwap(orderParams, signer) {
   const order = {
     expiry,
     nonce,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
     taker: {
       wallet: takerWalletAddress,
       token: takerToken,
       param: takerParam,
+      kind,
     },
     affiliate: constants.defaults.Party,
   }
@@ -87,11 +90,12 @@ async function signSwapTypedData(orderParams, signer) {
   const order = {
     expiry,
     nonce,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
     taker: {
       wallet: takerWalletAddress,
       token: takerToken,
       param: takerParam,
+      kind,
     },
     affiliate: constants.defaults.Party,
   }
