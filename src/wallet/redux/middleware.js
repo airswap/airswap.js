@@ -260,8 +260,15 @@ function attemptExpressLogin(store) {
           }
           break
         default:
-          window.ethereum.send('eth_accounts').then(({ result }) => {
-            if ((_.first(result) || '').toLowerCase() === expressLoginCredentials.address) {
+          window.ethereum.send({ method: 'eth_accounts' }, (err, resp) => {
+            if (err) {
+              return err
+            }
+            const address = _.first(_.get(resp, 'result'))
+            if (!address) {
+              return 'address not found'
+            }
+            if (address.toLowerCase() === expressLoginCredentials.address) {
               store.dispatch(connectWallet(expressLoginCredentials.walletType))
             }
           })

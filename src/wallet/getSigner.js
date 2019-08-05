@@ -119,6 +119,8 @@ function getSigner(params, walletActions = {}, walletType) {
     let networkVersion
     if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {
       networkVersion = NETWORK
+    } else if (web3Provider.networkVersion) {
+      networkVersion = Number(web3Provider.networkVersion)
     } else {
       networkVersion = Number(web3Provider.send({ method: 'net_version' }).result)
     }

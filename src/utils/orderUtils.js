@@ -1,9 +1,7 @@
 const ethUtil = require('ethereumjs-util')
 const abi = require('ethereumjs-abi')
-const Web3 = require('web3')
+const utils = require('web3-utils')
 const { Buffer } = require('buffer')
-
-const web3 = new Web3()
 
 const constants = {
   DOMAIN_NAME: 'SWAP',
@@ -51,9 +49,9 @@ function stringify(type) {
   return `${str})`
 }
 
-const EIP712_DOMAIN_TYPEHASH = web3.utils.soliditySha3(stringify('EIP712Domain'))
-const ORDER_TYPEHASH = web3.utils.soliditySha3(stringify('Order') + stringify('Party'))
-const PARTY_TYPEHASH = web3.utils.soliditySha3(stringify('Party'))
+const EIP712_DOMAIN_TYPEHASH = utils.soliditySha3(stringify('EIP712Domain'))
+const ORDER_TYPEHASH = utils.soliditySha3(stringify('Order') + stringify('Party'))
+const PARTY_TYPEHASH = utils.soliditySha3(stringify('Party'))
 
 function hashParty(party) {
   return ethUtil.keccak256(
