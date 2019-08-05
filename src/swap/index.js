@@ -36,10 +36,13 @@ async function swap(orderParams, signer) {
   const order = {
     expiry,
     nonce,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam },
-    taker: { wallet: takerWallet.toLowerCase(), token: takerToken, param: takerParam },
+    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
+    taker: { wallet: takerWallet.toLowerCase(), token: takerToken, param: takerParam, kind },
     affiliate: constants.defaults.Party,
   }
+
+  console.log(JSON.stringify(order, null, 2))
+  console.log(JSON.stringify(signature, null, 2))
 
   const contract = getSwapContract(signer)
   return contract.swap(order, signature, {
@@ -55,8 +58,8 @@ async function signSwap(orderParams, signer) {
   const takerWalletAddress = takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet
 
   const order = {
-    expiry,
     nonce,
+    expiry,
     maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
     taker: {
       wallet: takerWalletAddress,

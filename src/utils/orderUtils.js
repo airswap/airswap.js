@@ -8,7 +8,7 @@ const constants = {
   DOMAIN_VERSION: '2',
   SECONDS_IN_DAY: 86400,
   EMPTY_ADDRESS: '0x0000000000000000000000000000000000000000',
-  ONE_ETH: web3.utils.toWei('1', 'ether'),
+  ONE_ETH: utils.toWei('1', 'ether'),
   ERC721_INTERFACE_ID: '0x80ac58cd',
   ERC20_INTERFACE_ID: '0x277f8169',
   types: {
