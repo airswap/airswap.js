@@ -41,9 +41,6 @@ async function swap(orderParams, signer) {
     affiliate: constants.defaults.Party,
   }
 
-  console.log(JSON.stringify(order, null, 2))
-  console.log(JSON.stringify(signature, null, 2))
-
   const contract = getSwapContract(signer)
   return contract.swap(order, signature, {
     value: ethers.utils.bigNumberify(takerToken === ETH_ADDRESS ? takerParam : 0),
