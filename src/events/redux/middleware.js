@@ -149,14 +149,6 @@ export default function eventsMiddleware(store) {
           action.block.number - 1,
           action.block.number,
         ).then(logs => {
-          console.log(
-            SWAP_CONTRACT_ADDRESS,
-            exchangeABI,
-            swapABIInterface.events.Swap.topic,
-            action.block.number - 1,
-            action.block.number,
-          )
-
           const swapTxIds = _.map(eventSelectors.getFetchedSwapFills(store.getState()), 'transactionHash')
           const newSwapFills = _.filter(logs, ({ transactionHash }) => !_.includes(swapTxIds, transactionHash))
           if (logs && logs.length && newSwapFills.length) {
