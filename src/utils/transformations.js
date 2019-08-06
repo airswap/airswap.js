@@ -40,13 +40,17 @@ function parseSwapParameters(parameters) {
     makerWallet,
     makerToken,
     makerParam,
+    makerKind,
     takerWallet,
     takerToken,
     takerParam,
+    takerKind,
     affiliateWallet,
     affiliateToken,
     affiliateParam,
+    affiliateKind,
   ] = _order.split(',')
+
   const [signer, v, r, s, version] = _signature.split(',')
   return {
     nonce,
@@ -54,12 +58,15 @@ function parseSwapParameters(parameters) {
     makerWallet,
     makerToken,
     makerParam,
+    makerKind,
     takerWallet,
     takerToken,
     takerParam,
+    takerKind,
     affiliateWallet,
     affiliateToken,
     affiliateParam,
+    affiliateKind,
     signer,
     v,
     r,
