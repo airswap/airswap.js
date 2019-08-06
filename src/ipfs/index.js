@@ -40,6 +40,35 @@ async function ipfsStoreJSON(obj) {
   })
 }
 
+async function ipfsStoreString(storeString) {
+  if (!_.isString(storeString)) {
+    throw new Error('str is not a string')
+  }
+
+  return new Promise((resolve, reject) => {
+    // this "resolved" syntax is required since there isn't a Promise.none()
+    let resolved = 0
+    ipfsAirSwap
+      .add(storeString)
+      .then(resolve)
+      .catch(e => {
+        resolved++
+        if (resolved === 2) {
+          reject(e)
+        }
+      })
+    ipfsInfura
+      .add(storeString)
+      .then(resolve)
+      .catch(e => {
+        resolved++
+        if (resolved === 2) {
+          reject(e)
+        }
+      })
+  })
+}
+
 const fetchIPFSContentFromCloudfare = cid =>
   axios.get(`https://cloudflare-ipfs.com/ipfs/${cid}`).then(resp => JSON.stringify(resp.data))
 
@@ -82,4 +111,43 @@ async function ipfsFetchJSONFromCID(cid) {
   return JSON.parse(content)
 }
 
-module.exports = { ipfsStoreJSON, ipfsFetchJSONFromCID }
+async function ipfsFetchStringFromCID(cid) {
+  const content = await new Promise((resolve, reject) => {
+    if (!cid) {
+      resolve(undefined)
+      return
+    }
+    // this "resolved" syntax is required since there isn't a Promise.none()
+    let resolved = 0
+    ipfsAirSwap
+      .cat(cid)
+      .then(resolve)
+      .catch(e => {
+        resolved++
+        if (resolved === 3) {
+          reject(e)
+        }
+      })
+    ipfsInfura
+      .cat(cid)
+      .then(resolve)
+      .catch(e => {
+        resolved++
+        if (resolved === 3) {
+          reject(e)
+        }
+      })
+
+    fetchIPFSContentFromCloudfare(cid)
+      .then(resolve)
+      .catch(e => {
+        resolved++
+        if (resolved === 3) {
+          reject(e)
+        }
+      })
+  })
+  return _.trim(content, '"')
+}
+
+module.exports = { ipfsStoreJSON, ipfsFetchJSONFromCID, ipfsStoreString, ipfsFetchStringFromCID }
