@@ -32,7 +32,7 @@ const NAME_MAPPING = {
 }
 
 const SWAP_CONTRACT_MAPPING = {
-  [MAIN_ID]: '0x7a1c16fe6db67b5bd1f04eed93ceb5593e9d6e32',
+  [MAIN_ID]: '0x9af9c0cf3cd15e0afe63930fbf20941c89f3ff98',
   [RINKEBY_ID]: '0x4dcc6340026966e4fb22592bb9b2d7a6e3821a30',
 }
 
@@ -157,7 +157,7 @@ const NODESMITH_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const httpProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
+const httpProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -327,4 +327,5 @@ module.exports = {
   FORTMATIC_ID,
   IS_INSTANT,
   httpProvider,
+  NODESMITH_GETH_NODE,
 }
