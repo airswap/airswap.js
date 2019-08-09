@@ -3,8 +3,6 @@ const WebSocket = require('isomorphic-ws')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
 
-const TIMEOUT = 12000
-
 // Class Constructor
 // ----------------
 class Router {
@@ -14,12 +12,13 @@ class Router {
   // * `keyspace`: `boolean` - if true, uses a keyspace messageSigner (message) => keyspace.sign(message), if false, uses an ethereum signer
   // * `requireAuthentication`: `boolean` if authenticated, the indexer allows the setting of intents. If not, only messaging is enabled
   constructor(config) {
-    const { rpcActions = {}, messageSigner, address, keyspace, requireAuthentication } = config
+    const { rpcActions = {}, messageSigner, address, keyspace, requireAuthentication, timeout = 12000 } = config
 
     // Create an ethereum wallet object for signing orders
     this.messageSigner = messageSigner
     this.address = address
     this.requireAuthentication = requireAuthentication
+    this.timeout = timeout
 
     const keyspaceSnippet = keyspace ? 'use_pgp=true&' : ''
     const prefix = typeof window !== 'undefined' && window.location.protocol === 'http:' ? 'ws:' : 'wss:'
@@ -80,7 +79,7 @@ class Router {
       if (typeof reject === 'function') {
         reject({ message: `Request timed out. [${message.id}]`, code: -1 })
       }
-    }, TIMEOUT)
+    }, this.timeout)
   }
 
   // WebSocket Interaction
