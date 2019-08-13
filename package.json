@@ -80,6 +80,7 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
+    "@ensdomains/ui": "https://github.com/perich/ui.git",
     "@ledgerhq/hw-app-eth": "^4.55.0",
     "@ledgerhq/hw-transport-u2f": "^4.55.0",
     "@portis/web3": "^2.0.0-beta.16",
