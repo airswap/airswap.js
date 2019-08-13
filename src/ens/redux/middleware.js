@@ -1,6 +1,6 @@
 import { getAddress, getName, setupENS } from '@ensdomains/ui'
 import { setENSReady, gotENSLookupError, gotENSLookupSuccess } from './actions'
-import { httpProvider } from '../../constants'
+import { httpProvider, ENS_NULL_ADDRESS } from '../../constants'
 
 // eslint-disable-next-line
 export default function ensMiddleware(store) {
@@ -13,7 +13,11 @@ export default function ensMiddleware(store) {
         const { name } = action
         getAddress(name)
           .then(address => {
-            store.dispatch(gotENSLookupSuccess(address, name))
+            if (address === ENS_NULL_ADDRESS) {
+              store.dispatch(gotENSLookupError(`Address not found for ${name}`))
+            } else {
+              store.dispatch(gotENSLookupSuccess(address, name))
+            }
           })
           .catch(e => {
             store.dispatch(gotENSLookupError(e.message))
