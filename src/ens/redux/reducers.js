@@ -32,8 +32,8 @@ const ens = (state = defaultState, action) => {
     case 'ENS_LOOKUP_SUCCESS':
       return {
         ...state,
-        nameToAddressMap: { ...state.nameToAddressMap, [action.name]: action.address },
-        addressToNameMap: { ...state.addressToNameMap, [action.address]: action.name },
+        nameToAddressMap: { ...state.nameToAddressMap, [action.ensName]: action.address },
+        addressToNameMap: { ...state.addressToNameMap, [action.address]: action.ensName },
         error: null,
         isDoingLookup: false,
       }
@@ -45,8 +45,8 @@ const ens = (state = defaultState, action) => {
 const getIsENSReady = state => state.ens.isReady
 const getIsDoingENSLookup = state => state.ens.isDoingLookup
 const getENSError = state => state.ens.error
-const getENSNamesByAddress = state => state.ens.nameToAddressMap
-const getENSAddressesByName = state => state.ens.addressToNameMap
+const getENSNamesByAddress = state => state.ens.addressToNameMap
+const getENSAddressesByName = state => state.ens.nameToAddressMap
 
 export const selectors = {
   getIsENSReady,
