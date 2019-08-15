@@ -6,7 +6,7 @@ function getERC20Contract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 
-export function name(contractAddress) {
+export function getName(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.name()
 }
@@ -16,7 +16,7 @@ export function approve(contractAddress, spender, value, signer) {
   return contract.approve(spender, value)
 }
 
-export function totalSupply(contractAddress) {
+export function getTotalSupply(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.totalSupply()
 }
@@ -26,22 +26,22 @@ export function transferFrom(contractAddress, from, to, value, signer) {
   return contract.transferFrom(from, to, value)
 }
 
-export function decimals(contractAddress) {
+export function getDecimals(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.decimals()
 }
 
-export function version(contractAddress) {
+export function getVersion(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.version()
 }
 
-export function balanceOf(contractAddress, owner) {
+export function getBalanceOf(contractAddress, owner) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.balanceOf(owner)
 }
 
-export function symbol(contractAddress) {
+export function getSymbol(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.symbol()
 }
@@ -56,7 +56,7 @@ export function approveAndCall(contractAddress, spender, value, extraData, signe
   return contract.approveAndCall(spender, value, extraData)
 }
 
-export function allowance(contractAddress, owner, spender) {
+export function getAllowance(contractAddress, owner, spender) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.allowance(owner, spender)
 }

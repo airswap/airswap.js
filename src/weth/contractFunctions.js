@@ -6,7 +6,7 @@ function getWethContract(provider) {
   return new ethers.Contract(constants.WETH_CONTRACT_ADDRESS, abi, provider)
 }
 
-export function name() {
+export function getName() {
   const contract = getWethContract(constants.httpProvider)
   return contract.name()
 }
@@ -16,7 +16,7 @@ export function approve(spender, amount, signer) {
   return contract.approve(spender, amount)
 }
 
-export function totalSupply() {
+export function getTotalSupply() {
   const contract = getWethContract(constants.httpProvider)
   return contract.totalSupply()
 }
@@ -31,17 +31,17 @@ export function withdraw(amount, signer) {
   return contract.withdraw(amount)
 }
 
-export function decimals() {
+export function getDecimals() {
   const contract = getWethContract(constants.httpProvider)
   return contract.decimals()
 }
 
-export function balanceOf(owner) {
+export function getBalanceOf(owner) {
   const contract = getWethContract(constants.httpProvider)
   return contract.balanceOf(owner)
 }
 
-export function symbol() {
+export function getSymbol() {
   const contract = getWethContract(constants.httpProvider)
   return contract.symbol()
 }
@@ -56,7 +56,7 @@ export function deposit(ethAmount, signer) {
   return contract.deposit({ value: ethers.utils.bigNumberify(ethAmount) })
 }
 
-export function allowance(owner, spender) {
+export function getAllowance(owner, spender) {
   const contract = getWethContract(constants.httpProvider)
   return contract.allowance(owner, spender)
 }
