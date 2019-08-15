@@ -9,7 +9,7 @@ export const gotENSLookupError = errorMsg => ({
 
 export const gotENSLookupSuccess = (address, ensName) => ({
   type: 'ENS_LOOKUP_SUCCESS',
-  address,
+  address: address.toLowerCase(),
   ensName,
 })
 
@@ -20,5 +20,5 @@ export const findAddressByENSName = ensName => ({
 
 export const findENSNameByAddress = address => ({
   type: 'FIND_ENS_NAME_BY_ADDRESS',
-  address,
+  address: address.toLowerCase(),
 })
