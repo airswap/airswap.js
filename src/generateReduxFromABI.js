@@ -118,9 +118,9 @@ function get${_.upperFirst(eventNamespace)}Contract(provider${passedInContractAd
   ].join('\n')
 }
 
-const abiLocation = 'abis/WETH_ABI.json'
-const namespace = 'weth'
-const contractKey = 'WETH_CONTRACT_ADDRESS'
+const abiLocation = 'abis/hst.json'
+const namespace = 'ERC20'
+const contractKey = '' //'WETH_CONTRACT_ADDRESS'
 
 fs.mkdir(`./${namespace}/redux/`, { recursive: true }, err => {
   if (err) throw err
@@ -132,11 +132,11 @@ fs.mkdir(`./${namespace}/redux/`, { recursive: true }, err => {
     `./${namespace}/redux/eventTrackingActions.js`,
     generateTrackedAction(abiLocation, contractKey, namespace),
   )
-  fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex())
-  fs.writeFileSync(`./${namespace}/redux/middleware.js`, generateMiddleware())
-  fs.writeFileSync(`./${namespace}/redux/reducers.js`, generateReducers())
   fs.writeFileSync(
     `./${namespace}/contractFunctions.js`,
     generateContractFunctions(abiLocation, contractKey, namespace),
   )
+  fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
+  fs.writeFileSync(`./${namespace}/redux/middleware.js`, generateMiddleware(), { flag: 'wx' })
+  fs.writeFileSync(`./${namespace}/redux/reducers.js`, generateReducers(), { flag: 'wx' })
 })
