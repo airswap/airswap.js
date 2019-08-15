@@ -6,8 +6,8 @@ import { createSelector } from 'reselect'
 import { ETH_BASE_ADDRESSES } from '../../constants'
 import { makeHTTPReducer, makeHTTPSelectors } from '../../utils/redux/templates/http'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { selectors as eventSelectors } from '../../events/redux'
 import { lowerCaseStringsInObject } from '../../utils/transformations'
+import { getFormattedExchangeFills24Hour } from '../../swapLegacy/redux/eventTrackingSelectors'
 
 const connectedUsers = makeHTTPReducer('connectedUsers')
 const indexerIntents = makeHTTPReducer('indexerIntents')
@@ -205,7 +205,7 @@ const makeGetLowestPriceByTokenPair = createSelector(
  * @returns {function(): number}
  */
 const makeGet24HourVolumeByTokenPair = createSelector(
-  eventSelectors.getFormattedExchangeFills24Hour,
+  getFormattedExchangeFills24Hour,
   events => ({ makerToken, takerToken }) => {
     const filteredEvents = _.filter(events, { makerToken, takerToken })
     return _.reduce(filteredEvents, (sum, val) => sum + val.ethAmount, 0)
@@ -220,7 +220,7 @@ const makeGet24HourVolumeByTokenPair = createSelector(
  * @returns {function(): number}
  */
 const makeGet24HourTradesByTokenPair = createSelector(
-  eventSelectors.getFormattedExchangeFills24Hour,
+  getFormattedExchangeFills24Hour,
   events => ({ makerToken, takerToken }) => {
     const filteredEvents = _.filter(events, { makerToken, takerToken })
     return filteredEvents.length
