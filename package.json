@@ -54,7 +54,9 @@
     "predeploy": "npm run build && cp ./package.json ./lib/package.json",
     "deploy": "gh-pages --dist lib --branch release",
     "lint-staged": "lint-staged",
-    "prettify": "prettier --write src/**/*.js"
+    "lint": "eslint src --ext .js,.jsx",
+    "prettify": "prettier --write src/**/*.js",
+    "generate": "cd src && node generateReduxFromABI.js && yarn lint --fix"
   },
   "pre-commit": [
     "lint-staged"

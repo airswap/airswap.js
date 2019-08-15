@@ -135,6 +135,11 @@ const modules = [
     namespace: 'ERC20',
     contractKey: '',
   },
+  {
+    abiLocation: 'abis/Swap.json',
+    namespace: 'swap',
+    contractKey: 'SWAP_CONTRACT_ADDRESS',
+  },
 ]
 
 modules.map(createSubmodules)
