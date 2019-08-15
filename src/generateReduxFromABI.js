@@ -92,15 +92,21 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
   const functionArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
     const inputNames = _.map(inputs, ({ name, type }, i) => name || `${type}Input${i + 1}`)
     const signerParameter = type === 'transaction' ? `${inputNames.length ? ', ' : ''}signer` : ''
-    const functionArgs = inputs.length ? `{ ${inputNames.join(', ')} }` : ''
+    const functionArgs = inputs.length ? `${inputNames.join(', ')}` : ''
     const getContract = type === 'transaction' ? `signer` : 'constants.httpProvider'
     const lastParamContractAddress = contractKey ? '' : ', contractAddress'
     const paramContractAddress = contractKey
       ? ''
       : `contractAddress${inputs.length || type === 'transaction' ? ', ' : ''}`
-    return `export function ${name}(${paramContractAddress}${functionArgs}${signerParameter}) {
+    const paramEthAmount = !payable
+      ? ''
+      : `${paramContractAddress || functionArgs || signerParameter ? 'ethAmount, ' : 'ethAmount'}`
+    const innerParamEthAmount = !payable
+      ? ''
+      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount) }`
+    return `export function ${name}(${paramContractAddress}${paramEthAmount}${functionArgs}${signerParameter}) {
   const contract = get${_.upperFirst(eventNamespace)}Contract(${getContract}${lastParamContractAddress})
-  return contract.${name}(${inputNames.join(', ')})
+  return contract.${name}(${inputNames.join(', ')}${innerParamEthAmount})
 }
 `
   })
@@ -118,25 +124,50 @@ function get${_.upperFirst(eventNamespace)}Contract(provider${passedInContractAd
   ].join('\n')
 }
 
-const abiLocation = 'abis/hst.json'
-const namespace = 'ERC20'
-const contractKey = '' //'WETH_CONTRACT_ADDRESS'
+const modules = [
+  {
+    abiLocation: 'abis/WETH_ABI.json',
+    namespace: 'weth',
+    contractKey: 'WETH_CONTRACT_ADDRESS',
+  },
+  {
+    abiLocation: 'abis/hst.json',
+    namespace: 'ERC20',
+    contractKey: '',
+  },
+]
 
-fs.mkdir(`./${namespace}/redux/`, { recursive: true }, err => {
-  if (err) throw err
-  fs.writeFileSync(
-    `./${namespace}/redux/eventTrackingSelectors.js`,
-    generateEventTrackingSelectors(abiLocation, contractKey, namespace),
-  )
-  fs.writeFileSync(
-    `./${namespace}/redux/eventTrackingActions.js`,
-    generateTrackedAction(abiLocation, contractKey, namespace),
-  )
-  fs.writeFileSync(
-    `./${namespace}/contractFunctions.js`,
-    generateContractFunctions(abiLocation, contractKey, namespace),
-  )
-  fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
-  fs.writeFileSync(`./${namespace}/redux/middleware.js`, generateMiddleware(), { flag: 'wx' })
-  fs.writeFileSync(`./${namespace}/redux/reducers.js`, generateReducers(), { flag: 'wx' })
-})
+modules.map(createSubmodules)
+
+function createSubmodules({ abiLocation, namespace, contractKey }) {
+  fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
+    if (err) throw err
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/eventTrackingSelectors.js`,
+      generateEventTrackingSelectors(abiLocation, contractKey, namespace),
+    )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/eventTrackingActions.js`,
+      generateTrackedAction(abiLocation, contractKey, namespace),
+    )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/contractFunctions.js`,
+      generateContractFunctions(abiLocation, contractKey, namespace),
+    )
+    try {
+      fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
+    } catch (e) {
+      // console.log('redux/index.js already exists')
+    }
+    try {
+      fs.writeFileSync(`./${namespace}/redux/middleware.js`, generateMiddleware(), { flag: 'wx' })
+    } catch (e) {
+      // console.log('redux/middleware.js already exists')
+    }
+    try {
+      fs.writeFileSync(`./${namespace}/redux/reducers.js`, generateReducers(), { flag: 'wx' })
+    } catch (e) {
+      // console.log('redux/reducers.js already exists')
+    }
+  })
+}

@@ -11,9 +11,9 @@ export function name() {
   return contract.name()
 }
 
-export function approve({ guy, wad }, signer) {
+export function approve(spender, amount, signer) {
   const contract = getWethContract(signer)
-  return contract.approve(guy, wad)
+  return contract.approve(spender, amount)
 }
 
 export function totalSupply() {
@@ -21,14 +21,14 @@ export function totalSupply() {
   return contract.totalSupply()
 }
 
-export function transferFrom({ src, dst, wad }, signer) {
+export function transferFrom(from, to, amount, signer) {
   const contract = getWethContract(signer)
-  return contract.transferFrom(src, dst, wad)
+  return contract.transferFrom(from, to, amount)
 }
 
-export function withdraw({ wad }, signer) {
+export function withdraw(amount, signer) {
   const contract = getWethContract(signer)
-  return contract.withdraw(wad)
+  return contract.withdraw(amount)
 }
 
 export function decimals() {
@@ -36,9 +36,9 @@ export function decimals() {
   return contract.decimals()
 }
 
-export function balanceOf({ addressInput1 }) {
+export function balanceOf(owner) {
   const contract = getWethContract(constants.httpProvider)
-  return contract.balanceOf(addressInput1)
+  return contract.balanceOf(owner)
 }
 
 export function symbol() {
@@ -46,17 +46,17 @@ export function symbol() {
   return contract.symbol()
 }
 
-export function transfer({ dst, wad }, signer) {
+export function transfer(to, amount, signer) {
   const contract = getWethContract(signer)
-  return contract.transfer(dst, wad)
+  return contract.transfer(to, amount)
 }
 
-export function deposit(signer) {
+export function deposit(ethAmount, signer) {
   const contract = getWethContract(signer)
-  return contract.deposit()
+  return contract.deposit({ value: ethers.utils.bigNumberify(ethAmount) })
 }
 
-export function allowance({ addressInput1, addressInput2 }) {
+export function allowance(owner, spender) {
   const contract = getWethContract(constants.httpProvider)
-  return contract.allowance(addressInput1, addressInput2)
+  return contract.allowance(owner, spender)
 }

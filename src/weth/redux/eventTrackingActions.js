@@ -1,48 +1,48 @@
 const abi = require('../../abis/WETH_ABI.json')
 const constants = require('../../constants')
 
-export const trackWethApproval = ({ callback, src, guy, fromBlock, backFillBlockCount } = {}) => ({
+export const trackWethApproval = ({ callback, owner, spender, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.WETH_CONTRACT_ADDRESS,
   abi,
   name: 'Approval',
-  params: { src, guy },
+  params: { owner, spender },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
   namespace: 'weth',
 })
 
-export const trackWethTransfer = ({ callback, src, dst, fromBlock, backFillBlockCount } = {}) => ({
+export const trackWethTransfer = ({ callback, from, to, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.WETH_CONTRACT_ADDRESS,
   abi,
   name: 'Transfer',
-  params: { src, dst },
+  params: { from, to },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
   namespace: 'weth',
 })
 
-export const trackWethDeposit = ({ callback, dst, fromBlock, backFillBlockCount } = {}) => ({
+export const trackWethDeposit = ({ callback, owner, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.WETH_CONTRACT_ADDRESS,
   abi,
   name: 'Deposit',
-  params: { dst },
+  params: { owner },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
   namespace: 'weth',
 })
 
-export const trackWethWithdrawal = ({ callback, src, fromBlock, backFillBlockCount } = {}) => ({
+export const trackWethWithdrawal = ({ callback, owner, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.WETH_CONTRACT_ADDRESS,
   abi,
   name: 'Withdrawal',
-  params: { src },
+  params: { owner },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',

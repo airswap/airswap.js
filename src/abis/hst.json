@@ -16,11 +16,11 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_spender",
+        "name": "spender",
         "type": "address"
       },
       {
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -51,15 +51,15 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_from",
+        "name": "from",
         "type": "address"
       },
       {
-        "name": "_to",
+        "name": "to",
         "type": "address"
       },
       {
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -103,7 +103,7 @@
     "constant": true,
     "inputs": [
       {
-        "name": "_owner",
+        "name": "owner",
         "type": "address"
       }
     ],
@@ -134,11 +134,11 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_to",
+        "name": "to",
         "type": "address"
       },
       {
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -156,15 +156,15 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_spender",
+        "name": "spender",
         "type": "address"
       },
       {
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       },
       {
-        "name": "_extraData",
+        "name": "extraData",
         "type": "bytes"
       }
     ],
@@ -182,11 +182,11 @@
     "constant": true,
     "inputs": [
       {
-        "name": "_owner",
+        "name": "owner",
         "type": "address"
       },
       {
-        "name": "_spender",
+        "name": "spender",
         "type": "address"
       }
     ],
@@ -203,19 +203,19 @@
   {
     "inputs": [
       {
-        "name": "_initialAmount",
+        "name": "initialAmount",
         "type": "uint256"
       },
       {
-        "name": "_tokenName",
+        "name": "tokenName",
         "type": "string"
       },
       {
-        "name": "_decimalUnits",
+        "name": "decimalUnits",
         "type": "uint8"
       },
       {
-        "name": "_tokenSymbol",
+        "name": "tokenSymbol",
         "type": "string"
       }
     ],
@@ -230,17 +230,17 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "_from",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "_to",
+        "name": "to",
         "type": "address"
       },
       {
         "indexed": false,
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       }
     ],
@@ -252,17 +252,17 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "_owner",
+        "name": "owner",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "_spender",
+        "name": "spender",
         "type": "address"
       },
       {
         "indexed": false,
-        "name": "_value",
+        "name": "value",
         "type": "uint256"
       }
     ],

@@ -11,9 +11,9 @@ export function name(contractAddress) {
   return contract.name()
 }
 
-export function approve(contractAddress, { _spender, _value }, signer) {
+export function approve(contractAddress, spender, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
-  return contract.approve(_spender, _value)
+  return contract.approve(spender, value)
 }
 
 export function totalSupply(contractAddress) {
@@ -21,9 +21,9 @@ export function totalSupply(contractAddress) {
   return contract.totalSupply()
 }
 
-export function transferFrom(contractAddress, { _from, _to, _value }, signer) {
+export function transferFrom(contractAddress, from, to, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
-  return contract.transferFrom(_from, _to, _value)
+  return contract.transferFrom(from, to, value)
 }
 
 export function decimals(contractAddress) {
@@ -36,9 +36,9 @@ export function version(contractAddress) {
   return contract.version()
 }
 
-export function balanceOf(contractAddress, { _owner }) {
+export function balanceOf(contractAddress, owner) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
-  return contract.balanceOf(_owner)
+  return contract.balanceOf(owner)
 }
 
 export function symbol(contractAddress) {
@@ -46,17 +46,17 @@ export function symbol(contractAddress) {
   return contract.symbol()
 }
 
-export function transfer(contractAddress, { _to, _value }, signer) {
+export function transfer(contractAddress, to, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
-  return contract.transfer(_to, _value)
+  return contract.transfer(to, value)
 }
 
-export function approveAndCall(contractAddress, { _spender, _value, _extraData }, signer) {
+export function approveAndCall(contractAddress, spender, value, extraData, signer) {
   const contract = getERC20Contract(signer, contractAddress)
-  return contract.approveAndCall(_spender, _value, _extraData)
+  return contract.approveAndCall(spender, value, extraData)
 }
 
-export function allowance(contractAddress, { _owner, _spender }) {
+export function allowance(contractAddress, owner, spender) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
-  return contract.allowance(_owner, _spender)
+  return contract.allowance(owner, spender)
 }
