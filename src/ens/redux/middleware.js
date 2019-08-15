@@ -1,10 +1,10 @@
 import { getAddress, getName, setupENS } from '@ensdomains/ui'
 import { setENSReady, gotENSLookupError, gotENSLookupSuccess } from './actions'
-import { httpProvider, ENS_NULL_ADDRESS } from '../../constants'
+import { AIRSWAP_GETH_NODE_ADDRESS, ENS_NULL_ADDRESS } from '../../constants'
 
 // eslint-disable-next-line
 export default function ensMiddleware(store) {
-  setupENS({ customProvider: httpProvider }).then(() => {
+  setupENS({ customProvider: AIRSWAP_GETH_NODE_ADDRESS }).then(() => {
     store.dispatch(setENSReady())
   })
   return next => action => {
