@@ -8,6 +8,7 @@ const {
   SWAP_LEGACY_CONTRACT_ADDRESS,
   SWAP_CONTRACT_ADDRESS,
 } = require('../constants')
+
 const { getLogs } = require('../utils/gethRead')
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
