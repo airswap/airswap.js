@@ -3,7 +3,7 @@
     "constant": true,
     "inputs": [
       {
-        "name": "",
+        "name": "makerWallet",
         "type": "address"
       }
     ],
@@ -22,11 +22,11 @@
     "constant": true,
     "inputs": [
       {
-        "name": "",
+        "name": "makerWallet",
         "type": "address"
       },
       {
-        "name": "",
+        "name": "nonce",
         "type": "uint256"
       }
     ],
@@ -45,11 +45,11 @@
     "constant": true,
     "inputs": [
       {
-        "name": "",
+        "name": "approverAddress",
         "type": "address"
       },
       {
-        "name": "",
+        "name": "delegateAddress",
         "type": "address"
       }
     ],
@@ -285,7 +285,7 @@
             "type": "tuple"
           }
         ],
-        "name": "_order",
+        "name": "order",
         "type": "tuple"
       },
       {
@@ -311,7 +311,7 @@
             "type": "bytes1"
           }
         ],
-        "name": "_signature",
+        "name": "signature",
         "type": "tuple"
       }
     ],
@@ -325,47 +325,47 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_nonce",
+        "name": "nonce",
         "type": "uint256"
       },
       {
-        "name": "_expiry",
+        "name": "expiry",
         "type": "uint256"
       },
       {
-        "name": "_makerWallet",
+        "name": "makerWallet",
         "type": "address"
       },
       {
-        "name": "_makerParam",
+        "name": "makerParam",
         "type": "uint256"
       },
       {
-        "name": "_makerToken",
+        "name": "makerToken",
         "type": "address"
       },
       {
-        "name": "_takerWallet",
+        "name": "takerWallet",
         "type": "address"
       },
       {
-        "name": "_takerParam",
+        "name": "takerParam",
         "type": "uint256"
       },
       {
-        "name": "_takerToken",
+        "name": "takerToken",
         "type": "address"
       },
       {
-        "name": "_v",
+        "name": "v",
         "type": "uint8"
       },
       {
-        "name": "_r",
+        "name": "r",
         "type": "bytes32"
       },
       {
-        "name": "_s",
+        "name": "s",
         "type": "bytes32"
       }
     ],
@@ -379,7 +379,7 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_nonces",
+        "name": "nonces",
         "type": "uint256[]"
       }
     ],
@@ -393,7 +393,7 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_minimumNonce",
+        "name": "minimumNonce",
         "type": "uint256"
       }
     ],
@@ -407,11 +407,11 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_delegate",
+        "name": "delegate",
         "type": "address"
       },
       {
-        "name": "_expiry",
+        "name": "expiry",
         "type": "uint256"
       }
     ],
@@ -425,7 +425,7 @@
     "constant": false,
     "inputs": [
       {
-        "name": "_delegate",
+        "name": "delegate",
         "type": "address"
       }
     ],

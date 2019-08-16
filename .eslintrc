@@ -45,7 +45,8 @@
     "import/no-named-as-default": "off",
     "react/require-default-props": "off",
     "no-underscore-dangle": "off",
-    "array-callback-return": "off"
+    "array-callback-return": "off",
+    "func-names": "off"
   },
   "overrides": [
     {
