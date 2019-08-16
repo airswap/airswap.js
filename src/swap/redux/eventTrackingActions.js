@@ -1,9 +1,10 @@
-import { SWAP_CONTRACT_ADDRESS, abis } from '../../constants'
+const abi = require('../../abis/Swap.json')
+const constants = require('../../constants')
 
 export const trackSwapSwap = ({ callback, nonce, makerWallet, takerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
-  contract: SWAP_CONTRACT_ADDRESS,
-  abi: abis[SWAP_CONTRACT_ADDRESS],
+  contract: constants.SWAP_CONTRACT_ADDRESS,
+  abi,
   name: 'Swap',
   params: { nonce, makerWallet, takerWallet },
   fromBlock,
@@ -14,8 +15,8 @@ export const trackSwapSwap = ({ callback, nonce, makerWallet, takerWallet, fromB
 
 export const trackSwapCancel = ({ callback, nonce, makerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
-  contract: SWAP_CONTRACT_ADDRESS,
-  abi: abis[SWAP_CONTRACT_ADDRESS],
+  contract: constants.SWAP_CONTRACT_ADDRESS,
+  abi,
   name: 'Cancel',
   params: { nonce, makerWallet },
   fromBlock,
@@ -26,8 +27,8 @@ export const trackSwapCancel = ({ callback, nonce, makerWallet, fromBlock, backF
 
 export const trackSwapInvalidate = ({ callback, nonce, makerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
-  contract: SWAP_CONTRACT_ADDRESS,
-  abi: abis[SWAP_CONTRACT_ADDRESS],
+  contract: constants.SWAP_CONTRACT_ADDRESS,
+  abi,
   name: 'Invalidate',
   params: { nonce, makerWallet },
   fromBlock,
@@ -44,8 +45,8 @@ export const trackSwapAuthorize = ({
   backFillBlockCount,
 } = {}) => ({
   callback,
-  contract: SWAP_CONTRACT_ADDRESS,
-  abi: abis[SWAP_CONTRACT_ADDRESS],
+  contract: constants.SWAP_CONTRACT_ADDRESS,
+  abi,
   name: 'Authorize',
   params: { approverAddress, delegateAddress },
   fromBlock,
@@ -62,8 +63,8 @@ export const trackSwapRevoke = ({
   backFillBlockCount,
 } = {}) => ({
   callback,
-  contract: SWAP_CONTRACT_ADDRESS,
-  abi: abis[SWAP_CONTRACT_ADDRESS],
+  contract: constants.SWAP_CONTRACT_ADDRESS,
+  abi,
   name: 'Revoke',
   params: { approverAddress, delegateAddress },
   fromBlock,

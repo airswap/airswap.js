@@ -2,10 +2,9 @@ const _ = require('lodash')
 const uuid = require('uuid')
 const ethers = require('ethers')
 const ethUtil = require('ethereumjs-util')
-const { AIRSWAP_GETH_NODE_ADDRESS, NETWORK, NETWORK_MAPPING } = require('../constants')
+const { httpProvider, NETWORK, NETWORK_MAPPING } = require('../constants')
 const walletTypes = require('./static/walletTypes.json')
-
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const UncheckedJsonRpcSigner = require('./uncheckedJsonRpcSigner')
 
 function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, walletType) {
   const supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletType }), 'supportsSignTypedData')
@@ -114,7 +113,7 @@ function getSigner(params, walletActions = {}, walletType) {
   if (!(privateKey || web3Provider)) {
     throw new Error("must set 'privateKey' or 'web3Provider' in params")
   } else if (privateKey) {
-    return traceMethodCalls(new ethers.Wallet(privateKey, provider), walletActions)
+    return traceMethodCalls(new ethers.Wallet(privateKey, httpProvider), walletActions)
   } else {
     let networkVersion
     if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {
@@ -130,7 +129,7 @@ function getSigner(params, walletActions = {}, walletType) {
     }
 
     const tempProvider = new ethers.providers.Web3Provider(web3Provider)
-    const signer = tempProvider.getSigner()
+    const signer = new UncheckedJsonRpcSigner(tempProvider.getSigner())
     return traceMethodCalls(signer, walletActions, walletType)
   }
 }
