@@ -18,10 +18,13 @@ function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
   const actionsTextArray = _.filter(abi, { type: 'event' }).map(({ name, inputs }) => {
     const filteredInputs = _.map(_.filter(inputs, { indexed: true }), 'name')
     const contractString = contractKey ? `\n  contract: constants.${contractKey},` : ''
-
-    return `export const track${_.upperFirst(eventNamespace)}${name} = ({ callback, ${filteredInputs.join(
-      ', ',
-    )}, fromBlock, backFillBlockCount } = {}) => ({
+    const inputsOuterParam = filteredInputs.length ? `${filteredInputs.join(', ')}, ` : ''
+    if (name === 'LogError') {
+      console.log(_.map(_.filter(inputs, { indexed: true }), 'name'))
+    }
+    return `export const track${_.upperFirst(
+      eventNamespace,
+    )}${name} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount } = {}) => ({
   callback,${contractString}
   abi,
   name: '${name}',
@@ -145,6 +148,11 @@ const modules = [
     abiLocation: 'abis/deltaBalancesABI.json',
     namespace: 'deltaBalances',
     contractKey: 'DELTA_BALANCES_CONTRACT_ADDRESS',
+  },
+  {
+    abiLocation: 'abis/nuo.json',
+    namespace: 'nuo',
+    contractKey: 'NUO_CONTRACT_ADDRESS',
   },
 ]
 
