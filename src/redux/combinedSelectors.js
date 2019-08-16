@@ -50,6 +50,7 @@ const getTransactionHistory = createSelector(
   erc20Selectors.getTransactionReceiptsUnwrapWeth,
   tokenSelectors.getTokensByAddress,
   tokenSelectors.makeGetReadableOrder,
+  tokenSelectors.makeGetReadableSwapOrder,
   (
     fillTransactions,
     fillReceipts,
@@ -69,6 +70,7 @@ const getTransactionHistory = createSelector(
     unwrapTransactionsReceipts,
     tokensByAddress,
     getReadableOrder,
+    getReadableSwapOrder,
   ) => {
     const receipts = _.compact([
       ..._.values(fillReceipts),
@@ -96,7 +98,7 @@ const getTransactionHistory = createSelector(
       return {
         transactionHash: tx.hash,
         transaction: tx,
-        description: getTransactionDescription(tx, tokensByAddress, getReadableOrder),
+        description: getTransactionDescription(tx, tokensByAddress, getReadableOrder, getReadableSwapOrder),
         transactionReceipt,
         textStatus,
         eventStatus,

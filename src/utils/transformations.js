@@ -30,10 +30,11 @@ function stringBNValues(obj) {
 }
 
 function parseSwapParameters(parameters) {
-  const { _order, _signature } = parameters
-  if (!(_order && _signature)) {
+  const { order, signature } = parameters
+  if (!(order && signature)) {
     return parameters
   }
+
   const [
     nonce,
     expiry,
@@ -49,9 +50,9 @@ function parseSwapParameters(parameters) {
     affiliateToken,
     affiliateParam,
     affiliateKind,
-  ] = _order.split(',')
+  ] = order.split(',')
 
-  const [signer, v, r, s, version] = _signature.split(',')
+  const [signer, v, r, s, version] = signature.split(',')
   return {
     nonce,
     expiry,
@@ -88,6 +89,7 @@ function getParsedInputFromTransaction(transaction) {
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
   const parameters = _.zipObject(parameterKeys, parameterValues)
   const value = ethers.utils.formatEther(transaction.value)
+
   return {
     name,
     parameters: to === SWAP_CONTRACT_ADDRESS ? parseSwapParameters(parameters) : parameters,
@@ -95,7 +97,7 @@ function getParsedInputFromTransaction(transaction) {
   }
 }
 
-function getTransactionDescription(transaction, tokensByAddress, getReadableOrder) {
+function getTransactionDescription(transaction, tokensByAddress, getReadableOrder, getReadableSwapOrder) {
   if (!(transaction && transaction.to) || _.isEmpty(tokensByAddress)) {
     return ''
   }
@@ -116,6 +118,9 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
     return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} for trade`
   } else if (name === 'fill') {
     const order = getReadableOrder(parameters)
+    return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
+  } else if (name === 'swap') {
+    const order = getReadableSwapOrder(parseSwapParameters(parameters))
     return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
   }
 }

@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
-import { getFetchedSwapCancel, getFetchedSwapSwap } from './eventTrackingSelectors'
+import { getSwapCancelEvents, getSwapSwapEvents } from './eventTrackingSelectors'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 
 export const getFormattedSwapFills = createSelector(
-  getFetchedSwapSwap,
+  getSwapSwapEvents,
   makeGetReadableSwapOrder,
   blockTrackerSelectors.getBlocks,
   (events, getReadableSwapOrder, blockObj) =>
@@ -17,7 +17,7 @@ export const getFormattedSwapFills = createSelector(
 )
 
 export const getFormattedSwapCancels = createSelector(
-  getFetchedSwapCancel,
+  getSwapCancelEvents,
   blockTrackerSelectors.getBlocks,
   (events, blockObj) =>
     events.map(({ transactionHash, blockNumber, values }) => ({

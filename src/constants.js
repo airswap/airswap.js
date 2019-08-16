@@ -94,16 +94,6 @@ const WETH_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const NUO_CONTRACT_ADDRESS = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return ETH_ADDRESS
-    case MAIN_ID:
-      return '0x740f8b58f5562c8379f2a8c2230c9be5c03ac3fc'
-    default:
-  }
-})(NETWORK)
-
 const ETH_BASE_ADDRESSES = [ETH_ADDRESS, WETH_CONTRACT_ADDRESS]
 
 const DAI_CONTRACT_ADDRESS = (N => {
@@ -338,5 +328,4 @@ module.exports = {
   IS_INSTANT,
   httpProvider,
   NODESMITH_GETH_NODE,
-  NUO_CONTRACT_ADDRESS,
 }
