@@ -113,7 +113,7 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
   if (name === 'deposit') {
     return `Wrap ${value} ETH`
   } else if (name === 'withdraw') {
-    return `Unwrap ${ethers.utils.formatEther(parameters.wad)} WETH`
+    return `Unwrap ${ethers.utils.formatEther(parameters.amount)} WETH`
   } else if (name === 'approve') {
     return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} for trade`
   } else if (name === 'fill') {
