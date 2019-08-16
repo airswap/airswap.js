@@ -11,7 +11,7 @@ export default function ensMiddleware(store) {
         httpProvider
           .resolveName(name)
           .then(address => {
-            if (address === ENS_NULL_ADDRESS) {
+            if (!address || address === ENS_NULL_ADDRESS) {
               store.dispatch(gotENSLookupError(`Address not found for ${name}`))
             } else {
               store.dispatch(gotENSLookupSuccess(address, name))
@@ -28,6 +28,9 @@ export default function ensMiddleware(store) {
         httpProvider
           .lookupAddress(address)
           .then(ensName => {
+            if (!ensName) {
+              store.dispatch(gotENSLookupError(`Name not found for ${address}}`))
+            }
             store.dispatch(gotENSLookupSuccess(address, ensName))
           })
           .catch(e => {
