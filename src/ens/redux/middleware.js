@@ -30,8 +30,9 @@ export default function ensMiddleware(store) {
           .then(ensName => {
             if (!ensName) {
               store.dispatch(gotENSLookupError(`Name not found for ${address}}`))
+            } else {
+              store.dispatch(gotENSLookupSuccess(address, ensName))
             }
-            store.dispatch(gotENSLookupSuccess(address, ensName))
           })
           .catch(e => {
             store.dispatch(gotENSLookupError(e.message))
