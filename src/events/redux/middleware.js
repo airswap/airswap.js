@@ -48,6 +48,19 @@ const initPollExchangeFills = _.once(store => {
         callback,
       }),
     )
+
+    eventTracker.trackEvent(
+      trackSwapSwap({
+        callback,
+        backFillBlockCount: 7000,
+      }),
+    )
+
+    eventTracker.trackEvent(
+      trackSwapCancel({
+        callback,
+      }),
+    )
   } else {
     eventTracker.trackEvent(
       trackSwapSwap({

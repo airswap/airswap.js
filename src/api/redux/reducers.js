@@ -7,7 +7,7 @@ import { ETH_BASE_ADDRESSES } from '../../constants'
 import { makeHTTPReducer, makeHTTPSelectors } from '../../utils/redux/templates/http'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { lowerCaseStringsInObject } from '../../utils/transformations'
-import { getFormattedExchangeFills24Hour } from '../../swapLegacy/redux/eventTrackingSelectors'
+import { getFormattedExchangeFills24Hour } from '../../swapLegacy/redux/selectors'
 
 const connectedUsers = makeHTTPReducer('connectedUsers')
 const indexerIntents = makeHTTPReducer('indexerIntents')

@@ -255,57 +255,102 @@ class Router {
   getOrder(makerAddress, params) {
     const { makerAmount, takerAmount, makerToken, takerToken } = params
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
-
+    const swapVersion = params.swapVersion || 1
     if (!makerAmount && !takerAmount) throw BadArgumentsError
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getOrder', {
-      makerToken,
-      takerToken,
-      takerAddress: this.address.toLowerCase(),
-      makerAmount: makerAmount ? String(makerAmount) : null,
-      takerAmount: takerAmount ? String(takerAmount) : null,
+    const query =
+      swapVersion === 2
+        ? {
+            makerToken,
+            takerToken,
+            makerParam: makerAmount ? String(makerAmount) : null,
+            takerParam: takerAmount ? String(takerAmount) : null,
+            takerWallet: this.address.toLowerCase(),
+          }
+        : {
+            makerToken,
+            takerToken,
+            makerAmount: makerAmount ? String(makerAmount) : null,
+            takerAmount: takerAmount ? String(takerAmount) : null,
+            takerAddress: this.address.toLowerCase(),
+          }
+
+    const payload = Router.makeRPC('getOrder', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => {
+      if (swapVersion === 2) {
+        return {
+          ...order,
+          v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
+          expiry: order.expiry ? ethers.utils.bigNumberify(order.expiry).toNumber() : order.expiry,
+          makerWallet: (order.makerWallet || '').toLowerCase(), // normalizes the case of addresses in returned orders
+          takerWallet: (order.takerWallet || '').toLowerCase(),
+          makerToken: (order.makerToken || '').toLowerCase(),
+          takerToken: (order.takerToken || '').toLowerCase(),
+          swapVersion,
+          nonce: order.nonce ? `${order.nonce}` : order.nonce,
+        }
+      }
+      return {
+        ...order,
+        v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
+        expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
+        makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
+        takerAddress: (order.takerAddress || '').toLowerCase(),
+        makerToken: (order.makerToken || '').toLowerCase(),
+        takerToken: (order.takerToken || '').toLowerCase(),
+        swapVersion,
+        nonce: order.nonce ? `${order.nonce}` : order.nonce,
+      }
     })
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
-      ...order,
-      v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
-      expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
-      makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
-      takerAddress: (order.takerAddress || '').toLowerCase(),
-      makerToken: (order.makerToken || '').toLowerCase(),
-      takerToken: (order.takerToken || '').toLowerCase(),
-    }))
   }
 
   getQuote(makerAddress, params) {
     const { makerAmount, takerAmount, makerToken, takerToken } = params
+    const swapVersion = params.swapVersion || 1
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
 
     if (!makerAmount && !takerAmount) throw BadArgumentsError
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getQuote', {
-      makerToken,
-      takerToken,
-      makerAmount: makerAmount ? String(makerAmount) : null,
-      takerAmount: takerAmount ? String(takerAmount) : null,
-    })
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej))
+    const query =
+      swapVersion === 2
+        ? {
+            makerToken,
+            takerToken,
+            makerParam: makerAmount ? String(makerAmount) : null,
+            takerParam: takerAmount ? String(takerAmount) : null,
+          }
+        : {
+            makerToken,
+            takerToken,
+            makerAmount: makerAmount ? String(makerAmount) : null,
+            takerAmount: takerAmount ? String(takerAmount) : null,
+          }
+
+    const payload = Router.makeRPC('getQuote', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => ({
+      ...quote,
+      swapVersion,
+    }))
   }
 
   getMaxQuote(makerAddress, params) {
     const { makerToken, takerToken } = params
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
-
+    const swapVersion = params.swapVersion || 1
     if (!takerToken || !makerToken) throw BadArgumentsError
 
     const payload = Router.makeRPC('getMaxQuote', {
       makerToken,
       takerToken,
     })
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej))
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => ({
+      ...quote,
+      swapVersion,
+    }))
   }
   // Given an array of trade intents, make a JSON-RPC `getOrder` call for each `intent`
   getOrders(intents, params) {

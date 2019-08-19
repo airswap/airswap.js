@@ -1,9 +1,7 @@
 const ethers = require('ethers')
-const Web3 = require('web3')
+const utils = require('web3-utils')
 const { constants, getOrderHash } = require('../utils/orderUtils')
 const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
-
-const web3 = new Web3()
 
 function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
@@ -153,7 +151,7 @@ function cancel(ids, signer) {
 async function signSwapSimple(order, signer) {
   const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
 
-  const hashedOrder = web3.utils.soliditySha3(
+  const hashedOrder = utils.soliditySha3(
     // Version 0x00: Data with intended validator (verifyingContract)
     { type: 'bytes1', value: '0x0' },
     { type: 'address', value: SWAP_CONTRACT_ADDRESS },
