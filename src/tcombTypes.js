@@ -27,6 +27,24 @@ const Order = t.struct({
   v: t.Number,
   r: t.String,
   s: t.String,
+  swapVersion: t.Number,
+})
+
+const Swap = t.struct({
+  expiry: t.Number,
+  makerParam: AtomicAmount,
+  makerToken: Address,
+  makerWallet: Address,
+  nonce: t.String,
+  r: t.String,
+  s: t.String,
+  signer: t.String,
+  swapVersion: t.Number,
+  takerParam: AtomicAmount,
+  takerToken: Address,
+  takerWallet: Address,
+  v: t.Number,
+  version: t.String,
 })
 
 const Quote = t.struct({
@@ -35,6 +53,15 @@ const Quote = t.struct({
   takerToken: Address,
   makerAmount: AtomicAmount,
   takerAmount: AtomicAmount,
+})
+
+const SwapQuote = t.struct({
+  makerParam: AtomicAmount,
+  takerParam: AtomicAmount,
+  makerToken: Address,
+  takerToken: Address,
+  makerWallet: Address,
+  swapVersion: t.Number,
 })
 
 const Query = t.struct({
@@ -61,9 +88,9 @@ const DexIndexResponses = t.list(DexIndexResponse)
 
 const Intents = t.list(Intent)
 
-const OrderResponses = t.list(Order)
+const OrderResponses = t.list(t.union([Order, Swap]))
 
-const QuoteResponses = t.list(Quote)
+const QuoteResponses = t.list(t.union([Quote, SwapQuote]))
 
 const CheckoutFrame = t.struct({
   stackId: UUID,
@@ -86,4 +113,4 @@ const gasLevel = t.refinement(t.String, s => _.includes(GAS_LEVELS, s))
 
 const Currency = t.refinement(t.String, s => _.includes(Object.keys(FIAT_CURRENCIES), s))
 
-module.exports = { Address, Query, CheckoutFrame, gasLevel, Currency, Quote, Order }
+module.exports = { Address, Query, CheckoutFrame, gasLevel, Currency, Quote, Order, Swap, SwapQuote }
