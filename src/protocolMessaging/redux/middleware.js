@@ -10,7 +10,8 @@ import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
 import { ETH_ADDRESS, IS_INSTANT } from '../../constants'
-import { Quote, Order } from '../../tcombTypes'
+import { Quote, Order, Swap, SwapQuote } from '../../tcombTypes'
+import { fillSwap } from '../../swap/redux/actions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -108,18 +109,21 @@ function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) 
 async function getOrderTakerTokenWithQuotes(intent, store, action) {
   const { makerToken, takerToken, takerAmount } = action.query
   const makerAddress = intent.connectionAddress || intent.makerAddress
-
-  const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken })
+  const swapVersion = intent.swapVersion || 1
+  const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion })
   let maxQuote
   let quote
+
   try {
-    maxQuote = await maxQuotePromise
+    const maxQuoteResponse = await maxQuotePromise
+    maxQuote = swapVersion === 2 ? SwapQuote(maxQuoteResponse) : Quote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
   }
   try {
-    quote = await quotePromise
+    const quoteResponse = await quotePromise
+    quote = swapVersion === 2 ? SwapQuote(quoteResponse) : Quote(quoteResponse)
   } catch (e) {
     console.log(e)
   }
@@ -134,11 +138,15 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
-      const order = Order(
-        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
-      )
+      const lowBalanceResponse = await router.getOrder(makerAddress, {
+        takerAmount: adjustedTokenBalance,
+        makerToken,
+        takerToken,
+        swapVersion,
+      })
+      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
       store.dispatch(gotQuoteResponse(quote, action.stackId))
-      return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
+      return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
       console.log(e)
     }
@@ -146,17 +154,23 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
   if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount)) {
     try {
-      const order = Order(
-        await router.getOrder(makerAddress, { takerAmount: maxQuote.takerAmount, makerToken, takerToken }),
-      )
-      return store.dispatch(gotAlternativeOrderResponse(order, action.stackId))
+      const alternativeOrderResponse = await router.getOrder(makerAddress, {
+        takerAmount: maxQuote.takerAmount,
+        makerToken,
+        takerToken,
+        swapVersion,
+      })
+      const alternativeOrder = swapVersion === 2 ? Swap(alternativeOrderResponse) : Order(alternativeOrderResponse)
+
+      return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
       console.log(e)
     }
   }
 
   try {
-    const order = Order(await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken }))
+    const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
+    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -168,18 +182,20 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 async function getOrderMakerTokenWithQuotes(intent, store, action) {
   const { makerToken, takerToken, makerAmount } = action.query
   const makerAddress = intent.connectionAddress || intent.makerAddress
-
-  const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken })
+  const swapVersion = intent.swapVersion || 1
+  const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion })
   let maxQuote
   let quote
   try {
-    maxQuote = Quote(await maxQuotePromise)
+    const maxQuoteResponse = await maxQuotePromise
+    maxQuote = swapVersion === 2 ? SwapQuote(maxQuoteResponse) : Quote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
   }
   try {
-    quote = Quote(await quotePromise)
+    const quoteResponse = await quotePromise
+    quote = swapVersion === 2 ? SwapQuote(quoteResponse) : Quote(quoteResponse)
   } catch (e) {
     console.log(e)
   }
@@ -194,11 +210,16 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
-      const order = Order(
-        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
-      )
+      const lowBalanceResponse = await router.getOrder(makerAddress, {
+        takerAmount: adjustedTokenBalance,
+        makerToken,
+        takerToken,
+        swapVersion,
+      })
+      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
+
       store.dispatch(gotQuoteResponse(quote, action.stackId))
-      return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
+      return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
       console.log(e)
     }
@@ -206,17 +227,24 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 
   if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount)) {
     try {
-      const order = Order(
-        await router.getOrder(makerAddress, { makerAmount: maxQuote.makerAmount, makerToken, takerToken }),
-      )
-      return store.dispatch(gotAlternativeOrderResponse(order, action.stackId))
+      const alternativeOrderResponse = await router.getOrder(makerAddress, {
+        makerAmount: maxQuote.makerAmount,
+        makerToken,
+        takerToken,
+        swapVersion,
+      })
+      const alternativeOrder = swapVersion === 2 ? Swap(alternativeOrderResponse) : Order(alternativeOrderResponse)
+
+      return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
       console.log(e)
     }
   }
 
   try {
-    const order = Order(await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken }))
+    const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
+    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -228,22 +256,29 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken, takerAmount } = action.query
   const makerAddress = intent.connectionAddress || intent.makerAddress
-
+  const swapVersion = intent.swapVersion || 1
   if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
-      const order = Order(
-        await router.getOrder(makerAddress, { takerAmount: adjustedTokenBalance, makerToken, takerToken }),
-      )
-      return store.dispatch(gotLowBalanceOrderResponse(order, action.stackId))
+      const lowBalanceResponse = await router.getOrder(makerAddress, {
+        takerAmount: adjustedTokenBalance,
+        makerToken,
+        takerToken,
+        swapVersion,
+      })
+      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
+
+      return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
       console.log(e)
     }
   }
 
   try {
-    const order = Order(await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken }))
+    const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
+    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -255,9 +290,11 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken, makerAmount } = action.query
   const makerAddress = intent.connectionAddress || intent.makerAddress
-
+  const swapVersion = intent.swapVersion || 1
   try {
-    const order = Order(await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken }))
+    const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
+    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -316,7 +353,12 @@ export default function routerMiddleware(store) {
           protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
           protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
           protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
-        store.dispatch(fillOrder(bestOrder))
+
+        if (bestOrder.swapVersion === 2) {
+          store.dispatch(fillSwap(bestOrder))
+        } else {
+          store.dispatch(fillOrder(bestOrder))
+        }
         break
       case 'SELECT_CHECKOUT_FRAME_ORDER':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line

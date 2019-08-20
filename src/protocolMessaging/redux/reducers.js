@@ -2,13 +2,14 @@
 import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
-import { makeGetReadableOrder } from '../../tokens/redux/reducers'
+import { makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 import { selectors as swapLegacySelectors } from '../../swapLegacy/redux'
+import { selectors as swapSelectors } from '../../swap/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as fiatSelectors } from '../../fiat/redux'
 
-import { getOrderId } from '../../utils/order'
+import { getOrderId, getSwapSimpleOrderId } from '../../utils/order'
 import { CheckoutFrame } from '../../tcombTypes'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
@@ -141,12 +142,26 @@ const getCurrentFrameQueryContext = createSelector(getCurrentFrame, frame => ({
   ...frame.queryContext,
   ...frame.query,
 }))
+
+const makeGetReadableSwap = createSelector(
+  makeGetReadableOrder,
+  makeGetReadableSwapOrder,
+  (getReadableOrder, getReadableSwapOrder) => order =>
+    order.swapVersion === 2
+      ? {
+          ...getReadableSwapOrder(order),
+          takerAmount: order.takerParam,
+          makerAmount: order.makerParam,
+        }
+      : getReadableOrder(order),
+)
+
 const getCurrentFrameStackId = createSelector(getCurrentFrame, frame => frame.stackId)
 const getCurrentFrameSelectedOrderId = createSelector(getCurrentFrame, frame => frame.selectedOrderId)
 const getCurrentFrameIntents = createSelector(getCurrentFrame, frame => frame.intents)
 const getCurrentFrameTimeoutReached = createSelector(getCurrentFrame, frame => frame.timeoutReached)
 const getCurrentFrameAllIntentsResolved = createSelector(getCurrentFrame, frame => frame.allIntentsResolved)
-const getCurrentFrameOrderResponses = createSelector(getCurrentFrame, makeGetReadableOrder, (frame, getReadableOrder) =>
+const getCurrentFrameOrderResponses = createSelector(getCurrentFrame, makeGetReadableSwap, (frame, getReadableOrder) =>
   frame.orderResponses.map(getReadableOrder),
 )
 const getCurrentFrameDexIndexResponses = createSelector(getCurrentFrame, frame => frame.dexIndexResponses)
@@ -154,22 +169,22 @@ const getCurrentFrameIsDexIndexQuerying = createSelector(getCurrentFrame, frame 
 
 const getCurrentFrameAlternativeOrderResponses = createSelector(
   getCurrentFrame,
-  makeGetReadableOrder,
+  makeGetReadableSwap,
   (frame, getReadableOrder) => frame.alternativeOrderResponses.map(getReadableOrder),
 )
 
 const getCurrentFrameLowBalanceOrderResponses = createSelector(
   getCurrentFrame,
-  makeGetReadableOrder,
+  makeGetReadableSwap,
   (frame, getReadableOrder) => frame.lowBalanceOrderResponses.map(getReadableOrder),
 )
 
-const getCurrentFrameQuoteResponses = createSelector(getCurrentFrame, makeGetReadableOrder, (frame, getReadableOrder) =>
+const getCurrentFrameQuoteResponses = createSelector(getCurrentFrame, makeGetReadableSwap, (frame, getReadableOrder) =>
   frame.quoteResponses.map(getReadableOrder),
 )
 const getCurrentFrameAlternativeQuoteResponses = createSelector(
   getCurrentFrame,
-  makeGetReadableOrder,
+  makeGetReadableSwap,
   (frame, getReadableOrder) => frame.alternativeQuoteResponses.map(getReadableOrder),
 )
 
@@ -408,6 +423,16 @@ const {
   getErrorMiningFillOrder,
 } = swapLegacySelectors
 
+const {
+  getSubmittingFillSwap,
+  getErrorSubmittingFillSwap,
+  getMiningFillSwap,
+  getTransactionsFillSwap,
+  getMinedFillSwap,
+  getTransactionReceiptsFillSwap,
+  getErrorMiningFillSwap,
+} = swapSelectors
+
 const getCurrentFrameBestOrderExecution = createSelector(
   getCurrentFrameSelectedOrder,
   getCurrentFrameBestOrder,
@@ -420,6 +445,13 @@ const getCurrentFrameBestOrderExecution = createSelector(
   getMinedFillOrder,
   getTransactionReceiptsFillOrder,
   getErrorMiningFillOrder,
+  getSubmittingFillSwap,
+  getErrorSubmittingFillSwap,
+  getMiningFillSwap,
+  getTransactionsFillSwap,
+  getMinedFillSwap,
+  getTransactionReceiptsFillSwap,
+  getErrorMiningFillSwap,
   (
     currentFrameSelectedOrder,
     currentFrameBestOrder,
@@ -432,6 +464,13 @@ const getCurrentFrameBestOrderExecution = createSelector(
     minedFillOrder,
     transactionReceiptsFillOrder,
     errorMiningFillOrder,
+    submittingFillSwap,
+    errorSubmittingFillSwap,
+    miningFillSwap,
+    transactionsFillSwap,
+    minedFillSwap,
+    transactionReceiptsFillSwap,
+    errorMiningFillSwap,
   ) => {
     const order =
       currentFrameSelectedOrder ||
@@ -439,19 +478,40 @@ const getCurrentFrameBestOrderExecution = createSelector(
       currentFrameBestAlternativeOrder ||
       currentFrameBestLowBalanceOrder // TODO: This will need to be re-done by an order filling mechanic driven by order IDs
     if (!order) return {}
-    const orderId = getOrderId(order)
-    const vals = _.mapValues(
-      {
-        submittingFillOrder,
-        errorSubmittingFillOrder,
-        miningFillOrder,
-        transactionsFillOrder,
-        minedFillOrder,
-        transactionReceiptsFillOrder,
-        errorMiningFillOrder,
-      },
-      v => v[orderId],
-    )
+    let vals
+    if (order.swapVersion === 2) {
+      const orderId = getSwapSimpleOrderId(order)
+      vals = _.mapKeys(
+        _.mapValues(
+          {
+            submittingFillSwap,
+            errorSubmittingFillSwap,
+            miningFillSwap,
+            transactionsFillSwap,
+            minedFillSwap,
+            transactionReceiptsFillSwap,
+            errorMiningFillSwap,
+          },
+          v => v[orderId],
+        ),
+        (val, key) => `${_.trimEnd(key, 'FillSwap')}FillOrder`,
+      )
+    } else {
+      const orderId = getOrderId(order)
+      vals = _.mapValues(
+        {
+          submittingFillOrder,
+          errorSubmittingFillOrder,
+          miningFillOrder,
+          transactionsFillOrder,
+          minedFillOrder,
+          transactionReceiptsFillOrder,
+          errorMiningFillOrder,
+        },
+        v => v[orderId],
+      )
+    }
+
     return vals
   },
 )
@@ -537,7 +597,7 @@ const getCurrentFrameStateSummaryProperties = createSelector(
 const makeLookUpCheckoutFrameByOrderId = createSelector(getCheckoutStack, stack => orderId =>
   _.find(stack, ({ orderResponses, alternativeOrderResponses, lowBalanceOrderResponses }) => {
     const orders = [...orderResponses, ...alternativeOrderResponses, ...lowBalanceOrderResponses]
-    return !!_.find(orders, o => getOrderId(o) === orderId)
+    return !!_.find(orders, o => getOrderId(o) === orderId || getSwapSimpleOrderId(o) === orderId)
   }),
 )
 
