@@ -16,6 +16,8 @@ import {
   trackSwapLegacyFailed,
   trackSwapLegacyFilled,
 } from '../../swapLegacy/redux/eventTrackingActions'
+import { trackWethDeposit, trackWethWithdrawal } from '../../weth/redux/eventTrackingActions'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 function processEventLogs(logs, store) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
@@ -24,6 +26,23 @@ function processEventLogs(logs, store) {
     const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
     store.dispatch(newEventsAction)
   }
+}
+
+const initTrackWeth = store => {
+  const callback = logs => processEventLogs(logs, store)
+  const connectedWalletAddress = getConnectedWalletAddress(store.getState())
+  eventTracker.trackEvent(
+    trackWethDeposit({
+      callback,
+      owner: connectedWalletAddress,
+    }),
+  )
+  eventTracker.trackEvent(
+    trackWethWithdrawal({
+      callback,
+      owner: connectedWalletAddress,
+    }),
+  )
 }
 
 const initPollExchangeFills = _.once(store => {
@@ -81,6 +100,7 @@ const pollERC20Transfers = (store, block) => {
   if (!addresses.length) {
     return null
   }
+  console.log('fetching addresses', addresses)
   const { fromTopics, toTopics } = buildGlobalERC20TransfersTopics(addresses)
   Promise.all([
     fetchLogs(null, ERC20abi, fromTopics, block.number - 1, block.number), // might sometimes fetch balances twice, but better than missing an update
@@ -123,6 +143,9 @@ export default function eventsMiddleware(store) {
           ...action,
           callback: logs => processEventLogs(logs, store),
         })
+        break
+      case 'ROUTER_CONNECTED':
+        initTrackWeth(store)
         break
       default:
     }
