@@ -57,18 +57,19 @@ function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap, store) {
 }
 
 function reduceERC20LogsToTokenAddressMap(logs) {
-  return _.reduce(
+  const tokenAddressMap = _.reduce(
     logs,
     (obj, log) => {
+      const values = _.values(log.values)
       const tokenAddress = log.address
-      const address1 = log.parsedLogValues['0']
-      const address2 = log.parsedLogValues['1']
+      const [address1, address2] = values
       obj[address1] = _.isArray(obj[address1]) ? _.uniq([...obj[address1], tokenAddress]) : [tokenAddress] //eslint-disable-line
       obj[address2] = _.isArray(obj[address2]) ? _.uniq([...obj[address2], tokenAddress]) : [tokenAddress] //eslint-disable-line
       return obj
     },
     {},
   )
+  return tokenAddressMap
 }
 
 function reduceSwapFillsLogsToTokenAddressMap(logs) {
@@ -171,8 +172,9 @@ export default function balancesMiddleware(store) {
         )
         loadBalancesForTokenAddressMap(tokenAddressMap, store)
         break
-      case makeEventActionTypes('swapFills').got:
-        const swapLogs = _.get(action, 'response', [])
+      case makeEventActionTypes('trackedEvents').got:
+        const response = _.get(action, 'response', [])
+        const swapLogs = _.filter(response, { name: 'Swap' })
         const swapTokenAddressMap = filterTokenAddressMapByTrackedAddresses(
           reduceSwapFillsLogsToTokenAddressMap(swapLogs),
           store,

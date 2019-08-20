@@ -131,9 +131,9 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
 const AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return 'https://ethereum.api.nodesmith.io/v1/rinkeby/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
+      return 'https://geth-rinkeby.airswap-api.com'
     case MAIN_ID:
-      return 'https://ethereum.api.nodesmith.io/v1/mainnet/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
+      return 'https://geth-cluster.airswap-api.com'
     default:
   }
 })(NETWORK)
@@ -159,6 +159,8 @@ const NODESMITH_GETH_NODE = (N => {
 })(NETWORK)
 
 const httpProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const infuraProvider = new ethers.providers.JsonRpcProvider(INFURA_GETH_NODE)
+const nodesmithProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -329,5 +331,7 @@ module.exports = {
   FORTMATIC_ID,
   IS_INSTANT,
   httpProvider,
+  infuraProvider,
+  nodesmithProvider,
   NODESMITH_GETH_NODE,
 }
