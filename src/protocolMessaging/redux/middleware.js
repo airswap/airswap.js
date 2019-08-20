@@ -97,6 +97,9 @@ function takerTokenBalanceIsZero(store, takerToken) {
   const state = store.getState()
   const connectedBalances = deltaBalancesSelectors.getConnectedBalances(state)
   const connectedApprovals = deltaBalancesSelectors.getConnectedApprovals(state)
+  if (!connectedApprovals) {
+    return false
+  }
   const tokenApproved = takerToken === ETH_ADDRESS || connectedApprovals[takerToken]
   return !tokenApproved || Number(connectedBalances[takerToken]) === 0
 }
