@@ -259,6 +259,7 @@ class Router {
     if (!makerAmount && !takerAmount) throw BadArgumentsError
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
+
     const query =
       swapVersion === 2
         ? {
