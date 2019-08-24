@@ -5,8 +5,6 @@ const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
 const { NODESMITH_URL, NODESMITH_KEY, httpProvider } = require('../constants')
 
-const ethersProvider = httpProvider
-
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
 let nodesmithProvider
@@ -57,7 +55,7 @@ async function send({ method, params }) {
       )
     })
   }
-  return ethersProvider.send(method, params)
+  return httpProvider.send(method, params)
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {

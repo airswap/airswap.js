@@ -1,17 +1,8 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const {
-  AST_CONTRACT_ADDRESS, //eslint-disable-line
-  ERC20abi,
-  AIRSWAP_GETH_NODE_ADDRESS,
-  abis,
-  SWAP_LEGACY_CONTRACT_ADDRESS,
-  SWAP_CONTRACT_ADDRESS,
-} = require('../constants')
+const { httpProvider, ERC20abi, abis, SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } = require('../constants')
 
 const { getLogs } = require('../utils/gethRead')
-
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
 const queries = {}
 
@@ -19,7 +10,7 @@ const { hexlify, hexStripZeros } = ethers.utils
 
 async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
   const toBlockOverride =
-    _.isUndefined(toBlock) || _.isNull(toBlock) ? await provider.getBlockNumber() : Number(toBlock)
+    _.isUndefined(toBlock) || _.isNull(toBlock) ? await httpProvider.getBlockNumber() : Number(toBlock)
   const fromBlockOverride =
     _.isUndefined(fromBlock) || _.isNull(fromBlock) ? Number(toBlockOverride) - 7000 : Number(fromBlock) // default is around 1 day of blocks
 
@@ -48,8 +39,16 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
   try {
     logs = await getLogs(logParams)
   } catch (e) {
-    console.log('error fetching logs from geth', e, logParams)
-    return
+    console.log(`logs not ready for block ${toBlockOverride}, retrying in 1s`)
+    return new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          fetchLogs(contractAddress, abi, topic, fromBlock, toBlock)
+            .then(resolve)
+            .catch(reject),
+        1000,
+      )
+    })
   }
 
   return parseEventLogs(logs, abi)
