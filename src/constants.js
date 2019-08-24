@@ -131,9 +131,9 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
 const AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return 'https://geth-rinkeby.airswap-api.com'
+      return 'https://eth-rinkeby.alchemyapi.io/jsonrpc/SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
     case MAIN_ID:
-      return 'https://geth-cluster.airswap-api.com'
+      return 'https://eth-mainnet.alchemyapi.io/jsonrpc/1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
     default:
   }
 })(NETWORK)
