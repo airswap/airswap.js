@@ -100,11 +100,11 @@ const pollERC20Transfers = (store, block) => {
   if (!addresses.length) {
     return null
   }
-  console.log('fetching addresses', addresses)
+
   const { fromTopics, toTopics } = buildGlobalERC20TransfersTopics(addresses)
   Promise.all([
-    fetchLogs(null, ERC20abi, fromTopics, block.number - 1, block.number), // might sometimes fetch balances twice, but better than missing an update
-    fetchLogs(null, ERC20abi, toTopics, block.number - 1, block.number),
+    fetchLogs(null, ERC20abi, fromTopics, block.number, block.number), // might sometimes fetch balances twice, but better than missing an update
+    fetchLogs(null, ERC20abi, toTopics, block.number, block.number),
   ]).then(([fromLogs, toLogs]) => {
     const logs = [...fromLogs, ...toLogs]
     if (logs && logs.length) {

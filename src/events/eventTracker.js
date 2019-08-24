@@ -23,8 +23,16 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock, parse 
   try {
     logs = await getLogs(logParams)
   } catch (e) {
-    console.log('error fetching logs from geth', e, logParams)
-    return
+    console.log(`logs not ready for block ${toBlock}, retrying in 1s`)
+    return new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          fetchLogs(contractAddress, abi, topic, fromBlock, toBlock, parse)
+            .then(resolve)
+            .catch(reject),
+        1000,
+      )
+    })
   }
 
   return parse ? parseEventLogs(logs, abi) : logs
