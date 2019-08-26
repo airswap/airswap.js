@@ -128,17 +128,17 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const ALECHEMY_RINKEBY_ID =
-  process.env.REACT_APP_ALECHEMY_RINKEBY_ID || process.env.ALECHEMY_RINKEBY_ID || 'SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
-const ALECHEMY_MAINNET_ID =
-  process.env.REACT_APP_ALECHEMY_MAINNET_ID || process.env.ALECHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
+const ALCHEMY_RINKEBY_ID =
+  process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID || 'SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
+const ALCHEMY_MAINNET_ID =
+  process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
 
 const AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return `https://eth-rinkeby.alchemyapi.io/jsonrpc/${ALECHEMY_RINKEBY_ID}`
+      return `https://eth-rinkeby.alchemyapi.io/jsonrpc/${ALCHEMY_RINKEBY_ID}`
     case MAIN_ID:
-      return `https://eth-mainnet.alchemyapi.io/jsonrpc/${ALECHEMY_MAINNET_ID}`
+      return `https://eth-mainnet.alchemyapi.io/jsonrpc/${ALCHEMY_MAINNET_ID}`
     default:
   }
 })(NETWORK)
