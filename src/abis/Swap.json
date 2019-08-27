@@ -325,60 +325,6 @@
     "constant": false,
     "inputs": [
       {
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "name": "expiry",
-        "type": "uint256"
-      },
-      {
-        "name": "makerWallet",
-        "type": "address"
-      },
-      {
-        "name": "makerParam",
-        "type": "uint256"
-      },
-      {
-        "name": "makerToken",
-        "type": "address"
-      },
-      {
-        "name": "takerWallet",
-        "type": "address"
-      },
-      {
-        "name": "takerParam",
-        "type": "uint256"
-      },
-      {
-        "name": "takerToken",
-        "type": "address"
-      },
-      {
-        "name": "v",
-        "type": "uint8"
-      },
-      {
-        "name": "r",
-        "type": "bytes32"
-      },
-      {
-        "name": "s",
-        "type": "bytes32"
-      }
-    ],
-    "name": "swapSimple",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
         "name": "nonces",
         "type": "uint256[]"
       }
