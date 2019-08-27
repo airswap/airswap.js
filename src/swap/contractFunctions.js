@@ -26,36 +26,6 @@ export function swap(order, signature, signer) {
   return contract.swap(order, signature)
 }
 
-export function swapSimple(
-  nonce,
-  expiry,
-  makerWallet,
-  makerParam,
-  makerToken,
-  takerWallet,
-  takerParam,
-  takerToken,
-  v,
-  r,
-  s,
-  signer,
-) {
-  const contract = getSwapContract(signer)
-  return contract.swapSimple(
-    nonce,
-    expiry,
-    makerWallet,
-    makerParam,
-    makerToken,
-    takerWallet,
-    takerParam,
-    takerToken,
-    v,
-    r,
-    s,
-  )
-}
-
 export function cancel(nonces, signer) {
   const contract = getSwapContract(signer)
   return contract.cancel(nonces)
