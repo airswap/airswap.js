@@ -149,11 +149,6 @@ const modules = [
     namespace: 'deltaBalances',
     contractKey: 'DELTA_BALANCES_CONTRACT_ADDRESS',
   },
-  {
-    abiLocation: 'abis/nuo.json',
-    namespace: 'nuo',
-    contractKey: 'NUO_CONTRACT_ADDRESS',
-  },
 ]
 
 modules.map(createSubmodules)
