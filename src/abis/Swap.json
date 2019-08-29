@@ -283,35 +283,35 @@
             ],
             "name": "affiliate",
             "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "name": "signer",
+                "type": "address"
+              },
+              {
+                "name": "v",
+                "type": "uint8"
+              },
+              {
+                "name": "r",
+                "type": "bytes32"
+              },
+              {
+                "name": "s",
+                "type": "bytes32"
+              },
+              {
+                "name": "version",
+                "type": "bytes1"
+              }
+            ],
+            "name": "signature",
+            "type": "tuple"
           }
         ],
         "name": "order",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "name": "signer",
-            "type": "address"
-          },
-          {
-            "name": "v",
-            "type": "uint8"
-          },
-          {
-            "name": "r",
-            "type": "bytes32"
-          },
-          {
-            "name": "s",
-            "type": "bytes32"
-          },
-          {
-            "name": "version",
-            "type": "bytes1"
-          }
-        ],
-        "name": "signature",
         "type": "tuple"
       }
     ],

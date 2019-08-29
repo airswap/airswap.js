@@ -1,102 +1,57 @@
+const _ = require('lodash')
 const ethers = require('ethers')
-const utils = require('web3-utils')
-const { constants, getOrderHash } = require('../utils/orderUtils')
-const { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, abis } = require('../constants')
+const {
+  hashes: { getOrderHash },
+  constants,
+} = require('@airswap/order-utils')
+const { nest } = require('./utils')
+const { SWAP_CONTRACT_ADDRESS, abis } = require('../constants')
+
+const removeFalsey = obj => _.pickBy(obj, _.identity)
+
+const fillOrderDefaults = ({ expiry, nonce, maker, taker, affiliate }) => ({
+  expiry: `${expiry}`,
+  nonce: `${nonce}`,
+  maker: { ...constants.defaults.Party, ...removeFalsey(maker) },
+  taker: { ...constants.defaults.Party, ...removeFalsey(taker) },
+  affiliate: { ...constants.defaults.Party, ...removeFalsey(affiliate) },
+})
 
 function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
 }
 
 async function swap(orderParams, signer) {
-  const {
-    version,
-    signer: signerAddress,
-    r,
-    s,
-    v,
-    nonce,
-    makerWallet,
-    makerParam,
-    makerToken,
-    takerWallet,
-    takerParam,
-    takerToken,
-    expiry,
-  } = orderParams
-
-  const signature = {
-    version,
-    signer: signerAddress,
-    r,
-    s,
-    v,
-  }
-  const order = {
-    expiry,
-    nonce,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
-    taker: { wallet: takerWallet.toLowerCase(), token: takerToken, param: takerParam, kind },
-    affiliate: constants.defaults.Party,
-  }
-
+  const order = orderParams.maker ? orderParams : nest(orderParams)
+  order.signature.v = Number(order.signature.v)
   const contract = getSwapContract(signer)
-  return contract.swap(order, signature, {
-    value: ethers.utils.bigNumberify(takerToken === ETH_ADDRESS ? takerParam : 0),
-  })
+  return contract.swap(order)
 }
 
-const { kind } = constants.defaults.Party
-
 async function signSwap(orderParams, signer) {
-  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
-
-  const takerWalletAddress = takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet
-
-  const order = {
-    nonce,
-    expiry,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
-    taker: {
-      wallet: takerWalletAddress,
-      token: takerToken,
-      param: takerParam,
-      kind,
-    },
-    affiliate: constants.defaults.Party,
-  }
-
+  // TODO: Add automatic ERC20 vs ERC721 type detection
+  const order = fillOrderDefaults(orderParams)
   const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
   const signerAddress = await signer.getAddress()
   const { r, s, v } = sig
-
-  return {
-    ...orderParams,
-    takerWallet: takerWalletAddress,
-    signer: signerAddress.toLowerCase(),
-    version: '0x45', // Version 0x45: personal_sign
-    r,
-    s,
-    v,
+  const signedOrder = {
+    ...order,
+    signature: {
+      signer: signerAddress.toLowerCase(), // Version 0x45: personal_sign
+      version: constants.signatures.PERSONAL_SIGN,
+      r,
+      s,
+      v: `${v}`,
+    },
   }
+
+  return signedOrder
 }
 
 async function signSwapTypedData(orderParams, signer) {
-  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = orderParams
-  const takerWalletAddress = takerWallet ? takerWallet.toLowerCase() : constants.defaults.Party.wallet
-  const order = {
-    expiry,
-    nonce,
-    maker: { wallet: makerWallet.toLowerCase(), token: makerToken, param: makerParam, kind },
-    taker: {
-      wallet: takerWalletAddress,
-      token: takerToken,
-      param: takerParam,
-      kind,
-    },
-    affiliate: constants.defaults.Party,
-  }
+  const order = fillOrderDefaults(orderParams)
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
     domain: {
@@ -110,76 +65,22 @@ async function signSwapTypedData(orderParams, signer) {
   const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
-
-  return {
-    ...orderParams,
-    takerWallet: takerWalletAddress,
-    version: '0x01', // Version 0x01: signTypedData
-    signer: signerAddress.toLowerCase(),
-    r,
-    s,
-    v,
-  }
-}
-
-function swapSimple(order, signer) {
-  const contract = getSwapContract(signer)
-
-  return contract.swapSimple(
-    order.nonce,
-    order.expiry,
-    order.makerWallet,
-    order.makerParam,
-    order.makerToken,
-    order.takerWallet,
-    order.takerParam,
-    order.takerToken,
-    order.v,
-    order.r,
-    order.s,
-    {
-      value: ethers.utils.bigNumberify(order.takerToken === ETH_ADDRESS ? order.takerParam : 0),
+  const signedOrder = {
+    ...order,
+    signature: {
+      signer: signerAddress.toLowerCase(),
+      version: constants.signatures.SIGN_TYPED_DATA, // Version 0x01: signTypedData
+      r,
+      s,
+      v: `${v}`,
     },
-  )
+  }
+  return signedOrder
 }
 
 function cancel(ids, signer) {
   const contract = getSwapContract(signer)
   return contract.cancel(ids)
-}
-
-async function signSwapSimple(order, signer) {
-  const { nonce, makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry } = order
-
-  const hashedOrder = utils.soliditySha3(
-    // Version 0x00: Data with intended validator (verifyingContract)
-    { type: 'bytes1', value: '0x0' },
-    { type: 'address', value: SWAP_CONTRACT_ADDRESS },
-    { type: 'uint256', value: nonce },
-    { type: 'uint256', value: expiry },
-    { type: 'address', value: makerWallet },
-    { type: 'uint256', value: makerParam },
-    { type: 'address', value: makerToken },
-    { type: 'address', value: takerWallet },
-    { type: 'uint256', value: takerParam },
-    { type: 'address', value: takerToken },
-  )
-
-  const signedMsg = await signer.signMessage(ethers.utils.arrayify(hashedOrder))
-
-  const sig = ethers.utils.splitSignature(signedMsg)
-
-  return {
-    nonce,
-    makerWallet,
-    makerParam,
-    makerToken,
-    takerWallet,
-    takerParam,
-    takerToken,
-    expiry,
-    ...sig,
-  }
 }
 
 function getMakerOrderStatus(makerAddress, nonce, signer) {
@@ -188,4 +89,4 @@ function getMakerOrderStatus(makerAddress, nonce, signer) {
   return contract.makerOrderStatus(makerAddress, nonce)
 }
 
-module.exports = { swap, swapSimple, cancel, signSwapSimple, signSwapTypedData, signSwap, getMakerOrderStatus }
+module.exports = { swap, cancel, signSwapTypedData, signSwap, getMakerOrderStatus }

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
+import { flatten, nest } from '../../swap/utils'
 import Router from '../index'
 import { getSigner } from '../../wallet/redux/actions'
 import { selectors as apiSelectors } from '../../api/redux'
@@ -10,7 +11,9 @@ import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
 import { ETH_ADDRESS, IS_INSTANT } from '../../constants'
-import { Quote, Order, Swap, SwapQuote } from '../../tcombTypes'
+import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
+
+import { Order, Quote } from '../../swap/tcomb'
 import { fillSwap } from '../../swap/redux/actions'
 
 async function initialzeRouter(store) {
@@ -120,13 +123,13 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
   try {
     const maxQuoteResponse = await maxQuotePromise
-    maxQuote = swapVersion === 2 ? SwapQuote(maxQuoteResponse) : Quote(maxQuoteResponse)
+    maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
   }
   try {
     const quoteResponse = await quotePromise
-    quote = swapVersion === 2 ? SwapQuote(quoteResponse) : Quote(quoteResponse)
+    quote = swapVersion === 2 ? flatten(Quote(quoteResponse)) : LegacyQuote(quoteResponse)
   } catch (e) {
     console.log(e)
   }
@@ -147,7 +150,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
+      const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
@@ -163,7 +166,8 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const alternativeOrder = swapVersion === 2 ? Swap(alternativeOrderResponse) : Order(alternativeOrderResponse)
+      const alternativeOrder =
+        swapVersion === 2 ? flatten(Order(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
 
       return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
@@ -173,7 +177,8 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
   try {
     const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
+
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -192,13 +197,13 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   let quote
   try {
     const maxQuoteResponse = await maxQuotePromise
-    maxQuote = swapVersion === 2 ? SwapQuote(maxQuoteResponse) : Quote(maxQuoteResponse)
+    maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
   }
   try {
     const quoteResponse = await quotePromise
-    quote = swapVersion === 2 ? SwapQuote(quoteResponse) : Quote(quoteResponse)
+    quote = swapVersion === 2 ? flatten(Quote(quoteResponse)) : LegacyQuote(quoteResponse)
   } catch (e) {
     console.log(e)
   }
@@ -219,7 +224,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
+      const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
 
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
@@ -236,7 +241,8 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const alternativeOrder = swapVersion === 2 ? Swap(alternativeOrderResponse) : Order(alternativeOrderResponse)
+      const alternativeOrder =
+        swapVersion === 2 ? flatten(Order(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
 
       return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
@@ -246,7 +252,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 
   try {
     const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -270,7 +276,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const lowBalanceOrder = swapVersion === 2 ? Swap(lowBalanceResponse) : Order(lowBalanceResponse)
+      const lowBalanceOrder = swapVersion === 2 ? Order(lowBalanceResponse) : LegacyOrder(lowBalanceResponse)
 
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
@@ -280,7 +286,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 
   try {
     const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+    const order = swapVersion === 2 ? Order(orderResponse) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -296,7 +302,7 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   const swapVersion = intent.swapVersion || 1
   try {
     const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Swap(orderResponse) : Order(orderResponse)
+    const order = swapVersion === 2 ? Order(orderResponse) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -358,7 +364,7 @@ export default function routerMiddleware(store) {
           protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
 
         if (bestOrder.swapVersion === 2) {
-          store.dispatch(fillSwap(bestOrder))
+          store.dispatch(fillSwap(nest(bestOrder)))
         } else {
           store.dispatch(fillOrder(bestOrder))
         }

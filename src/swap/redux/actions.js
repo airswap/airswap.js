@@ -5,11 +5,6 @@ export const fillSwap = order => ({
   order,
 })
 
-export const fillSwapSimple = order => ({
-  type: 'FILL_SWAP_SIMPLE',
-  order,
-})
-
 export const cancelSwap = order => ({
   type: 'CANCEL_SWAP',
   order,
@@ -17,8 +12,4 @@ export const cancelSwap = order => ({
 
 export const signSwap = makePromiseAction({
   type: 'SIGN_SWAP',
-})
-
-export const signSwapSimple = makePromiseAction({
-  type: 'SIGN_SWAP_SIMPLE',
 })

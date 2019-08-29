@@ -55,6 +55,7 @@ const startWalletAction = async (store, actionType, argParams) => {
   let params
   if (actionType === 'sendTransaction') {
     const to = await args.to
+
     const contractInterface = new ethers.utils.Interface(abis[to.toLowerCase()])
     const { data } = args
     const parsed = contractInterface.parseTransaction({ data })

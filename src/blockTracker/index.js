@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { fetchBlock, fetchLatestBlock } = require('../utils/gethRead')
+const { fetchBlock, fetchCurrentBlockNumber } = require('../utils/gethRead')
 
 class BlockTracker {
   constructor(interval = 3000) {
@@ -9,13 +9,15 @@ class BlockTracker {
     this.readyPromise = this.init()
   }
   async init() {
-    const block = await fetchLatestBlock(true)
+    const blockNumber = await fetchCurrentBlockNumber()
+    const block = await fetchBlock(blockNumber)
     this.blocks[block.number] = block
     this.pollForNextBlock()
     return true
   }
   async onBlock(processNewBlock) {
     await this.readyPromise
+
     processNewBlock(this.getLatestBlock())
     this.blockProcessors.push(processNewBlock)
   }
@@ -30,12 +32,23 @@ class BlockTracker {
   }
   async pollForNextBlock() {
     const currentBlockNumber = this.getLatestBlockNumber()
-    let block
+    let latestBlock
+    let latestBlockNumber
     try {
-      block = await fetchBlock(currentBlockNumber + 1)
-      if (block) {
-        this.blocks[block.number] = block
-        this.blockProcessors.map(processNewBlock => processNewBlock(block))
+      latestBlockNumber = await fetchCurrentBlockNumber()
+      if (latestBlockNumber > currentBlockNumber) {
+        latestBlock = await fetchBlock(latestBlockNumber)
+        this.blocks[latestBlock.number] = latestBlock
+        this.blockProcessors.map(processNewBlock => processNewBlock(latestBlock))
+        if (latestBlock.number > currentBlockNumber + 1) {
+          const range = _.range(currentBlockNumber + 1, latestBlock.number)
+          console.log('blocks were missed, filling in the gaps', range)
+          range.map(async n => {
+            const missedBlock = await fetchBlock(n)
+            this.blocks[missedBlock.number] = missedBlock
+            this.blockProcessors.map(processNewBlock => processNewBlock(missedBlock))
+          })
+        }
       }
     } catch (e) {
       console.log(`didnt get block (threw error) ${currentBlockNumber}`, e)

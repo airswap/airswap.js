@@ -15,102 +15,10 @@ const Address = t.refinement(t.String, isAddress)
 const AtomicAmount = t.refinement(t.String, isAtomicAmount)
 const UUID = t.refinement(t.String, validator.isUUID)
 
-const Order = t.struct({
-  makerAddress: Address,
-  makerToken: Address,
-  takerAddress: Address,
-  takerToken: Address,
-  makerAmount: AtomicAmount,
-  takerAmount: AtomicAmount,
-  nonce: t.String,
-  expiration: t.Number,
-  v: t.Number,
-  r: t.String,
-  s: t.String,
-  swapVersion: t.Number,
-})
-
-const Swap = t.struct({
-  expiry: t.Number,
-  makerParam: AtomicAmount,
-  makerToken: Address,
-  makerWallet: Address,
-  nonce: t.String,
-  r: t.String,
-  s: t.String,
-  signer: t.String,
-  swapVersion: t.Number,
-  takerParam: AtomicAmount,
-  takerToken: Address,
-  takerWallet: Address,
-  v: t.Number,
-  version: t.String,
-})
-
-const Quote = t.struct({
-  makerAddress: Address,
-  makerToken: Address,
-  takerToken: Address,
-  makerAmount: AtomicAmount,
-  takerAmount: AtomicAmount,
-})
-
-const SwapQuote = t.struct({
-  makerParam: AtomicAmount,
-  takerParam: AtomicAmount,
-  makerToken: Address,
-  takerToken: Address,
-  makerWallet: Address,
-  swapVersion: t.Number,
-})
-
-const Query = t.struct({
-  makerToken: Address,
-  takerToken: Address,
-  makerAmount: t.maybe(AtomicAmount),
-  takerAmount: t.maybe(AtomicAmount),
-})
-
-const QueryContext = t.struct({
-  specifiedAmount: t.refinement(t.String, s => _.includes(['token', 'base'], s)),
-  side: t.refinement(t.String, s => _.includes(['buy', 'sell'], s)),
-})
-
-const Intent = t.struct({
-  makerToken: Address,
-  takerToken: Address,
-  makerAddress: Address,
-})
-
-const DexIndexResponse = t.Object
-
-const DexIndexResponses = t.list(DexIndexResponse)
-
-const Intents = t.list(Intent)
-
-const OrderResponses = t.list(t.union([Order, Swap]))
-
-const QuoteResponses = t.list(t.union([Quote, SwapQuote]))
-
-const CheckoutFrame = t.struct({
-  stackId: UUID,
-  query: t.maybe(Query),
-  queryContext: t.maybe(QueryContext),
-  intents: t.maybe(Intents),
-  orderResponses: OrderResponses,
-  alternativeOrderResponses: OrderResponses,
-  lowBalanceOrderResponses: OrderResponses,
-  quoteResponses: QuoteResponses,
-  alternativeQuoteResponses: QuoteResponses,
-  timeoutReached: t.Boolean,
-  allIntentsResolved: t.Boolean,
-  selectedOrderId: t.String,
-  isDexIndexQuerying: t.maybe(t.Boolean),
-  dexIndexResponses: DexIndexResponses,
-})
+const stringLiteral = str => t.refinement(t.String, val => val === str)
 
 const gasLevel = t.refinement(t.String, s => _.includes(GAS_LEVELS, s))
 
 const Currency = t.refinement(t.String, s => _.includes(Object.keys(FIAT_CURRENCIES), s))
 
-module.exports = { Address, Query, CheckoutFrame, gasLevel, Currency, Quote, Order, Swap, SwapQuote }
+module.exports = { Address, gasLevel, Currency, AtomicAmount, stringLiteral, UUID }
