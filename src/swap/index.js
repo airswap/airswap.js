@@ -24,7 +24,6 @@ function getSwapContract(signer) {
 async function swap(orderParams, signer) {
   const order = orderParams.maker ? orderParams : nest(orderParams)
   order.signature.v = Number(order.signature.v)
-  console.log('MY ORDER', JSON.stringify(order, null, 2))
   const contract = getSwapContract(signer)
   return contract.swap(order)
 }
@@ -63,7 +62,6 @@ async function signSwapTypedData(orderParams, signer) {
     primaryType: 'Order',
     message: order, // remove falsey values on order
   }
-  console.log('DATA', JSON.stringify(data, null, 2))
   const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
@@ -77,7 +75,6 @@ async function signSwapTypedData(orderParams, signer) {
       v: `${v}`,
     },
   }
-
   return signedOrder
 }
 
