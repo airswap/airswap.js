@@ -2,9 +2,21 @@ const ethers = require('ethers')
 const WebSocket = require('isomorphic-ws')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
-
+const { nest } = require('../swap/utils')
 // Class Constructor
 // ----------------
+
+const quoteQueryDefaults = {
+  affiliateToken: '0x0000000000000000000000000000000000000000',
+  affiliateParam: '0',
+}
+
+const orderQueryDefaults = {
+  takerWallet: '0x0000000000000000000000000000000000000000',
+  affiliateToken: '0x0000000000000000000000000000000000000000',
+  affiliateParam: '0',
+}
+
 class Router {
   // * `rpcActions`: `Object` - user defined methods; called by peers via JSON-RPC
   // * `messageSigner`: `function` - a function taking the form (message) => signer.sign(message)
@@ -249,6 +261,44 @@ class Router {
     return new Promise((resolve, reject) => this.call(INDEXER_ADDRESS, payload, resolve, reject))
   }
 
+  getMakerSideOrder(makerAddress, params) {
+    const { makerToken, takerToken, takerParam, affiliateToken, affiliateParam } = params
+
+    const query = Object.assign({}, orderQueryDefaults, {
+      makerToken,
+      takerToken,
+      takerParam,
+      takerWallet: this.address.toLowerCase(),
+      affiliateToken,
+      affiliateParam,
+    })
+
+    const payload = Router.makeRPC('getMakerSideOrder', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
+      ...order,
+      swap: { version: 2 },
+    }))
+  }
+
+  getTakerSideOrder(makerAddress, params) {
+    const { makerToken, takerToken, makerParam, affiliateToken, affiliateParam } = params
+
+    const query = Object.assign({}, orderQueryDefaults, {
+      makerToken,
+      takerToken,
+      makerParam,
+      takerWallet: this.address.toLowerCase(),
+      affiliateToken,
+      affiliateParam,
+    })
+
+    const payload = Router.makeRPC('getTakerSideOrder', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
+      ...order,
+      swap: { version: 2 },
+    }))
+  }
+
   // Make a JSON-RPC `getOrder` call on a maker and recieve back a signed order (or a timeout if they fail to respond)
   // * `makerAddress`: `string` - the maker address to request an order from
   // * `params`: `Object` - order parameters. Must specify 1 of either `makerAmount` or `takerAmount`. Must also specify `makerToken` and `takerToken` addresses
@@ -256,54 +306,73 @@ class Router {
     const { makerAmount, takerAmount, makerToken, takerToken } = params
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
     const swapVersion = params.swapVersion || 1
+
+    if (swapVersion === 2) {
+      if (takerAmount) {
+        return this.getMakerSideOrder(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
+      } else if (makerAmount) {
+        return this.getTakerSideOrder(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
+      }
+    }
+
     if (!makerAmount && !takerAmount) throw BadArgumentsError
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const query =
-      swapVersion === 2
-        ? {
-            makerToken,
-            takerToken,
-            makerParam: makerAmount ? String(makerAmount) : null,
-            takerParam: takerAmount ? String(takerAmount) : null,
-            takerWallet: this.address.toLowerCase(),
-          }
-        : {
-            makerToken,
-            takerToken,
-            makerAmount: makerAmount ? String(makerAmount) : null,
-            takerAmount: takerAmount ? String(takerAmount) : null,
-            takerAddress: this.address.toLowerCase(),
-          }
+    const query = {
+      makerToken,
+      takerToken,
+      makerAmount: makerAmount ? String(makerAmount) : null,
+      takerAmount: takerAmount ? String(takerAmount) : null,
+      takerAddress: this.address.toLowerCase(),
+    }
 
     const payload = Router.makeRPC('getOrder', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => {
-      if (swapVersion === 2) {
-        return {
-          ...order,
-          v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
-          expiry: order.expiry ? ethers.utils.bigNumberify(order.expiry).toNumber() : order.expiry,
-          makerWallet: (order.makerWallet || '').toLowerCase(), // normalizes the case of addresses in returned orders
-          takerWallet: (order.takerWallet || '').toLowerCase(),
-          makerToken: (order.makerToken || '').toLowerCase(),
-          takerToken: (order.takerToken || '').toLowerCase(),
-          swapVersion,
-          nonce: order.nonce ? `${order.nonce}` : order.nonce,
-        }
-      }
-      return {
-        ...order,
-        v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
-        expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
-        makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
-        takerAddress: (order.takerAddress || '').toLowerCase(),
-        makerToken: (order.makerToken || '').toLowerCase(),
-        takerToken: (order.takerToken || '').toLowerCase(),
-        swapVersion,
-        nonce: order.nonce ? `${order.nonce}` : order.nonce,
-      }
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
+      ...order,
+      v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
+      expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
+      makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
+      takerAddress: (order.takerAddress || '').toLowerCase(),
+      makerToken: (order.makerToken || '').toLowerCase(),
+      takerToken: (order.takerToken || '').toLowerCase(),
+      swapVersion,
+      nonce: order.nonce ? `${order.nonce}` : order.nonce,
+    }))
+  }
+
+  getMakerSideQuote(makerAddress, params) {
+    const { makerToken, takerToken, takerParam, affiliateToken, affiliateParam } = params
+
+    const query = Object.assign({}, quoteQueryDefaults, {
+      makerToken,
+      takerToken,
+      takerParam,
+      affiliateToken,
+      affiliateParam,
     })
+
+    const payload = Router.makeRPC('getMakerSideQuote', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(({ makerParam }) =>
+      nest({ makerToken, takerToken, makerParam, takerParam, swapVersion: 2 }),
+    )
+  }
+
+  getTakerSideQuote(makerAddress, params) {
+    const { makerToken, takerToken, makerParam, affiliateToken, affiliateParam } = params
+
+    const query = Object.assign({}, quoteQueryDefaults, {
+      makerToken,
+      takerToken,
+      makerParam,
+      affiliateToken,
+      affiliateParam,
+    })
+
+    const payload = Router.makeRPC('getTakerSideQuote', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(({ takerParam }) =>
+      nest({ makerToken, takerToken, makerParam, takerParam, swapVersion: 2 }),
+    )
   }
 
   getQuote(makerAddress, params) {
@@ -311,24 +380,24 @@ class Router {
     const swapVersion = params.swapVersion || 1
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
 
+    if (swapVersion === 2) {
+      if (takerAmount) {
+        return this.getMakerSideQuote(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
+      } else if (makerAmount) {
+        return this.getTakerSideQuote(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
+      }
+    }
+
     if (!makerAmount && !takerAmount) throw BadArgumentsError
     if (makerAmount && takerAmount) throw BadArgumentsError
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const query =
-      swapVersion === 2
-        ? {
-            makerToken,
-            takerToken,
-            makerParam: makerAmount ? String(makerAmount) : null,
-            takerParam: takerAmount ? String(takerAmount) : null,
-          }
-        : {
-            makerToken,
-            takerToken,
-            makerAmount: makerAmount ? String(makerAmount) : null,
-            takerAmount: takerAmount ? String(takerAmount) : null,
-          }
+    const query = {
+      makerToken,
+      takerToken,
+      makerAmount: makerAmount ? String(makerAmount) : null,
+      takerAmount: takerAmount ? String(takerAmount) : null,
+    }
 
     const payload = Router.makeRPC('getQuote', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => ({
@@ -339,18 +408,31 @@ class Router {
 
   getMaxQuote(makerAddress, params) {
     const { makerToken, takerToken } = params
-    const BadArgumentsError = new Error('bad arguments passed to getOrder')
+    const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
     const swapVersion = params.swapVersion || 1
     if (!takerToken || !makerToken) throw BadArgumentsError
 
-    const payload = Router.makeRPC('getMaxQuote', {
-      makerToken,
-      takerToken,
-    })
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => ({
-      ...quote,
-      swapVersion,
-    }))
+    const query =
+      swapVersion === 2
+        ? Object.assign({}, quoteQueryDefaults, params)
+        : {
+            makerToken,
+            takerToken,
+          }
+
+    const payload = Router.makeRPC('getMaxQuote', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(
+      quote =>
+        swapVersion === 2
+          ? nest({
+              makerToken,
+              takerToken,
+              makerParam: quote.makerParam,
+              takerParam: quote.takerParam,
+              swapVersion,
+            })
+          : { ...quote, ...query, swapVersion },
+    )
   }
   // Given an array of trade intents, make a JSON-RPC `getOrder` call for each `intent`
   getOrders(intents, params) {

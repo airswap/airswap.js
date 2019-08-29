@@ -1,6 +1,5 @@
 import uuid from 'uuid4'
 import { getOrderId } from '../../utils/order'
-import { Order } from '../../tcombTypes'
 
 const newCheckoutFrame = () => ({
   type: 'NEW_CHECKOUT_FRAME',
@@ -19,7 +18,7 @@ const fillFrameBestOrder = () => ({
 
 const selectCheckoutFrameOrder = order => ({
   type: 'SELECT_CHECKOUT_FRAME_ORDER',
-  orderId: getOrderId(Order(order)),
+  orderId: getOrderId(order),
 })
 
 export { newCheckoutFrame, setCheckoutFrameQuery, fillFrameBestOrder, selectCheckoutFrameOrder }

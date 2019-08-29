@@ -1,9 +1,10 @@
+const Bottleneck = require('bottleneck')
 const _ = require('lodash')
 const ethers = require('ethers')
 const uuid = require('uuid')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, httpProvider } = require('../constants')
+const { NODESMITH_URL, NODESMITH_KEY, httpProvider, ENV } = require('../constants')
 
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
@@ -39,6 +40,11 @@ if (nodesmithSupported) {
   initializeNodesmith()
 }
 
+const limiter = new Bottleneck({
+  maxConcurrent: ENV === 'development' ? 2 : 3,
+  minTime: 50,
+})
+
 async function send({ method, params }) {
   if (nodesmithSupported) {
     await nodesmithOpenPromise
@@ -55,7 +61,8 @@ async function send({ method, params }) {
       )
     })
   }
-  return httpProvider.send(method, params)
+
+  return limiter.schedule(() => httpProvider.send(method, params)).catch(e => console.log('EXCEPTION', e))
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {
@@ -70,6 +77,22 @@ function fetchLatestBlock(includeFullTransactions = true) {
   const method = {
     method: 'eth_getBlockByNumber',
     params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
+  }
+  return send(method).then(parseBlock)
+}
+
+function fetchCurrentBlockNumber() {
+  const method = {
+    method: 'eth_blockNumber',
+    params: [],
+  }
+  return send(method).then(hexToInt)
+}
+
+function fetchPendingBlock(includeFullTransactions = true) {
+  const method = {
+    method: 'eth_getBlockByNumber',
+    params: ['pending', includeFullTransactions], // [hex block number, include full transactions boolean]
   }
   return send(method).then(parseBlock)
 }
@@ -117,4 +140,4 @@ async function call(txObj, blockTag = 'latest') {
   return send(method)
 }
 
-module.exports = { fetchBlock, fetchLatestBlock, getLogs, call }
+module.exports = { fetchBlock, fetchLatestBlock, getLogs, call, fetchPendingBlock, fetchCurrentBlockNumber }
