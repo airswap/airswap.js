@@ -10,7 +10,8 @@ import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
 import { selectors as apiSelectors } from '../api/redux'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
-import * as types from '../tcombTypes'
+import { Quote } from '../swap/tcomb'
+import { LegacyQuote } from '../swapLegacy/tcomb'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -114,7 +115,10 @@ const getLiquidity = createSelector(
   apiSelectors.getConnectedIndexerIntents,
   deltaBalancesSelectors.getBalances,
   (responses, intents, balances) => {
-    const [quoteResponses] = _.partition(responses, q => t.validate(q, types.Quote).isValid())
+    const [quoteResponses] = _.partition(
+      responses,
+      q => t.validate(q, Quote).isValid() || t.validate(q, LegacyQuote).isValid(),
+    )
     const formattedQuotes = _.map(quoteResponses, quote => _.mapValues(quote, v => v.toLowerCase())) // lowercase all addresses (doesn't effect number strings)
     const intentValues = _.map(intents, ({ makerAddress, makerToken, takerToken }) => {
       const intentQuote = _.find(formattedQuotes, { makerAddress, makerToken, takerToken })
@@ -145,7 +149,10 @@ const getMaxOrderLiquidity = createSelector(
   apiSelectors.getConnectedIndexerIntents,
   deltaBalancesSelectors.getBalances,
   (responses, intents, balances) => {
-    const [quoteResponses] = _.partition(responses, q => t.validate(q, types.Quote).isValid())
+    const [quoteResponses] = _.partition(
+      responses,
+      q => t.validate(q, Quote).isValid() || t.validate(q, LegacyQuote).isValid(),
+    )
     const formattedQuotes = _.map(quoteResponses, quote => _.mapValues(quote, v => v.toLowerCase())) // lowercase all addresses (doesn't effect number strings)
     const intentValues = _.map(intents, ({ makerAddress, makerToken, takerToken }) => {
       const intentQuote = _.find(formattedQuotes, { makerAddress, makerToken, takerToken })

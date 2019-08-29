@@ -9,10 +9,22 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as fiatSelectors } from '../../fiat/redux'
 
-import { getOrderId, getSwapSimpleOrderId } from '../../utils/order'
-import { CheckoutFrame } from '../../tcombTypes'
+import { getOrderId } from '../../utils/order'
+import { getSwapOrderId } from '../../swap/utils'
+import { CheckoutFrame } from '../tcomb'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
+  console.log(
+    JSON.stringify(
+      {
+        ...state[frameIndex],
+        ...frameUpdateObj,
+      },
+      null,
+      2,
+    ),
+  )
+
   return [
     ...state.slice(0, frameIndex),
     CheckoutFrame({
@@ -480,7 +492,7 @@ const getCurrentFrameBestOrderExecution = createSelector(
     if (!order) return {}
     let vals
     if (order.swapVersion === 2) {
-      const orderId = getSwapSimpleOrderId(order)
+      const orderId = getSwapOrderId(order)
       vals = _.mapKeys(
         _.mapValues(
           {
@@ -597,7 +609,7 @@ const getCurrentFrameStateSummaryProperties = createSelector(
 const makeLookUpCheckoutFrameByOrderId = createSelector(getCheckoutStack, stack => orderId =>
   _.find(stack, ({ orderResponses, alternativeOrderResponses, lowBalanceOrderResponses }) => {
     const orders = [...orderResponses, ...alternativeOrderResponses, ...lowBalanceOrderResponses]
-    return !!_.find(orders, o => getOrderId(o) === orderId || getSwapSimpleOrderId(o) === orderId)
+    return !!_.find(orders, o => getOrderId(o) === orderId || getSwapOrderId(o) === orderId)
   }),
 )
 

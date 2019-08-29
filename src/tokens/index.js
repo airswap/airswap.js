@@ -2,6 +2,7 @@ const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
 const { NETWORK } = require('../constants')
+const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
@@ -184,7 +185,8 @@ class TokenMetadata {
       tokenAddress,
     }
   }
-  getReadableSwapOrder(order, tokenSymbolsByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
+  getReadableSwapOrder(orderParams, tokenSymbolsByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
+    const order = orderParams.maker ? flatten(orderParams) : orderParams
     const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
     const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
     const tokenSymbolsByAddress = tokenSymbolsByAddressParam || this.tokenSymbolsByAddress
