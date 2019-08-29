@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@airswap/order-utils@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.0.tgz#5bcfc8629c7e3d1a25cc0682b9f7a668a42e3bd3"
-  integrity sha512-wlS2JSFaNjOcd0/ewBOf5ixNAheH3AQe5gwc+Fuyl9y8z18ORE2dEhy71JujdrZEE5HT9XMxSyGjY91tl9CyhQ==
+"@airswap/order-utils@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.1.tgz#37e5c0393e96c48cbc119cc92afa16376bf12cd2"
+  integrity sha512-HrpwUSG9tdOvb8LxgvQFF8DpIHuEjN4tDAJwFYJynmKvJqUCeJ6gnk63v3DMdrJKF2BdWJDeN0QuF9M46/p9yA==
   dependencies:
     eth-sig-util "^2.2.0"
     ethereumjs-util "^6.1.0"
@@ -9883,6 +9883,7 @@ webidl-conversions@^4.0.2:
   dependencies:
     debug "^2.2.0"
     es5-ext "^0.10.50"
+    gulp "^4.0.2"
     nan "^2.14.0"
     typedarray-to-buffer "^3.1.5"
     yaeti "^0.0.6"

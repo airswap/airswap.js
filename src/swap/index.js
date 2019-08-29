@@ -23,7 +23,8 @@ function getSwapContract(signer) {
 
 async function swap(orderParams, signer) {
   const order = orderParams.maker ? orderParams : nest(orderParams)
-  console.log('FILLING ORDER', order)
+  order.signature.v = Number(order.signature.v)
+  console.log('MY ORDER', JSON.stringify(order, null, 2))
   const contract = getSwapContract(signer)
   return contract.swap(order)
 }
@@ -31,13 +32,12 @@ async function swap(orderParams, signer) {
 async function signSwap(orderParams, signer) {
   // TODO: Add automatic ERC20 vs ERC721 type detection
   const order = fillOrderDefaults(orderParams)
-
   const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
   const signerAddress = await signer.getAddress()
   const { r, s, v } = sig
-  return {
+  const signedOrder = {
     ...order,
     signature: {
       signer: signerAddress.toLowerCase(), // Version 0x45: personal_sign
@@ -47,6 +47,8 @@ async function signSwap(orderParams, signer) {
       v: `${v}`,
     },
   }
+
+  return signedOrder
 }
 
 async function signSwapTypedData(orderParams, signer) {
@@ -61,6 +63,7 @@ async function signSwapTypedData(orderParams, signer) {
     primaryType: 'Order',
     message: order, // remove falsey values on order
   }
+  console.log('DATA', JSON.stringify(data, null, 2))
   const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
@@ -74,6 +77,7 @@ async function signSwapTypedData(orderParams, signer) {
       v: `${v}`,
     },
   }
+
   return signedOrder
 }
 

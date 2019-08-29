@@ -14,17 +14,6 @@ import { getSwapOrderId } from '../../swap/utils'
 import { CheckoutFrame } from '../tcomb'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
-  console.log(
-    JSON.stringify(
-      {
-        ...state[frameIndex],
-        ...frameUpdateObj,
-      },
-      null,
-      2,
-    ),
-  )
-
   return [
     ...state.slice(0, frameIndex),
     CheckoutFrame({
