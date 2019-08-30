@@ -43,8 +43,10 @@ const QuoteParty = t.struct({
 })
 
 const Quote = t.struct({
+  affiliate: QuoteParty,
   maker: QuoteParty,
   taker: QuoteParty,
+  swap: t.maybe(t.struct({ version: t.Number })),
 })
 
 const FlatQuote = t.Object
