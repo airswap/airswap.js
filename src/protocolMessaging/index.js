@@ -2,7 +2,7 @@ const ethers = require('ethers')
 const WebSocket = require('isomorphic-ws')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
-const { nest } = require('../swap/utils')
+const { nest, flatten } = require('../swap/utils')
 // Class Constructor
 // ----------------
 
@@ -15,6 +15,18 @@ const orderQueryDefaults = {
   takerWallet: '0x0000000000000000000000000000000000000000',
   affiliateToken: '0x0000000000000000000000000000000000000000',
   affiliateParam: '0',
+}
+
+function typeSafeOrder({ nonce, expiry, signature, ...rest }) {
+  return {
+    ...rest,
+    signature: {
+      ...signature,
+      v: `${signature.v}`,
+    },
+    nonce: `${nonce}`,
+    expiry: `${expiry}`,
+  }
 }
 
 class Router {
@@ -275,7 +287,7 @@ class Router {
 
     const payload = Router.makeRPC('getMakerSideOrder', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
-      ...order,
+      ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
   }
@@ -294,7 +306,7 @@ class Router {
 
     const payload = Router.makeRPC('getTakerSideOrder', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
-      ...order,
+      ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
   }
@@ -353,9 +365,15 @@ class Router {
     })
 
     const payload = Router.makeRPC('getMakerSideQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(({ makerParam }) =>
-      nest({ makerToken, takerToken, makerParam, takerParam, swapVersion: 2 }),
-    )
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+      const flatQuote = flatten(quote)
+      const combinedQuote = {
+        ...query,
+        ...flatQuote,
+        swapVersion: 2,
+      }
+      return nest(combinedQuote)
+    })
   }
 
   getTakerSideQuote(makerAddress, params) {
@@ -370,9 +388,44 @@ class Router {
     })
 
     const payload = Router.makeRPC('getTakerSideQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(({ takerParam }) =>
-      nest({ makerToken, takerToken, makerParam, takerParam, swapVersion: 2 }),
-    )
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+      const flatQuote = flatten(quote)
+      const combinedQuote = {
+        ...query,
+        ...flatQuote,
+        swapVersion: 2,
+      }
+      return nest(combinedQuote)
+    })
+  }
+
+  getMaxQuote(makerAddress, params) {
+    const { makerToken, takerToken } = params
+    const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
+    const swapVersion = params.swapVersion || 1
+    if (!takerToken || !makerToken) throw BadArgumentsError
+
+    const query =
+      swapVersion === 2
+        ? Object.assign({}, quoteQueryDefaults, { makerToken, takerToken })
+        : {
+            makerToken,
+            takerToken,
+          }
+
+    const payload = Router.makeRPC('getMaxQuote', query)
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+      if (swapVersion === 2) {
+        const flatQuote = flatten(quote)
+        const combinedQuote = {
+          ...query,
+          ...flatQuote,
+          swapVersion: 2,
+        }
+        return nest(combinedQuote)
+      }
+      return { ...quote, ...query, swapVersion }
+    })
   }
 
   getQuote(makerAddress, params) {
@@ -404,35 +457,6 @@ class Router {
       ...quote,
       swapVersion,
     }))
-  }
-
-  getMaxQuote(makerAddress, params) {
-    const { makerToken, takerToken } = params
-    const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
-    const swapVersion = params.swapVersion || 1
-    if (!takerToken || !makerToken) throw BadArgumentsError
-
-    const query =
-      swapVersion === 2
-        ? Object.assign({}, quoteQueryDefaults, params)
-        : {
-            makerToken,
-            takerToken,
-          }
-
-    const payload = Router.makeRPC('getMaxQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(
-      quote =>
-        swapVersion === 2
-          ? nest({
-              makerToken,
-              takerToken,
-              makerParam: quote.makerParam,
-              takerParam: quote.takerParam,
-              swapVersion,
-            })
-          : { ...quote, ...query, swapVersion },
-    )
   }
   // Given an array of trade intents, make a JSON-RPC `getOrder` call for each `intent`
   getOrders(intents, params) {

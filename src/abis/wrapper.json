@@ -1,0 +1,166 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "wethContract",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "swapContract",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_swapContract",
+        "type": "address"
+      },
+      {
+        "name": "_wethContract",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "name": "nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "name": "param",
+                "type": "uint256"
+              },
+              {
+                "name": "kind",
+                "type": "bytes4"
+              }
+            ],
+            "name": "maker",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "name": "param",
+                "type": "uint256"
+              },
+              {
+                "name": "kind",
+                "type": "bytes4"
+              }
+            ],
+            "name": "taker",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "name": "param",
+                "type": "uint256"
+              },
+              {
+                "name": "kind",
+                "type": "bytes4"
+              }
+            ],
+            "name": "affiliate",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "name": "signer",
+                "type": "address"
+              },
+              {
+                "name": "v",
+                "type": "uint8"
+              },
+              {
+                "name": "r",
+                "type": "bytes32"
+              },
+              {
+                "name": "s",
+                "type": "bytes32"
+              },
+              {
+                "name": "version",
+                "type": "bytes1"
+              }
+            ],
+            "name": "signature",
+            "type": "tuple"
+          }
+        ],
+        "name": "order",
+        "type": "tuple"
+      }
+    ],
+    "name": "swap",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
