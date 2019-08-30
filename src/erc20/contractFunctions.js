@@ -6,57 +6,57 @@ function getERC20Contract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 
-export function getName(contractAddress) {
+export function getERC20Name(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.name()
 }
 
-export function approve(contractAddress, spender, value, signer) {
+export function submitERC20Approve(contractAddress, spender, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.approve(spender, value)
 }
 
-export function getTotalSupply(contractAddress) {
+export function getERC20TotalSupply(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.totalSupply()
 }
 
-export function transferFrom(contractAddress, from, to, value, signer) {
+export function submitERC20TransferFrom(contractAddress, from, to, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.transferFrom(from, to, value)
 }
 
-export function getDecimals(contractAddress) {
+export function getERC20Decimals(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.decimals()
 }
 
-export function getVersion(contractAddress) {
+export function getERC20Version(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.version()
 }
 
-export function getBalanceOf(contractAddress, owner) {
+export function getERC20BalanceOf(contractAddress, owner) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.balanceOf(owner)
 }
 
-export function getSymbol(contractAddress) {
+export function getERC20Symbol(contractAddress) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.symbol()
 }
 
-export function transfer(contractAddress, to, value, signer) {
+export function submitERC20Transfer(contractAddress, to, value, signer) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.transfer(to, value)
 }
 
-export function approveAndCall(contractAddress, spender, value, extraData, signer) {
+export function submitERC20ApproveAndCall(contractAddress, spender, value, extraData, signer) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.approveAndCall(spender, value, extraData)
 }
 
-export function getAllowance(contractAddress, owner, spender) {
+export function getERC20Allowance(contractAddress, owner, spender) {
   const contract = getERC20Contract(constants.httpProvider, contractAddress)
   return contract.allowance(owner, spender)
 }

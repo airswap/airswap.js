@@ -414,7 +414,7 @@ class Router {
 
     const query =
       swapVersion === 2
-        ? Object.assign({}, quoteQueryDefaults, params)
+        ? Object.assign({}, quoteQueryDefaults, { makerToken, takerToken })
         : {
             makerToken,
             takerToken,

@@ -6,62 +6,62 @@ function getDeltaBalancesContract(provider) {
   return new ethers.Contract(constants.DELTA_BALANCES_CONTRACT_ADDRESS, abi, provider)
 }
 
-export function getAllBalancesForManyAccounts(users, tokens) {
+export function getDeltaBalancesAllBalancesForManyAccounts(users, tokens) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.allBalancesForManyAccounts(users, tokens)
 }
 
-export function getTokenBalance(user, token) {
+export function getDeltaBalancesTokenBalance(user, token) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.tokenBalance(user, token)
 }
 
-export function destruct(signer) {
+export function submitDeltaBalancesDestruct(signer) {
   const contract = getDeltaBalancesContract(signer)
   return contract.destruct()
 }
 
-export function getWalletAllowances(user, spender, tokens) {
+export function getDeltaBalancesWalletAllowances(user, spender, tokens) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.walletAllowances(user, spender, tokens)
 }
 
-export function withdraw(signer) {
+export function submitDeltaBalancesWithdraw(signer) {
   const contract = getDeltaBalancesContract(signer)
   return contract.withdraw()
 }
 
-export function getWalletBalances(user, tokens) {
+export function getDeltaBalancesWalletBalances(user, tokens) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.walletBalances(user, tokens)
 }
 
-export function getTokenAllowance(user, spender, token) {
+export function getDeltaBalancesTokenAllowance(user, spender, token) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.tokenAllowance(user, spender, token)
 }
 
-export function withdrawToken(token, amount, signer) {
+export function submitDeltaBalancesWithdrawToken(token, amount, signer) {
   const contract = getDeltaBalancesContract(signer)
   return contract.withdrawToken(token, amount)
 }
 
-export function getAllWETHbalances(wethAddress, users) {
+export function getDeltaBalancesAllWETHbalances(wethAddress, users) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.allWETHbalances(wethAddress, users)
 }
 
-export function getAllAllowancesForManyAccounts(users, spender, tokens) {
+export function getDeltaBalancesAllAllowancesForManyAccounts(users, spender, tokens) {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.allAllowancesForManyAccounts(users, spender, tokens)
 }
 
-export function getAdmin() {
+export function getDeltaBalancesAdmin() {
   const contract = getDeltaBalancesContract(constants.httpProvider)
   return contract.admin()
 }
 
-export function constructor(_deployer, signer) {
+export function submitDeltaBalancesConstructor(_deployer, signer) {
   const contract = getDeltaBalancesContract(signer)
   return contract.constructor(_deployer)
 }

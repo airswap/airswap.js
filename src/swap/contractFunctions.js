@@ -6,42 +6,42 @@ function getSwapContract(provider) {
   return new ethers.Contract(constants.SWAP_CONTRACT_ADDRESS, abi, provider)
 }
 
-export function getMakerMinimumNonce(makerWallet) {
+export function getSwapMakerMinimumNonce(makerWallet) {
   const contract = getSwapContract(constants.httpProvider)
   return contract.makerMinimumNonce(makerWallet)
 }
 
-export function getMakerOrderStatus(makerWallet, nonce) {
+export function getSwapMakerOrderStatus(makerWallet, nonce) {
   const contract = getSwapContract(constants.httpProvider)
   return contract.makerOrderStatus(makerWallet, nonce)
 }
 
-export function getDelegateApprovals(approverAddress, delegateAddress) {
+export function getSwapDelegateApprovals(approverAddress, delegateAddress) {
   const contract = getSwapContract(constants.httpProvider)
   return contract.delegateApprovals(approverAddress, delegateAddress)
 }
 
-export function swap(order, signature, signer) {
+export function submitSwap(order, signer) {
   const contract = getSwapContract(signer)
-  return contract.swap(order, signature)
+  return contract.swap(order)
 }
 
-export function cancel(nonces, signer) {
+export function submitSwapCancel(nonces, signer) {
   const contract = getSwapContract(signer)
   return contract.cancel(nonces)
 }
 
-export function invalidate(minimumNonce, signer) {
+export function submitSwapInvalidate(minimumNonce, signer) {
   const contract = getSwapContract(signer)
   return contract.invalidate(minimumNonce)
 }
 
-export function authorize(delegate, expiry, signer) {
+export function submitSwapAuthorize(delegate, expiry, signer) {
   const contract = getSwapContract(signer)
   return contract.authorize(delegate, expiry)
 }
 
-export function revoke(delegate, signer) {
+export function submitSwapRevoke(delegate, signer) {
   const contract = getSwapContract(signer)
   return contract.revoke(delegate)
 }

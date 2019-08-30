@@ -19,9 +19,6 @@ function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
     const filteredInputs = _.map(_.filter(inputs, { indexed: true }), 'name')
     const contractString = contractKey ? `\n  contract: constants.${contractKey},` : ''
     const inputsOuterParam = filteredInputs.length ? `${filteredInputs.join(', ')}, ` : ''
-    if (name === 'LogError') {
-      console.log(_.map(_.filter(inputs, { indexed: true }), 'name'))
-    }
     return `export const track${_.upperFirst(
       eventNamespace,
     )}${name} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount } = {}) => ({
@@ -87,7 +84,18 @@ function generateReducers() {
   return ``
 }
 
-function getInputNames(inputs) {}
+const getContractFunctionName = (type, name, eventNamespace) => {
+  const prefix = type === 'call' ? 'get' : 'submit'
+  if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
+    return `${prefix}${_.upperFirst(name)}`
+  } else {
+    return `${prefix}${_.upperFirst(eventNamespace)}${_.upperFirst(name)}`
+  }
+}
+
+const getContractFunctionActionType = (type, name, eventNamespace) => {
+  return _.snakeCase(getContractFunctionName(type, name, eventNamespace)).toUpperCase()
+}
 
 function generateContractFunctions(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`./${abiLocation}`)
@@ -98,7 +106,7 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
     const functionArgs = inputs.length ? `${inputNames.join(', ')}` : ''
     const getContract = type === 'transaction' ? `signer` : 'constants.httpProvider'
     const lastParamContractAddress = contractKey ? '' : ', contractAddress'
-    const functionName = type === 'call' ? `get${_.upperFirst(name)}` : name
+    const functionName = getContractFunctionName(type, name, eventNamespace)
     const paramContractAddress = contractKey
       ? ''
       : `contractAddress${inputs.length || type === 'transaction' ? ', ' : ''}`
@@ -128,6 +136,138 @@ function get${_.upperFirst(eventNamespace)}Contract(provider${passedInContractAd
   ].join('\n')
 }
 
+function generateContractFunctionActions(abiLocation, contractKey, eventNamespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
+  const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
+    const filteredInputs = _.map(inputs, 'name')
+    if (payable) filteredInputs.push('ethAmount')
+    const inputsOuterParam = filteredInputs.length ? `{${filteredInputs.join(', ')}}` : ''
+    const inputsInnerParam = filteredInputs.length ? `${filteredInputs.join(',\n')}, ` : ''
+    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const actionType = getContractFunctionActionType(type, name, eventNamespace)
+    return `export const ${actionName} = (${inputsOuterParam}) => dispatch => new Promise((resolve, reject) => dispatch({${inputsInnerParam}
+  TYPE: '${actionType}',
+  resolve,
+  reject,
+}))\n`
+  })
+  return actionsTextArray.join('\n')
+}
+
+function generateEthersTransactionContractFunctionMiddleware(abiLocation, contractKey, eventNamespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
+  const onlyCalls = _.filter(contractFunctions, { type: 'call' }) === contractFunctions.length
+  const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
+    let filteredInputs = _.map(inputs, 'name')
+    if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
+    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const actionType = getContractFunctionActionType(type, name, eventNamespace)
+    let caseContent
+    if (type === 'call') {
+      caseContent = `makeMiddlewareHTTPFn(contractFunctions.${actionName}, '${actionName}', store, action)`
+    } else {
+      const functionArguments = filteredInputs.length
+        ? `${filteredInputs.map(input => `txAction.${input}`).join(', ')},`
+        : ''
+      const txActionParam = filteredInputs.length ? ', txAction' : ''
+
+      caseContent = `makeMiddlewareEthersTransactionsFn(async (txStore${txActionParam}) => {
+      const signer = await txStore.dispatch(getSigner())
+      return contractFunctions.${actionName}(${functionArguments}signer)
+      }, '${actionName}', store, action, JSON.stringify(_.omit(action, ['ethAmount'])))`
+    }
+
+    return `
+  case '${actionType}':
+    ${caseContent}
+  break`
+  })
+  const actionCases = actionsTextArray.join('')
+
+  const getSigner = onlyCalls ? '' : "import { getSigner } from '../../wallet/redux/actions'\n"
+
+  return `
+import _ from 'lodash'  
+import * as contractFunctions from '../contractFunctions'
+import { makeMiddlewareEthersTransactionsFn } from '../../utils/redux/templates/ethersTransactions'
+import { makeMiddlewareHTTPFn } from '../../utils/redux/templates/http'
+${getSigner}  
+export default function ${eventNamespace}Middleware(store) {
+  return next => action => {
+    switch (action.type) {
+      ${actionCases}
+      default:
+    }
+    return next(action)
+  }
+}
+  
+`
+}
+
+function generateContractFunctionMiddleware(abiLocation, contractKey, eventNamespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
+  const onlyCalls = _.filter(contractFunctions, { type: 'call' }) === contractFunctions.length
+  const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
+    let filteredInputs = _.map(inputs, 'name')
+    if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
+    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const actionType = getContractFunctionActionType(type, name, eventNamespace)
+    let caseContent
+    if (type === 'call') {
+      const functionArguments = filteredInputs.length
+        ? `${filteredInputs.map(input => `action.${input}`).join(', ')}`
+        : ''
+      caseContent = `contractFunctions.${actionName}(${functionArguments}).then(action.resolve).catch(action.reject)`
+    } else {
+      const functionArguments = filteredInputs.length
+        ? `${filteredInputs.map(input => `action.${input}`).join(', ')},`
+        : ''
+      caseContent = `store.dispatch(getSigner()).then(({ signer }) => {
+       contractFunctions.${actionName}(${functionArguments}signer).then((tx) => {
+         action.resolve(tx)
+         store.dispatch({
+           type: 'ADD_TRACKED_TRANSACTION',
+           tx,
+         })
+       }).catch((error) => {
+         action.reject(error)
+         store.dispatch({
+           type: 'ERROR_SUBMITTING_TRANSACTION',
+           error,
+         })
+       })
+      })`
+    }
+
+    return `
+  case '${actionType}':
+    ${caseContent}
+  break`
+  })
+  const actionCases = actionsTextArray.join('')
+
+  const getSigner = onlyCalls ? '' : "import { getSigner } from '../../wallet/redux/actions'\n"
+
+  return `
+import * as contractFunctions from '../contractFunctions'
+${getSigner}  
+export default function ${eventNamespace}Middleware(store) {
+  return next => action => {
+    switch (action.type) {
+      ${actionCases}
+      default:
+    }
+    return next(action)
+  }
+}
+  
+`
+}
+
 const modules = [
   {
     abiLocation: 'abis/WETH_ABI.json',
@@ -148,6 +288,11 @@ const modules = [
     abiLocation: 'abis/deltaBalancesABI.json',
     namespace: 'deltaBalances',
     contractKey: 'DELTA_BALANCES_CONTRACT_ADDRESS',
+  },
+  {
+    abiLocation: 'abis/wrapper.json',
+    namespace: 'wrapper',
+    contractKey: 'WRAPPER_CONTRACT_ADDRESS',
   },
 ]
 
@@ -170,6 +315,14 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
     fs.writeFileSync(
       `./${namespace.toLowerCase()}/contractFunctions.js`,
       generateContractFunctions(abiLocation, contractKey, namespace),
+    )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/contractFunctionActions.js`,
+      generateContractFunctionActions(abiLocation, contractKey, namespace),
+    )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/contractFunctionMiddleware.js`,
+      generateContractFunctionMiddleware(abiLocation, contractKey, namespace),
     )
     try {
       fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
