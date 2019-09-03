@@ -14,7 +14,7 @@ import { ETH_ADDRESS, IS_INSTANT } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
-import { fillSwap } from '../../swap/redux/actions'
+import { submitSwap } from '../../swap/redux/contractFunctionActions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -276,7 +276,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
         takerToken,
         swapVersion,
       })
-      const lowBalanceOrder = swapVersion === 2 ? Order(lowBalanceResponse) : LegacyOrder(lowBalanceResponse)
+      const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
 
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
@@ -286,7 +286,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 
   try {
     const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Order(orderResponse) : LegacyOrder(orderResponse)
+    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -302,7 +302,7 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   const swapVersion = intent.swapVersion || 1
   try {
     const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
-    const order = swapVersion === 2 ? Order(orderResponse) : LegacyOrder(orderResponse)
+    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -364,7 +364,10 @@ export default function routerMiddleware(store) {
           protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
 
         if (bestOrder.swapVersion === 2) {
-          store.dispatch(fillSwap(nest(bestOrder)))
+          const bestSwap = nest(bestOrder)
+          const submitSwapAction = submitSwap({ order: bestSwap })
+
+          store.dispatch(submitSwapAction)
         } else {
           store.dispatch(fillOrder(bestOrder))
         }

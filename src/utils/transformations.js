@@ -29,9 +29,16 @@ function stringBNValues(obj) {
   return _.mapValues(obj, v => (v && v._ethersType === 'BigNumber' ? v.toString() : v)) // eslint_disable_line
 }
 
+function recurseTuple(tuple) {
+  if (tuple.components) {
+    return _.zipObject(_.map(tuple.components, 'name'), _.map(tuple.components, recurseTuple))
+  }
+  return tuple.name
+}
+
 function parseSwapParameters(parameters) {
-  const { order, signature } = parameters
-  if (!(order && signature)) {
+  const { order } = parameters
+  if (!order) {
     return parameters
   }
 
@@ -50,9 +57,13 @@ function parseSwapParameters(parameters) {
     affiliateToken,
     affiliateParam,
     affiliateKind,
+    signer,
+    v,
+    r,
+    s,
+    version,
   ] = order.split(',')
 
-  const [signer, v, r, s, version] = signature.split(',')
   return {
     nonce,
     expiry,
@@ -176,6 +187,7 @@ function getTransactionTextStatus(transactionReceipt) {
 }
 
 module.exports = {
+  recurseTuple,
   parseAmount,
   formatErrorMessage,
   lowerCaseStringsInObject,
