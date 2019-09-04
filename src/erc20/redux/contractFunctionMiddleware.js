@@ -11,23 +11,18 @@ export default function ERC20Middleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_ERC_20_APPROVE':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitERC20Approve(action.spender, action.value, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitERC20Approve(action.spender, action.value, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'ERC20',
+            name: 'approve',
+            parameters: { spender: action.spender, value: action.value },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_ERC_20_TOTAL_SUPPLY':
@@ -37,23 +32,23 @@ export default function ERC20Middleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_ERC_20_TRANSFER_FROM':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitERC20TransferFrom(action.from, action.to, action.value, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitERC20TransferFrom(
+            action.from,
+            action.to,
+            action.value,
+            signer,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'ERC20',
+            name: 'transferFrom',
+            parameters: { from: action.from, to: action.to, value: action.value },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_ERC_20_DECIMALS':
@@ -81,43 +76,38 @@ export default function ERC20Middleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_ERC_20_TRANSFER':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitERC20Transfer(action.to, action.value, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitERC20Transfer(action.to, action.value, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'ERC20',
+            name: 'transfer',
+            parameters: { to: action.to, value: action.value },
+          })
+          action.resolve(id)
         })
         break
       case 'SUBMIT_ERC_20_APPROVE_AND_CALL':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitERC20ApproveAndCall(action.spender, action.value, action.extraData, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitERC20ApproveAndCall(
+            action.spender,
+            action.value,
+            action.extraData,
+            signer,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'ERC20',
+            name: 'approveAndCall',
+            parameters: { spender: action.spender, value: action.value, extraData: action.extraData },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_ERC_20_ALLOWANCE':

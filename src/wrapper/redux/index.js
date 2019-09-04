@@ -1,4 +1,4 @@
-import middleware from './middleware'
+import middleware from './contractFunctionMiddleware'
 import reducers from './reducers'
 
 const selectors = {}

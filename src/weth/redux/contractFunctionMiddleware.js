@@ -11,23 +11,18 @@ export default function wethMiddleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_APPROVE':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWethApprove(action.spender, action.amount, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWethApprove(action.spender, action.amount, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'weth',
+            name: 'approve',
+            parameters: { spender: action.spender, amount: action.amount },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_WETH_TOTAL_SUPPLY':
@@ -37,43 +32,38 @@ export default function wethMiddleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_TRANSFER_FROM':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWethTransferFrom(action.from, action.to, action.amount, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWethTransferFrom(
+            action.from,
+            action.to,
+            action.amount,
+            signer,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'weth',
+            name: 'transferFrom',
+            parameters: { from: action.from, to: action.to, amount: action.amount },
+          })
+          action.resolve(id)
         })
         break
       case 'SUBMIT_WETH_WITHDRAW':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWethWithdraw(action.amount, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWethWithdraw(action.amount, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'weth',
+            name: 'withdraw',
+            parameters: { amount: action.amount },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_WETH_DECIMALS':
@@ -95,43 +85,33 @@ export default function wethMiddleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_TRANSFER':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWethTransfer(action.to, action.amount, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWethTransfer(action.to, action.amount, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'weth',
+            name: 'transfer',
+            parameters: { to: action.to, amount: action.amount },
+          })
+          action.resolve(id)
         })
         break
       case 'SUBMIT_WETH_DEPOSIT':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWethDeposit(action.ethAmount, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWethDeposit(action.ethAmount, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'weth',
+            name: 'deposit',
+            parameters: { ethAmount: action.ethAmount },
+          })
+          action.resolve(id)
         })
         break
       case 'GET_WETH_ALLOWANCE':

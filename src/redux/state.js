@@ -16,6 +16,8 @@ import * as fiat from '../fiat/redux'
 import * as hdw from '../HDW/redux'
 import * as ledger from '../ledger/redux'
 import * as blockTracker from '../blockTracker/redux'
+import * as transactionTracker from '../transactionTracker/redux'
+import * as wrapper from '../wrapper/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -37,9 +39,11 @@ const state = {
   hdw,
   ledger,
   blockTracker,
+  transactionTracker,
+  wrapper,
 }
 
-const middleware = _.map(_.values(state), 'middleware')
+const middleware = _.flatten(_.map(_.values(state), 'middleware'))
 const rootReducerObj = _.mapValues(state, 'reducers')
 const configureStateContainers = connect =>
   _.mapValues(_.merge({}, ..._.compact(_.map(_.values(state), 'containers'))), containerSelector =>
