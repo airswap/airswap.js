@@ -17,23 +17,18 @@ export default function wrapperMiddleware(store) {
           .catch(action.reject)
         break
       case 'SUBMIT_WRAPPER_SWAP':
-        store.dispatch(getSigner()).then(({ signer }) => {
-          contractFunctions
-            .submitWrapperSwap(action.ethAmount, action.order, signer)
-            .then(tx => {
-              action.resolve(tx)
-              store.dispatch({
-                type: 'ADD_TRACKED_TRANSACTION',
-                tx,
-              })
-            })
-            .catch(error => {
-              action.reject(error)
-              store.dispatch({
-                type: 'ERROR_SUBMITTING_TRANSACTION',
-                error,
-              })
-            })
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWrapperSwap(action.ethAmount, action.order, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'wrapper',
+            name: 'swap',
+            parameters: { ethAmount: action.ethAmount, order: action.order },
+          })
+          action.resolve(id)
         })
         break
       default:

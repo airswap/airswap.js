@@ -4,10 +4,10 @@ import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import { makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 import { selectors as swapLegacySelectors } from '../../swapLegacy/redux'
-import { selectors as swapSelectors } from '../../swap/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as fiatSelectors } from '../../fiat/redux'
+import { selectors as transactionSelectors } from '../../transactionTracker/redux'
 
 import { getOrderId } from '../../utils/order'
 import { getSwapOrderId } from '../../swap/utils'
@@ -424,16 +424,6 @@ const {
   getErrorMiningFillOrder,
 } = swapLegacySelectors
 
-const {
-  getSubmittingFillSwap,
-  getErrorSubmittingFillSwap,
-  getMiningFillSwap,
-  getTransactionsFillSwap,
-  getMinedFillSwap,
-  getTransactionReceiptsFillSwap,
-  getErrorMiningFillSwap,
-} = swapSelectors
-
 const getCurrentFrameBestOrderExecution = createSelector(
   getCurrentFrameSelectedOrder,
   getCurrentFrameBestOrder,
@@ -446,13 +436,7 @@ const getCurrentFrameBestOrderExecution = createSelector(
   getMinedFillOrder,
   getTransactionReceiptsFillOrder,
   getErrorMiningFillOrder,
-  getSubmittingFillSwap,
-  getErrorSubmittingFillSwap,
-  getMiningFillSwap,
-  getTransactionsFillSwap,
-  getMinedFillSwap,
-  getTransactionReceiptsFillSwap,
-  getErrorMiningFillSwap,
+  transactionSelectors.getTransactions,
   (
     currentFrameSelectedOrder,
     currentFrameBestOrder,
@@ -465,13 +449,7 @@ const getCurrentFrameBestOrderExecution = createSelector(
     minedFillOrder,
     transactionReceiptsFillOrder,
     errorMiningFillOrder,
-    submittingFillSwap,
-    errorSubmittingFillSwap,
-    miningFillSwap,
-    transactionsFillSwap,
-    minedFillSwap,
-    transactionReceiptsFillSwap,
-    errorMiningFillSwap,
+    transactions,
   ) => {
     const order =
       currentFrameSelectedOrder ||
@@ -482,20 +460,10 @@ const getCurrentFrameBestOrderExecution = createSelector(
     let vals
     if (order.swapVersion === 2) {
       const orderId = getSwapOrderId(order)
+      const tx = _.find(transactions, t => getSwapOrderId(t.parameters.order) === orderId)
       vals = _.mapKeys(
-        _.mapValues(
-          {
-            submittingFillSwap,
-            errorSubmittingFillSwap,
-            miningFillSwap,
-            transactionsFillSwap,
-            minedFillSwap,
-            transactionReceiptsFillSwap,
-            errorMiningFillSwap,
-          },
-          v => v[orderId],
-        ),
-        (val, key) => `${_.trimEnd(key, 'FillSwap')}FillOrder`,
+        tx,
+        (val, key) => (['transaction', 'transactionReceipt'].includes(key) ? `${key}sFillOrder` : `${key}FillOrder`),
       )
     } else {
       const orderId = getOrderId(order)

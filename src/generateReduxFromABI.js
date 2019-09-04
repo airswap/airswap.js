@@ -115,7 +115,7 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
       : `${paramContractAddress || functionArgs || signerParameter ? 'ethAmount, ' : 'ethAmount'}`
     const innerParamEthAmount = !payable
       ? ''
-      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount) }`
+      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount || '0') }`
     return `export function ${functionName}(${paramContractAddress}${paramEthAmount}${functionArgs}${signerParameter}) {
   const contract = get${_.upperFirst(eventNamespace)}Contract(${getContract}${lastParamContractAddress})
   return contract.${name}(${inputNames.join(', ')}${innerParamEthAmount})
@@ -147,7 +147,7 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
     const actionName = getContractFunctionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     return `export const ${actionName} = (${inputsOuterParam}) => dispatch => new Promise((resolve, reject) => dispatch({${inputsInnerParam}
-  TYPE: '${actionType}',
+  type: '${actionType}',
   resolve,
   reject,
 }))\n`
@@ -226,20 +226,21 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
       const functionArguments = filteredInputs.length
         ? `${filteredInputs.map(input => `action.${input}`).join(', ')},`
         : ''
-      caseContent = `store.dispatch(getSigner()).then(({ signer }) => {
-       contractFunctions.${actionName}(${functionArguments}signer).then((tx) => {
-         action.resolve(tx)
-         store.dispatch({
-           type: 'ADD_TRACKED_TRANSACTION',
-           tx,
-         })
-       }).catch((error) => {
-         action.reject(error)
-         store.dispatch({
-           type: 'ERROR_SUBMITTING_TRANSACTION',
-           error,
-         })
+      const parameters = filteredInputs.length
+        ? `\nparameters: {${filteredInputs.map(input => `${input}: action.${input}`).join(', ')}, }`
+        : ''
+
+      caseContent = `store.dispatch(getSigner()).then(signer => {
+       const contractFunctionPromise = contractFunctions.${actionName}(${functionArguments}signer)
+       const id = Date.now().toString()
+       store.dispatch({
+         type: 'ADD_TRACKED_TRANSACTION',
+         contractFunctionPromise,
+         id,
+         namespace: '${eventNamespace}',
+         name: '${name}',${parameters}
        })
+       action.resolve(id)
       })`
     }
 

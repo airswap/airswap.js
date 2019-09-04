@@ -1,7 +1,7 @@
 export const getWrapperWethContract = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      TYPE: 'GET_WRAPPER_WETH_CONTRACT',
+      type: 'GET_WRAPPER_WETH_CONTRACT',
       resolve,
       reject,
     }),
@@ -10,7 +10,7 @@ export const getWrapperWethContract = () => dispatch =>
 export const getWrapperSwapContract = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      TYPE: 'GET_WRAPPER_SWAP_CONTRACT',
+      type: 'GET_WRAPPER_SWAP_CONTRACT',
       resolve,
       reject,
     }),
@@ -21,7 +21,7 @@ export const submitWrapperSwap = ({ order, ethAmount }) => dispatch =>
     dispatch({
       order,
       ethAmount,
-      TYPE: 'SUBMIT_WRAPPER_SWAP',
+      type: 'SUBMIT_WRAPPER_SWAP',
       resolve,
       reject,
     }),
