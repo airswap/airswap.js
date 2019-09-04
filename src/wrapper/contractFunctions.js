@@ -18,5 +18,5 @@ export function getWrapperSwapContract() {
 
 export function submitWrapperSwap(ethAmount, order, signer) {
   const contract = getWrapperContract(signer)
-  return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount) })
+  return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
 }

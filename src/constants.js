@@ -7,6 +7,7 @@ const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/Swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
+const wrapperABI = require('./abis/wrapper')
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
@@ -186,6 +187,7 @@ const baseAbis = {
   [SWAP_LEGACY_CONTRACT_ADDRESS]: swapLegacy.abi,
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
+  [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
 }
 
 const abis = new Proxy(baseAbis, {
@@ -295,6 +297,8 @@ const FORTMATIC_ID = (N => {
 
 const IS_INSTANT = process.env.REACT_APP_INSTANT
 
+const INFINITE_EXPIRY = 253395176400 // 10/10/9999
+
 module.exports = {
   ENV,
   MAIN_ID,
@@ -350,4 +354,5 @@ module.exports = {
   nodesmithProvider,
   NODESMITH_GETH_NODE,
   WRAPPER_CONTRACT_ADDRESS,
+  INFINITE_EXPIRY,
 }

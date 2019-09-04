@@ -10,11 +10,13 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS, IS_INSTANT } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
 import { submitSwap } from '../../swap/redux/contractFunctionActions'
+import { getEthWrapperApproval, submitEthWrapperAuthorize } from '../../swap/redux/actions'
+import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -85,7 +87,10 @@ const allIntentsResolved = stackId => ({
 const orderFetchingTimeout = 3000 // 3 seconds
 
 function intentSupportsQuotes({ supportedMethods }) {
-  return _.intersection(supportedMethods, ['getQuote', 'getMaxQuote']).length === 2
+  return (
+    _.intersection(supportedMethods, ['getQuote', 'getMaxQuote']).length === 2 ||
+    _.intersection(supportedMethods, ['getMakerSideQuote', 'getTakerSideQuote', 'getMaxQuote']).length === 3
+  )
 }
 
 function isMakerSide(query) {
@@ -324,6 +329,34 @@ function mapIntentFetchProtocolOrder(intent, store, action) {
   }
 }
 
+const baseAsset = 'ETH'
+
+async function fillFrameBestOrder(store) {
+  const state = store.getState()
+  const bestOrder =
+    protocolMessagingSelectors.getCurrentFrameSelectedOrder(state) ||
+    protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
+    protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
+    protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
+
+  if (bestOrder.swapVersion === 2) {
+    const bestSwap = nest(bestOrder)
+    if (baseAsset === 'ETH') {
+      const ethWrapperApproval = await store.dispatch(getEthWrapperApproval())
+      if (!ethWrapperApproval) {
+        store.dispatch(submitEthWrapperAuthorize())
+      } else {
+        const ethAmount = bestOrder.takerToken === WETH_CONTRACT_ADDRESS ? bestOrder.takerParam : '0'
+        store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
+      }
+    } else {
+      store.dispatch(submitSwap({ order: bestSwap }))
+    }
+  } else {
+    store.dispatch(fillOrder(bestOrder))
+  }
+}
+
 export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
@@ -357,20 +390,7 @@ export default function routerMiddleware(store) {
         break
       case 'FILL_FRAME_BEST_ORDER':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
-        const bestOrder =
-          protocolMessagingSelectors.getCurrentFrameSelectedOrder(state) ||
-          protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
-          protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
-          protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
-
-        if (bestOrder.swapVersion === 2) {
-          const bestSwap = nest(bestOrder)
-          const submitSwapAction = submitSwap({ order: bestSwap })
-
-          store.dispatch(submitSwapAction)
-        } else {
-          store.dispatch(fillOrder(bestOrder))
-        }
+        fillFrameBestOrder(store)
         break
       case 'SELECT_CHECKOUT_FRAME_ORDER':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line

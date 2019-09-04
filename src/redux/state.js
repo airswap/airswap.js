@@ -17,6 +17,7 @@ import * as hdw from '../HDW/redux'
 import * as ledger from '../ledger/redux'
 import * as blockTracker from '../blockTracker/redux'
 import * as transactionTracker from '../transactionTracker/redux'
+import * as wrapper from '../wrapper/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -39,6 +40,7 @@ const state = {
   ledger,
   blockTracker,
   transactionTracker,
+  wrapper,
 }
 
 const middleware = _.flatten(_.map(_.values(state), 'middleware'))

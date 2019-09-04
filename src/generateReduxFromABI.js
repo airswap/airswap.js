@@ -115,7 +115,7 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
       : `${paramContractAddress || functionArgs || signerParameter ? 'ethAmount, ' : 'ethAmount'}`
     const innerParamEthAmount = !payable
       ? ''
-      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount) }`
+      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount || '0') }`
     return `export function ${functionName}(${paramContractAddress}${paramEthAmount}${functionArgs}${signerParameter}) {
   const contract = get${_.upperFirst(eventNamespace)}Contract(${getContract}${lastParamContractAddress})
   return contract.${name}(${inputNames.join(', ')}${innerParamEthAmount})
