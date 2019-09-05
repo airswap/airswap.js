@@ -4,6 +4,7 @@ import {
   WETH_CONTRACT_ADDRESS,
   WRAPPER_CONTRACT_ADDRESS,
 } from '../../constants'
+import { getERC20Allowance } from './contractFunctionActions'
 
 export const approveToken = (tokenAddress, spender) => ({
   type: 'APPROVE_TOKEN',
@@ -24,3 +25,5 @@ export const unwrapWeth = amount => ({
 export const approveAirswapToken = tokenAddress => approveToken(tokenAddress, SWAP_LEGACY_CONTRACT_ADDRESS)
 export const approveAirswapTokenSwap = tokenAddress => approveToken(tokenAddress, SWAP_CONTRACT_ADDRESS)
 export const approveWrapperWethToken = () => approveToken(WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS)
+
+export const getWrapperWethTokenApproval = () => getERC20Allowance()

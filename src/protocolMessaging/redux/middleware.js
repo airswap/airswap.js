@@ -10,13 +10,16 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
 import { submitSwap } from '../../swap/redux/contractFunctionActions'
 import { getEthWrapperApproval, submitEthWrapperAuthorize } from '../../swap/redux/actions'
 import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
+import { approveWrapperWethToken } from '../../erc20/redux/actions'
+import { getERC20Allowance } from '../../erc20/contractFunctions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -343,18 +346,46 @@ async function fillFrameBestOrder(store) {
     const bestSwap = nest(bestOrder)
     if (baseAsset === 'ETH') {
       const ethWrapperApproval = await store.dispatch(getEthWrapperApproval())
+      const connectedAddress = getConnectedWalletAddress(state)
+      const wrapperWethAllowance = (await getERC20Allowance(
+        WETH_CONTRACT_ADDRESS,
+        connectedAddress,
+        WRAPPER_CONTRACT_ADDRESS,
+      )).toString()
+      // needs to be refactored to use redux allowance fetch instead of inline
+
+      const ethAmount = bestSwap.taker.token === WETH_CONTRACT_ADDRESS ? bestSwap.taker.param : '0'
+
       if (!ethWrapperApproval) {
-        store.dispatch(submitEthWrapperAuthorize())
-      } else {
-        const ethAmount = bestOrder.takerToken === WETH_CONTRACT_ADDRESS ? bestOrder.takerParam : '0'
-        store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
+        await store.dispatch(submitEthWrapperAuthorize())
       }
+
+      if (Number(wrapperWethAllowance) === 0) {
+        await store.dispatch(approveWrapperWethToken())
+      }
+      store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {
       store.dispatch(submitSwap({ order: bestSwap }))
     }
   } else {
     store.dispatch(fillOrder(bestOrder))
   }
+}
+
+// assumes that instant passes WETH as the baseAsset
+// and that we force ETH
+function filterIntents(intents, query, queryContext) {
+  const { makerToken, takerToken } = query
+  const { side } = queryContext
+  return _.filter(intents, intent => {
+    if (intent.swapVersion === 2) {
+      return intent.makerToken === makerToken && intent.takerToken === takerToken
+    }
+    if (side === 'buy') {
+      return intent.takerToken === ETH_ADDRESS && intent.makerToken === makerToken
+    }
+    return intent.makerToken === makerToken && intent.takerToken === takerToken
+  })
 }
 
 export default function routerMiddleware(store) {
@@ -378,8 +409,7 @@ export default function routerMiddleware(store) {
       case 'SET_CHECKOUT_FRAME_QUERY':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
         const intents = apiSelectors.getConnectedIndexerIntents(state)
-        const { makerToken, takerToken } = action.query
-        const filteredIntents = _.filter(intents, { makerToken, takerToken })
+        const filteredIntents = filterIntents(intents, action.query, action.queryContext)
         store.dispatch(gotIntents(filteredIntents, action.stackId))
         Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
           store.dispatch(allIntentsResolved(action.stackId)),
