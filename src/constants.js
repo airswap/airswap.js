@@ -38,7 +38,7 @@ const SWAP_CONTRACT_MAPPING = {
 }
 
 const SWAP_LEGACY_CONTRACT_MAPPING = {
-  [MAIN_ID]: '0x7d32b51258bbd675e47f55082ad3bb1133c5cc60',
+  [MAIN_ID]: '0x8fd3121013a07c57f0d69646e86e7a4880b467b7',
   [RINKEBY_ID]: '0x07fc7c43d8168a2730344e5cf958aaecc3b42b41',
 }
 
@@ -88,7 +88,7 @@ const WRAPPER_CONTRACT_ADDRESS = (N => {
     case RINKEBY_ID:
       return '0x15fc598e31b98d73a7d56e10f079b827cb97af82'
     case MAIN_ID:
-      return '0x00000000000000000000000000000000'
+      return '0x7d32b51258bbd675e47f55082ad3bb1133c5cc60'
     default:
   }
 })(NETWORK)
