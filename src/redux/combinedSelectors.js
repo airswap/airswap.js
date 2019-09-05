@@ -8,6 +8,7 @@ import { selectors as swapSelectors } from '../swap/redux'
 import { selectors as tokenSelectors } from '../tokens/redux'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
 import { selectors as apiSelectors } from '../api/redux'
+import { selectors as transactionSelectors } from '../transactionTracker/redux'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
@@ -52,6 +53,7 @@ const getTransactionHistory = createSelector(
   tokenSelectors.getTokensByAddress,
   tokenSelectors.makeGetReadableOrder,
   tokenSelectors.makeGetReadableSwapOrder,
+  transactionSelectors.getTransactions,
   (
     fillTransactions,
     fillReceipts,
@@ -72,6 +74,7 @@ const getTransactionHistory = createSelector(
     tokensByAddress,
     getReadableOrder,
     getReadableSwapOrder,
+    transactionHistory,
   ) => {
     const receipts = _.compact([
       ..._.values(fillReceipts),
@@ -82,6 +85,7 @@ const getTransactionHistory = createSelector(
       ..._.values(approveReceipts),
       ..._.values(wrapTransactionsReceipts),
       ..._.values(unwrapTransactionsReceipts),
+      ..._.map(transactionHistory, 'transactionReceipt'),
     ])
     const transactions = _.compact([
       ..._.values(fillTransactions),
@@ -92,6 +96,7 @@ const getTransactionHistory = createSelector(
       ..._.values(approveTransactions),
       ..._.values(wrapTransaction),
       ..._.values(unwrapTransaction),
+      ..._.map(transactionHistory, 'transaction'),
     ]).map(tx => {
       const transactionReceipt = _.find(receipts, { transactionHash: tx.hash })
       const { textStatus, eventStatus } = getTransactionTextStatus(transactionReceipt)

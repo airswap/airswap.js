@@ -33,7 +33,7 @@ const NAME_MAPPING = {
 }
 
 const SWAP_CONTRACT_MAPPING = {
-  [MAIN_ID]: '0x54d2690e97e477a4b33f40d6e4afdd4832c07c57',
+  [MAIN_ID]: '0x251f752b85a9f7e1b3c42d802715b5d7a8da3165',
   [RINKEBY_ID]: '0x6f337ba064b0a92538a4afdcf0e60f50eeae0d5b',
 }
 
@@ -88,7 +88,7 @@ const WRAPPER_CONTRACT_ADDRESS = (N => {
     case RINKEBY_ID:
       return '0x15fc598e31b98d73a7d56e10f079b827cb97af82'
     case MAIN_ID:
-      return '0x00000000000000000000000000000000'
+      return '0x7d32b51258bbd675e47f55082ad3bb1133c5cc60'
     default:
   }
 })(NETWORK)
