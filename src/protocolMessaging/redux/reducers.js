@@ -8,10 +8,17 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as fiatSelectors } from '../../fiat/redux'
 import { selectors as transactionSelectors } from '../../transactionTracker/redux'
-
+import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
+import { selectors as erc20Selectors } from '../../erc20/redux'
 import { getOrderId } from '../../utils/order'
 import { getSwapOrderId } from '../../swap/utils'
 import { CheckoutFrame } from '../tcomb'
+import { approveAirswapToken, approveAirswapTokenSwap, approveWrapperWethToken } from '../../erc20/redux/actions'
+import { submitEthWrapperAuthorize } from '../../swap/redux/actions'
+import { getConnectedWrapperDelegateApproval } from '../../swap/redux/selectors'
+import { getConnectedWrapperWethApproval } from '../../erc20/redux/selectors'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
+import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
   return [
@@ -240,7 +247,28 @@ const makeGetBestOrder = createSelector(
   gasSelectors.getCurrentGasPriceSettings,
   tokenSelectors.makeGetExchangeFillGasLimitByToken,
   fiatSelectors.makeGetEthInFiat,
-  (isCurrentFrameFinishedQuerying, { gwei }, getExchangeFillGasLimitByToken, getEthInFiat) => orders => {
+  deltaBalancesSelectors.getConnectedSwapApprovals,
+  deltaBalancesSelectors.getConnectedApprovals,
+  getConnectedWrapperDelegateApproval,
+  getConnectedWrapperWethApproval,
+  transactionSelectors.getTransactions,
+  getConnectedWalletAddress,
+  erc20Selectors.getMiningApproveToken,
+  erc20Selectors.getSubmittingApproveToken,
+  (
+    isCurrentFrameFinishedQuerying,
+    { gwei },
+    getExchangeFillGasLimitByToken,
+    getEthInFiat,
+    connectedSwapApprovals,
+    connectedApprovals,
+    connectedWrapperDelegateApproval,
+    connectedWrapperWethApproval,
+    transactions,
+    connectedWalletAddress,
+    miningApproveToken,
+    submittingApproveToken,
+  ) => orders => {
     if (!orders.length || !isCurrentFrameFinishedQuerying) return undefined
     const sortedOrders = _.sortBy(orders, 'price')
     const bestOrder = _.first(
@@ -250,6 +278,69 @@ const makeGetBestOrder = createSelector(
     const ethGasLimit = Number(getExchangeFillGasLimitByToken({ symbol: bestOrder.tokenSymbol }))
     const ethGasCost = ethGasLimit * ethGasPrice
     const ethTotal = bestOrder.ethAmount + ethGasCost
+    let missingApprovals
+    if (bestOrder.swapVersion === 2) {
+      const miningTakerTokenSwapApproval =
+        _.get(miningApproveToken, bestOrder.takerToken, false) ||
+        _.get(submittingApproveToken, bestOrder.takerToken, false)
+      const wrapperDelegateApproval = _.find(
+        transactions,
+        ({ namespace, name, parameters: { delegate } }) =>
+          delegate === WRAPPER_CONTRACT_ADDRESS && namespace === 'swap' && name === 'authorize',
+      )
+      const miningWrapperDelegateApproval =
+        _.get(wrapperDelegateApproval, 'mining', false) || _.get(wrapperDelegateApproval, 'submitting', false)
+      const wrapperWethApproval = _.find(
+        transactions,
+        ({ namespace, name, parameters: { contractAddress, spender } }) =>
+          contractAddress === WETH_CONTRACT_ADDRESS &&
+          spender === WRAPPER_CONTRACT_ADDRESS &&
+          namespace === 'ERC20' &&
+          name === 'approve',
+      )
+      const miningWrapperWethApproval =
+        _.get(wrapperWethApproval, 'mining', false) || _.get(wrapperWethApproval, 'submitting', false)
+
+      const takerTokenSwapApproval = _.get(connectedSwapApprovals, bestOrder.takerToken, false)
+
+      missingApprovals = [
+        {
+          id: 'takerTokenSwapApproval',
+          payload: approveAirswapTokenSwap(bestOrder.takerToken),
+          approved: takerTokenSwapApproval,
+          isMining: miningTakerTokenSwapApproval,
+        },
+        {
+          id: 'wrapperDelegateApproval',
+          payload: submitEthWrapperAuthorize(),
+          approved: connectedWrapperDelegateApproval,
+          isMining: miningWrapperDelegateApproval,
+        },
+        {
+          id: 'wrapperWethApproval',
+          payload: approveWrapperWethToken(),
+          approved: connectedWrapperWethApproval,
+          isMining: miningWrapperWethApproval,
+        },
+      ]
+    } else {
+      const takerTokenApproval = _.get(connectedApprovals, bestOrder.takerToken, false)
+      const miningTakerTokenSwapApproval =
+        _.get(miningApproveToken, bestOrder.takerToken, false) ||
+        _.get(submittingApproveToken, bestOrder.takerToken, false)
+
+      missingApprovals = [
+        {
+          id: 'takerTokenSwapApproval',
+          payload: approveAirswapToken(bestOrder.takerToken),
+          approved: takerTokenApproval,
+          isMining: miningTakerTokenSwapApproval,
+        },
+      ]
+    }
+
+    missingApprovals = _.filter(missingApprovals, a => !a.approved).map(a => _.omit(a, 'approved'))
+
     return {
       ...bestOrder,
       priceInFiat: getEthInFiat(bestOrder.price), // TODO: this will need to be redone for tokens other than eth as base token
@@ -258,6 +349,7 @@ const makeGetBestOrder = createSelector(
       ethTotalInFiat: getEthInFiat(ethTotal),
       ethGasCost,
       ethGasCostInFiat: getEthInFiat(ethGasCost),
+      missingApprovals,
     }
   },
 )

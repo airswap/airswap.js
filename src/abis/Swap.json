@@ -45,11 +45,11 @@
     "constant": true,
     "inputs": [
       {
-        "name": "approverAddress",
+        "name": "approver",
         "type": "address"
       },
       {
-        "name": "delegateAddress",
+        "name": "delegate",
         "type": "address"
       }
     ],
@@ -171,12 +171,12 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "approverAddress",
+        "name": "approver",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "delegateAddress",
+        "name": "delegate",
         "type": "address"
       },
       {
@@ -193,12 +193,12 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "approverAddress",
+        "name": "approver",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "delegateAddress",
+        "name": "delegate",
         "type": "address"
       }
     ],

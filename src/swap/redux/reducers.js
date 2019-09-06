@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux'
+// import { createSelector } from 'reselect'
 import { makeEthersTxnsReducer, makeEthersTxnsSelectors } from '../../utils/redux/templates/ethersTransactions'
+// import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 const fillSwapSimple = makeEthersTxnsReducer('fillSwapSimple')
 const fillSwap = makeEthersTxnsReducer('fillSwap')

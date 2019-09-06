@@ -7,13 +7,31 @@ export default function wrapperMiddleware(store) {
       case 'GET_WRAPPER_WETH_CONTRACT':
         contractFunctions
           .getWrapperWethContract()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'wrapper',
+              name: 'wethContract',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_WRAPPER_SWAP_CONTRACT':
         contractFunctions
           .getWrapperSwapContract()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'wrapper',
+              name: 'swapContract',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_WRAPPER_SWAP':

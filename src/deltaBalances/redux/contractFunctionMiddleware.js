@@ -7,13 +7,33 @@ export default function deltaBalancesMiddleware(store) {
       case 'GET_DELTA_BALANCES_ALL_BALANCES_FOR_MANY_ACCOUNTS':
         contractFunctions
           .getDeltaBalancesAllBalancesForManyAccounts(action.users, action.tokens)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'allBalancesForManyAccounts',
+              timestamp: Date.now(),
+              parameters: { users: action.users, tokens: action.tokens },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_DELTA_BALANCES_TOKEN_BALANCE':
         contractFunctions
           .getDeltaBalancesTokenBalance(action.user, action.token)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'tokenBalance',
+              timestamp: Date.now(),
+              parameters: { user: action.user, token: action.token },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_DELTA_BALANCES_DESTRUCT':
@@ -33,7 +53,17 @@ export default function deltaBalancesMiddleware(store) {
       case 'GET_DELTA_BALANCES_WALLET_ALLOWANCES':
         contractFunctions
           .getDeltaBalancesWalletAllowances(action.user, action.spender, action.tokens)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'walletAllowances',
+              timestamp: Date.now(),
+              parameters: { user: action.user, spender: action.spender, tokens: action.tokens },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_DELTA_BALANCES_WITHDRAW':
@@ -53,13 +83,33 @@ export default function deltaBalancesMiddleware(store) {
       case 'GET_DELTA_BALANCES_WALLET_BALANCES':
         contractFunctions
           .getDeltaBalancesWalletBalances(action.user, action.tokens)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'walletBalances',
+              timestamp: Date.now(),
+              parameters: { user: action.user, tokens: action.tokens },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_DELTA_BALANCES_TOKEN_ALLOWANCE':
         contractFunctions
           .getDeltaBalancesTokenAllowance(action.user, action.spender, action.token)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'tokenAllowance',
+              timestamp: Date.now(),
+              parameters: { user: action.user, spender: action.spender, token: action.token },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_DELTA_BALANCES_WITHDRAW_TOKEN':
@@ -84,19 +134,48 @@ export default function deltaBalancesMiddleware(store) {
       case 'GET_DELTA_BALANCES_ALL_WET_HBALANCES':
         contractFunctions
           .getDeltaBalancesAllWETHbalances(action.wethAddress, action.users)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'allWETHbalances',
+              timestamp: Date.now(),
+              parameters: { wethAddress: action.wethAddress, users: action.users },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_DELTA_BALANCES_ALL_ALLOWANCES_FOR_MANY_ACCOUNTS':
         contractFunctions
           .getDeltaBalancesAllAllowancesForManyAccounts(action.users, action.spender, action.tokens)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'allAllowancesForManyAccounts',
+              timestamp: Date.now(),
+              parameters: { users: action.users, spender: action.spender, tokens: action.tokens },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_DELTA_BALANCES_ADMIN':
         contractFunctions
           .getDeltaBalancesAdmin()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'deltaBalances',
+              name: 'admin',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_DELTA_BALANCES_CONSTRUCTOR':
