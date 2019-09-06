@@ -19,6 +19,8 @@ import { getConnectedWrapperDelegateApproval } from '../../swap/redux/selectors'
 import { getConnectedWrapperWethApproval } from '../../erc20/redux/selectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
+import { makeGetLatestERC20ApproveTransaction } from '../../erc20/redux/contractTransactionSelectors'
+import { makeGetLatestSwapAuthorizeTransaction } from '../../swap/redux/contractTransactionSelectors'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
   return [
@@ -251,10 +253,11 @@ const makeGetBestOrder = createSelector(
   deltaBalancesSelectors.getConnectedApprovals,
   getConnectedWrapperDelegateApproval,
   getConnectedWrapperWethApproval,
-  transactionSelectors.getTransactions,
   getConnectedWalletAddress,
   erc20Selectors.getMiningApproveToken,
   erc20Selectors.getSubmittingApproveToken,
+  makeGetLatestERC20ApproveTransaction,
+  makeGetLatestSwapAuthorizeTransaction,
   (
     isCurrentFrameFinishedQuerying,
     { gwei },
@@ -264,10 +267,11 @@ const makeGetBestOrder = createSelector(
     connectedApprovals,
     connectedWrapperDelegateApproval,
     connectedWrapperWethApproval,
-    transactions,
     connectedWalletAddress,
     miningApproveToken,
     submittingApproveToken,
+    getLatestERC20ApproveTransaction,
+    getLatestSwapAuthorizeTransaction,
   ) => orders => {
     if (!orders.length || !isCurrentFrameFinishedQuerying) return undefined
     const sortedOrders = _.sortBy(orders, 'price')
@@ -283,21 +287,16 @@ const makeGetBestOrder = createSelector(
       const miningTakerTokenSwapApproval =
         _.get(miningApproveToken, bestOrder.takerToken, false) ||
         _.get(submittingApproveToken, bestOrder.takerToken, false)
-      const wrapperDelegateApproval = _.find(
-        transactions,
-        ({ namespace, name, parameters: { delegate } }) =>
-          delegate === WRAPPER_CONTRACT_ADDRESS && namespace === 'swap' && name === 'authorize',
-      )
+      const wrapperDelegateApproval = getLatestSwapAuthorizeTransaction({
+        delegate: WRAPPER_CONTRACT_ADDRESS,
+      })
       const miningWrapperDelegateApproval =
         _.get(wrapperDelegateApproval, 'mining', false) || _.get(wrapperDelegateApproval, 'submitting', false)
-      const wrapperWethApproval = _.find(
-        transactions,
-        ({ namespace, name, parameters: { contractAddress, spender } }) =>
-          contractAddress === WETH_CONTRACT_ADDRESS &&
-          spender === WRAPPER_CONTRACT_ADDRESS &&
-          namespace === 'ERC20' &&
-          name === 'approve',
-      )
+      const wrapperWethApproval = getLatestERC20ApproveTransaction({
+        contractAddress: WETH_CONTRACT_ADDRESS,
+        spender: WRAPPER_CONTRACT_ADDRESS,
+      })
+
       const miningWrapperWethApproval =
         _.get(wrapperWethApproval, 'mining', false) || _.get(wrapperWethApproval, 'submitting', false)
 

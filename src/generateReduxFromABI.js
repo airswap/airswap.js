@@ -20,6 +20,10 @@ function getInterfaceCallFunctions(abi) {
   return _.filter(getInterfaceFunctions(abi), { type: 'call' })
 }
 
+function getInterfaceTransactionFunctions(abi) {
+  return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
+}
+
 // eslint-disable-next-line
 function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`./${abiLocation}`)
@@ -262,6 +266,52 @@ ${selectorTextArray.join('\n')}
 `
 }
 
+const getContractFunctionSelectorName = (type, name, eventNamespace) => {
+  if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
+    return `${_.upperFirst(name)}`
+  } else {
+    return `${_.upperFirst(eventNamespace)}${_.upperFirst(name)}`
+  }
+}
+
+// eslint-disable-next-line
+function generateContractTransactionSelectors(abiLocation, contractKey, namespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type, inputs }) => {
+    let filteredInputs = _.map(inputs, 'name')
+    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
+    const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
+    const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
+
+    return `
+export const get${getContractFunctionSelectorName(type, name, namespace)}Transactions = createSelector(
+  getTransactions,
+   transactions =>  {
+   const filteredValues = _.filter(transactions, { name: '${name}', namespace: '${namespace}' })
+   const sortedValues = _.sortBy(filteredValues, 'id')
+   return sortedValues
+  }
+)
+
+export const makeGetLatest${getContractFunctionSelectorName(type, name, namespace)}Transaction = createSelector(
+  get${getContractFunctionSelectorName(type, name, namespace)}Transactions,
+   transactions => (${selectorOuterParams}) =>  {
+   return _.last(_.filter(transactions, { ${selectorInnerParams} }))
+  }
+)
+`
+  })
+
+  return `import _ from 'lodash'
+import { createSelector } from 'reselect'
+import { selectors as transactionSelectors } from '../../transactionTracker/redux'
+
+const { getTransactions } = transactionSelectors
+
+${selectorTextArray.join('\n')}
+`
+}
+
 const modules = [
   {
     abiLocation: 'abis/WETH_ABI.json',
@@ -322,6 +372,11 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
       `./${namespace.toLowerCase()}/redux/callDataSelectors.js`,
       generateCallDataSelectors(abiLocation, contractKey, namespace),
     )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
+      generateContractTransactionSelectors(abiLocation, contractKey, namespace),
+    )
+
     try {
       fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
     } catch (e) {

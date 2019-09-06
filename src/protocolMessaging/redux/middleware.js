@@ -16,8 +16,8 @@ import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 import { Order, Quote } from '../../swap/tcomb'
 import { submitSwap } from '../../swap/redux/contractFunctionActions'
 import { getEthWrapperApproval } from '../../swap/redux/actions'
-import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 import { getWrapperWethTokenApproval } from '../../erc20/redux/actions'
+import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -411,7 +411,6 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    console.log(protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(state))
     return next(action)
   }
 }
