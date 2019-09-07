@@ -19,11 +19,11 @@ export const getSwapMakerOrderStatus = ({ makerWallet, nonce }) => dispatch =>
     }),
   )
 
-export const getSwapDelegateApprovals = ({ approverAddress, delegateAddress }) => dispatch =>
+export const getSwapDelegateApprovals = ({ approver, delegate }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      approverAddress,
-      delegateAddress,
+      approver,
+      delegate,
       type: 'GET_SWAP_DELEGATE_APPROVALS',
       resolve,
       reject,

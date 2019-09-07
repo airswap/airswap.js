@@ -1,6 +1,8 @@
+import _ from 'lodash'
+import { ethers } from 'ethers'
 import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } from '../../utils/transformations'
 import getRevertReason from '../../utils/revertReason'
-import { httpProvider } from '../../constants'
+import { httpProvider, abis } from '../../constants'
 
 const submitting = ({ id, namespace, name, parameters }) => ({
   type: 'SUBMITTING_TRANSACTION',
@@ -43,6 +45,39 @@ const errorMining = ({ id, namespace, name, transactionReceipt, error }) => ({
   error,
 })
 
+function parseEventLog(log, abiInterface) {
+  let parsedLog
+  try {
+    parsedLog = abiInterface.parseLog(log)
+  } catch (e) {
+    // this was added because ERC721 transactions show up under the Transfer topic but can't be parsed by the human-standard-token abi
+    return null
+  }
+
+  const parsedLogValues = _.mapValues(parsedLog.values, v => ((v.toString ? v.toString() : v) || '').toLowerCase()) // converts bignumbers to strings and lowercases everything (most importantly addresses)
+  const argumentRange = _.range(Number(parsedLogValues.length)).map(p => p.toString())
+  const formattedLogValues = _.pickBy(
+    parsedLogValues,
+    (param, key) => !_.includes(argumentRange, key) && key !== 'length', // removes some extra junk ethers puts in the parsed logs
+  )
+  const { address, topics, data, blockNumber, transactionHash, removed, transactionIndex, logIndex } = log
+  const { name, signature, topic } = parsedLog
+  return {
+    ...{
+      address,
+      topics,
+      data,
+      blockNumber: ethers.utils.bigNumberify(blockNumber).toNumber(),
+      transactionIndex: ethers.utils.bigNumberify(transactionIndex).toNumber(),
+      logIndex: ethers.utils.bigNumberify(logIndex).toNumber(),
+      transactionHash,
+      removed,
+    },
+    ...{ name, signature, topic },
+    values: formattedLogValues,
+  }
+}
+
 async function trackTransaction({ contractFunctionPromise, namespace, name, id, parameters }, store) {
   store.dispatch(submitting({ id, namespace, name, parameters }))
   let txn
@@ -74,7 +109,40 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     return
   }
   store.dispatch(mined({ id, namespace, name, transactionReceipt }))
+  transactionReceipt.logs.map(log => {
+    const abiInterface = new ethers.utils.Interface(abis[log.address.toLowerCase()])
+    const parsedLog = parseEventLog(log, abiInterface)
+    store.dispatch({
+      type: 'TRANSACTION_LOG_EVENT',
+      event: parsedLog,
+      namespace,
+      name,
+    })
+  })
 }
+
+// {
+//   type: 'TRANSACTION_LOG_EVENT',
+//     event: {
+//   address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+//     topics: [
+//     '0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c',
+//     '0x00000000000000000000000015fc598e31b98d73a7d56e10f079b827cb97af82'
+//   ],
+//     data: '0x00000000000000000000000000000000000000000000000000005af3107a4000',
+//     blockNumber: 5044840,
+//     transactionIndex: 7,
+//     logIndex: 7,
+//     transactionHash: '0x83de8d44a545c37daf57158ba4eb8b5b744e34582b25e0477436d03191794480',
+//     name: 'Deposit',
+//     signature: 'Deposit(address,uint256)',
+//     topic: '0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c',
+//     values: {
+//     owner: '0x15fc598e31b98d73a7d56e10f079b827cb97af82',
+//       amount: '100000000000000'
+//   }
+// }
+// }
 
 export default function transactionTrackerMiddleware(store) {
   return next => action => {

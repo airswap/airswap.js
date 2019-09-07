@@ -12,6 +12,18 @@ function getInterfaceEvents(abi) {
   return _.uniqBy(_.values(getInterface(abi).events), 'name')
 }
 
+function getInterfaceFunctions(abi) {
+  return _.uniqBy(_.values(getInterface(abi).functions), 'name')
+}
+
+function getInterfaceCallFunctions(abi) {
+  return _.filter(getInterfaceFunctions(abi), { type: 'call' })
+}
+
+function getInterfaceTransactionFunctions(abi) {
+  return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
+}
+
 // eslint-disable-next-line
 function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`./${abiLocation}`)
@@ -140,7 +152,8 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
   const abi = require(`./${abiLocation}`)
   const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
   const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
-    const filteredInputs = _.map(inputs, 'name')
+    let filteredInputs = _.map(inputs, 'name')
+    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
     if (payable) filteredInputs.push('ethAmount')
     const inputsOuterParam = filteredInputs.length ? `{${filteredInputs.join(', ')}}` : ''
     const inputsInnerParam = filteredInputs.length ? `${filteredInputs.join(',\n')}, ` : ''
@@ -155,58 +168,6 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
   return actionsTextArray.join('\n')
 }
 
-function generateEthersTransactionContractFunctionMiddleware(abiLocation, contractKey, eventNamespace = '') {
-  const abi = require(`./${abiLocation}`)
-  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
-  const onlyCalls = _.filter(contractFunctions, { type: 'call' }) === contractFunctions.length
-  const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
-    let filteredInputs = _.map(inputs, 'name')
-    if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
-    const actionName = getContractFunctionName(type, name, eventNamespace)
-    const actionType = getContractFunctionActionType(type, name, eventNamespace)
-    let caseContent
-    if (type === 'call') {
-      caseContent = `makeMiddlewareHTTPFn(contractFunctions.${actionName}, '${actionName}', store, action)`
-    } else {
-      const functionArguments = filteredInputs.length
-        ? `${filteredInputs.map(input => `txAction.${input}`).join(', ')},`
-        : ''
-      const txActionParam = filteredInputs.length ? ', txAction' : ''
-
-      caseContent = `makeMiddlewareEthersTransactionsFn(async (txStore${txActionParam}) => {
-      const signer = await txStore.dispatch(getSigner())
-      return contractFunctions.${actionName}(${functionArguments}signer)
-      }, '${actionName}', store, action, JSON.stringify(_.omit(action, ['ethAmount'])))`
-    }
-
-    return `
-  case '${actionType}':
-    ${caseContent}
-  break`
-  })
-  const actionCases = actionsTextArray.join('')
-
-  const getSigner = onlyCalls ? '' : "import { getSigner } from '../../wallet/redux/actions'\n"
-
-  return `
-import _ from 'lodash'  
-import * as contractFunctions from '../contractFunctions'
-import { makeMiddlewareEthersTransactionsFn } from '../../utils/redux/templates/ethersTransactions'
-import { makeMiddlewareHTTPFn } from '../../utils/redux/templates/http'
-${getSigner}  
-export default function ${eventNamespace}Middleware(store) {
-  return next => action => {
-    switch (action.type) {
-      ${actionCases}
-      default:
-    }
-    return next(action)
-  }
-}
-  
-`
-}
-
 function generateContractFunctionMiddleware(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`./${abiLocation}`)
   const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
@@ -214,20 +175,32 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
   const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
     let filteredInputs = _.map(inputs, 'name')
     if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
+    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
     const actionName = getContractFunctionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     let caseContent
+
+    const parameters = filteredInputs.length
+      ? `\nparameters: {${filteredInputs.map(input => `${input}: action.${input}`).join(', ')}, }`
+      : ''
+
     if (type === 'call') {
       const functionArguments = filteredInputs.length
         ? `${filteredInputs.map(input => `action.${input}`).join(', ')}`
         : ''
-      caseContent = `contractFunctions.${actionName}(${functionArguments}).then(action.resolve).catch(action.reject)`
+      caseContent = `contractFunctions.${actionName}(${functionArguments}).then(response => {
+        store.dispatch({
+         type: 'GOT_CALL_RESPONSE',
+         response: response && response.toString ? response.toString() : response,
+         namespace: '${eventNamespace}',
+         name: '${name}',
+         timestamp: Date.now(),${parameters}
+        })
+        action.resolve(response)
+      }).catch(action.reject)`
     } else {
       const functionArguments = filteredInputs.length
         ? `${filteredInputs.map(input => `action.${input}`).join(', ')},`
-        : ''
-      const parameters = filteredInputs.length
-        ? `\nparameters: {${filteredInputs.map(input => `${input}: action.${input}`).join(', ')}, }`
         : ''
 
       caseContent = `store.dispatch(getSigner()).then(signer => {
@@ -266,6 +239,76 @@ export default function ${eventNamespace}Middleware(store) {
   }
 }
   
+`
+}
+
+// eslint-disable-next-line
+function generateCallDataSelectors(abiLocation, contractKey, namespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const selectorTextArray = getInterfaceCallFunctions(abi).map(({ name, type, inputs }) => {
+    return `
+export const ${getContractFunctionName(type, name, namespace)} = createSelector(
+  getCallData,
+  values =>  {
+   const filteredValues = _.filter(values, { name: '${name}', namespace: '${namespace}' })
+   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+  }
+)
+`
+  })
+
+  return `import _ from 'lodash'
+import { createSelector } from 'reselect'
+
+const getCallData = state => state.callData
+${selectorTextArray.join('\n')}
+`
+}
+
+const getContractFunctionSelectorName = (type, name, eventNamespace) => {
+  if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
+    return `${_.upperFirst(name)}`
+  } else {
+    return `${_.upperFirst(eventNamespace)}${_.upperFirst(name)}`
+  }
+}
+
+// eslint-disable-next-line
+function generateContractTransactionSelectors(abiLocation, contractKey, namespace = '') {
+  const abi = require(`./${abiLocation}`)
+  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type, inputs }) => {
+    let filteredInputs = _.map(inputs, 'name')
+    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
+    const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
+    const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
+
+    return `
+export const get${getContractFunctionSelectorName(type, name, namespace)}Transactions = createSelector(
+  getTransactions,
+   transactions =>  {
+   const filteredValues = _.filter(transactions, { name: '${name}', namespace: '${namespace}' })
+   const sortedValues = _.sortBy(filteredValues, 'id')
+   return sortedValues
+  }
+)
+
+export const makeGetLatest${getContractFunctionSelectorName(type, name, namespace)}Transaction = createSelector(
+  get${getContractFunctionSelectorName(type, name, namespace)}Transactions,
+   transactions => (${selectorOuterParams}) =>  {
+   return _.last(_.filter(transactions, { ${selectorInnerParams} }))
+  }
+)
+`
+  })
+
+  return `import _ from 'lodash'
+import { createSelector } from 'reselect'
+import { selectors as transactionSelectors } from '../../transactionTracker/redux'
+
+const { getTransactions } = transactionSelectors
+
+${selectorTextArray.join('\n')}
 `
 }
 
@@ -325,6 +368,15 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
       `./${namespace.toLowerCase()}/redux/contractFunctionMiddleware.js`,
       generateContractFunctionMiddleware(abiLocation, contractKey, namespace),
     )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/callDataSelectors.js`,
+      generateCallDataSelectors(abiLocation, contractKey, namespace),
+    )
+    fs.writeFileSync(
+      `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
+      generateContractTransactionSelectors(abiLocation, contractKey, namespace),
+    )
+
     try {
       fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
     } catch (e) {
