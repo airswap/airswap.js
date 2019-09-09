@@ -174,7 +174,7 @@ const NODESMITH_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const httpProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const httpProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
 const infuraProvider = new ethers.providers.JsonRpcProvider(INFURA_GETH_NODE)
 const nodesmithProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
 

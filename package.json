@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -123,7 +123,6 @@
     "web3-utils": "^1.2.1"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "yarn": "^1.13.0"
+    "node": ">=10.0.0"
   }
 }
