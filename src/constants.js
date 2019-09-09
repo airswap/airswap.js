@@ -154,6 +154,16 @@ const AIRSWAP_GETH_NODE_ADDRESS = (N => {
   }
 })(NETWORK)
 
+const ALCHEMY_WEBSOCKET_URL = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return `wss://eth-rinkeby.ws.alchemyapi.io/ws/${ALCHEMY_RINKEBY_ID}`
+    case MAIN_ID:
+      return `wss://eth-mainnet.ws.alchemyapi.io/ws/${ALCHEMY_MAINNET_ID}`
+    default:
+  }
+})(NETWORK)
+
 const INFURA_GETH_NODE = (N => {
   switch (N) {
     case RINKEBY_ID:
@@ -355,4 +365,5 @@ module.exports = {
   NODESMITH_GETH_NODE,
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
+  ALCHEMY_WEBSOCKET_URL,
 }
