@@ -1,15 +1,17 @@
-const Bottleneck = require('bottleneck')
+const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const _ = require('lodash')
 const ethers = require('ethers')
 const uuid = require('uuid')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, httpProvider, ENV } = require('../constants')
+const { NODESMITH_URL, NODESMITH_KEY, ALCHEMY_WEBSOCKET_URL } = require('../constants')
 
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
 let nodesmithProvider
 let nodesmithOpenPromise
+
+const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
 async function initializeNodesmith() {
   nodesmithProvider = new WebSocket(NODESMITH_URL)
@@ -40,11 +42,6 @@ if (nodesmithSupported) {
   initializeNodesmith()
 }
 
-const limiter = new Bottleneck({
-  maxConcurrent: ENV === 'development' ? 2 : 3,
-  minTime: 50,
-})
-
 async function send({ method, params }) {
   if (nodesmithSupported) {
     await nodesmithOpenPromise
@@ -62,7 +59,7 @@ async function send({ method, params }) {
     })
   }
 
-  return limiter.schedule(() => httpProvider.send(method, params)).catch(e => console.log('EXCEPTION', e))
+  return alchemyWeb3.currentProvider.send(method, params)
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {
