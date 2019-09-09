@@ -246,6 +246,7 @@ const getIsCurrentFrameFinishedQuerying = createSelector(
 
 const makeGetBestOrder = createSelector(
   getIsCurrentFrameFinishedQuerying,
+  getCurrentFrameQueryContext,
   gasSelectors.getCurrentGasPriceSettings,
   tokenSelectors.makeGetExchangeFillGasLimitByToken,
   fiatSelectors.makeGetEthInFiat,
@@ -260,6 +261,7 @@ const makeGetBestOrder = createSelector(
   getSwapAuthorizeTransactions,
   (
     isCurrentFrameFinishedQuerying,
+    currentFrameQueryContext,
     { gwei },
     getExchangeFillGasLimitByToken,
     getEthInFiat,
@@ -281,7 +283,11 @@ const makeGetBestOrder = createSelector(
     const ethGasPrice = Number(gwei) / 10 ** 9
     const ethGasLimit = Number(getExchangeFillGasLimitByToken({ symbol: bestOrder.tokenSymbol }))
     const ethGasCost = ethGasLimit * ethGasPrice
-    const ethTotal = bestOrder.ethAmount + ethGasCost
+    const { side } = currentFrameQueryContext
+    let ethTotal = bestOrder.ethAmount
+    if (side === 'sell') {
+      ethTotal += ethGasCost
+    }
     let missingApprovals
     if (bestOrder.swapVersion === 2) {
       const miningTakerTokenSwapApproval =
