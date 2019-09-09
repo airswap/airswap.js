@@ -2,7 +2,13 @@ const ethers = require('ethers')
 const _ = require('lodash')
 const tokenMetadata = require('../tokens')
 
-const { httpProvider, DELTA_BALANCES_CONTRACT_ADDRESS, abis, TOKEN_APPROVAL_CHECK_AMOUNT } = require('../constants')
+const {
+  httpProvider,
+  DELTA_BALANCES_CONTRACT_ADDRESS,
+  abis,
+  TOKEN_APPROVAL_CHECK_AMOUNT,
+  ETH_ADDRESS,
+} = require('../constants')
 
 const { call } = require('../utils/gethRead')
 
@@ -57,7 +63,15 @@ function getManyAllowancesManyAddresses(tokens, addresses, spender, provider = d
       const allowances = results.slice(i * t, (i + 1) * t)
       return [
         address,
-        _.zipObject(tokens, _.map(allowances, b => Number(b.toString()) > Number(TOKEN_APPROVAL_CHECK_AMOUNT))),
+        _.zipObject(
+          tokens,
+          _.map(allowances, (b, j) => {
+            if (tokens[j] === ETH_ADDRESS) {
+              return true
+            }
+            return Number(b.toString()) > Number(TOKEN_APPROVAL_CHECK_AMOUNT)
+          }),
+        ),
       ]
     })
     return _.fromPairs(allAllowances)
