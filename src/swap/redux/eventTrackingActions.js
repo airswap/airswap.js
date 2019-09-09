@@ -37,36 +37,24 @@ export const trackSwapInvalidate = ({ callback, nonce, makerWallet, fromBlock, b
   namespace: 'swap',
 })
 
-export const trackSwapAuthorize = ({
-  callback,
-  approverAddress,
-  delegateAddress,
-  fromBlock,
-  backFillBlockCount,
-} = {}) => ({
+export const trackSwapAuthorize = ({ callback, approver, delegate, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.SWAP_CONTRACT_ADDRESS,
   abi,
   name: 'Authorize',
-  params: { approverAddress, delegateAddress },
+  params: { approver, delegate },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
   namespace: 'swap',
 })
 
-export const trackSwapRevoke = ({
-  callback,
-  approverAddress,
-  delegateAddress,
-  fromBlock,
-  backFillBlockCount,
-} = {}) => ({
+export const trackSwapRevoke = ({ callback, approver, delegate, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.SWAP_CONTRACT_ADDRESS,
   abi,
   name: 'Revoke',
-  params: { approverAddress, delegateAddress },
+  params: { approver, delegate },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',

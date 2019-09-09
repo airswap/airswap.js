@@ -7,7 +7,16 @@ export default function wethMiddleware(store) {
       case 'GET_WETH_NAME':
         contractFunctions
           .getWethName()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'name',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_APPROVE':
@@ -28,7 +37,16 @@ export default function wethMiddleware(store) {
       case 'GET_WETH_TOTAL_SUPPLY':
         contractFunctions
           .getWethTotalSupply()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'totalSupply',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_TRANSFER_FROM':
@@ -69,19 +87,47 @@ export default function wethMiddleware(store) {
       case 'GET_WETH_DECIMALS':
         contractFunctions
           .getWethDecimals()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'decimals',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_WETH_BALANCE_OF':
         contractFunctions
           .getWethBalanceOf(action.owner)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'balanceOf',
+              timestamp: Date.now(),
+              parameters: { owner: action.owner },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_WETH_SYMBOL':
         contractFunctions
           .getWethSymbol()
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'symbol',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_WETH_TRANSFER':
@@ -117,7 +163,17 @@ export default function wethMiddleware(store) {
       case 'GET_WETH_ALLOWANCE':
         contractFunctions
           .getWethAllowance(action.owner, action.spender)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'weth',
+              name: 'allowance',
+              timestamp: Date.now(),
+              parameters: { owner: action.owner, spender: action.spender },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       default:

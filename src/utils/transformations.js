@@ -121,6 +121,7 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
   const parameters = _.zipObject(parameterKeys, parameterValues)
   const value = ethers.utils.formatEther(transaction.value)
+
   if (name === 'deposit') {
     return `Wrap ${value} ETH`
   } else if (name === 'withdraw') {
@@ -133,6 +134,8 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
   } else if (name === 'swap') {
     const order = getReadableSwapOrder(parseSwapParameters(parameters))
     return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
+  } else if (name === 'authorize') {
+    return `Authorize delegate`
   }
 }
 

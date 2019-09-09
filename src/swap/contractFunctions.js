@@ -16,9 +16,9 @@ export function getSwapMakerOrderStatus(makerWallet, nonce) {
   return contract.makerOrderStatus(makerWallet, nonce)
 }
 
-export function getSwapDelegateApprovals(approverAddress, delegateAddress) {
+export function getSwapDelegateApprovals(approver, delegate) {
   const contract = getSwapContract(constants.httpProvider)
-  return contract.delegateApprovals(approverAddress, delegateAddress)
+  return contract.delegateApprovals(approver, delegate)
 }
 
 export function submitSwap(order, signer) {

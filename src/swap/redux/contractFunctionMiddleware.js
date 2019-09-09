@@ -7,19 +7,49 @@ export default function swapMiddleware(store) {
       case 'GET_SWAP_MAKER_MINIMUM_NONCE':
         contractFunctions
           .getSwapMakerMinimumNonce(action.makerWallet)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'makerMinimumNonce',
+              timestamp: Date.now(),
+              parameters: { makerWallet: action.makerWallet },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_SWAP_MAKER_ORDER_STATUS':
         contractFunctions
           .getSwapMakerOrderStatus(action.makerWallet, action.nonce)
-          .then(action.resolve)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'makerOrderStatus',
+              timestamp: Date.now(),
+              parameters: { makerWallet: action.makerWallet, nonce: action.nonce },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'GET_SWAP_DELEGATE_APPROVALS':
         contractFunctions
-          .getSwapDelegateApprovals(action.approverAddress, action.delegateAddress)
-          .then(action.resolve)
+          .getSwapDelegateApprovals(action.approver, action.delegate)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'delegateApprovals',
+              timestamp: Date.now(),
+              parameters: { approver: action.approver, delegate: action.delegate },
+            })
+            action.resolve(response)
+          })
           .catch(action.reject)
         break
       case 'SUBMIT_SWAP':
