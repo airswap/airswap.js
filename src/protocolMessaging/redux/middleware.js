@@ -114,7 +114,8 @@ function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) 
 }
 
 async function getOrderTakerTokenWithQuotes(intent, store, action) {
-  const { makerToken, takerToken, takerAmount } = action.query
+  const { takerAmount } = action.query
+  const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
   const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
@@ -135,13 +136,13 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     console.log(e)
   }
 
-  if (takerTokenBalanceIsZero(store, takerToken)) {
+  if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
     if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount)) {
       return store.dispatch(gotAlternativeQuoteResponse(maxQuote, action.stackId))
     } else if (quote) {
       return store.dispatch(gotQuoteResponse(quote, action.stackId))
     }
-  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, quote.takerAmount)) {
+  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
@@ -189,7 +190,8 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 }
 
 async function getOrderMakerTokenWithQuotes(intent, store, action) {
-  const { makerToken, takerToken, makerAmount } = action.query
+  const { makerAmount } = action.query
+  const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
   const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
@@ -209,13 +211,13 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
     console.log(e)
   }
 
-  if (takerTokenBalanceIsZero(store, takerToken)) {
+  if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
     if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount)) {
       return store.dispatch(gotAlternativeQuoteResponse(maxQuote, action.stackId))
     } else if (quote) {
       return store.dispatch(gotQuoteResponse(quote, action.stackId))
     }
-  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, quote.takerAmount)) {
+  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
@@ -264,10 +266,11 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 }
 
 async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
-  const { makerToken, takerToken, takerAmount } = action.query
+  const { takerAmount } = action.query
+  const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
-  if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount)) {
+  if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
@@ -298,7 +301,8 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 }
 
 async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
-  const { makerToken, takerToken, makerAmount } = action.query
+  const { makerAmount } = action.query
+  const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
   try {
@@ -353,13 +357,23 @@ async function fillFrameBestOrder(store) {
 function filterIntents(intents, query, queryContext) {
   const { makerToken, takerToken } = query
   const { side } = queryContext
+
   return _.filter(intents, intent => {
+    // for 2.0 special cases (wrapper)
     if (intent.swapVersion === 2) {
-      return intent.makerToken === makerToken && intent.takerToken === takerToken
+      if (query.takerToken === ETH_ADDRESS) {
+        return intent.makerToken === makerToken && intent.takerToken === WETH_CONTRACT_ADDRESS
+      } else if (query.makerToken === ETH_ADDRESS) {
+        return intent.makerToken === WETH_CONTRACT_ADDRESS && intent.takerToken === takerToken
+      }
     }
-    if (side === 'buy') {
-      return intent.takerToken === ETH_ADDRESS && intent.makerToken === makerToken
+    // for 1.0 special cases (no ETH on sells)
+    if (side === 'sell') {
+      if (query.makerToken === ETH_ADDRESS) {
+        return intent.makerToken === WETH_CONTRACT_ADDRESS && intent.takerToken === takerToken
+      }
     }
+    // normal matches
     return intent.makerToken === makerToken && intent.takerToken === takerToken
   })
 }
@@ -387,7 +401,6 @@ export default function routerMiddleware(store) {
         const intents = apiSelectors.getConnectedIndexerIntents(state)
         const filteredIntents = filterIntents(intents, action.query, action.queryContext)
         store.dispatch(gotIntents(filteredIntents, action.stackId))
-
         store.dispatch(getEthWrapperApproval())
         store.dispatch(getWrapperWethTokenApproval())
 
