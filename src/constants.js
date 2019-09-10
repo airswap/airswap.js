@@ -1,5 +1,6 @@
 const ethers = require('ethers')
 const _ = require('lodash')
+const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const ERC20abi = require('human-standard-token-abi')
 const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
@@ -88,7 +89,7 @@ const WRAPPER_CONTRACT_ADDRESS = (N => {
     case RINKEBY_ID:
       return '0x15fc598e31b98d73a7d56e10f079b827cb97af82'
     case MAIN_ID:
-      return '0x7d32b51258bbd675e47f55082ad3bb1133c5cc60'
+      return '0x5abcfbd462e175993c6c350023f8634d71daa61d'
     default:
   }
 })(NETWORK)
@@ -309,6 +310,8 @@ const IS_INSTANT = process.env.REACT_APP_INSTANT
 
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
+const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+
 module.exports = {
   ENV,
   MAIN_ID,
@@ -366,4 +369,5 @@ module.exports = {
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
   ALCHEMY_WEBSOCKET_URL,
+  alchemyWeb3,
 }

@@ -1,5 +1,5 @@
 const { ethers } = require('ethers')
-const { abis, SWAP_CONTRACT_ADDRESS } = require('../constants')
+const { abis, SWAP_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } = require('../constants')
 
 const _ = require('lodash')
 const BigNumber = require('bignumber.js')
@@ -103,7 +103,8 @@ function getParsedInputFromTransaction(transaction) {
 
   return {
     name,
-    parameters: to === SWAP_CONTRACT_ADDRESS ? parseSwapParameters(parameters) : parameters,
+    parameters:
+      to === SWAP_CONTRACT_ADDRESS || to === WRAPPER_CONTRACT_ADDRESS ? parseSwapParameters(parameters) : parameters,
     formattedETHValue: value,
   }
 }

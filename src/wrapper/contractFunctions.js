@@ -5,18 +5,19 @@ const constants = require('../constants')
 function getWrapperContract(provider) {
   return new ethers.Contract(constants.WRAPPER_CONTRACT_ADDRESS, abi, provider)
 }
-
-export function getWrapperWethContract() {
+function getWrapperWethContract() {
   const contract = getWrapperContract(constants.httpProvider)
   return contract.wethContract()
 }
 
-export function getWrapperSwapContract() {
+function getWrapperSwapContract() {
   const contract = getWrapperContract(constants.httpProvider)
   return contract.swapContract()
 }
 
-export function submitWrapperSwap(ethAmount, order, signer) {
+function submitWrapperSwap(ethAmount, order, signer) {
   const contract = getWrapperContract(signer)
   return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
+
+module.exports = { getWrapperWethContract, getWrapperSwapContract, submitWrapperSwap }
