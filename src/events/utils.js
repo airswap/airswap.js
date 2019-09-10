@@ -13,7 +13,7 @@ function parseEventLog(log, abiInterface) {
     // this was added because ERC721 transactions show up under the Transfer topic but can't be parsed by the human-standard-token abi
     return null
   }
-  console.log('parsedLog', parsedLog, log.address)
+
   if (!parsedLog) {
     return null
   }
