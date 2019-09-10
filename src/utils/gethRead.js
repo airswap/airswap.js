@@ -1,17 +1,14 @@
-const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const _ = require('lodash')
 const ethers = require('ethers')
 const uuid = require('uuid')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, ALCHEMY_WEBSOCKET_URL } = require('../constants')
+const { NODESMITH_URL, NODESMITH_KEY, alchemyWeb3 } = require('../constants')
 
 const nodesmithSupported = !!NODESMITH_KEY
 const callbacks = {}
 let nodesmithProvider
 let nodesmithOpenPromise
-
-const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
 async function initializeNodesmith() {
   nodesmithProvider = new WebSocket(NODESMITH_URL)
@@ -137,4 +134,12 @@ async function call(txObj, blockTag = 'latest') {
   return send(method)
 }
 
-module.exports = { fetchBlock, fetchLatestBlock, getLogs, call, fetchPendingBlock, fetchCurrentBlockNumber }
+module.exports = {
+  fetchBlock,
+  fetchLatestBlock,
+  getLogs,
+  call,
+  fetchPendingBlock,
+  fetchCurrentBlockNumber,
+  alchemyWeb3,
+}

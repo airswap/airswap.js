@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -56,7 +56,7 @@
     "lint-staged": "lint-staged",
     "lint": "eslint src --ext .js,.jsx",
     "prettify": "prettier --write src/**/*.js",
-    "generate": "cd src && node generateReduxFromABI.js && yarn lint --fix"
+    "generate": "cd src && node abiGen.js && yarn lint --fix"
   },
   "pre-commit": [
     "lint-staged"

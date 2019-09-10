@@ -3,6 +3,7 @@
 const fs = require('fs')
 const ethers = require('ethers')
 const _ = require('lodash')
+const generateContractFunctions = require('./abiGen/generateContractFunctions')
 
 function getInterface(abi) {
   return new ethers.utils.Interface(abi)
@@ -107,45 +108,6 @@ const getContractFunctionName = (type, name, eventNamespace) => {
 
 const getContractFunctionActionType = (type, name, eventNamespace) => {
   return _.snakeCase(getContractFunctionName(type, name, eventNamespace)).toUpperCase()
-}
-
-function generateContractFunctions(abiLocation, contractKey, eventNamespace = '') {
-  const abi = require(`./${abiLocation}`)
-  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
-  const functionArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
-    const inputNames = _.map(inputs, ({ name, type }, i) => name || `${type}Input${i + 1}`)
-    const signerParameter = type === 'transaction' ? `${inputNames.length ? ', ' : ''}signer` : ''
-    const functionArgs = inputs.length ? `${inputNames.join(', ')}` : ''
-    const getContract = type === 'transaction' ? `signer` : 'constants.httpProvider'
-    const lastParamContractAddress = contractKey ? '' : ', contractAddress'
-    const functionName = getContractFunctionName(type, name, eventNamespace)
-    const paramContractAddress = contractKey
-      ? ''
-      : `contractAddress${inputs.length || type === 'transaction' ? ', ' : ''}`
-    const paramEthAmount = !payable
-      ? ''
-      : `${paramContractAddress || functionArgs || signerParameter ? 'ethAmount, ' : 'ethAmount'}`
-    const innerParamEthAmount = !payable
-      ? ''
-      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount || '0') }`
-    return `export function ${functionName}(${paramContractAddress}${paramEthAmount}${functionArgs}${signerParameter}) {
-  const contract = get${_.upperFirst(eventNamespace)}Contract(${getContract}${lastParamContractAddress})
-  return contract.${name}(${inputNames.join(', ')}${innerParamEthAmount})
-}
-`
-  })
-  const passedInContractAddress = contractKey ? '' : ', contractAddress'
-  const contractConstantsImport = `\nconst constants = require('../constants')\n`
-  const contractAddress = contractKey ? `constants.${contractKey}` : 'contractAddress'
-  return [
-    `const ethers = require('ethers')
-const abi = require('../${abiLocation}')${contractConstantsImport}
-function get${_.upperFirst(eventNamespace)}Contract(provider${passedInContractAddress}) {
-  return new ethers.Contract(${contractAddress}, abi, provider)
-}
-`,
-    ...functionArray,
-  ].join('\n')
 }
 
 function generateContractFunctionActions(abiLocation, contractKey, eventNamespace = '') {
