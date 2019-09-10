@@ -7,7 +7,8 @@ const { flatten } = require('../swap/utils')
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
-const makeCrawlTokenUrl = address => `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}`
+const makeCrawlTokenUrl = (address, id) =>
+  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${id ? `&id=${id}` : ''}`
 
 BigNumber.config({ ERRORS: false })
 BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
@@ -19,6 +20,7 @@ function fetchTokens() {
       mode: 'cors',
     })
       .then(response => {
+        console.log(response)
         if (!response.ok) {
           reject(response.statusText)
         }
@@ -28,9 +30,9 @@ function fetchTokens() {
   })
 }
 
-function crawlToken(tokenAddress) {
+function crawlToken(tokenAddress, tokenId) {
   return new Promise((resolve, reject) => {
-    fetch(makeCrawlTokenUrl(tokenAddress), {
+    fetch(makeCrawlTokenUrl(tokenAddress, tokenId), {
       method: 'get',
       mode: 'cors',
     })
@@ -64,8 +66,8 @@ class TokenMetadata {
     this.tokenAddressesBySymbol = _.mapValues(this.tokensBySymbol, t => t.address)
     return tokens
   }
-  crawlToken(address) {
-    return crawlToken(address).then(token => {
+  crawlToken(address, id) {
+    return crawlToken(address, id).then(token => {
       this.tokens.push(token)
       return token
     })

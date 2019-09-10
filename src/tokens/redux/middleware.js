@@ -22,7 +22,7 @@ export default function balancesMiddleware(store) {
   return next => action => {
     switch (action.type) {
       case 'CRAWL_TOKEN':
-        tokenMetadata.crawlToken(action.address).then(token => store.dispatch(addToken(token)))
+        tokenMetadata.crawlToken(action.address, action.id).then(token => store.dispatch(addToken(token)))
         break
       default:
     }
