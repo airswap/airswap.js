@@ -20,7 +20,6 @@ function fetchTokens() {
       mode: 'cors',
     })
       .then(response => {
-        console.log(response)
         if (!response.ok) {
           reject(response.statusText)
         }
