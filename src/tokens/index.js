@@ -5,9 +5,11 @@ const { NETWORK } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
+const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
 const makeCrawlTokenUrl = address => `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}`
+const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
 
 BigNumber.config({ ERRORS: false })
 BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
@@ -31,6 +33,22 @@ function fetchTokens() {
 function crawlToken(tokenAddress) {
   return new Promise((resolve, reject) => {
     fetch(makeCrawlTokenUrl(tokenAddress), {
+      method: 'get',
+      mode: 'cors',
+    })
+      .then(response => {
+        if (!response.ok) {
+          reject(response.statusText)
+        }
+        return response.json()
+      })
+      .then(resolve)
+  })
+}
+
+function crawlNFTItem(tokenAddress, tokenId) {
+  return new Promise((resolve, reject) => {
+    fetch(makeCrawlNFTItemUrl(tokenAddress, tokenId), {
       method: 'get',
       mode: 'cors',
     })
@@ -69,6 +87,16 @@ class TokenMetadata {
       this.tokens.push(token)
       return token
     })
+  }
+  // eslint-disable-next-line class-methods-use-this
+  crawlNFTItem(address, id) {
+    return crawlNFTItem(address, id).then(token => ({
+      name: token.asset_contract.name,
+      symbol: token.asset_contract.symbol,
+      address: token.asset_contract.address,
+      id: token.token_id,
+      img_url: token.image_url,
+    }))
   }
   formatSignificantDigitsByToken(tokenQuery, value) {
     const token = _.find(this.tokens, tokenQuery)
