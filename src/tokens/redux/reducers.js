@@ -33,7 +33,7 @@ const data = (state = defaultState, action) => {
 const nftItems = (state = defaultState, action) => {
   switch (action.type) {
     case 'ADD_NFT_ITEM':
-      return _.uniqBy([action.token, ...state], token => [token.address, token.token_id].join(','))
+      return _.uniqBy([action.token, ...state], token => [token.address, token.id].join(','))
 
     default:
       return state
@@ -73,7 +73,7 @@ const getTokenAddressesBySymbol = createSelector(getTokensBySymbol, tokensBySymb
 
 const getNFTItems = state => state.tokens.nftItems
 const makeGetNFTItemByAddressAndId = createSelector(getNFTItems, items => (tokenAddress, tokenId) =>
-  _.find(items, t => t.address === tokenAddress && t.token_id === tokenId),
+  _.find(items, t => t.address === tokenAddress && t.id === tokenId),
 )
 
 const makeFormatBySymbol = createSelector(getTokensBySymbol, getTokensSymbols, (tokensBySymbol, tokensSymbols) =>

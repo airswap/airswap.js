@@ -94,11 +94,8 @@ class TokenMetadata {
       name: token.asset_contract.name,
       symbol: token.asset_contract.symbol,
       address: token.asset_contract.address,
-      decimals: 0,
-      token_id: token.token_id,
-      kind: 'ERC721',
-      airswap_img_url: token.image_url,
-      airswapUI: 'new',
+      id: token.token_id,
+      img_url: token.image_url,
     }))
   }
   formatSignificantDigitsByToken(tokenQuery, value) {
