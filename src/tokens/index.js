@@ -4,8 +4,7 @@ const _ = require('lodash')
 const { NETWORK } = require('../constants')
 const { flatten } = require('../swap/utils')
 
-const TOKEN_METADATA_BASE_URL = 'http://localhost:4000'
-// const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
+const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
