@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const uuid = require('uuid')
+const uuid = require('uuid4')
 const WebSocket = require('isomorphic-ws')
 const { formatErrorMessage } = require('../utils/transformations')
 const { NODESMITH_URL, NODESMITH_KEY, alchemyWeb3 } = require('../constants')

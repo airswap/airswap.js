@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import uuid from 'uuid'
+import uuid from 'uuid4'
 
 export const waitForState = ({ selector, result }) => dispatch =>
   new Promise((resolve, reject) =>

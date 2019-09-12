@@ -300,6 +300,11 @@ const modules = [
     namespace: 'wrapper',
     contractKey: 'WRAPPER_CONTRACT_ADDRESS',
   },
+  {
+    abiLocation: 'abis/erc721.json',
+    namespace: 'ERC721',
+    contractKey: '',
+  },
 ]
 
 modules.map(createSubmodules)
