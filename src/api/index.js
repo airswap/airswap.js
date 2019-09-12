@@ -34,11 +34,7 @@ function fetchIndexerIntents() {
         }
         return response.json().then(intents =>
           intents.map(intent => {
-            // TODO: remove address after swapVersion 2 is properly added to the indexer
-            if (intent.address === '0xbabe31056c0fe1b704d811b2405f6e9f5ae5e59d') {
-              return { ...intent, makerAddress: intent.address, swapVersion: 2 }
-            }
-            return { ...intent, makerAddress: intent.address }
+            return { ...intent, makerAddress: intent.address, swapVersion: 1 }
           }),
         )
       })

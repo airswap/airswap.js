@@ -30,6 +30,16 @@ const data = (state = defaultState, action) => {
   }
 }
 
+const nftItems = (state = defaultState, action) => {
+  switch (action.type) {
+    case 'ADD_NFT_ITEM':
+      return _.uniqBy([action.token, ...state], token => [token.address, token.id].join(','))
+
+    default:
+      return state
+  }
+}
+
 const ready = (state = false, action) => {
   switch (action.type) {
     case 'TOKENS_LOADED':
@@ -41,9 +51,11 @@ const ready = (state = false, action) => {
 
 export default combineReducers({
   data,
+  nftItems,
   ready,
 })
 
+// Tokens
 const getTokens = state => state.tokens.data
 const getAirSwapApprovedTokens = createSelector(getTokens, tokens => _.filter(tokens, { airswapUI: 'yes' }))
 const areTokensReady = state => state.tokens.ready
@@ -57,6 +69,11 @@ const getTokensSymbolsByAddress = createSelector(getTokensByAddress, tokensByAdd
 )
 const getTokenAddressesBySymbol = createSelector(getTokensBySymbol, tokensBySymbol =>
   _.mapValues(tokensBySymbol, t => t.address),
+)
+
+const getNFTItems = state => state.tokens.nftItems
+const makeGetNFTItemByAddressAndId = createSelector(getNFTItems, items => (tokenAddress, tokenId) =>
+  _.find(items, t => t.address === tokenAddress && t.id === tokenId),
 )
 
 const makeFormatBySymbol = createSelector(getTokensBySymbol, getTokensSymbols, (tokensBySymbol, tokensSymbols) =>
@@ -182,12 +199,14 @@ const makeGetExchangeFillGasLimitByToken = createSelector(getTokens, tokens => t
 
 export {
   getTokens,
+  getNFTItems,
   areTokensReady,
   getTokensSymbols,
   getTokenAddresses,
   getTokenBySymbol,
   getTokensBySymbol,
   getTokensByAddress,
+  makeGetNFTItemByAddressAndId,
   makeFormatBySymbol,
   makeFullByToken,
   makeAtomicByToken,
@@ -206,12 +225,14 @@ export {
 
 export const selectors = {
   getTokens,
+  getNFTItems,
   areTokensReady,
   getTokensSymbols,
   getTokenAddresses,
   getTokenBySymbol,
   getTokensBySymbol,
   getTokensByAddress,
+  makeGetNFTItemByAddressAndId,
   makeFormatBySymbol,
   makeFullByToken,
   makeAtomicByToken,
