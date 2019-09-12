@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const uuid = require('uuid')
+const uuid = require('uuid4')
 const EventSource = require('eventsource')
 const fetch = require('isomorphic-fetch')
 const { REACT_APP_SERVER_URL, AIRSWAP_API_URL, AIRSWAP_HEADLESS_API_SSE, MAKER_STATS_URL } = require('../constants')

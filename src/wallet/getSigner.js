@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const uuid = require('uuid')
+const uuid = require('uuid4')
 const ethers = require('ethers')
 const ethUtil = require('ethereumjs-util')
 const { httpProvider, NETWORK, NETWORK_MAPPING } = require('../constants')

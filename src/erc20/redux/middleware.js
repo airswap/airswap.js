@@ -1,4 +1,4 @@
-import uuid from 'uuid'
+import uuid from 'uuid4'
 import { getSigner } from '../../wallet/redux/actions'
 import {
   makeMiddlewareEthersTransactionsFn,
