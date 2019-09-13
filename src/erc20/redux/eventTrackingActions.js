@@ -1,3 +1,4 @@
+// This file is generated code, edits will be overwritten
 const abi = require('../../abis/hst.json')
 
 export const trackERC20Transfer = ({ callback, from, to, fromBlock, backFillBlockCount } = {}) => ({

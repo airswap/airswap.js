@@ -1,3 +1,4 @@
+// This file is generated code, edits will be overwritten
 const ethers = require('ethers')
 const abi = require('../abis/wrapper.json')
 const constants = require('../constants')

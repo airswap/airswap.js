@@ -1,10 +1,12 @@
+// This file is generated code, edits will be overwritten
+
 import * as contractFunctions from '../contractFunctions'
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function deltaBalancesMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_DELTA_BALANCES_ALL_BALANCES_FOR_MANY_ACCOUNTS':
+      case 'FETCH_DELTA_BALANCES_ALL_BALANCES_FOR_MANY_ACCOUNTS':
         contractFunctions
           .getDeltaBalancesAllBalancesForManyAccounts(action.users, action.tokens)
           .then(response => {
@@ -20,7 +22,7 @@ export default function deltaBalancesMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_DELTA_BALANCES_TOKEN_BALANCE':
+      case 'FETCH_DELTA_BALANCES_TOKEN_BALANCE':
         contractFunctions
           .getDeltaBalancesTokenBalance(action.user, action.token)
           .then(response => {
@@ -50,7 +52,7 @@ export default function deltaBalancesMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_DELTA_BALANCES_WALLET_ALLOWANCES':
+      case 'FETCH_DELTA_BALANCES_WALLET_ALLOWANCES':
         contractFunctions
           .getDeltaBalancesWalletAllowances(action.user, action.spender, action.tokens)
           .then(response => {
@@ -80,7 +82,7 @@ export default function deltaBalancesMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_DELTA_BALANCES_WALLET_BALANCES':
+      case 'FETCH_DELTA_BALANCES_WALLET_BALANCES':
         contractFunctions
           .getDeltaBalancesWalletBalances(action.user, action.tokens)
           .then(response => {
@@ -96,7 +98,7 @@ export default function deltaBalancesMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_DELTA_BALANCES_TOKEN_ALLOWANCE':
+      case 'FETCH_DELTA_BALANCES_TOKEN_ALLOWANCE':
         contractFunctions
           .getDeltaBalancesTokenAllowance(action.user, action.spender, action.token)
           .then(response => {
@@ -131,7 +133,7 @@ export default function deltaBalancesMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_DELTA_BALANCES_ALL_WET_HBALANCES':
+      case 'FETCH_DELTA_BALANCES_ALL_WET_HBALANCES':
         contractFunctions
           .getDeltaBalancesAllWETHbalances(action.wethAddress, action.users)
           .then(response => {
@@ -147,7 +149,7 @@ export default function deltaBalancesMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_DELTA_BALANCES_ALL_ALLOWANCES_FOR_MANY_ACCOUNTS':
+      case 'FETCH_DELTA_BALANCES_ALL_ALLOWANCES_FOR_MANY_ACCOUNTS':
         contractFunctions
           .getDeltaBalancesAllAllowancesForManyAccounts(action.users, action.spender, action.tokens)
           .then(response => {
@@ -163,7 +165,7 @@ export default function deltaBalancesMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_DELTA_BALANCES_ADMIN':
+      case 'FETCH_DELTA_BALANCES_ADMIN':
         contractFunctions
           .getDeltaBalancesAdmin()
           .then(response => {

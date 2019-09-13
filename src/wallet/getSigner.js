@@ -14,18 +14,13 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
         return walletType
       } else if (propKey === 'supportsSignTypedData') {
         return supportsSignTypedData
-      } else if (
-        startWalletAction &&
-        finishWalletAction &&
-        typeof target[propKey] === 'function' &&
-        propKey === 'sendTransaction'
-      ) {
+      } else if (typeof target[propKey] === 'function' && propKey === 'sendTransaction') {
         return async function(...args) {
-          const transactionArguments = (await startWalletAction(propKey, args)) || {}
+          const transactionArguments = startWalletAction ? (await startWalletAction(propKey, args)) || {} : {}
           const [tx, ...rest] = args
 
           const result = target[propKey].apply(this, [{ ...tx, ...transactionArguments }, ...rest])
-          result.finally(() => finishWalletAction(propKey, args))
+          result.finally(() => finishWalletAction && finishWalletAction(propKey, args))
           return result
         }
       } else if (

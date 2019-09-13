@@ -1,4 +1,4 @@
-import fetchGasSettings from '../index'
+import { fetchGasSettings } from '../index'
 import { makeMiddlewareHTTPFn } from '../../utils/redux/templates/http'
 
 export default function gasMiddleware(store) {

@@ -1,10 +1,12 @@
+// This file is generated code, edits will be overwritten
+
 import * as contractFunctions from '../contractFunctions'
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function wrapperMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_WRAPPER_WETH_CONTRACT':
+      case 'FETCH_WRAPPER_WETH_CONTRACT':
         contractFunctions
           .getWrapperWethContract()
           .then(response => {
@@ -19,7 +21,7 @@ export default function wrapperMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_WRAPPER_SWAP_CONTRACT':
+      case 'FETCH_WRAPPER_SWAP_CONTRACT':
         contractFunctions
           .getWrapperSwapContract()
           .then(response => {

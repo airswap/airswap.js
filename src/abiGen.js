@@ -1,29 +1,15 @@
 /* eslint-disable */
 
 const fs = require('fs')
-const ethers = require('ethers')
 const _ = require('lodash')
 const generateContractFunctions = require('./abiGen/generateContractFunctions')
-
-function getInterface(abi) {
-  return new ethers.utils.Interface(abi)
-}
-
-function getInterfaceEvents(abi) {
-  return _.uniqBy(_.values(getInterface(abi).events), 'name')
-}
-
-function getInterfaceFunctions(abi) {
-  return _.uniqBy(_.values(getInterface(abi).functions), 'name')
-}
-
-function getInterfaceCallFunctions(abi) {
-  return _.filter(getInterfaceFunctions(abi), { type: 'call' })
-}
-
-function getInterfaceTransactionFunctions(abi) {
-  return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
-}
+const {
+  writeFile,
+  getInterface,
+  getInterfaceEvents,
+  getInterfaceCallFunctions,
+  getInterfaceTransactionFunctions,
+} = require('./abiGen/utils')
 
 // eslint-disable-next-line
 function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
@@ -106,8 +92,17 @@ const getContractFunctionName = (type, name, eventNamespace) => {
   }
 }
 
+const getContractFunctionActionName = (type, name, eventNamespace) => {
+  const prefix = type === 'call' ? 'fetch' : 'submit'
+  if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
+    return `${prefix}${_.upperFirst(name)}`
+  } else {
+    return `${prefix}${_.upperFirst(eventNamespace)}${_.upperFirst(name)}`
+  }
+}
+
 const getContractFunctionActionType = (type, name, eventNamespace) => {
-  return _.snakeCase(getContractFunctionName(type, name, eventNamespace)).toUpperCase()
+  return _.snakeCase(getContractFunctionActionName(type, name, eventNamespace)).toUpperCase()
 }
 
 function generateContractFunctionActions(abiLocation, contractKey, eventNamespace = '') {
@@ -119,7 +114,7 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
     if (payable) filteredInputs.push('ethAmount')
     const inputsOuterParam = filteredInputs.length ? `{${filteredInputs.join(', ')}}` : ''
     const inputsInnerParam = filteredInputs.length ? `${filteredInputs.join(',\n')}, ` : ''
-    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const actionName = getContractFunctionActionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     return `export const ${actionName} = (${inputsOuterParam}) => dispatch => new Promise((resolve, reject) => dispatch({${inputsInnerParam}
   type: '${actionType}',
@@ -138,7 +133,8 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
     let filteredInputs = _.map(inputs, 'name')
     if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
     if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
-    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const functionName = getContractFunctionName(type, name, eventNamespace)
+    const actionName = getContractFunctionActionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     let caseContent
 
@@ -150,7 +146,7 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
       const functionArguments = filteredInputs.length
         ? `${filteredInputs.map(input => `action.${input}`).join(', ')}`
         : ''
-      caseContent = `contractFunctions.${actionName}(${functionArguments}).then(response => {
+      caseContent = `contractFunctions.${functionName}(${functionArguments}).then(response => {
         store.dispatch({
          type: 'GOT_CALL_RESPONSE',
          response: response && response.toString ? response.toString() : response,
@@ -239,11 +235,12 @@ const getContractFunctionSelectorName = (type, name, eventNamespace) => {
 // eslint-disable-next-line
 function generateContractTransactionSelectors(abiLocation, contractKey, namespace = '') {
   const abi = require(`./${abiLocation}`)
-  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type, inputs }) => {
-    let filteredInputs = _.map(inputs, 'name')
-    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
-    const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
-    const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
+  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type }) => {
+    // inputs
+    // let filteredInputs = _.map(inputs, 'name')
+    // if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
+    // const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
+    // const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
 
     return `
 export const get${getContractFunctionSelectorName(type, name, namespace)}Transactions = createSelector(
@@ -252,13 +249,6 @@ export const get${getContractFunctionSelectorName(type, name, namespace)}Transac
    const filteredValues = _.filter(transactions, { name: '${name}', namespace: '${namespace}' })
    const sortedValues = _.sortBy(filteredValues, 'id')
    return sortedValues
-  }
-)
-
-export const makeGetLatest${getContractFunctionSelectorName(type, name, namespace)}Transaction = createSelector(
-  get${getContractFunctionSelectorName(type, name, namespace)}Transactions,
-   transactions => (${selectorOuterParams}) =>  {
-   return _.last(_.filter(transactions, { ${selectorInnerParams} }))
   }
 )
 `
@@ -310,36 +300,38 @@ const modules = [
 modules.map(createSubmodules)
 
 function createSubmodules({ abiLocation, namespace, contractKey }) {
+  writeFile(
+    `./${namespace.toLowerCase()}/contractFunctions.js`,
+    generateContractFunctions(abiLocation, contractKey, namespace),
+  )
+
   fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
     if (err) throw err
     const events = getInterfaceEvents(require(`./${abiLocation}`))
     if (events.length) {
-      fs.writeFileSync(
+      writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingSelectors.js`,
         generateEventTrackingSelectors(abiLocation, contractKey, namespace),
       )
-      fs.writeFileSync(
+      writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingActions.js`,
         generateTrackedAction(abiLocation, contractKey, namespace),
       )
     }
-    fs.writeFileSync(
-      `./${namespace.toLowerCase()}/contractFunctions.js`,
-      generateContractFunctions(abiLocation, contractKey, namespace),
-    )
-    fs.writeFileSync(
+
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractFunctionActions.js`,
       generateContractFunctionActions(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractFunctionMiddleware.js`,
       generateContractFunctionMiddleware(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/callDataSelectors.js`,
       generateCallDataSelectors(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
       generateContractTransactionSelectors(abiLocation, contractKey, namespace),
     )

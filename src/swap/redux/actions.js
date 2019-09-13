@@ -1,7 +1,7 @@
 import { makePromiseAction } from '../../utils/redux'
 import { WRAPPER_CONTRACT_ADDRESS, INFINITE_EXPIRY, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
-import { getSwapDelegateApprovals, submitSwapAuthorize } from './contractFunctionActions'
+import { fetchSwapDelegateApprovals, submitSwapAuthorize } from './contractFunctionActions'
 import { approveToken } from '../../erc20/redux/actions'
 
 export const fillSwap = order => ({
@@ -22,7 +22,7 @@ export const approveTokenForSwap = tokenAddress => approveToken(tokenAddress, SW
 
 export const getEthWrapperApproval = () => (dispatch, getState) =>
   dispatch(
-    getSwapDelegateApprovals({
+    fetchSwapDelegateApprovals({
       approver: getConnectedWalletAddress(getState()),
       delegate: WRAPPER_CONTRACT_ADDRESS,
     }),

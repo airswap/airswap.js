@@ -1,31 +1,32 @@
-export const getERC721SupportsInterface = ({ contractAddress, interfaceId }) => dispatch =>
+// This file is generated code, edits will be overwritten
+export const fetchERC721SupportsInterface = ({ contractAddress, interfaceId }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       interfaceId,
-      type: 'GET_ERC_721_SUPPORTS_INTERFACE',
+      type: 'FETCH_ERC_721_SUPPORTS_INTERFACE',
       resolve,
       reject,
     }),
   )
 
-export const getERC721BalanceOf = ({ contractAddress, owner }) => dispatch =>
+export const fetchERC721BalanceOf = ({ contractAddress, owner }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       owner,
-      type: 'GET_ERC_721_BALANCE_OF',
+      type: 'FETCH_ERC_721_BALANCE_OF',
       resolve,
       reject,
     }),
   )
 
-export const getERC721OwnerOf = ({ contractAddress, tokenId }) => dispatch =>
+export const fetchERC721OwnerOf = ({ contractAddress, tokenId }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       tokenId,
-      type: 'GET_ERC_721_OWNER_OF',
+      type: 'FETCH_ERC_721_OWNER_OF',
       resolve,
       reject,
     }),
@@ -56,12 +57,12 @@ export const submitERC721Approve = ({ contractAddress, to, tokenId }) => dispatc
     }),
   )
 
-export const getERC721GetApproved = ({ contractAddress, tokenId }) => dispatch =>
+export const fetchERC721GetApproved = ({ contractAddress, tokenId }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       tokenId,
-      type: 'GET_ERC_721_GET_APPROVED',
+      type: 'FETCH_ERC_721_GET_APPROVED',
       resolve,
       reject,
     }),
@@ -79,13 +80,13 @@ export const submitERC721SetApprovalForAll = ({ contractAddress, operator, _appr
     }),
   )
 
-export const getERC721IsApprovedForAll = ({ contractAddress, owner, operator }) => dispatch =>
+export const fetchERC721IsApprovedForAll = ({ contractAddress, owner, operator }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       owner,
       operator,
-      type: 'GET_ERC_721_IS_APPROVED_FOR_ALL',
+      type: 'FETCH_ERC_721_IS_APPROVED_FOR_ALL',
       resolve,
       reject,
     }),

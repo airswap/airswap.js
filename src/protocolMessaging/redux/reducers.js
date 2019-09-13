@@ -146,21 +146,12 @@ const getIsConnectingRouter = state => state.protocolMessaging.connectingRouter
 const getRouterRequireAuth = state => state.protocolMessaging.routerRequireAuth
 
 const getCheckoutStack = state => state.protocolMessaging.checkoutStack
-const getCurrentFrame = createSelector(
-  getCheckoutStack,
-  stack => _.last(stack) || {},
-)
-const getCurrentFrameQuery = createSelector(
-  getCurrentFrame,
-  frame => frame.query,
-)
-const getCurrentFrameQueryContext = createSelector(
-  getCurrentFrame,
-  frame => ({
-    ...frame.queryContext,
-    ...frame.query,
-  }),
-)
+const getCurrentFrame = createSelector(getCheckoutStack, stack => _.last(stack) || {})
+const getCurrentFrameQuery = createSelector(getCurrentFrame, frame => frame.query)
+const getCurrentFrameQueryContext = createSelector(getCurrentFrame, frame => ({
+  ...frame.queryContext,
+  ...frame.query,
+}))
 
 const makeGetReadableSwap = createSelector(
   makeGetReadableOrder,
@@ -175,39 +166,16 @@ const makeGetReadableSwap = createSelector(
       : getReadableOrder(order),
 )
 
-const getCurrentFrameStackId = createSelector(
-  getCurrentFrame,
-  frame => frame.stackId,
+const getCurrentFrameStackId = createSelector(getCurrentFrame, frame => frame.stackId)
+const getCurrentFrameSelectedOrderId = createSelector(getCurrentFrame, frame => frame.selectedOrderId)
+const getCurrentFrameIntents = createSelector(getCurrentFrame, frame => frame.intents)
+const getCurrentFrameTimeoutReached = createSelector(getCurrentFrame, frame => frame.timeoutReached)
+const getCurrentFrameAllIntentsResolved = createSelector(getCurrentFrame, frame => frame.allIntentsResolved)
+const getCurrentFrameOrderResponses = createSelector(getCurrentFrame, makeGetReadableSwap, (frame, getReadableOrder) =>
+  frame.orderResponses.map(getReadableOrder),
 )
-const getCurrentFrameSelectedOrderId = createSelector(
-  getCurrentFrame,
-  frame => frame.selectedOrderId,
-)
-const getCurrentFrameIntents = createSelector(
-  getCurrentFrame,
-  frame => frame.intents,
-)
-const getCurrentFrameTimeoutReached = createSelector(
-  getCurrentFrame,
-  frame => frame.timeoutReached,
-)
-const getCurrentFrameAllIntentsResolved = createSelector(
-  getCurrentFrame,
-  frame => frame.allIntentsResolved,
-)
-const getCurrentFrameOrderResponses = createSelector(
-  getCurrentFrame,
-  makeGetReadableSwap,
-  (frame, getReadableOrder) => frame.orderResponses.map(getReadableOrder),
-)
-const getCurrentFrameDexIndexResponses = createSelector(
-  getCurrentFrame,
-  frame => frame.dexIndexResponses,
-)
-const getCurrentFrameIsDexIndexQuerying = createSelector(
-  getCurrentFrame,
-  frame => frame.isDexIndexQuerying,
-)
+const getCurrentFrameDexIndexResponses = createSelector(getCurrentFrame, frame => frame.dexIndexResponses)
+const getCurrentFrameIsDexIndexQuerying = createSelector(getCurrentFrame, frame => frame.isDexIndexQuerying)
 
 const getCurrentFrameAlternativeOrderResponses = createSelector(
   getCurrentFrame,
@@ -221,10 +189,8 @@ const getCurrentFrameLowBalanceOrderResponses = createSelector(
   (frame, getReadableOrder) => frame.lowBalanceOrderResponses.map(getReadableOrder),
 )
 
-const getCurrentFrameQuoteResponses = createSelector(
-  getCurrentFrame,
-  makeGetReadableSwap,
-  (frame, getReadableOrder) => frame.quoteResponses.map(getReadableOrder),
+const getCurrentFrameQuoteResponses = createSelector(getCurrentFrame, makeGetReadableSwap, (frame, getReadableOrder) =>
+  frame.quoteResponses.map(getReadableOrder),
 )
 const getCurrentFrameAlternativeQuoteResponses = createSelector(
   getCurrentFrame,
@@ -349,6 +315,18 @@ const makeGetBestOrder = createSelector(
           payload: approveAirswapTokenSwap(bestOrder.takerToken),
           approved: takerTokenSwapApproval,
           isMining: miningTakerTokenSwapApproval,
+        },
+        {
+          id: 'wrapperDelegateApproval',
+          payload: submitEthWrapperAuthorize(),
+          approved: connectedWrapperDelegateApproval,
+          isMining: miningWrapperDelegateApproval,
+        },
+        {
+          id: 'wrapperWethApproval',
+          payload: approveWrapperWethToken(),
+          approved: connectedWrapperWethApproval,
+          isMining: miningWrapperWethApproval,
         },
       ]
     } else {
@@ -581,8 +559,9 @@ const getCurrentFrameBestOrderExecution = createSelector(
     if (order.swapVersion === 2) {
       const orderId = getSwapOrderId(order)
       const tx = _.find(transactions, t => getSwapOrderId(t.parameters.order) === orderId)
-      vals = _.mapKeys(tx, (val, key) =>
-        ['transaction', 'transactionReceipt'].includes(key) ? `${key}sFillOrder` : `${key}FillOrder`,
+      vals = _.mapKeys(
+        tx,
+        (val, key) => (['transaction', 'transactionReceipt'].includes(key) ? `${key}sFillOrder` : `${key}FillOrder`),
       )
     } else {
       const orderId = getOrderId(order)
@@ -682,13 +661,11 @@ const getCurrentFrameStateSummaryProperties = createSelector(
   },
 )
 
-const makeLookUpCheckoutFrameByOrderId = createSelector(
-  getCheckoutStack,
-  stack => orderId =>
-    _.find(stack, ({ orderResponses, alternativeOrderResponses, lowBalanceOrderResponses }) => {
-      const orders = [...orderResponses, ...alternativeOrderResponses, ...lowBalanceOrderResponses]
-      return !!_.find(orders, o => getOrderId(o) === orderId || getSwapOrderId(o) === orderId)
-    }),
+const makeLookUpCheckoutFrameByOrderId = createSelector(getCheckoutStack, stack => orderId =>
+  _.find(stack, ({ orderResponses, alternativeOrderResponses, lowBalanceOrderResponses }) => {
+    const orders = [...orderResponses, ...alternativeOrderResponses, ...lowBalanceOrderResponses]
+    return !!_.find(orders, o => getOrderId(o) === orderId || getSwapOrderId(o) === orderId)
+  }),
 )
 
 export const selectors = {
