@@ -4,7 +4,7 @@ import { getSigner } from '../../wallet/redux/actions'
 export default function ERC721Middleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_ERC_721_SUPPORTS_INTERFACE':
+      case 'FETCH_ERC_721_SUPPORTS_INTERFACE':
         contractFunctions
           .getERC721SupportsInterface(action.contractAddress, action.interfaceId)
           .then(response => {
@@ -20,7 +20,7 @@ export default function ERC721Middleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_ERC_721_BALANCE_OF':
+      case 'FETCH_ERC_721_BALANCE_OF':
         contractFunctions
           .getERC721BalanceOf(action.contractAddress, action.owner)
           .then(response => {
@@ -36,7 +36,7 @@ export default function ERC721Middleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_ERC_721_OWNER_OF':
+      case 'FETCH_ERC_721_OWNER_OF':
         contractFunctions
           .getERC721OwnerOf(action.contractAddress, action.tokenId)
           .then(response => {
@@ -98,7 +98,7 @@ export default function ERC721Middleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_ERC_721_GET_APPROVED':
+      case 'FETCH_ERC_721_GET_APPROVED':
         contractFunctions
           .getERC721GetApproved(action.contractAddress, action.tokenId)
           .then(response => {
@@ -138,7 +138,7 @@ export default function ERC721Middleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_ERC_721_IS_APPROVED_FOR_ALL':
+      case 'FETCH_ERC_721_IS_APPROVED_FOR_ALL':
         contractFunctions
           .getERC721IsApprovedForAll(action.contractAddress, action.owner, action.operator)
           .then(response => {

@@ -1,30 +1,30 @@
-export const getSwapMakerMinimumNonce = ({ makerWallet }) => dispatch =>
+export const fetchSwapMakerMinimumNonce = ({ makerWallet }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       makerWallet,
-      type: 'GET_SWAP_MAKER_MINIMUM_NONCE',
+      type: 'FETCH_SWAP_MAKER_MINIMUM_NONCE',
       resolve,
       reject,
     }),
   )
 
-export const getSwapMakerOrderStatus = ({ makerWallet, nonce }) => dispatch =>
+export const fetchSwapMakerOrderStatus = ({ makerWallet, nonce }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       makerWallet,
       nonce,
-      type: 'GET_SWAP_MAKER_ORDER_STATUS',
+      type: 'FETCH_SWAP_MAKER_ORDER_STATUS',
       resolve,
       reject,
     }),
   )
 
-export const getSwapDelegateApprovals = ({ approver, delegate }) => dispatch =>
+export const fetchSwapDelegateApprovals = ({ approver, delegate }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       approver,
       delegate,
-      type: 'GET_SWAP_DELEGATE_APPROVALS',
+      type: 'FETCH_SWAP_DELEGATE_APPROVALS',
       resolve,
       reject,
     }),

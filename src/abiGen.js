@@ -106,8 +106,17 @@ const getContractFunctionName = (type, name, eventNamespace) => {
   }
 }
 
+const getContractFunctionActionName = (type, name, eventNamespace) => {
+  const prefix = type === 'call' ? 'fetch' : 'submit'
+  if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
+    return `${prefix}${_.upperFirst(name)}`
+  } else {
+    return `${prefix}${_.upperFirst(eventNamespace)}${_.upperFirst(name)}`
+  }
+}
+
 const getContractFunctionActionType = (type, name, eventNamespace) => {
-  return _.snakeCase(getContractFunctionName(type, name, eventNamespace)).toUpperCase()
+  return _.snakeCase(getContractFunctionActionName(type, name, eventNamespace)).toUpperCase()
 }
 
 function generateContractFunctionActions(abiLocation, contractKey, eventNamespace = '') {
@@ -119,7 +128,7 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
     if (payable) filteredInputs.push('ethAmount')
     const inputsOuterParam = filteredInputs.length ? `{${filteredInputs.join(', ')}}` : ''
     const inputsInnerParam = filteredInputs.length ? `${filteredInputs.join(',\n')}, ` : ''
-    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const actionName = getContractFunctionActionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     return `export const ${actionName} = (${inputsOuterParam}) => dispatch => new Promise((resolve, reject) => dispatch({${inputsInnerParam}
   type: '${actionType}',
@@ -138,7 +147,8 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
     let filteredInputs = _.map(inputs, 'name')
     if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
     if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
-    const actionName = getContractFunctionName(type, name, eventNamespace)
+    const functionName = getContractFunctionName(type, name, eventNamespace)
+    const actionName = getContractFunctionActionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     let caseContent
 
@@ -150,7 +160,7 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
       const functionArguments = filteredInputs.length
         ? `${filteredInputs.map(input => `action.${input}`).join(', ')}`
         : ''
-      caseContent = `contractFunctions.${actionName}(${functionArguments}).then(response => {
+      caseContent = `contractFunctions.${functionName}(${functionArguments}).then(response => {
         store.dispatch({
          type: 'GOT_CALL_RESPONSE',
          response: response && response.toString ? response.toString() : response,
@@ -310,6 +320,11 @@ const modules = [
 modules.map(createSubmodules)
 
 function createSubmodules({ abiLocation, namespace, contractKey }) {
+  fs.writeFileSync(
+    `./${namespace.toLowerCase()}/contractFunctions.js`,
+    generateContractFunctions(abiLocation, contractKey, namespace),
+  )
+
   fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
     if (err) throw err
     const events = getInterfaceEvents(require(`./${abiLocation}`))
@@ -323,10 +338,7 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
         generateTrackedAction(abiLocation, contractKey, namespace),
       )
     }
-    fs.writeFileSync(
-      `./${namespace.toLowerCase()}/contractFunctions.js`,
-      generateContractFunctions(abiLocation, contractKey, namespace),
-    )
+
     fs.writeFileSync(
       `./${namespace.toLowerCase()}/redux/contractFunctionActions.js`,
       generateContractFunctionActions(abiLocation, contractKey, namespace),

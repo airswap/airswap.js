@@ -1,8 +1,8 @@
-export const getERC20Name = ({ contractAddress }) => dispatch =>
+export const fetchERC20Name = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      type: 'GET_ERC_20_NAME',
+      type: 'FETCH_ERC_20_NAME',
       resolve,
       reject,
     }),
@@ -20,11 +20,11 @@ export const submitERC20Approve = ({ contractAddress, spender, value }) => dispa
     }),
   )
 
-export const getERC20TotalSupply = ({ contractAddress }) => dispatch =>
+export const fetchERC20TotalSupply = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      type: 'GET_ERC_20_TOTAL_SUPPLY',
+      type: 'FETCH_ERC_20_TOTAL_SUPPLY',
       resolve,
       reject,
     }),
@@ -43,42 +43,42 @@ export const submitERC20TransferFrom = ({ contractAddress, from, to, value }) =>
     }),
   )
 
-export const getERC20Decimals = ({ contractAddress }) => dispatch =>
+export const fetchERC20Decimals = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      type: 'GET_ERC_20_DECIMALS',
+      type: 'FETCH_ERC_20_DECIMALS',
       resolve,
       reject,
     }),
   )
 
-export const getERC20Version = ({ contractAddress }) => dispatch =>
+export const fetchERC20Version = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      type: 'GET_ERC_20_VERSION',
+      type: 'FETCH_ERC_20_VERSION',
       resolve,
       reject,
     }),
   )
 
-export const getERC20BalanceOf = ({ contractAddress, owner }) => dispatch =>
+export const fetchERC20BalanceOf = ({ contractAddress, owner }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       owner,
-      type: 'GET_ERC_20_BALANCE_OF',
+      type: 'FETCH_ERC_20_BALANCE_OF',
       resolve,
       reject,
     }),
   )
 
-export const getERC20Symbol = ({ contractAddress }) => dispatch =>
+export const fetchERC20Symbol = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      type: 'GET_ERC_20_SYMBOL',
+      type: 'FETCH_ERC_20_SYMBOL',
       resolve,
       reject,
     }),
@@ -109,13 +109,13 @@ export const submitERC20ApproveAndCall = ({ contractAddress, spender, value, ext
     }),
   )
 
-export const getERC20Allowance = ({ contractAddress, owner, spender }) => dispatch =>
+export const fetchERC20Allowance = ({ contractAddress, owner, spender }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       owner,
       spender,
-      type: 'GET_ERC_20_ALLOWANCE',
+      type: 'FETCH_ERC_20_ALLOWANCE',
       resolve,
       reject,
     }),

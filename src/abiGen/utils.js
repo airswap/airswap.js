@@ -16,8 +16,27 @@ function getInterface(abi) {
   return new ethers.utils.Interface(abi)
 }
 
+function getInterfaceEvents(abi) {
+  return _.uniqBy(_.values(getInterface(abi).events), 'name')
+}
+
+function getInterfaceFunctions(abi) {
+  return _.uniqBy(_.values(getInterface(abi).functions), 'name')
+}
+
+function getInterfaceCallFunctions(abi) {
+  return _.filter(getInterfaceFunctions(abi), { type: 'call' })
+}
+
+function getInterfaceTransactionFunctions(abi) {
+  return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
+}
+
 module.exports = {
   getContractFunctionName,
   getContractFunctionActionType,
   getInterface,
+  getInterfaceEvents,
+  getInterfaceCallFunctions,
+  getInterfaceTransactionFunctions,
 }

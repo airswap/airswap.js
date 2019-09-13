@@ -1,20 +1,20 @@
-export const getDeltaBalancesAllBalancesForManyAccounts = ({ users, tokens }) => dispatch =>
+export const fetchDeltaBalancesAllBalancesForManyAccounts = ({ users, tokens }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       users,
       tokens,
-      type: 'GET_DELTA_BALANCES_ALL_BALANCES_FOR_MANY_ACCOUNTS',
+      type: 'FETCH_DELTA_BALANCES_ALL_BALANCES_FOR_MANY_ACCOUNTS',
       resolve,
       reject,
     }),
   )
 
-export const getDeltaBalancesTokenBalance = ({ user, token }) => dispatch =>
+export const fetchDeltaBalancesTokenBalance = ({ user, token }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       user,
       token,
-      type: 'GET_DELTA_BALANCES_TOKEN_BALANCE',
+      type: 'FETCH_DELTA_BALANCES_TOKEN_BALANCE',
       resolve,
       reject,
     }),
@@ -29,13 +29,13 @@ export const submitDeltaBalancesDestruct = () => dispatch =>
     }),
   )
 
-export const getDeltaBalancesWalletAllowances = ({ user, spender, tokens }) => dispatch =>
+export const fetchDeltaBalancesWalletAllowances = ({ user, spender, tokens }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       user,
       spender,
       tokens,
-      type: 'GET_DELTA_BALANCES_WALLET_ALLOWANCES',
+      type: 'FETCH_DELTA_BALANCES_WALLET_ALLOWANCES',
       resolve,
       reject,
     }),
@@ -50,24 +50,24 @@ export const submitDeltaBalancesWithdraw = () => dispatch =>
     }),
   )
 
-export const getDeltaBalancesWalletBalances = ({ user, tokens }) => dispatch =>
+export const fetchDeltaBalancesWalletBalances = ({ user, tokens }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       user,
       tokens,
-      type: 'GET_DELTA_BALANCES_WALLET_BALANCES',
+      type: 'FETCH_DELTA_BALANCES_WALLET_BALANCES',
       resolve,
       reject,
     }),
   )
 
-export const getDeltaBalancesTokenAllowance = ({ user, spender, token }) => dispatch =>
+export const fetchDeltaBalancesTokenAllowance = ({ user, spender, token }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       user,
       spender,
       token,
-      type: 'GET_DELTA_BALANCES_TOKEN_ALLOWANCE',
+      type: 'FETCH_DELTA_BALANCES_TOKEN_ALLOWANCE',
       resolve,
       reject,
     }),
@@ -84,33 +84,33 @@ export const submitDeltaBalancesWithdrawToken = ({ token, amount }) => dispatch 
     }),
   )
 
-export const getDeltaBalancesAllWETHbalances = ({ wethAddress, users }) => dispatch =>
+export const fetchDeltaBalancesAllWETHbalances = ({ wethAddress, users }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       wethAddress,
       users,
-      type: 'GET_DELTA_BALANCES_ALL_WET_HBALANCES',
+      type: 'FETCH_DELTA_BALANCES_ALL_WET_HBALANCES',
       resolve,
       reject,
     }),
   )
 
-export const getDeltaBalancesAllAllowancesForManyAccounts = ({ users, spender, tokens }) => dispatch =>
+export const fetchDeltaBalancesAllAllowancesForManyAccounts = ({ users, spender, tokens }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       users,
       spender,
       tokens,
-      type: 'GET_DELTA_BALANCES_ALL_ALLOWANCES_FOR_MANY_ACCOUNTS',
+      type: 'FETCH_DELTA_BALANCES_ALL_ALLOWANCES_FOR_MANY_ACCOUNTS',
       resolve,
       reject,
     }),
   )
 
-export const getDeltaBalancesAdmin = () => dispatch =>
+export const fetchDeltaBalancesAdmin = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      type: 'GET_DELTA_BALANCES_ADMIN',
+      type: 'FETCH_DELTA_BALANCES_ADMIN',
       resolve,
       reject,
     }),

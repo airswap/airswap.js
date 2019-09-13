@@ -4,7 +4,7 @@ import { getSigner } from '../../wallet/redux/actions'
 export default function swapMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_SWAP_MAKER_MINIMUM_NONCE':
+      case 'FETCH_SWAP_MAKER_MINIMUM_NONCE':
         contractFunctions
           .getSwapMakerMinimumNonce(action.makerWallet)
           .then(response => {
@@ -20,7 +20,7 @@ export default function swapMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_SWAP_MAKER_ORDER_STATUS':
+      case 'FETCH_SWAP_MAKER_ORDER_STATUS':
         contractFunctions
           .getSwapMakerOrderStatus(action.makerWallet, action.nonce)
           .then(response => {
@@ -36,7 +36,7 @@ export default function swapMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_SWAP_DELEGATE_APPROVALS':
+      case 'FETCH_SWAP_DELEGATE_APPROVALS':
         contractFunctions
           .getSwapDelegateApprovals(action.approver, action.delegate)
           .then(response => {
