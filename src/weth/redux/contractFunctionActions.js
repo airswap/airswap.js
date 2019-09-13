@@ -1,7 +1,8 @@
-export const getWethName = () => dispatch =>
+// This file is generated code, edits will be overwritten
+export const fetchWethName = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      type: 'GET_WETH_NAME',
+      type: 'FETCH_WETH_NAME',
       resolve,
       reject,
     }),
@@ -18,10 +19,10 @@ export const submitWethApprove = ({ spender, amount }) => dispatch =>
     }),
   )
 
-export const getWethTotalSupply = () => dispatch =>
+export const fetchWethTotalSupply = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      type: 'GET_WETH_TOTAL_SUPPLY',
+      type: 'FETCH_WETH_TOTAL_SUPPLY',
       resolve,
       reject,
     }),
@@ -49,29 +50,29 @@ export const submitWethWithdraw = ({ amount }) => dispatch =>
     }),
   )
 
-export const getWethDecimals = () => dispatch =>
+export const fetchWethDecimals = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      type: 'GET_WETH_DECIMALS',
+      type: 'FETCH_WETH_DECIMALS',
       resolve,
       reject,
     }),
   )
 
-export const getWethBalanceOf = ({ owner }) => dispatch =>
+export const fetchWethBalanceOf = ({ owner }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       owner,
-      type: 'GET_WETH_BALANCE_OF',
+      type: 'FETCH_WETH_BALANCE_OF',
       resolve,
       reject,
     }),
   )
 
-export const getWethSymbol = () => dispatch =>
+export const fetchWethSymbol = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      type: 'GET_WETH_SYMBOL',
+      type: 'FETCH_WETH_SYMBOL',
       resolve,
       reject,
     }),
@@ -98,12 +99,12 @@ export const submitWethDeposit = ({ ethAmount }) => dispatch =>
     }),
   )
 
-export const getWethAllowance = ({ owner, spender }) => dispatch =>
+export const fetchWethAllowance = ({ owner, spender }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       owner,
       spender,
-      type: 'GET_WETH_ALLOWANCE',
+      type: 'FETCH_WETH_ALLOWANCE',
       resolve,
       reject,
     }),

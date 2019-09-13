@@ -1,10 +1,12 @@
+// This file is generated code, edits will be overwritten
+
 import * as contractFunctions from '../contractFunctions'
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function ERC20Middleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_ERC_20_NAME':
+      case 'FETCH_ERC_20_NAME':
         contractFunctions
           .getERC20Name(action.contractAddress)
           .then(response => {
@@ -40,7 +42,7 @@ export default function ERC20Middleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_ERC_20_TOTAL_SUPPLY':
+      case 'FETCH_ERC_20_TOTAL_SUPPLY':
         contractFunctions
           .getERC20TotalSupply(action.contractAddress)
           .then(response => {
@@ -82,7 +84,7 @@ export default function ERC20Middleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_ERC_20_DECIMALS':
+      case 'FETCH_ERC_20_DECIMALS':
         contractFunctions
           .getERC20Decimals(action.contractAddress)
           .then(response => {
@@ -98,7 +100,7 @@ export default function ERC20Middleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_ERC_20_VERSION':
+      case 'FETCH_ERC_20_VERSION':
         contractFunctions
           .getERC20Version(action.contractAddress)
           .then(response => {
@@ -114,7 +116,7 @@ export default function ERC20Middleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_ERC_20_BALANCE_OF':
+      case 'FETCH_ERC_20_BALANCE_OF':
         contractFunctions
           .getERC20BalanceOf(action.contractAddress, action.owner)
           .then(response => {
@@ -130,7 +132,7 @@ export default function ERC20Middleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_ERC_20_SYMBOL':
+      case 'FETCH_ERC_20_SYMBOL':
         contractFunctions
           .getERC20Symbol(action.contractAddress)
           .then(response => {
@@ -192,7 +194,7 @@ export default function ERC20Middleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_ERC_20_ALLOWANCE':
+      case 'FETCH_ERC_20_ALLOWANCE':
         contractFunctions
           .getERC20Allowance(action.contractAddress, action.owner, action.spender)
           .then(response => {

@@ -1,10 +1,12 @@
+// This file is generated code, edits will be overwritten
+
 import * as contractFunctions from '../contractFunctions'
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function wethMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'GET_WETH_NAME':
+      case 'FETCH_WETH_NAME':
         contractFunctions
           .getWethName()
           .then(response => {
@@ -34,7 +36,7 @@ export default function wethMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_WETH_TOTAL_SUPPLY':
+      case 'FETCH_WETH_TOTAL_SUPPLY':
         contractFunctions
           .getWethTotalSupply()
           .then(response => {
@@ -84,7 +86,7 @@ export default function wethMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_WETH_DECIMALS':
+      case 'FETCH_WETH_DECIMALS':
         contractFunctions
           .getWethDecimals()
           .then(response => {
@@ -99,7 +101,7 @@ export default function wethMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_WETH_BALANCE_OF':
+      case 'FETCH_WETH_BALANCE_OF':
         contractFunctions
           .getWethBalanceOf(action.owner)
           .then(response => {
@@ -115,7 +117,7 @@ export default function wethMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'GET_WETH_SYMBOL':
+      case 'FETCH_WETH_SYMBOL':
         contractFunctions
           .getWethSymbol()
           .then(response => {
@@ -160,7 +162,7 @@ export default function wethMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'GET_WETH_ALLOWANCE':
+      case 'FETCH_WETH_ALLOWANCE':
         contractFunctions
           .getWethAllowance(action.owner, action.spender)
           .then(response => {

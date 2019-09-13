@@ -87,9 +87,9 @@ const PGP_CONTRACT_ADDRESS = (N => {
 const WRAPPER_CONTRACT_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return '0x15fc598e31b98d73a7d56e10f079b827cb97af82'
+      return '0x0000000000000000000000000000000000000000'
     case MAIN_ID:
-      return '0x5abcfbd462e175993c6c350023f8634d71daa61d'
+      return '0x0000000000000000000000000000000000000000'
     default:
   }
 })(NETWORK)
@@ -222,7 +222,7 @@ const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
 
 const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
-const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI']
+const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI', 'USDC']
 
 const MAX_DISPLAY_DECIMALS = 8
 

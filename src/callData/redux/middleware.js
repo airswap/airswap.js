@@ -1,5 +1,5 @@
-import { getSwapDelegateApprovals } from '../../swap/redux/contractFunctionActions'
-import { getERC20Allowance } from '../../erc20/redux/contractFunctionActions'
+import { fetchSwapDelegateApprovals } from '../../swap/redux/contractFunctionActions'
+import { fetchERC20Allowance } from '../../erc20/redux/contractFunctionActions'
 
 export default function callData(store) {
   return next => action => {
@@ -9,7 +9,7 @@ export default function callData(store) {
         const eventName = event.name.toLowerCase()
         if (eventName === 'authorize') {
           store.dispatch(
-            getSwapDelegateApprovals({
+            fetchSwapDelegateApprovals({
               // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
               approver: event.values.approver.toLowerCase(),
               delegate: event.values.delegate.toLowerCase(),
@@ -19,7 +19,7 @@ export default function callData(store) {
 
         if (eventName === 'approval') {
           store.dispatch(
-            getERC20Allowance({
+            fetchERC20Allowance({
               // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
               contractAddress: event.address.toLowerCase(),
               owner: event.values.owner.toLowerCase(),
