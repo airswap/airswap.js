@@ -217,14 +217,14 @@ class TokenMetadata {
       tokenAddress = takerToken
     }
 
-    // set price in base token terms if there is a base token
-    // otherwise, set price in eth terms
-    if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+    // if eth/weth is involved, set price in eth terms
+    // otherwise set price in base token terms
+    if (takerSymbol === 'ETH' || takerSymbol === 'WETH' || makerSymbol === 'ETH' || makerSymbol === 'WETH') {
+      price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
       price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
     } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
       price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
-    } else {
-      price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
     }
 
     return {
