@@ -1,3 +1,5 @@
+// This file is generated code, edits will be overwritten
+
 import * as contractFunctions from '../contractFunctions'
 import { getSigner } from '../../wallet/redux/actions'
 

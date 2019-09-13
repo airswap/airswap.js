@@ -1,3 +1,4 @@
+// This file is generated code, edits will be overwritten
 const abi = require('../../abis/erc721.json')
 
 export const trackERC721Transfer = ({ callback, from, to, tokenId, fromBlock, backFillBlockCount } = {}) => ({

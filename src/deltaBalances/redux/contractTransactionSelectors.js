@@ -1,3 +1,4 @@
+// This file is generated code, edits will be overwritten
 import _ from 'lodash'
 import { createSelector } from 'reselect'
 import { selectors as transactionSelectors } from '../../transactionTracker/redux'

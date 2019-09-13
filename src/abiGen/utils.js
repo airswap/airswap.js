@@ -1,5 +1,6 @@
 const ethers = require('ethers')
 const _ = require('lodash')
+const fs = require('fs')
 
 const getContractFunctionName = (type, name, eventNamespace) => {
   const prefix = type === 'call' ? 'get' : 'submit'
@@ -32,6 +33,12 @@ function getInterfaceTransactionFunctions(abi) {
   return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
 }
 
+const filePrefix = '// This file is generated code, edits will be overwritten\n'
+
+function writeFile(location, contents) {
+  fs.writeFileSync(location, `${filePrefix}${contents}`)
+}
+
 module.exports = {
   getContractFunctionName,
   getContractFunctionActionType,
@@ -39,4 +46,5 @@ module.exports = {
   getInterfaceEvents,
   getInterfaceCallFunctions,
   getInterfaceTransactionFunctions,
+  writeFile,
 }

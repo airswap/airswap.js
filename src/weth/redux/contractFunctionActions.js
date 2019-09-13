@@ -1,3 +1,4 @@
+// This file is generated code, edits will be overwritten
 export const fetchWethName = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({

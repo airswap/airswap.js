@@ -1,29 +1,15 @@
 /* eslint-disable */
 
 const fs = require('fs')
-const ethers = require('ethers')
 const _ = require('lodash')
 const generateContractFunctions = require('./abiGen/generateContractFunctions')
-
-function getInterface(abi) {
-  return new ethers.utils.Interface(abi)
-}
-
-function getInterfaceEvents(abi) {
-  return _.uniqBy(_.values(getInterface(abi).events), 'name')
-}
-
-function getInterfaceFunctions(abi) {
-  return _.uniqBy(_.values(getInterface(abi).functions), 'name')
-}
-
-function getInterfaceCallFunctions(abi) {
-  return _.filter(getInterfaceFunctions(abi), { type: 'call' })
-}
-
-function getInterfaceTransactionFunctions(abi) {
-  return _.filter(getInterfaceFunctions(abi), { type: 'transaction' })
-}
+const {
+  writeFile,
+  getInterface,
+  getInterfaceEvents,
+  getInterfaceCallFunctions,
+  getInterfaceTransactionFunctions,
+} = require('./abiGen/utils')
 
 // eslint-disable-next-line
 function generateTrackedAction(abiLocation, contractKey, eventNamespace = '') {
@@ -314,7 +300,7 @@ const modules = [
 modules.map(createSubmodules)
 
 function createSubmodules({ abiLocation, namespace, contractKey }) {
-  fs.writeFileSync(
+  writeFile(
     `./${namespace.toLowerCase()}/contractFunctions.js`,
     generateContractFunctions(abiLocation, contractKey, namespace),
   )
@@ -323,29 +309,29 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
     if (err) throw err
     const events = getInterfaceEvents(require(`./${abiLocation}`))
     if (events.length) {
-      fs.writeFileSync(
+      writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingSelectors.js`,
         generateEventTrackingSelectors(abiLocation, contractKey, namespace),
       )
-      fs.writeFileSync(
+      writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingActions.js`,
         generateTrackedAction(abiLocation, contractKey, namespace),
       )
     }
 
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractFunctionActions.js`,
       generateContractFunctionActions(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractFunctionMiddleware.js`,
       generateContractFunctionMiddleware(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/callDataSelectors.js`,
       generateCallDataSelectors(abiLocation, contractKey, namespace),
     )
-    fs.writeFileSync(
+    writeFile(
       `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
       generateContractTransactionSelectors(abiLocation, contractKey, namespace),
     )
