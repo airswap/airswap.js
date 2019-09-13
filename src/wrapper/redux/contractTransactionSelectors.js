@@ -9,8 +9,3 @@ export const getWrapperSwapTransactions = createSelector(getTransactions, transa
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
-
-export const makeGetLatestWrapperSwapTransaction = createSelector(
-  getWrapperSwapTransactions,
-  transactions => ({ order }) => _.last(_.filter(transactions, { order })),
-)

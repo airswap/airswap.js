@@ -249,11 +249,12 @@ const getContractFunctionSelectorName = (type, name, eventNamespace) => {
 // eslint-disable-next-line
 function generateContractTransactionSelectors(abiLocation, contractKey, namespace = '') {
   const abi = require(`./${abiLocation}`)
-  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type, inputs }) => {
-    let filteredInputs = _.map(inputs, 'name')
-    if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
-    const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
-    const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
+  const selectorTextArray = getInterfaceTransactionFunctions(abi).map(({ name, type }) => {
+    // inputs
+    // let filteredInputs = _.map(inputs, 'name')
+    // if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
+    // const selectorOuterParams = filteredInputs.length ? `{ ${filteredInputs.join(', ')} }` : ''
+    // const selectorInnerParams = filteredInputs.length ? `${filteredInputs.join(', ')}` : ''
 
     return `
 export const get${getContractFunctionSelectorName(type, name, namespace)}Transactions = createSelector(
@@ -262,13 +263,6 @@ export const get${getContractFunctionSelectorName(type, name, namespace)}Transac
    const filteredValues = _.filter(transactions, { name: '${name}', namespace: '${namespace}' })
    const sortedValues = _.sortBy(filteredValues, 'id')
    return sortedValues
-  }
-)
-
-export const makeGetLatest${getContractFunctionSelectorName(type, name, namespace)}Transaction = createSelector(
-  get${getContractFunctionSelectorName(type, name, namespace)}Transactions,
-   transactions => (${selectorOuterParams}) =>  {
-   return _.last(_.filter(transactions, { ${selectorInnerParams} }))
   }
 )
 `
