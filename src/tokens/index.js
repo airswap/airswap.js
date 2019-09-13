@@ -1,7 +1,7 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
-const { NETWORK } = require('../constants')
+const { NETWORK, BASE_ASSET_TOKENS_SYMBOLS } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
@@ -169,12 +169,22 @@ class TokenMetadata {
     const makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
     const takerSymbol = tokenSymbolsByAddress[takerToken]
     const makerSymbol = tokenSymbolsByAddress[makerToken]
+
     let ethAmount = 0
-    let tokenAmount = 0
     let ethAmountFull = 0
+
+    let tokenAmount = 0
     let tokenAmountFull = 0
+
+    let baseTokenAmount = 0
+    let baseTokenAmountFull = 0
+    let baseTokenSymbol = ''
+
     let tokenSymbol = ''
     let tokenAddress = ''
+
+    let price
+
     if (takerSymbol === 'ETH' || takerSymbol === 'WETH') {
       ethAmount = takerAmountFormatted
       ethAmountFull = takerAmountFull
@@ -189,8 +199,33 @@ class TokenMetadata {
       tokenAmountFull = takerAmountFull
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+      baseTokenAmount = takerAmountFormatted
+      baseTokenAmountFull = takerAmountFull
+      baseTokenSymbol = takerSymbol
+      tokenAmount = makerAmountFormatted
+      tokenAmountFull = makerAmountFull
+      tokenSymbol = makerSymbol
+      tokenAddress = makerToken
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+      baseTokenAmount = makerAmountFormatted
+      baseTokenAmountFull = makerAmountFull
+      baseTokenSymbol = makerSymbol
+      tokenAmount = takerAmountFormatted
+      tokenAmountFull = takerAmountFull
+      tokenSymbol = takerSymbol
+      tokenAddress = takerToken
     }
-    const price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+
+    // set price in base token terms if there is a base token
+    // otherwise, set price in eth terms
+    if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+      price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+      price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else {
+      price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+    }
 
     return {
       ...order,
@@ -211,6 +246,8 @@ class TokenMetadata {
       tokenSymbol,
       tokenAmount,
       tokenAddress,
+      baseTokenAmount,
+      baseTokenSymbol,
     }
   }
   getReadableSwapOrder(orderParams, tokenSymbolsByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
@@ -227,12 +264,22 @@ class TokenMetadata {
     const makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
     const takerSymbol = tokenSymbolsByAddress[takerToken]
     const makerSymbol = tokenSymbolsByAddress[makerToken]
+
     let ethAmount = 0
-    let tokenAmount = 0
     let ethAmountFull = 0
+
+    let tokenAmount = 0
     let tokenAmountFull = 0
+
+    let baseTokenAmount = 0
+    let baseTokenAmountFull = 0
+    let baseTokenSymbol = ''
+
     let tokenSymbol = ''
     let tokenAddress = ''
+
+    let price
+
     if (takerSymbol === 'ETH' || takerSymbol === 'WETH') {
       ethAmount = takerAmountFormatted
       ethAmountFull = takerAmountFull
@@ -247,8 +294,33 @@ class TokenMetadata {
       tokenAmountFull = takerAmountFull
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+      baseTokenAmount = takerAmountFormatted
+      baseTokenAmountFull = takerAmountFull
+      baseTokenSymbol = takerSymbol
+      tokenAmount = makerAmountFormatted
+      tokenAmountFull = makerAmountFull
+      tokenSymbol = makerSymbol
+      tokenAddress = makerToken
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+      baseTokenAmount = makerAmountFormatted
+      baseTokenAmountFull = makerAmountFull
+      baseTokenSymbol = makerSymbol
+      tokenAmount = takerAmountFormatted
+      tokenAmountFull = takerAmountFull
+      tokenSymbol = takerSymbol
+      tokenAddress = takerToken
     }
-    const price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+
+    // set price in base token terms if there is a base token
+    // otherwise, set price in eth terms
+    if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+      price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+      price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else {
+      price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
+    }
 
     return {
       ...order,
@@ -274,6 +346,8 @@ class TokenMetadata {
       tokenSymbol,
       tokenAmount,
       tokenAddress,
+      baseTokenAmount,
+      baseTokenSymbol,
     }
   }
 }
