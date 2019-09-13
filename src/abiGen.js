@@ -3,6 +3,8 @@
 const fs = require('fs')
 const _ = require('lodash')
 const generateContractFunctions = require('./abiGen/generateContractFunctions')
+const generateEventListeners = require('./abiGen/generateEventListeners')
+
 const {
   writeFile,
   getInterface,
@@ -300,14 +302,22 @@ const modules = [
 modules.map(createSubmodules)
 
 function createSubmodules({ abiLocation, namespace, contractKey }) {
+  const events = getInterfaceEvents(require(`./${abiLocation}`))
+
   writeFile(
     `./${namespace.toLowerCase()}/contractFunctions.js`,
     generateContractFunctions(abiLocation, contractKey, namespace),
   )
 
+  if (events.length) {
+    writeFile(
+      `./${namespace.toLowerCase()}/eventListeners.js`,
+      generateEventListeners(abiLocation, contractKey, namespace),
+    )
+  }
+
   fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
     if (err) throw err
-    const events = getInterfaceEvents(require(`./${abiLocation}`))
     if (events.length) {
       writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingSelectors.js`,

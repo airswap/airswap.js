@@ -9,9 +9,9 @@ function generateEventListeners(abiLocation, contractKey, eventNamespace = '') {
     const filteredInputs = _.map(_.filter(inputs, { indexed: true }), 'name')
     const contractString = contractKey ? `\n  contract: constants.${contractKey},` : ''
     const inputsOuterParam = filteredInputs.length ? `${filteredInputs.join(', ')}, ` : ''
-    return `export const track${_.upperFirst(
-      eventNamespace,
-    )}${name} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount } = {}) => ({
+    const functionName = `track${_.upperFirst(eventNamespace)}${name}`
+
+    return `const ${functionName} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount, parser } = {}) => eventTracker.trackEvent({
   callback,${contractString}
   abi,
   name: '${name}',
@@ -20,6 +20,7 @@ function generateEventListeners(abiLocation, contractKey, eventNamespace = '') {
   backFillBlockCount,
   topic: '${topic}',
   namespace: '${eventNamespace}',
+  parser,
 })
 `
   })
@@ -27,8 +28,10 @@ function generateEventListeners(abiLocation, contractKey, eventNamespace = '') {
     ? `
 const constants = require('../constants')`
     : ''
-  return `const abi = require('../${abiLocation}')${contractContantsImport}\n
+  return `const eventTracker = require('../events/websocketEventTracker')
+  const abi = require('../${abiLocation}')${contractContantsImport}\n
   ${actionsTextArray.join('\n')}
+  module.exports = { ${getInterfaceEvents(abi).map(({ name }) => `track${_.upperFirst(eventNamespace)}${name}`)} }
   `
 }
 
