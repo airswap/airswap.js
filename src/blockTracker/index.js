@@ -42,7 +42,6 @@ class BlockTracker {
         this.blockProcessors.map(processNewBlock => processNewBlock(latestBlock))
         if (latestBlock.number > currentBlockNumber + 1) {
           const range = _.range(currentBlockNumber + 1, latestBlock.number)
-          console.log('blocks were missed, filling in the gaps', range)
           range.map(async n => {
             const missedBlock = await fetchBlock(n)
             this.blocks[missedBlock.number] = missedBlock
