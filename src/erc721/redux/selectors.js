@@ -41,11 +41,11 @@ export const makeGetIsERC721Approved = createSelector(getERC721GetApproved, valu
 
 export const makeGetERC721ApproveTransaction = createSelector(
   getERC721ApproveTransactions,
-  values => (tokenAddress, tokenId) =>
+  values => (contractAddress, tokenId) =>
     values.find(
-      transactionData =>
-        transactionData.name === 'approve' &&
-        transactionData.parameters.contractAddress === tokenAddress &&
-        transactionData.parameters.tokenId === tokenId,
+      callData =>
+        callData.name === 'approve' &&
+        callData.parameters.contractAddress === contractAddress &&
+        callData.parameters.tokenId === tokenId,
     ),
 )
