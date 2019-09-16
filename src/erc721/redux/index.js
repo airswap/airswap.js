@@ -1,4 +1,4 @@
-// import defaultMiddleware from './middleware'
+import defaultMiddleware from './middleware'
 import contractFunctionMiddleware from './contractFunctionMiddleware'
 
 import reducers, { selectors as reducerSelectors } from './reducers'
@@ -11,6 +11,6 @@ const selectors = {
   ...reducerSelectors,
 }
 
-const middleware = [contractFunctionMiddleware]
+const middleware = [defaultMiddleware, contractFunctionMiddleware]
 
 export { middleware, reducers, selectors }
