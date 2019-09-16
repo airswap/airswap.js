@@ -21,7 +21,7 @@ import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 function processEventLogs(logs, store) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
-  const newEvents = _.filter(logs, event => !_.includes(eventIds, getEventId(event)))
+  const newEvents = _.filter(logs, event => event && !_.includes(eventIds, getEventId(event)))
   if (logs && logs.length && newEvents.length) {
     const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
     store.dispatch(newEventsAction)
