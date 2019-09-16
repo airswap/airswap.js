@@ -6,6 +6,7 @@ import * as events from '../events/redux'
 import * as api from '../api/redux'
 import * as ens from '../ens/redux'
 import * as erc20 from '../erc20/redux'
+import * as erc721 from '../erc721/redux'
 import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
 import * as protocolMessaging from '../protocolMessaging/redux'
@@ -30,6 +31,7 @@ const state = {
   api,
   ens,
   erc20,
+  erc721,
   keySpace,
   dexIndex,
   protocolMessaging,
