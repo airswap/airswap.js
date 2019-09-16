@@ -5,7 +5,7 @@ import {
   WRAPPER_CONTRACT_ADDRESS,
   TOKEN_APPROVAL_AMOUNT,
 } from '../../constants'
-import { getERC20Allowance, submitERC20Approve } from './contractFunctionActions'
+import { fetchERC20Allowance, submitERC20Approve } from './contractFunctionActions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 export const approveToken = (tokenAddress, spender) => ({
@@ -36,7 +36,7 @@ export const approveWrapperWethToken = () =>
 
 export const getWrapperWethTokenApproval = () => (dispatch, getState) =>
   dispatch(
-    getERC20Allowance({
+    fetchERC20Allowance({
       contractAddress: WETH_CONTRACT_ADDRESS,
       owner: getConnectedWalletAddress(getState()),
       spender: WRAPPER_CONTRACT_ADDRESS,

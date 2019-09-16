@@ -5,7 +5,7 @@ const { NETWORK, BASE_ASSET_TOKENS_SYMBOLS } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
-const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
+const OPENSEA_API_URL = NETWORK === 4 ? 'https://rinkeby-api.opensea.io/api/v1' : 'https://api.opensea.io/api/v1'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
 const makeCrawlTokenUrl = address => `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}`
