@@ -134,6 +134,10 @@ function getTransactionDescription(
   } else if (name === 'withdraw') {
     return `Unwrap ${ethers.utils.formatEther(parameters.amount)} WETH`
   } else if (name === 'approve') {
+    const kind = _.get(tokensByAddress, `${to}.kind`)
+    if (kind === 'ERC721') {
+      return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} #${parameters.id} for trade`
+    }
     return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} for trade`
   } else if (name === 'fill') {
     const order = getReadableOrder(parameters)
