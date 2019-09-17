@@ -2,7 +2,8 @@ import _ from 'lodash'
 import { ethers } from 'ethers'
 import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } from '../../utils/transformations'
 import getRevertReason from '../../utils/revertReason'
-import { httpProvider, abis } from '../../constants'
+import { httpProvider } from '../../constants'
+import { getAbis } from '../../abis/redux/reducers'
 
 const submitting = ({ id, namespace, name, parameters }) => ({
   type: 'SUBMITTING_TRANSACTION',
@@ -88,7 +89,8 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     return
   }
   const transaction = stringBNValues(txn)
-  transaction.parsedInput = getParsedInputFromTransaction(transaction)
+  const abis = getAbis(store.getState())
+  transaction.parsedInput = getParsedInputFromTransaction(transaction, abis)
   transaction.timestamp = Date.now()
 
   store.dispatch(submitted({ id, namespace, name, transaction }))
@@ -109,6 +111,7 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     return
   }
   store.dispatch(mined({ id, namespace, name, transactionReceipt }))
+
   transactionReceipt.logs.map(log => {
     const abiInterface = new ethers.utils.Interface(abis[log.address.toLowerCase()])
     const parsedLog = parseEventLog(log, abiInterface)

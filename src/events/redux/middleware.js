@@ -9,7 +9,7 @@ import { getEventId } from '../utils'
 import * as gethRead from '../../utils/gethRead'
 import { buildGlobalERC20TransfersTopics, fetchLogs } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
-import eventTracker from '../websocketEventTracker'
+import eventTracker from '../eventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
 import {
   trackSwapLegacyCanceled,

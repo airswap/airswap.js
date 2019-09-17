@@ -71,6 +71,7 @@ function parseAmount(amount, precision) {
 class TokenMetadata {
   constructor() {
     this.tokens = []
+    this.nftItems = []
     this.ready = fetchTokens().then(tokens => this.setTokens(tokens))
   }
   setTokens(tokens) {
@@ -89,15 +90,16 @@ class TokenMetadata {
       return token
     })
   }
-  // eslint-disable-next-line class-methods-use-this
-  crawlNFTItem(address, id) {
-    return crawlNFTItem(address, id).then(token => ({
+  async crawlNFTItem(address, id) {
+    const nftItem = await crawlNFTItem(address, id).then(token => ({
       name: token.asset_contract.name,
       symbol: token.asset_contract.symbol,
       address: token.asset_contract.address,
       id: token.token_id,
       img_url: token.image_url,
     }))
+    this.nftItems.push(nftItem)
+    return nftItem
   }
   formatSignificantDigitsByToken(tokenQuery, value) {
     const token = _.find(this.tokens, tokenQuery)
@@ -251,20 +253,35 @@ class TokenMetadata {
       baseTokenSymbol,
     }
   }
-  getReadableSwapOrder(orderParams, tokenSymbolsByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
+  getReadableSwapOrder(orderParams, tokenByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
     const order = orderParams.maker ? flatten(orderParams) : orderParams
     const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
     const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
-    const tokenSymbolsByAddress = tokenSymbolsByAddressParam || this.tokenSymbolsByAddress
+    const tokensByAddress = tokenByAddressParam || this.tokensByAddress
     const { makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry, nonce } = order
+    let takerAmountFull
+    let takerAmountFormatted
+    let makerAmountFull
+    let makerAmountFormatted
 
-    const takerAmountFull = fullByToken({ address: takerToken }, takerParam)
-    const makerAmountFull = fullByToken({ address: makerToken }, makerParam)
+    if (_.get(tokensByAddress[takerToken], 'kind') === 'ERC721') {
+      takerAmountFull = ''
+      takerAmountFormatted = ''
+    } else {
+      takerAmountFull = fullByToken({ address: takerToken }, takerParam)
+      takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
+    }
 
-    const takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
-    const makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
-    const takerSymbol = tokenSymbolsByAddress[takerToken]
-    const makerSymbol = tokenSymbolsByAddress[makerToken]
+    if (_.get(tokensByAddress[makerToken], 'kind') === 'ERC721') {
+      makerAmountFull = ''
+      makerAmountFormatted = ''
+    } else {
+      makerAmountFull = fullByToken({ address: makerToken }, makerParam)
+      makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
+    }
+
+    const takerSymbol = _.get(tokensByAddress[takerToken], 'symbol')
+    const makerSymbol = _.get(tokensByAddress[makerToken], 'symbol')
 
     let ethAmount = 0
     let ethAmountFull = 0

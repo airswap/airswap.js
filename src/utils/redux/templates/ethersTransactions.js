@@ -4,6 +4,7 @@ import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } fro
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
 import { AIRSWAP_GETH_NODE_ADDRESS } from '../../../constants'
 import getRevertReason from '../../revertReason'
+import { getAbis } from '../../../abis/redux/reducers'
 
 const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
@@ -28,7 +29,8 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
     return
   }
   const formattedTxn = stringBNValues(txn)
-  const parsedInput = getParsedInputFromTransaction(formattedTxn)
+  const abis = getAbis(store.getState())
+  const parsedInput = getParsedInputFromTransaction(formattedTxn, abis)
 
   store.dispatch(submitted({ ...formattedTxn, ...parsedInput, timestamp: Date.now() }, uniqueId))
   let minedTxn

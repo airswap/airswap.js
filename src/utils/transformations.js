@@ -1,5 +1,5 @@
 const { ethers } = require('ethers')
-const { abis, SWAP_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } = require('../constants')
+const { abis: constantAbis, SWAP_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } = require('../constants')
 
 const _ = require('lodash')
 const BigNumber = require('bignumber.js')
@@ -87,7 +87,7 @@ function parseSwapParameters(parameters) {
   }
 }
 
-function getParsedInputFromTransaction(transaction) {
+function getParsedInputFromTransaction(transaction, abis = constantAbis) {
   if (!(transaction && transaction.to)) {
     return {}
   }
@@ -109,7 +109,13 @@ function getParsedInputFromTransaction(transaction) {
   }
 }
 
-function getTransactionDescription(transaction, tokensByAddress, getReadableOrder, getReadableSwapOrder) {
+function getTransactionDescription(
+  transaction,
+  tokensByAddress,
+  getReadableOrder,
+  getReadableSwapOrder,
+  abis = constantAbis,
+) {
   if (!(transaction && transaction.to) || _.isEmpty(tokensByAddress)) {
     return ''
   }
@@ -128,13 +134,30 @@ function getTransactionDescription(transaction, tokensByAddress, getReadableOrde
   } else if (name === 'withdraw') {
     return `Unwrap ${ethers.utils.formatEther(parameters.amount)} WETH`
   } else if (name === 'approve') {
+    const kind = _.get(tokensByAddress, `${to}.kind`)
+    if (kind === 'ERC721') {
+      return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} #${parameters.id} for trade`
+    }
     return `Approve ${_.get(tokensByAddress, `${to}.symbol`)} for trade`
   } else if (name === 'fill') {
     const order = getReadableOrder(parameters)
     return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
   } else if (name === 'swap') {
     const order = getReadableSwapOrder(parseSwapParameters(parameters))
-    return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
+    const takerToken = tokensByAddress[order.takerToken.toLowerCase()]
+    const makerToken = tokensByAddress[order.makerToken.toLowerCase()]
+
+    const takerSide =
+      takerToken.kind === 'ERC721'
+        ? `${takerToken.symbol} #${order.takerParam} `
+        : `${order.takerAmountFormatted} ${takerToken.symbol}`
+
+    const makerSide =
+      takerToken.kind === 'ERC721'
+        ? `${makerToken.symbol} #${order.makerParam} `
+        : `${order.takerAmountFormatted} ${makerToken.symbol}`
+
+    return `Fill order for ${takerSide} for ${makerSide}`
   } else if (name === 'authorize') {
     return `Authorize delegate`
   }
