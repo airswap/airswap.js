@@ -13,7 +13,11 @@ const setCheckoutFrameQuery = (
   type: 'SET_CHECKOUT_FRAME_QUERY',
   query: { makerToken, takerToken, makerAmount, takerAmount },
   // specifiedMakerAddress is sent from user land; always cast to lower case for protocol messaging
-  queryContext: { side, specifiedAmount, specifiedMakerAddress: specifiedMakerAddress.toLowerCase() },
+  queryContext: {
+    side,
+    specifiedAmount,
+    specifiedMakerAddress: specifiedMakerAddress ? specifiedMakerAddress.toLowerCase() : null,
+  },
 })
 
 const fillFrameBestOrder = () => ({
