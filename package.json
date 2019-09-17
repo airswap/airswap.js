@@ -117,6 +117,7 @@
     "sse.js": "^0.4.4",
     "tcomb": "^3.2.29",
     "tcomb-validation": "^3.4.1",
+    "uuid": "^3.3.3",
     "uuid4": "^1.1.4",
     "validator": "^10.11.0",
     "web3-provider-engine": "^15.0.0",

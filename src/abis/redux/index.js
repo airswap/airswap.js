@@ -1,3 +1,5 @@
 import reducers from './reducers'
 
-export { reducers }
+const middleware = []
+
+export { reducers, middleware }

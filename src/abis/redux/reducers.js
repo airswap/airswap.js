@@ -15,14 +15,16 @@ function abiReducer(state = abis, action) {
         const addresses = action.tokens.map(({ address }) => address.toLowerCase())
         const tokenAbis = action.tokens.map(getAbiForToken)
         const newAbis = _.zipObject(addresses, tokenAbis)
+        // old state remains, new state fills in gaps, but doesn't overwrite
+        // this is so custom contracts like WETH and AST aren't overwritten by their generic equivalents
         return {
-          ...state,
           ...newAbis,
+          ...state,
         }
       } else if (action.token) {
         return {
-          ...state,
           [action.token.address.toLowerCase()]: getAbiForToken(action.token),
+          ...state,
         }
       }
       return state
