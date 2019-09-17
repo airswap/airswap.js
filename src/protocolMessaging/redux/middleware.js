@@ -356,9 +356,14 @@ async function fillFrameBestOrder(store) {
 // and that we force ETH
 function filterIntents(intents, query, queryContext) {
   const { makerToken, takerToken } = query
-  const { side } = queryContext
+  const { side, specifiedMakerAddress } = queryContext
 
   return _.filter(intents, intent => {
+    // user is filtering to only query one specific maker
+    if (specifiedMakerAddress && specifiedMakerAddress !== intent.address) {
+      return false
+    }
+
     // for 2.0 special cases (wrapper)
     if (intent.swapVersion === 2) {
       if (query.takerToken === ETH_ADDRESS) {
