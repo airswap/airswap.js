@@ -74,8 +74,6 @@ class EventTracker {
 
 const eventTracker = new EventTracker()
 
-window.eventTracker = eventTracker
-
 // USAGE
 /*
 eventTracker.trackEvent({
