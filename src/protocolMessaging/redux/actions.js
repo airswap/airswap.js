@@ -6,10 +6,14 @@ const newCheckoutFrame = () => ({
   stackId: uuid(),
 })
 
-const setCheckoutFrameQuery = ({ makerToken, takerToken, makerAmount, takerAmount }, { side, specifiedAmount }) => ({
+const setCheckoutFrameQuery = (
+  { makerToken, takerToken, makerAmount, takerAmount },
+  { side, specifiedAmount, specifiedMakerAddress },
+) => ({
   type: 'SET_CHECKOUT_FRAME_QUERY',
   query: { makerToken, takerToken, makerAmount, takerAmount },
-  queryContext: { side, specifiedAmount },
+  // specifiedMakerAddress is sent from user land; always cast to lower case for protocol messaging
+  queryContext: { side, specifiedAmount, specifiedMakerAddress: specifiedMakerAddress.toLowerCase() },
 })
 
 const fillFrameBestOrder = () => ({
