@@ -144,7 +144,20 @@ function getTransactionDescription(
     return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
   } else if (name === 'swap') {
     const order = getReadableSwapOrder(parseSwapParameters(parameters))
-    return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
+    const takerToken = tokensByAddress[order.takerToken.toLowerCase()]
+    const makerToken = tokensByAddress[order.makerToken.toLowerCase()]
+
+    const takerSide =
+      takerToken.kind === 'ERC721'
+        ? `${takerToken.symbol} #${order.takerParam} `
+        : `${order.takerAmountFormatted} ${takerToken.symbol}`
+
+    const makerSide =
+      takerToken.kind === 'ERC721'
+        ? `${makerToken.symbol} #${order.makerParam} `
+        : `${order.takerAmountFormatted} ${makerToken.symbol}`
+
+    return `Fill order ${takerSide} for ${makerSide}`
   } else if (name === 'authorize') {
     return `Authorize delegate`
   }
