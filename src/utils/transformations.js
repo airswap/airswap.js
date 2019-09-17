@@ -157,7 +157,7 @@ function getTransactionDescription(
         ? `${makerToken.symbol} #${order.makerParam} `
         : `${order.takerAmountFormatted} ${makerToken.symbol}`
 
-    return `Fill order ${takerSide} for ${makerSide}`
+    return `Fill order for ${takerSide} for ${makerSide}`
   } else if (name === 'authorize') {
     return `Authorize delegate`
   }
