@@ -22,8 +22,8 @@ export default function callData(store) {
           if (action.namespace === 'ERC721') {
             store.dispatch(
               fetchERC721GetApproved({
-                contractAddress: event.parameters.contractAddress,
-                tokenId: event.parameters.tokenId,
+                contractAddress: event.parameters.contractAddress.toLowerCase(),
+                tokenId: event.parameters.tokenId.toLowerCase(),
               }),
             )
           } else {
