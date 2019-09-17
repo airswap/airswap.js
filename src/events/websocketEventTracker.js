@@ -23,7 +23,6 @@ async function subscribe(contractAddress, abi, topic, fromBlock, callback, parse
       callback(parser(parseEventLog(log, abiInterface)))
     } else {
       const parsedEventLog = parseEventLog(log, abiInterface)
-      console.log('got event', parsedEventLog)
       callback([parsedEventLog])
     }
   })
@@ -40,7 +39,6 @@ class EventTracker {
     const latestBlockNumber = blockTracker.getLatestBlockNumber()
     this.subscribeToEvent(event, latestBlockNumber)
     this.trackedEvents.push(event)
-    console.log('tracked event', event)
   }
   subscribeToEvent(event, blockNumber) {
     //eslint-disable-line
