@@ -1,5 +1,5 @@
 const { ethers } = require('ethers')
-const { abis, SWAP_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } = require('../constants')
+const { abis: constantAbis, SWAP_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } = require('../constants')
 
 const _ = require('lodash')
 const BigNumber = require('bignumber.js')
@@ -87,7 +87,7 @@ function parseSwapParameters(parameters) {
   }
 }
 
-function getParsedInputFromTransaction(transaction) {
+function getParsedInputFromTransaction(transaction, abis = constantAbis) {
   if (!(transaction && transaction.to)) {
     return {}
   }
@@ -109,7 +109,13 @@ function getParsedInputFromTransaction(transaction) {
   }
 }
 
-function getTransactionDescription(transaction, tokensByAddress, getReadableOrder, getReadableSwapOrder) {
+function getTransactionDescription(
+  transaction,
+  tokensByAddress,
+  getReadableOrder,
+  getReadableSwapOrder,
+  abis = constantAbis,
+) {
   if (!(transaction && transaction.to) || _.isEmpty(tokensByAddress)) {
     return ''
   }

@@ -8,11 +8,12 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage } from '../../utils/transformations'
-import { abis, PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
+import { PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
 import { web3WalletTypes } from '../static/constants'
 import { getLedgerProvider } from '../../ledger/redux/actions'
 import { initializeHDW } from '../../HDW/redux/actions'
 import { connectWallet } from './actions'
+import { getAbis } from '../../abis/redux/reducers'
 
 export const connectedWallet = (walletType, address) => ({
   type: 'CONNECTED_WALLET',
@@ -51,7 +52,7 @@ async function connectLedger(store) {
 const startWalletAction = async (store, actionType, argParams) => {
   const state = store.getState()
   const [args] = argParams
-
+  const abis = getAbis(state)
   let params
   if (actionType === 'sendTransaction') {
     const to = await args.to

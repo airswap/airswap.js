@@ -13,6 +13,7 @@ import { selectors as transactionSelectors } from '../transactionTracker/redux'
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
 import { LegacyQuote } from '../swapLegacy/tcomb'
+import { getAbis } from '../abis/redux/reducers'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -54,6 +55,7 @@ const getTransactionHistory = createSelector(
   tokenSelectors.makeGetReadableOrder,
   tokenSelectors.makeGetReadableSwapOrder,
   transactionSelectors.getTransactions,
+  getAbis,
   (
     fillTransactions,
     fillReceipts,
@@ -75,6 +77,7 @@ const getTransactionHistory = createSelector(
     getReadableOrder,
     getReadableSwapOrder,
     transactionHistory,
+    abis,
   ) => {
     const receipts = _.compact([
       ..._.values(fillReceipts),
@@ -100,11 +103,10 @@ const getTransactionHistory = createSelector(
     ]).map(tx => {
       const transactionReceipt = _.find(receipts, { transactionHash: tx.hash })
       const { textStatus, eventStatus } = getTransactionTextStatus(transactionReceipt)
-
       return {
         transactionHash: tx.hash,
         transaction: tx,
-        description: getTransactionDescription(tx, tokensByAddress, getReadableOrder, getReadableSwapOrder),
+        description: getTransactionDescription(tx, tokensByAddress, getReadableOrder, getReadableSwapOrder, abis),
         transactionReceipt,
         textStatus,
         eventStatus,

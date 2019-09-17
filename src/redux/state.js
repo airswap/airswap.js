@@ -19,6 +19,7 @@ import * as blockTracker from '../blockTracker/redux'
 import * as transactionTracker from '../transactionTracker/redux'
 import * as wrapper from '../wrapper/redux'
 import * as callData from '../callData/redux'
+import * as abis from '../abis/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -43,6 +44,7 @@ const state = {
   transactionTracker,
   wrapper,
   callData,
+  abis,
 }
 
 const middleware = _.flatten(_.map(_.values(state), 'middleware'))
