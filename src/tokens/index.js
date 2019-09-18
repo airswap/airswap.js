@@ -8,7 +8,8 @@ const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 const OPENSEA_API_URL = NETWORK === 4 ? 'https://rinkeby-api.opensea.io/api/v1' : 'https://api.opensea.io/api/v1'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
-const makeCrawlTokenUrl = address => `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}`
+const makeCrawlTokenUrl = address =>
+  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}`
 const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
 
 BigNumber.config({ ERRORS: false })

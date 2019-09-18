@@ -1,3 +1,10 @@
+![AirSwap Logo](https://miro.medium.com/max/4000/1*Wr5GFTao0-IXtpikXiAE2Q.png)
+
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/airswap/AirSwap.js.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/airswap/AirSwap.js/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/airswap/AirSwap.js.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/airswap/AirSwap.js/context:javascript)
+[![NPM version](https://img.shields.io/npm/v/airswap.js.svg)](https://www.npmjs.com/package/airswap.js)
+[![Discord Chat](https://img.shields.io/discord/590643190281928738?logo=discord)](https://discord.gg/ecQbV7H)  
+
 # AirSwap.js
 
 Useful JavaScript modules for Web3 and AirSwap network developers.

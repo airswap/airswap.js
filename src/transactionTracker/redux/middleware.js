@@ -120,6 +120,7 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
       event: parsedLog,
       namespace,
       name,
+      parameters,
     })
   })
 }
