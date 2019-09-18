@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { getERC721OwnerOf, getERC721GetApproved } from './callDataSelectors'
+import { getERC721OwnerOf, getERC721GetApproved, getERC721KittyIndexToApproved } from './callDataSelectors'
 import { getERC721ApproveTransactions } from './contractTransactionSelectors'
 import { SWAP_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
@@ -29,15 +29,19 @@ export const makeGetIsERC721Owner = createSelector(
   },
 )
 
-export const makeGetIsERC721Approved = createSelector(getERC721GetApproved, values => (contractAddress, tokenId) => {
-  const approvedAddress = values.find(
-    callData =>
-      callData.name === 'getApproved' &&
-      callData.parameters.contractAddress === contractAddress &&
-      callData.parameters.tokenId === tokenId,
-  )
-  return approvedAddress && approvedAddress.response.toLowerCase() === SWAP_CONTRACT_ADDRESS
-})
+export const makeGetIsERC721Approved = createSelector(
+  getERC721GetApproved,
+  getERC721KittyIndexToApproved,
+  (values, kittyValues) => (contractAddress, tokenId) => {
+    const approvedAddress = [...values, ...kittyValues].find(
+      callData =>
+        (callData.name === 'getApproved' || callData.name === 'kittyIndexToApproved') &&
+        callData.parameters.contractAddress === contractAddress &&
+        callData.parameters.tokenId === tokenId,
+    )
+    return approvedAddress && approvedAddress.response.toLowerCase() === SWAP_CONTRACT_ADDRESS
+  },
+)
 
 export const makeGetERC721ApproveTransaction = createSelector(
   getERC721ApproveTransactions,

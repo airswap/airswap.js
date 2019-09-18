@@ -46,6 +46,11 @@ function getERC721IsApprovedForAll(contractAddress, owner, operator) {
   return contract.isApprovedForAll(owner, operator)
 }
 
+function getERC721KittyIndexToApproved(contractAddress, tokenId) {
+  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  return contract.kittyIndexToApproved(tokenId)
+}
+
 function submitERC721SafeTransferFrom(contractAddress, from, to, tokenId, signer) {
   const contract = getERC721Contract(signer, contractAddress)
   return contract.safeTransferFrom(from, to, tokenId)
@@ -60,5 +65,6 @@ module.exports = {
   getERC721GetApproved,
   submitERC721SetApprovalForAll,
   getERC721IsApprovedForAll,
+  getERC721KittyIndexToApproved,
   submitERC721SafeTransferFrom,
 }
