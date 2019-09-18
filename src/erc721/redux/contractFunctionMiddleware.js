@@ -156,6 +156,22 @@ export default function ERC721Middleware(store) {
           })
           .catch(action.reject)
         break
+      case 'FETCH_ERC_721_KITTY_INDEX_TO_APPROVED':
+        contractFunctions
+          .getERC721KittyIndexToApproved(action.contractAddress, action.tokenId)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'ERC721',
+              name: 'kittyIndexToApproved',
+              timestamp: Date.now(),
+              parameters: { contractAddress: action.contractAddress, tokenId: action.tokenId },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
       case 'SUBMIT_ERC_721_SAFE_TRANSFER_FROM':
         store.dispatch(getSigner()).then(signer => {
           const contractFunctionPromise = contractFunctions.submitERC721SafeTransferFrom(
