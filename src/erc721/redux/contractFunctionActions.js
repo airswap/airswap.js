@@ -92,6 +92,17 @@ export const fetchERC721IsApprovedForAll = ({ contractAddress, owner, operator }
     }),
   )
 
+export const fetchERC721KittyIndexToApproved = ({ contractAddress, tokenId }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      contractAddress,
+      tokenId,
+      type: 'FETCH_ERC_721_KITTY_INDEX_TO_APPROVED',
+      resolve,
+      reject,
+    }),
+  )
+
 export const submitERC721SafeTransferFrom = ({ contractAddress, from, to, tokenId }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({

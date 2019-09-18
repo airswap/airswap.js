@@ -33,3 +33,9 @@ export const getERC721IsApprovedForAll = createSelector(getCallData, values => {
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
+
+export const getERC721KittyIndexToApproved = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'kittyIndexToApproved', namespace: 'ERC721' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
