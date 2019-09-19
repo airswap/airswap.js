@@ -9,7 +9,14 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage } from '../../utils/transformations'
-import { PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID, NODESMITH_GETH_NODE } from '../../constants'
+import {
+  PORTIS_ID,
+  AIRSWAP_LOGO_URL,
+  AIRSWAP_GETH_NODE_ADDRESS,
+  NETWORK,
+  FORTMATIC_ID,
+  NODESMITH_GETH_NODE,
+} from '../../constants'
 import { web3WalletTypes } from '../static/constants'
 import { getLedgerProvider } from '../../ledger/redux/actions'
 import { initializeHDW } from '../../HDW/redux/actions'
@@ -189,8 +196,8 @@ function connectFortmatic(store) {
 
 function connectWalletLink(store) {
   const walletLink = new WalletLink({
-    appName: 'AirSwap',
-    appLogoUrl: '',
+    appName: process.env.REACT_APP_NAME || 'AirSwap',
+    appLogoUrl: AIRSWAP_LOGO_URL,
   })
 
   const provider = walletLink.makeWeb3Provider(NODESMITH_GETH_NODE, NETWORK)
@@ -243,6 +250,9 @@ const detectWeb3Wallets = async store => {
         break
       case 'equal':
         isAvailable = !!window.web3.currentProvider.isEQLWallet
+        break
+      case 'walletLink':
+        isAvailable = !!window.WalletLink && !!window.WalletLinkProvider
         break
       default:
         isAvailable = false
