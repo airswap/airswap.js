@@ -22,6 +22,8 @@ export const initLedger = () => connectWallet('ledger')
 
 export const initTrezor = () => connectWallet('trezor')
 
+export const initWalletLink = () => connectWallet('walletLink')
+
 export const clearWallet = () => ({
   type: 'CLEAR_WALLET',
 })
