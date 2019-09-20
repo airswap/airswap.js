@@ -2,13 +2,21 @@ import _ from 'lodash'
 import isMobile from 'ismobilejs'
 import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
+import WalletLink from 'walletlink'
 import { ethers } from 'ethers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage } from '../../utils/transformations'
-import { PORTIS_ID, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
+import {
+  PORTIS_ID,
+  AIRSWAP_LOGO_URL,
+  AIRSWAP_GETH_NODE_ADDRESS,
+  NETWORK,
+  FORTMATIC_ID,
+  NODESMITH_GETH_NODE,
+} from '../../constants'
 import { web3WalletTypes } from '../static/constants'
 import { getLedgerProvider } from '../../ledger/redux/actions'
 import { initializeHDW } from '../../HDW/redux/actions'
@@ -186,6 +194,24 @@ function connectFortmatic(store) {
   })
 }
 
+function connectWalletLink(store) {
+  const walletLink = new WalletLink({
+    appName: process.env.REACT_APP_NAME || 'AirSwap',
+    appLogoUrl: AIRSWAP_LOGO_URL,
+  })
+
+  const provider = walletLink.makeWeb3Provider(NODESMITH_GETH_NODE, NETWORK)
+  provider.enable().then(() => {
+    signer = getSigner({ web3Provider: provider }, walletActions)
+    const addressPromise = signer.getAddress()
+    addressPromise
+      .then(address => {
+        store.dispatch(connectedWallet('walletLink', address.toLowerCase()))
+      })
+      .catch(e => store.dispatch(errorConnectingWallet(e)))
+  })
+}
+
 const detectWeb3Wallets = async store => {
   const prevWalletsAvailable = walletSelectors.getAvailableWalletState(store.getState())
   if (window && !window.web3) {
@@ -224,6 +250,9 @@ const detectWeb3Wallets = async store => {
         break
       case 'equal':
         isAvailable = !!window.web3.currentProvider.isEQLWallet
+        break
+      case 'walletLink':
+        isAvailable = !!window.WalletLink && !!window.WalletLinkProvider
         break
       default:
         isAvailable = false
@@ -337,6 +366,9 @@ export default function walletMiddleware(store) {
           case 'trezor':
             // TODO: implement trezor conect
             // connectTrezor(store)
+            break
+          case 'walletLink':
+            connectWalletLink(store)
             break
           default:
             throw new Error(`${action.walletType} walletType not expected in wallet middleware`)

@@ -234,6 +234,8 @@ const SLS_PGP_URL =
 
 const GAS_URL = 'https://ethgasstation.airswap.io/ethgasAPI.json'
 
+const AIRSWAP_LOGO_URL = 'https://www.airswap.io/favicon.png'
+
 /**
  * @constant
  * @memberOf gas
@@ -318,6 +320,7 @@ module.exports = {
   RINKEBY_ID,
   KOVAN_ID,
   NETWORK_MAPPING,
+  AIRSWAP_LOGO_URL,
   NAME_MAPPING,
   SWAP_LEGACY_CONTRACT_MAPPING,
   NETWORK,
