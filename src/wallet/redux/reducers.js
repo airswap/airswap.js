@@ -78,6 +78,8 @@ function walletExpressLogin(state = {}, action) {
         walletType: action.walletType,
         address: action.address,
       }
+    case 'CLEAR_WALLET':
+      return {}
     default:
       return state
   }

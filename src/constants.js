@@ -34,7 +34,7 @@ const NAME_MAPPING = {
 }
 
 const SWAP_CONTRACT_MAPPING = {
-  [MAIN_ID]: '0x251f752b85a9f7e1b3c42d802715b5d7a8da3165',
+  [MAIN_ID]: '0xd9eef94131305538cd601aee42e57c554c1c1c92',
   [RINKEBY_ID]: '0x6f337ba064b0a92538a4afdcf0e60f50eeae0d5b',
 }
 
@@ -222,7 +222,7 @@ const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
 
 const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
-const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI', 'USDC']
+const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI', 'USDC', 'TUSD']
 
 const MAX_DISPLAY_DECIMALS = 8
 
@@ -233,6 +233,8 @@ const SLS_PGP_URL =
   (_.includes(['development', 'sandbox'], ENV) ? `https://pgp.${ENV}.airswap.io` : 'https://pgp.airswap.io')
 
 const GAS_URL = 'https://ethgasstation.airswap.io/ethgasAPI.json'
+
+const AIRSWAP_LOGO_URL = 'https://www.airswap.io/favicon.png'
 
 /**
  * @constant
@@ -318,6 +320,7 @@ module.exports = {
   RINKEBY_ID,
   KOVAN_ID,
   NETWORK_MAPPING,
+  AIRSWAP_LOGO_URL,
   NAME_MAPPING,
   SWAP_LEGACY_CONTRACT_MAPPING,
   NETWORK,
