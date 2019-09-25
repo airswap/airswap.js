@@ -23,7 +23,7 @@ class Gas {
   constructor() {
     this.settings = {}
     this.ready = this.pollGasSettings()
-    setInterval(() => this.pollGasSettings, 10000)
+    setInterval(() => this.pollGasSettings(), 10000)
   }
   async pollGasSettings() {
     const settings = await fetchGasSettings()
