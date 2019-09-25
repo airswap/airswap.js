@@ -21,7 +21,7 @@ const actionsBlacklist = [] // ['GOT_CONNECTED_USERS', 'GOT_GAS_SETTINGS', 'GOT_
 
 const composeEnhancers = composeWithDevTools({
   actionsBlacklist: [...actionsBlacklist, 'REDUX_STORAGE_SAVE'],
-  maxAge: 1000,
+  maxAge: 500,
 })
 
 export default function configureStore(

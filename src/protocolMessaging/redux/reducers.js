@@ -289,6 +289,7 @@ const makeGetBestOrder = createSelector(
       ethTotal += ethGasCost
     }
     let missingApprovals
+
     if (bestOrder.swapVersion === 2) {
       const miningTakerTokenSwapApproval =
         _.get(miningApproveToken, bestOrder.takerToken, false) ||
@@ -331,6 +332,7 @@ const makeGetBestOrder = createSelector(
       ]
     } else {
       const takerTokenApproval = _.get(connectedApprovals, bestOrder.takerToken, false)
+
       const miningTakerTokenSwapApproval =
         _.get(miningApproveToken, bestOrder.takerToken, false) ||
         _.get(submittingApproveToken, bestOrder.takerToken, false)

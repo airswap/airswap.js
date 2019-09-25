@@ -185,9 +185,12 @@ const NODESMITH_GETH_NODE = (N => {
   }
 })(NETWORK)
 
+const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+
 const httpProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 const infuraProvider = new ethers.providers.JsonRpcProvider(INFURA_GETH_NODE)
 const nodesmithProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
+const alchemyWebsocketProvider = new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -312,8 +315,6 @@ const IS_INSTANT = process.env.REACT_APP_INSTANT
 
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
-const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
-
 module.exports = {
   ENV,
   MAIN_ID,
@@ -373,4 +374,5 @@ module.exports = {
   INFINITE_EXPIRY,
   ALCHEMY_WEBSOCKET_URL,
   alchemyWeb3,
+  alchemyWebsocketProvider,
 }
