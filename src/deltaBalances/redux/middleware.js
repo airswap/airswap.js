@@ -139,8 +139,12 @@ function initializeTrackedAddresses(store) {
 }
 
 function addConnectedAddressToTrackedAddresses(store) {
-  const approvedTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
+  const tokens = process.env.INSTANT
+    ? tokenSelectors.getAvailableTokens(store.getState())
+    : tokenSelectors.getAirSwapApprovedTokens(store.getState())
+  const approvedTokens = _.filter(tokens, t => t.kind !== 'ERC721')
   const connectedAddress = getConnectedWalletAddress(store.getState())
+
   if (approvedTokens.length && connectedAddress) {
     const tokenAddresses = _.map(approvedTokens, 'address')
     const trackedAddresses = tokenAddresses.map(tokenAddress => ({
