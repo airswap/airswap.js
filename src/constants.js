@@ -9,6 +9,7 @@ const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/Swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
 const wrapperABI = require('./abis/wrapper')
+const { RetryProvider } = require('./utils/retryProvider')
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
@@ -187,9 +188,9 @@ const NODESMITH_GETH_NODE = (N => {
 
 const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
-const httpProvider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
-const infuraProvider = new ethers.providers.JsonRpcProvider(INFURA_GETH_NODE)
-const nodesmithProvider = new ethers.providers.JsonRpcProvider(NODESMITH_GETH_NODE)
+const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
+const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 const alchemyWebsocketProvider = new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
