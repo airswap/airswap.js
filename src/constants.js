@@ -9,7 +9,7 @@ const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/Swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
 const wrapperABI = require('./abis/wrapper')
-const { RetryProvider } = require('./utils/retryProvider')
+const RetryProvider = require('./utils/retryProvider')
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
