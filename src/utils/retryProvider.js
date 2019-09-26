@@ -1,5 +1,5 @@
-import { JsonRpcProvider } from 'ethers/providers'
-import { poll } from 'ethers/utils/web'
+const { JsonRpcProvider } = require('ethers/providers')
+const { poll } = require('ethers/utils/web')
 
 const ATTEMPTS = 5
 
@@ -26,4 +26,4 @@ class RetryProvider extends JsonRpcProvider {
   }
 }
 
-export { RetryProvider }
+module.exports = RetryProvider
