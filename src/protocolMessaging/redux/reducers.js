@@ -613,10 +613,10 @@ const getCurrentFrameState = createSelector(
     if (currentFrameNoPeersFound) return 'noPeersFound'
     if (currentFrameSelectedOrder) return 'selectedOrder'
     if (currentFrameBestLowBalanceOrder) return 'bestLowBalanceOrder'
-    if (currentFrameBestQuote) return 'bestQuote'
-    if (currentFrameBestAlternativeQuote) return 'bestAlternativeQuote'
     if (currentFrameBestOrder) return 'bestOrder'
     if (currentFrameBestAlternativeOrder) return 'bestAlternativeOrder'
+    if (currentFrameBestQuote) return 'bestQuote'
+    if (currentFrameBestAlternativeQuote) return 'bestAlternativeQuote'
     if (currentFrameQuerying) return 'querying'
     if (!currentFrameQuery) return 'new'
     throw new Error('checkout log has bug, state feel outside of route conditionals')
