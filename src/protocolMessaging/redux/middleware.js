@@ -18,6 +18,8 @@ import { submitSwap } from '../../swap/redux/contractFunctionActions'
 import { getEthWrapperApproval } from '../../swap/redux/actions'
 import { getWrapperWethTokenApproval } from '../../erc20/redux/actions'
 import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
+import { addTrackedAddress } from '../../deltaBalances/redux/actions'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -270,6 +272,10 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
+  if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
+    return null
+  }
+
   if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
     const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
@@ -305,6 +311,10 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   const { makerToken, takerToken } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
+
+  if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
+    return null
+  }
   try {
     const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
     const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
@@ -383,6 +393,21 @@ function filterIntents(intents, query, queryContext) {
   })
 }
 
+// this is useful in the widget, or anywhere else where a token is being queried that isn't being tracked
+// it's helpful in preventing edge cases while not causing bloat in the number of tracked tokens
+function trackMissingTokensForConnectedAddress(query, store) {
+  const state = store.getState()
+  const { makerToken, takerToken } = query
+  const address = getConnectedWalletAddress(state)
+  const connectedBalances = deltaBalancesSelectors.getConnectedBalances(state)
+  if (_.isUndefined(connectedBalances[makerToken])) {
+    store.dispatch(addTrackedAddress({ address, tokenAddress: makerToken }))
+  }
+  if (_.isUndefined(connectedBalances[takerToken])) {
+    store.dispatch(addTrackedAddress({ address, tokenAddress: takerToken }))
+  }
+}
+
 export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
@@ -402,6 +427,7 @@ export default function routerMiddleware(store) {
         }
         break
       case 'SET_CHECKOUT_FRAME_QUERY':
+        trackMissingTokensForConnectedAddress(action.query, store)
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
         const intents = apiSelectors.getConnectedIndexerIntents(state)
         const filteredIntents = filterIntents(intents, action.query, action.queryContext)

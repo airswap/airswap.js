@@ -122,10 +122,18 @@ export const getConnectedApprovals = createSelector(
   getConnectedWalletAddress,
   (approvals, address) => approvals[address],
 )
+export const getIsLoadingConnectedApprovals = createSelector(getConnectedApprovals, approvals =>
+  _.isUndefined(approvals),
+)
+
 export const getConnectedSwapApprovals = createSelector(
   getSwapApprovals,
   getConnectedWalletAddress,
   (approvals, address) => approvals[address],
+)
+
+export const getIsLoadingConnectedSwapApprovals = createSelector(getConnectedSwapApprovals, approvals =>
+  _.isUndefined(approvals),
 )
 
 const getTrackedAddresses = state => state.deltaBalances.trackedAddresses
@@ -163,4 +171,6 @@ export const selectors = {
   getTrackedAddresses,
   getTrackedTokensByAddress,
   getTrackedWalletAddresses,
+  getIsLoadingConnectedApprovals,
+  getIsLoadingConnectedSwapApprovals,
 }
