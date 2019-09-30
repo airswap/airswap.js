@@ -33,13 +33,13 @@ function traceMethodCalls(obj, blockTag = 'latest') {
   return new Proxy(obj, handler)
 }
 
-function getManyBalancesManyAddresses(tokens, addresses, provider = defaultProvider) {
-  const deltaBalancesContract = new ethers.Contract(
-    DELTA_BALANCES_CONTRACT_ADDRESS,
-    abis[DELTA_BALANCES_CONTRACT_ADDRESS],
-    provider,
-  )
+const deltaBalancesContract = new ethers.Contract(
+  DELTA_BALANCES_CONTRACT_ADDRESS,
+  abis[DELTA_BALANCES_CONTRACT_ADDRESS],
+  defaultProvider,
+)
 
+function getManyBalancesManyAddresses(tokens, addresses) {
   return deltaBalancesContract.allBalancesForManyAccounts(addresses, tokens).then(results => {
     const t = tokens.length
     const balances = _.map(addresses, (address, i) => {
@@ -50,13 +50,7 @@ function getManyBalancesManyAddresses(tokens, addresses, provider = defaultProvi
   })
 }
 
-function getManyAllowancesManyAddresses(tokens, addresses, spender, provider = defaultProvider) {
-  const deltaBalancesContract = new ethers.Contract(
-    DELTA_BALANCES_CONTRACT_ADDRESS,
-    abis[DELTA_BALANCES_CONTRACT_ADDRESS],
-    provider,
-  )
-
+function getManyAllowancesManyAddresses(tokens, addresses, spender) {
   return deltaBalancesContract.allAllowancesForManyAccounts(addresses, spender, tokens).then(results => {
     const t = tokens.length
     const allAllowances = _.map(addresses, (address, i) => {

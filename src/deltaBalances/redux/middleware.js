@@ -6,6 +6,7 @@ import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
+import DebouncedQueue from '../../utils/debouncedQueue'
 
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
@@ -24,33 +25,39 @@ export const gotTokenApprovals = approvals => ({
 
 const websocketChunkSize = 20
 
-function loadBalancesForTokenAddressMap(tokenAddressMap, store) {
+let balancesQueue
+
+function loadBalancesForTokenAddressMap(tokenAddressMap) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
       getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
-        store.dispatch(gotTokenBalances(results))
+        balancesQueue.push(results)
       })
     })
   })
 }
 
-function loadSwapAllowancesForTokenAddressMap(tokenAddressMap, store) {
+let swapAllowancesQueue
+
+function loadSwapAllowancesForTokenAddressMap(tokenAddressMap) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
-        store.dispatch(gotSwapTokenApprovals(results))
+        swapAllowancesQueue.push(results)
       })
     })
   })
 }
 
-function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap, store) {
+let swapLegacyAllowancesQueue
+
+function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
-        store.dispatch(gotTokenApprovals(results))
+        swapLegacyAllowancesQueue.push(results)
       })
     })
   })
@@ -156,6 +163,21 @@ function addConnectedAddressToTrackedAddresses(store) {
 }
 
 export default function balancesMiddleware(store) {
+  balancesQueue = new DebouncedQueue(results => {
+    const mergedResults = _.merge({}, ...results)
+    store.dispatch(gotTokenBalances(mergedResults))
+  }, 500)
+
+  swapAllowancesQueue = new DebouncedQueue(results => {
+    const mergedResults = _.merge({}, ...results)
+    store.dispatch(gotSwapTokenApprovals(mergedResults))
+  }, 500)
+
+  swapLegacyAllowancesQueue = new DebouncedQueue(results => {
+    const mergedResults = _.merge({}, ...results)
+    store.dispatch(gotTokenApprovals(mergedResults))
+  }, 500)
+
   return next => action => {
     const state = store.getState()
     const address = getConnectedWalletAddress(state)

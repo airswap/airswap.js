@@ -18,13 +18,15 @@ import {
 } from '../../swapLegacy/redux/eventTrackingActions'
 import { trackWethDeposit, trackWethWithdrawal } from '../../weth/redux/eventTrackingActions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
+import DebouncedQueue from '../../utils/debouncedQueue'
+
+let queue
 
 function processEventLogs(logs, store) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
   const newEvents = _.filter(logs, event => event && !_.includes(eventIds, getEventId(event)))
   if (logs && logs.length && newEvents.length) {
-    const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
-    store.dispatch(newEventsAction)
+    queue.push(newEvents)
   }
 }
 
@@ -128,6 +130,11 @@ function fetchMissingBlocksForFetchedEvents(store, action) {
 }
 
 export default function eventsMiddleware(store) {
+  queue = new DebouncedQueue(newEvents => {
+    const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
+    store.dispatch(newEventsAction)
+  })
+
   return next => action => {
     switch (action.type) {
       case makeEventActionTypes('trackedEvents').got:
