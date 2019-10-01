@@ -280,9 +280,6 @@ const FIAT_CURRENCIES = {
 
 const GET_TOKEN_PRICE_URL = `${MAKER_STATS_URL}getEthPrices`
 
-const keyspaceDefaultSeedFn = address => `I'm generating my encryption keys for AirSwap ${address}`
-const keyspaceSignatureTextFn = ipfsKeyHash => `IPFS location of my Keyspace identity: ${ipfsKeyHash}`
-
 const AIRSWAP_HEADLESS_API = `https://headless${ENV_URL_SNIPPET}.airswap.io/`
 const AIRSWAP_HEADLESS_API_SSE = `${AIRSWAP_HEADLESS_API}stream/`
 
@@ -356,8 +353,6 @@ module.exports = {
   GAS_LEVELS,
   GAS_LIMITS,
   FIAT_CURRENCIES,
-  keyspaceDefaultSeedFn,
-  keyspaceSignatureTextFn,
   AIRSWAP_HEADLESS_API,
   AIRSWAP_HEADLESS_API_SSE,
   PORTIS_ID,

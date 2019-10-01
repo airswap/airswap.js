@@ -2,30 +2,18 @@ const t = require('tcomb')
 const fetch = require('isomorphic-fetch')
 const querystring = require('querystring')
 const ethers = require('ethers')
-const {
-  PGP_CONTRACT_ADDRESS,
-  abis,
-  NETWORK,
-  SLS_PGP_URL,
-  keyspaceDefaultSeedFn,
-  keyspaceSignatureTextFn,
-} = require('../constants')
-const IPFS = require('ipfs-mini')
 const openpgp = require('openpgp')
-const axios = require('axios')
+const { PGP_CONTRACT_ADDRESS, abis, NETWORK, SLS_PGP_URL } = require('../constants')
 
-const ipfsInfura = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-const ipfsAirSwap = new IPFS({ host: 'ipfs.airswap.io', port: 443, protocol: 'https' })
+const { ipfsStoreJSON, ipfsFetchJSONFromCID } = require('../ipfs')
+
+const keyspaceDefaultSeedFn = address => `I'm generating my encryption keys for AirSwap ${address}`
+const keyspaceSignatureTextFn = ipfsKeyHash => `IPFS location of my Keyspace identity: ${ipfsKeyHash}`
 
 const key = t.struct({
   public: t.String,
   private: t.String,
 })
-
-const pinJSONToIPFS = JSONBody => {
-  const url = `${SLS_PGP_URL}/storePinata`
-  return axios.post(url, JSONBody).then(resp => resp.data.IpfsHash)
-}
 
 const ipfsHash = t.refinement(t.String, s => s.length > 30, 'ipfsHash')
 
@@ -36,79 +24,10 @@ async function generateKeyPair(signedSeed, signer) {
     curve: 'p256', // ECC curve name, most widely supported
     passphrase: signedSeed,
   })
-  return {
+  return key({
     private: privateKeyArmored,
     public: publicKeyArmored,
-  }
-}
-
-async function storePGPKeyOnIPFS(walletPGPKey) {
-  return new Promise((resolve, reject) => {
-    // this "resolved" syntax is required since there isn't a Promise.none()
-    let resolved = 0
-    ipfsAirSwap
-      .add(JSON.stringify(walletPGPKey))
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 2) {
-          reject(e)
-        }
-      })
-    ipfsInfura
-      .add(JSON.stringify(walletPGPKey))
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 2) {
-          reject(e)
-        }
-      })
-
-    pinJSONToIPFS(walletPGPKey) // pinata will always take the longest to resolve since they don't support reads
   })
-}
-
-const fetchIPFSContentFromCloudfare = cid =>
-  axios.get(`https://cloudflare-ipfs.com/ipfs/${cid}`).then(resp => JSON.stringify(resp.data))
-
-async function fetchPGPKeyFromIPFS(cid) {
-  const content = await new Promise((resolve, reject) => {
-    if (!cid) {
-      resolve(undefined)
-      return
-    }
-    // this "resolved" syntax is required since there isn't a Promise.none()
-    let resolved = 0
-    ipfsAirSwap
-      .cat(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
-    ipfsInfura
-      .cat(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
-
-    fetchIPFSContentFromCloudfare(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
-  })
-  return key(JSON.parse(content))
 }
 
 function getPGPContract(signer) {
@@ -171,9 +90,10 @@ class KeySpace {
     this.seed = this.seed || keyspaceDefaultSeedFn(this.signerAddress)
     try {
       this.signerIPFSHash = await this.getHashByAddress(this.signerAddress)
-      this.signerPGPKey = await fetchPGPKeyFromIPFS(this.signerIPFSHash)
+      this.signerPGPKey = await ipfsFetchJSONFromCID(this.signerIPFSHash)
     } catch (e) {
       console.log('ipfsHash for wallet not found')
+      return true
     }
     return true
   }
@@ -182,30 +102,32 @@ class KeySpace {
   }
   async getHashByAddress(address) {
     const that = this
-    return (
-      //this.ipfsHashes[address] ||
-      fetch(
-        `${SLS_PGP_URL}/getHashByAddress?${querystring.stringify({
-          address: address.toLowerCase(),
-          network: NETWORK,
-        })}`,
-        {
-          method: 'get',
-          mode: 'cors',
-        },
-      ).then(async response => {
-        if (!response.ok) {
-          throw new Error(response.statusText)
-        }
-        const ipfsKeyHash = ipfsHash(await response.text())
-        that.ipfsHashes[address.toLowerCase()] = ipfsKeyHash
-        return ipfsKeyHash
-      })
-    )
+    return fetch(
+      `${SLS_PGP_URL}/getHashByAddress?${querystring.stringify({
+        address: address.toLowerCase(),
+        network: NETWORK,
+      })}`,
+      {
+        method: 'get',
+        mode: 'cors',
+      },
+    ).then(async response => {
+      if (!response.ok) {
+        throw new Error(response.statusText)
+      }
+      const ipfsKeyHash = ipfsHash(await response.text())
+      that.ipfsHashes[address.toLowerCase()] = ipfsKeyHash
+      return ipfsKeyHash
+    })
   }
   async fetchKeyByAddress(address) {
+    if (this.pgpKeys[address.toLowerCase()]) {
+      return this.pgpKeys[address.toLowerCase()]
+    }
     const ipfsKeyHash = await this.getHashByAddress(address.toLowerCase())
-    return fetchPGPKeyFromIPFS(ipfsKeyHash)
+    const key = await ipfsFetchJSONFromCID(ipfsKeyHash)
+    this.pgpKeys[address.toLowerCase()] = key
+    return key
   }
   async setUpPGP() {
     await this.initialized
@@ -236,7 +158,7 @@ class KeySpace {
 
       let ipfsKeyHash
       try {
-        ipfsKeyHash = ipfsHash(await storePGPKeyOnIPFS(keyPair))
+        ipfsKeyHash = ipfsHash(await ipfsStoreJSON(keyPair))
       } catch (e) {
         return Promise.reject(e)
       }
@@ -275,6 +197,43 @@ class KeySpace {
 
     return this.isPGPReady()
   }
+  async encrypt(message, toAddress) {
+    const toKey = await this.fetchKeyByAddress(toAddress.toLowerCase())
+    const publicKeyArmored = toKey.public
+    const [privKeyObj] = (await openpgp.key.readArmored(this.signerPGPKey.private)).keys
+    await privKeyObj.decrypt(this.signedSeed)
+    return new Promise(async (resolve, reject) => {
+      openpgp
+        .encrypt({
+          message: openpgp.message.fromText(message), // input as Message object
+          publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys, // for encryption
+          privateKeys: [privKeyObj], // for signing (optional)
+        })
+        .then(ciphertext => {
+          resolve(ciphertext.data)
+        })
+        .catch(reject)
+    })
+  }
+  async decrypt(encryptedMessage, fromAddress) {
+    await this.setUpPGP()
+    const fromKey = await this.fetchKeyByAddress(fromAddress.toLowerCase())
+    const publicKeyArmored = fromKey.public
+    const [privKeyObj] = (await openpgp.key.readArmored(this.signerPGPKey.private)).keys
+    await privKeyObj.decrypt(this.signedSeed)
+    return new Promise(async (resolve, reject) => {
+      openpgp
+        .decrypt({
+          message: await openpgp.message.readArmored(encryptedMessage),
+          publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys, // for verification (optional)
+          privateKeys: [privKeyObj],
+        })
+        .then(plaintext => {
+          resolve(plaintext.data)
+        })
+        .catch(reject)
+    })
+  }
   async sign(text) {
     await this.setUpPGP()
     const privKeyObj = (await openpgp.key.readArmored(this.signerPGPKey.private)).keys[0]
@@ -287,6 +246,16 @@ class KeySpace {
       .then(signed => signed.data)
     return signedData
   }
+  async validate(cleartext, fromAddress) {
+    const fromKey = await this.fetchKeyByAddress(fromAddress.toLowerCase())
+    const publicKeyArmored = fromKey.public
+    const result = await openpgp.verify({
+      message: await openpgp.cleartext.readArmored(cleartext), // parse armored message
+      publicKeys: (await openpgp.key.readArmored(publicKeyArmored)).keys, // for verification
+    })
+    return _.get(result, 'signatures.0.valid')
+  }
+
   isPGPReady() {
     return this.signedSeed && this.signerIPFSHash && this.signerPGPKey
   }
