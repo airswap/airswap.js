@@ -473,7 +473,6 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    // console.log('connected balances', deltaBalancesSelectors.getConnectedBalances(state))
     return next(action)
   }
 }
