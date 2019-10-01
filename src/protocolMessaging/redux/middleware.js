@@ -20,6 +20,7 @@ import { getWrapperWethTokenApproval } from '../../erc20/redux/actions'
 import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
+import { waitForState } from '../../utils/redux/waitForState'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -327,7 +328,19 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   return null // If we can't get an order or quote, we simply resolve the async function with nothing
 }
 
-function mapIntentFetchProtocolOrder(intent, store, action) {
+async function waitForConnectedTakerTokenBalance(takerToken, store) {
+  return store.dispatch(
+    waitForState({
+      selector: state =>
+        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
+      result: true,
+    }),
+  )
+}
+
+async function mapIntentFetchProtocolOrder(intent, store, action) {
+  // wait to start querying intents until connected takerToken balance is loaded
+  await waitForConnectedTakerTokenBalance(action.query.takerToken, store)
   if (intentSupportsQuotes(intent) && isTakerSide(action.query)) {
     return getOrderTakerTokenWithQuotes(intent, store, action)
   } else if (intentSupportsQuotes(intent) && isMakerSide(action.query)) {
@@ -438,9 +451,14 @@ export default function routerMiddleware(store) {
         Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
           store.dispatch(allIntentsResolved(action.stackId)),
         )
-        window.setTimeout(() => {
-          store.dispatch(frameTimeoutReached(action.stackId))
-        }, orderFetchingTimeout)
+        // we don't start querying intents until connected takerToken balance is loaded
+        // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
+        waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+          window.setTimeout(() => {
+            store.dispatch(frameTimeoutReached(action.stackId))
+          }, orderFetchingTimeout)
+        })
+
         break
       case 'FILL_FRAME_BEST_ORDER':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
@@ -455,6 +473,7 @@ export default function routerMiddleware(store) {
         break
       default:
     }
+    // console.log('connected balances', deltaBalancesSelectors.getConnectedBalances(state))
     return next(action)
   }
 }
