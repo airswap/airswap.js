@@ -285,16 +285,6 @@ const AIRSWAP_HEADLESS_API_SSE = `${AIRSWAP_HEADLESS_API}stream/`
 
 const PORTIS_ID = '691c65e3-ef26-4e6a-9a91-cdc772ed2298'
 
-const ESAN_MAKER_ADDRESS = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return '0x6cc47be912a07fbe9cebe68c9e103fdf123b7269'
-    case MAIN_ID:
-      return '0x1550d41be3651686e1aeeea073d8d403d0bd2e30'
-    default:
-  }
-})(NETWORK)
-
 const NODESMITH_KEY = process.env.REACT_APP_NODESMITH_KEY || process.env.NODESMITH_KEY
 const NODESMITH_URL = `wss://ethereum.api.nodesmith.io/v1/${NETWORK_NAME ||
   'mainnet'}/jsonrpc/ws?apiKey=${NODESMITH_KEY}`
@@ -356,7 +346,6 @@ module.exports = {
   AIRSWAP_HEADLESS_API,
   AIRSWAP_HEADLESS_API_SSE,
   PORTIS_ID,
-  ESAN_MAKER_ADDRESS,
   MAKER_STATS_URL,
   NODESMITH_KEY,
   NODESMITH_URL,
