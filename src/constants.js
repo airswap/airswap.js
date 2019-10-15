@@ -191,6 +191,8 @@ const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
+// alchemy provider has built in retry
+// https://github.com/alchemyplatform/alchemy-web3
 const alchemyWebsocketProvider = new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
