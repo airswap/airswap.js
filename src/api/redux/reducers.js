@@ -171,51 +171,6 @@ const getAvailableMarketplaceTokens = createSelector(
     ),
 )
 
-// TODO: get this out of connected-react-router redux instead of straight from the URL
-const getSearchParams = () => new URLSearchParams(window.location.search)
-
-/*
-AVAILABLE TOKENS BY QUERY MEET THE FOLLOWING REQUIREMENTS
- - APPROVED (airswapUI: 'yes')
- - INDEXER (there exists an intent on the indexer for this token)
- - CONNECTED (the makerAddress of that intent is currently connected to the router)
- - FILTERED (the results are filtered by query based on intents; only valid tokens based on query `baseToken` and query `side` are returned)
-*/
-const getAvailableTokensByQuery = createSelector(
-  getAvailableTokens,
-  getIndexerIntents,
-  getTokensBySymbol,
-  getSearchParams,
-  (availableTokens, intents, tokensBySymbol, search) => {
-    let filteredTokens
-
-    if (!search.get('side') || !search.get('baseToken') || !intents.length) return availableTokens
-
-    const baseToken = tokensBySymbol[search.get('baseToken')]
-    if (!baseToken) return availableTokens
-
-    if (search.get('side') === 'sell') {
-      // find all intents where makerToken === baseToken.address
-      // then, filter tokens so we only render the takerTokens
-      const intentMap = {}
-      intents.filter(intent => intent.makerToken === baseToken.address).forEach(intent => {
-        intentMap[intent.takerToken] = true
-      })
-      filteredTokens = availableTokens.filter(t => intentMap[t.address])
-    } else {
-      // find all intents where takerToken === baseToken.address
-      // then, filter tokens so we only render the makerTokens
-      const intentMap = {}
-      intents.filter(intent => intent.takerToken === baseToken.address).forEach(intent => {
-        intentMap[intent.makerToken] = true
-      })
-      filteredTokens = availableTokens.filter(t => intentMap[t.address])
-    }
-
-    return filteredTokens
-  },
-)
-
 /*
 TOKENS BY ADDRESS
 */
@@ -323,7 +278,6 @@ export const selectors = {
   getConnectedMakerAddressesWithIndexerIntents,
   getAvailableMarketsByBaseTokenAddress,
   getAvailableTokens,
-  getAvailableTokensByQuery,
   getAvailableTokensByAddress,
   getAvailableTokenAddresses,
   getAvailableMarketplaceTokens,
