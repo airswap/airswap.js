@@ -307,8 +307,6 @@ function attemptExpressLogin(store) {
       console.log('Auto Log-In Failed', e)
     }
   }
-
-  console.log('express', availableWallets, expressLoginCredentials)
 }
 
 export default function walletMiddleware(store) {
