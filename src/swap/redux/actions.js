@@ -1,3 +1,4 @@
+import abi from '../../abis/Swap.json'
 import { makePromiseAction } from '../../utils/redux'
 import { WRAPPER_CONTRACT_ADDRESS, INFINITE_EXPIRY, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
@@ -33,3 +34,32 @@ export const submitEthWrapperAuthorize = () =>
     expiry: INFINITE_EXPIRY,
     delegate: WRAPPER_CONTRACT_ADDRESS,
   })
+
+export const trackSwapAllContracts = ({
+  callback,
+  nonce,
+  makerWallet,
+  takerWallet,
+  fromBlock,
+  backFillBlockCount,
+} = {}) => ({
+  callback,
+  abi,
+  name: 'Swap',
+  params: { nonce, makerWallet, takerWallet },
+  fromBlock,
+  backFillBlockCount,
+  type: 'TRACK_EVENT',
+  namespace: 'swap',
+})
+
+export const trackSwapCancelAllContracts = ({ callback, nonce, makerWallet, fromBlock, backFillBlockCount } = {}) => ({
+  callback,
+  abi,
+  name: 'Cancel',
+  params: { nonce, makerWallet },
+  fromBlock,
+  backFillBlockCount,
+  type: 'TRACK_EVENT',
+  namespace: 'swap',
+})

@@ -1,8 +1,15 @@
 const _ = require('lodash')
+const qs = require('querystring')
 const uuid = require('uuid4')
 const EventSource = require('eventsource')
 const fetch = require('isomorphic-fetch')
-const { REACT_APP_SERVER_URL, AIRSWAP_API_URL, AIRSWAP_HEADLESS_API_SSE, MAKER_STATS_URL } = require('../constants')
+const {
+  REACT_APP_SERVER_URL,
+  AIRSWAP_API_URL,
+  AIRSWAP_HEADLESS_API_SSE,
+  MAKER_STATS_URL,
+  AIRSWAP_HEADLESS_API,
+} = require('../constants')
 
 const prefix = typeof window !== 'undefined' ? window.location.protocol : 'https:'
 
@@ -117,6 +124,60 @@ function fetchQuotesSSE(queryArray, onMessageCallback) {
   }
 }
 
+function fetchHeadlessOrders({ makerToken, takerToken, makerAmount, takerAddress, timeoutSeconds }) {
+  const queryObj = _.pickBy({ makerToken, takerToken, makerAmount, takerAddress, timeoutSeconds }, _.identity) // removes falsey values from object
+  const queryURL = `${AIRSWAP_HEADLESS_API}getOrders?${qs.stringify(queryObj)}`
+  return new Promise((resolve, reject) =>
+    fetch(queryURL, {
+      method: 'get',
+      mode: 'cors',
+    })
+      .then(response => {
+        if (!response.ok) {
+          reject(response.statusText)
+        }
+        return response.json()
+      })
+      .then(resp => resolve(resp)),
+  )
+}
+
+function fetchHeadlessQuotes({ makerToken, takerToken, makerAmount, timeoutSeconds }) {
+  const queryObj = _.pickBy({ makerToken, takerToken, makerAmount, timeoutSeconds }, _.identity) // removes falsey values from object
+  const queryURL = `${AIRSWAP_HEADLESS_API}getQuotes?${qs.stringify(queryObj)}`
+  return new Promise((resolve, reject) =>
+    fetch(queryURL, {
+      method: 'get',
+      mode: 'cors',
+    })
+      .then(response => {
+        if (!response.ok) {
+          reject(response.statusText)
+        }
+        return response.json()
+      })
+      .then(resp => resolve(resp)),
+  )
+}
+
+function fetchHeadlessMaxQuotes({ makerToken, takerToken, timeoutSeconds }) {
+  const queryObj = _.pickBy({ makerToken, takerToken, timeoutSeconds }, _.identity) // removes falsey values from object
+  const queryURL = `${AIRSWAP_HEADLESS_API}getMaxQuotes?${qs.stringify(queryObj)}`
+  return new Promise((resolve, reject) =>
+    fetch(queryURL, {
+      method: 'get',
+      mode: 'cors',
+    })
+      .then(response => {
+        if (!response.ok) {
+          reject(response.statusText)
+        }
+        return response.json()
+      })
+      .then(resp => resolve(resp)),
+  )
+}
+
 module.exports = {
   fetchRouterConnectedUsers,
   fetchIndexerIntents,
@@ -125,4 +186,7 @@ module.exports = {
   fetchQuotesSSE,
   formatQueryArrayKeys,
   fetchConnectedIntents,
+  fetchHeadlessOrders,
+  fetchHeadlessQuotes,
+  fetchHeadlessMaxQuotes,
 }
