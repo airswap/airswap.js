@@ -1,4 +1,4 @@
-import { trackSwapAllContracts, trackSwapCancelAllContracts } from '../../swap/redux/eventTrackingActions'
+import { trackSwapAllContracts, trackSwapCancelAllContracts } from '../../swap/redux/actions'
 
 export const fetchHistoricalSwapFillsByMakerAddress = makerWallet =>
   trackSwapAllContracts({ makerWallet, fromBlock: 0 })
