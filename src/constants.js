@@ -228,7 +228,7 @@ const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
 
 const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
-const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI', 'USDC', 'TUSD']
+const BASE_ASSET_TOKENS_SYMBOLS = ['ETH', 'WETH', 'DAI', 'USDC', 'TUSD', 'TCAD', 'TGBP', 'THKD', 'TAUD']
 
 const MAX_DISPLAY_DECIMALS = 8
 
