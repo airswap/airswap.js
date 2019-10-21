@@ -285,7 +285,7 @@ const makeGetBestOrder = createSelector(
     const ethGasCost = ethGasLimit * ethGasPrice
     const { side } = currentFrameQueryContext
     let ethTotal = bestOrder.ethAmount
-    if (side === 'sell') {
+    if (side === 'buy') {
       ethTotal += ethGasCost
     }
     let missingApprovals
