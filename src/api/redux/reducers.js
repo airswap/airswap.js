@@ -3,11 +3,15 @@
 import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
-import { ETH_BASE_ADDRESSES } from '../../constants'
+import { ETH_BASE_ADDRESSES, BASE_ASSET_TOKENS_SYMBOLS } from '../../constants'
 import { makeHTTPReducer, makeHTTPSelectors } from '../../utils/redux/templates/http'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { lowerCaseStringsInObject } from '../../utils/transformations'
 import { getFormattedExchangeFills24Hour } from '../../swapLegacy/redux/selectors'
+import { getTokensBySymbol } from '../../tokens/redux/reducers'
+// import { selectors as protocolMessagingSelectors } from '../../protocolMessaging/redux/reducers'
+
+// const { getCurrentFrameQueryContext } = protocolMessagingSelectors
 
 const connectedUsers = makeHTTPReducer('connectedUsers')
 const indexerIntents = makeHTTPReducer('indexerIntents')
@@ -104,6 +108,38 @@ const getIndexerTokens = createSelector(getFetchedIndexerIntents, intents => [
 ])
 
 /*
+"AVAILABLE MARKETS" ARE INTENTS THAT MEET BOTH CRITERIA BELOW
+ - either the makertoken or takertoken of the intent involves a "BASE ASSET"
+ - the maker responsible for the intent is connected to the network
+*/
+
+const getAvailableMarketsByBaseTokenAddress = createSelector(
+  getConnectedIndexerIntents,
+  getTokensBySymbol,
+  (intents, tokensBySymbol) => {
+    const markets = {}
+
+    if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
+    BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
+      markets[token.address] = 0
+    })
+
+    intents.forEach(intent => {
+      if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
+        markets[intent.takerToken]++
+        return
+      }
+
+      if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
+        markets[intent.makerToken]++
+      }
+    })
+
+    return markets
+  },
+)
+
+/*
 "AVAILABLE" TOKENS MEET THE FOLLOWING REQUIREMENTS
  - APPROVED (airswapUI: 'yes')
  - INDEXER (there exist an intent on the indexer for this token)
@@ -133,6 +169,51 @@ const getAvailableMarketplaceTokens = createSelector(
       approvedTokens,
       token => _.includes(indexerTokenAddresses, token.address) && !_.includes(ETH_BASE_ADDRESSES, token.address),
     ),
+)
+
+// TODO: get this out of connected-react-router redux instead of straight from the URL
+const getSearchParams = () => new URLSearchParams(window.location.search)
+
+/*
+AVAILABLE TOKENS BY QUERY MEET THE FOLLOWING REQUIREMENTS
+ - APPROVED (airswapUI: 'yes')
+ - INDEXER (there exists an intent on the indexer for this token)
+ - CONNECTED (the makerAddress of that intent is currently connected to the router)
+ - FILTERED (the results are filtered by query based on intents; only valid tokens based on query `baseToken` and query `side` are returned)
+*/
+const getAvailableTokensByQuery = createSelector(
+  getAvailableTokens,
+  getIndexerIntents,
+  getTokensBySymbol,
+  getSearchParams,
+  (availableTokens, intents, tokensBySymbol, search) => {
+    let filteredTokens
+
+    if (!search.get('side') || !search.get('baseToken') || !intents.length) return availableTokens
+
+    const baseToken = tokensBySymbol[search.get('baseToken')]
+    if (!baseToken) return availableTokens
+
+    if (search.get('side') === 'sell') {
+      // find all intents where makerToken === baseToken.address
+      // then, filter tokens so we only render the takerTokens
+      const intentMap = {}
+      intents.filter(intent => intent.makerToken === baseToken.address).forEach(intent => {
+        intentMap[intent.takerToken] = true
+      })
+      filteredTokens = availableTokens.filter(t => intentMap[t.address])
+    } else {
+      // find all intents where takerToken === baseToken.address
+      // then, filter tokens so we only render the makerTokens
+      const intentMap = {}
+      intents.filter(intent => intent.takerToken === baseToken.address).forEach(intent => {
+        intentMap[intent.makerToken] = true
+      })
+      filteredTokens = availableTokens.filter(t => intentMap[t.address])
+    }
+
+    return filteredTokens
+  },
 )
 
 /*
@@ -240,7 +321,9 @@ export const selectors = {
   getIndexerIntents,
   getConnectedIndexerIntents,
   getConnectedMakerAddressesWithIndexerIntents,
+  getAvailableMarketsByBaseTokenAddress,
   getAvailableTokens,
+  getAvailableTokensByQuery,
   getAvailableTokensByAddress,
   getAvailableTokenAddresses,
   getAvailableMarketplaceTokens,
