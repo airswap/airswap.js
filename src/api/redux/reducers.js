@@ -3,11 +3,15 @@
 import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
-import { ETH_BASE_ADDRESSES } from '../../constants'
+import { ETH_BASE_ADDRESSES, BASE_ASSET_TOKENS_SYMBOLS } from '../../constants'
 import { makeHTTPReducer, makeHTTPSelectors } from '../../utils/redux/templates/http'
 import { selectors as tokenSelectors } from '../../tokens/redux'
 import { lowerCaseStringsInObject } from '../../utils/transformations'
 import { getFormattedExchangeFills24Hour } from '../../swapLegacy/redux/selectors'
+import { getTokensBySymbol } from '../../tokens/redux/reducers'
+// import { selectors as protocolMessagingSelectors } from '../../protocolMessaging/redux/reducers'
+
+// const { getCurrentFrameQueryContext } = protocolMessagingSelectors
 
 const connectedUsers = makeHTTPReducer('connectedUsers')
 const indexerIntents = makeHTTPReducer('indexerIntents')
@@ -102,6 +106,38 @@ const getIndexerTokens = createSelector(getFetchedIndexerIntents, intents => [
     new Set(),
   ),
 ])
+
+/*
+"AVAILABLE MARKETS" ARE INTENTS THAT MEET BOTH CRITERIA BELOW
+ - either the makertoken or takertoken of the intent involves a "BASE ASSET"
+ - the maker responsible for the intent is connected to the network
+*/
+
+const getAvailableMarketsByBaseTokenAddress = createSelector(
+  getConnectedIndexerIntents,
+  getTokensBySymbol,
+  (intents, tokensBySymbol) => {
+    const markets = {}
+
+    if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
+    BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
+      markets[token.address] = 0
+    })
+
+    intents.forEach(intent => {
+      if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
+        markets[intent.takerToken]++
+        return
+      }
+
+      if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
+        markets[intent.makerToken]++
+      }
+    })
+
+    return markets
+  },
+)
 
 /*
 "AVAILABLE" TOKENS MEET THE FOLLOWING REQUIREMENTS
@@ -240,6 +276,7 @@ export const selectors = {
   getIndexerIntents,
   getConnectedIndexerIntents,
   getConnectedMakerAddressesWithIndexerIntents,
+  getAvailableMarketsByBaseTokenAddress,
   getAvailableTokens,
   getAvailableTokensByAddress,
   getAvailableTokenAddresses,
