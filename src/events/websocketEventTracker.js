@@ -12,13 +12,19 @@ async function subscribe(contractAddress, abi, topic, fromBlock, callback, parse
     topics: topic,
   }
 
-  const logParams = {
-    ...query,
-    fromBlock,
-  }
+  const logParams = _.pickBy(
+    {
+      ...query,
+      fromBlock,
+    },
+    _.identity,
+  )
 
   const abiInterface = new Interface(abi)
   const subscription = alchemyWeb3.eth.subscribe('logs', logParams, (error, log) => {
+    if (error) {
+      console.log(error)
+    }
     if (parser) {
       callback(parser(parseEventLog(log, abiInterface)))
     } else {

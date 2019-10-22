@@ -51,3 +51,17 @@ export const getConnectedDelegateApprovals = createSelector(
 export const getConnectedWrapperDelegateApproval = createSelector(getConnectedDelegateApprovals, connectedApprovals =>
   _.get(connectedApprovals, WRAPPER_CONTRACT_ADDRESS),
 )
+
+const getFetchedTrackedEvents = state => state.events.trackedEvents.fetched
+
+export const getSwapSwapEventsAllContracts = createSelector(getFetchedTrackedEvents, events =>
+  _.filter(events, {
+    topic: '0xdb667502ab054fbfc1011315893dab3481c36c50f60b5ad16f1c14e6035e7a9e',
+  }),
+)
+
+export const getSwapCancelEventsAllContracts = createSelector(getFetchedTrackedEvents, events =>
+  _.filter(events, {
+    topic: '0x8dd3c361eb2366ff27c2db0eb07b9261f1d052570742ab8c9a0c326f37aa576d',
+  }),
+)
