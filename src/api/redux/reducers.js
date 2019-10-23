@@ -121,6 +121,7 @@ const getAvailableMarketsByBaseTokenAddress = createSelector(
 
     if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
     BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
+      if (!token) return
       markets[token.address] = 0
     })
 
