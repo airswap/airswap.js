@@ -340,17 +340,22 @@ class Router {
     }
 
     const payload = Router.makeRPC('getOrder', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
-      ...order,
-      v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
-      expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
-      makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
-      takerAddress: (order.takerAddress || '').toLowerCase(),
-      makerToken: (order.makerToken || '').toLowerCase(),
-      takerToken: (order.takerToken || '').toLowerCase(),
-      swapVersion,
-      nonce: order.nonce ? `${order.nonce}` : order.nonce,
-    }))
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => {
+      if (order.makerAmount === '0' && order.takerAmount === '0') {
+        return { message: 'makerAmount and takerAmount are both 0; invalid order' }
+      }
+      return {
+        ...order,
+        v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
+        expiration: order.expiration ? ethers.utils.bigNumberify(order.expiration).toNumber() : order.expiration,
+        makerAddress: (order.makerAddress || '').toLowerCase(), // normalizes the case of addresses in returned orders
+        takerAddress: (order.takerAddress || '').toLowerCase(),
+        makerToken: (order.makerToken || '').toLowerCase(),
+        takerToken: (order.takerToken || '').toLowerCase(),
+        swapVersion,
+        nonce: order.nonce ? `${order.nonce}` : order.nonce,
+      }
+    })
   }
 
   getMakerSideQuote(makerAddress, params) {
