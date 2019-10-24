@@ -3,6 +3,7 @@ const WebSocket = require('isomorphic-ws')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
 const { nest, flatten } = require('../swap/utils')
+
 // Class Constructor
 // ----------------
 
@@ -341,9 +342,18 @@ class Router {
 
     const payload = Router.makeRPC('getOrder', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => {
-      if (order.makerAmount === '0' && order.takerAmount === '0') {
-        return { message: 'makerAmount and takerAmount are both 0; invalid order' }
+      if (makerAmount && makerAmount !== order.makerAmount) {
+        return {
+          message:
+            'makerAmount specified in getOrder request does not match makerAmount sent from maker; discarding order',
+        }
+      } else if (takerAmount && takerAmount !== order.takerAmount) {
+        return {
+          message:
+            'takerAmount specified in getOrder request does not match takerAmount sent from maker; discarding order',
+        }
       }
+
       return {
         ...order,
         v: order.v ? ethers.utils.bigNumberify(order.v).toNumber() : order.v,
