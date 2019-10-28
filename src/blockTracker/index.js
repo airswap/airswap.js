@@ -2,8 +2,9 @@ const _ = require('lodash')
 const { fetchBlock, fetchCurrentBlockNumber } = require('../utils/gethRead')
 
 class BlockTracker {
-  constructor(interval = 3000) {
+  constructor(interval = 3000, blockMemoryLimit = Number.POSITIVE_INFINITY) {
     this.interval = interval
+    this.blockMemoryLimit = blockMemoryLimit
     this.blocks = {}
     this.blockProcessors = []
     this.readyPromise = this.init()
@@ -30,8 +31,15 @@ class BlockTracker {
   getLatestBlockNumber() {
     return _.get(this.getLatestBlock(), 'number')
   }
+  getOldestBlock() {
+    return _.head(this.getSortedBlocks())
+  }
+  getOldestBlockNumber() {
+    return _.get(this.getOldestBlock(), 'number')
+  }
   async pollForNextBlock() {
     const currentBlockNumber = this.getLatestBlockNumber()
+    const oldestBlockNumber = this.getOldestBlockNumber()
     let latestBlock
     let latestBlockNumber
     try {
@@ -39,6 +47,12 @@ class BlockTracker {
       if (latestBlockNumber > currentBlockNumber) {
         latestBlock = await fetchBlock(latestBlockNumber)
         this.blocks[latestBlock.number] = latestBlock
+
+        // free up memory if limit is set
+        if (Object.keys(this.blocks).length > this.blockMemoryLimit) {
+          delete this.blocks[oldestBlockNumber]
+        }
+
         this.blockProcessors.map(processNewBlock => processNewBlock(latestBlock))
         if (latestBlock.number > currentBlockNumber + 1) {
           const range = _.range(currentBlockNumber + 1, latestBlock.number)
