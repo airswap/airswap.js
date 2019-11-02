@@ -20,7 +20,7 @@ import { getConnectedWrapperWethApproval } from '../../erc20/redux/selectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
 import { getERC20ApproveTransactions } from '../../erc20/redux/contractTransactionSelectors'
-import { getSwapAuthorizeTransactions } from '../../swap/redux/contractTransactionSelectors'
+import { getSwapAuthorizeSenderTransactions } from '../../swap/redux/contractTransactionSelectors'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
   return [
@@ -258,7 +258,7 @@ const makeGetBestOrder = createSelector(
   erc20Selectors.getMiningApproveToken,
   erc20Selectors.getSubmittingApproveToken,
   getERC20ApproveTransactions,
-  getSwapAuthorizeTransactions,
+  getSwapAuthorizeSenderTransactions,
   (
     isCurrentFrameFinishedQuerying,
     currentFrameQueryContext,

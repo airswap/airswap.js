@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@airswap/order-utils@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.1.tgz#37e5c0393e96c48cbc119cc92afa16376bf12cd2"
-  integrity sha512-HrpwUSG9tdOvb8LxgvQFF8DpIHuEjN4tDAJwFYJynmKvJqUCeJ6gnk63v3DMdrJKF2BdWJDeN0QuF9M46/p9yA==
+"@airswap/order-utils@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.3.tgz#e5c352f7930ca8f2b404207c1013314db9b8402a"
+  integrity sha512-JMBJzq3T2oyi6t+uLPBF39s13gcIbcKQXD0V3lBn+pz25b0OeuGaD88i6WZGIBSR5MRFGcmTX1wPhc6C/A3EVg==
   dependencies:
     eth-sig-util "^2.2.0"
     ethereumjs-util "^6.1.0"

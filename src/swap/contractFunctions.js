@@ -1,29 +1,19 @@
 // This file is generated code, edits will be overwritten
 const ethers = require('ethers')
-const abi = require('../abis/Swap.json')
+const abi = require('../swap/abi.js')
 const constants = require('../constants')
 
 function getSwapContract(provider) {
   return new ethers.Contract(constants.SWAP_CONTRACT_ADDRESS, abi, provider)
 }
-function getSwapMakerMinimumNonce(makerWallet) {
-  const contract = getSwapContract(constants.httpProvider)
-  return contract.makerMinimumNonce(makerWallet)
-}
-
-function getSwapMakerOrderStatus(makerWallet, nonce) {
-  const contract = getSwapContract(constants.httpProvider)
-  return contract.makerOrderStatus(makerWallet, nonce)
-}
-
-function getSwapDelegateApprovals(approver, delegate) {
-  const contract = getSwapContract(constants.httpProvider)
-  return contract.delegateApprovals(approver, delegate)
-}
-
-function submitSwap(order, signer) {
+function submitSwapAuthorizeSender(authorizedSender, signer) {
   const contract = getSwapContract(signer)
-  return contract.swap(order)
+  return contract.authorizeSender(authorizedSender)
+}
+
+function submitSwapAuthorizeSigner(authorizedSigner, signer) {
+  const contract = getSwapContract(signer)
+  return contract.authorizeSigner(authorizedSigner)
 }
 
 function submitSwapCancel(nonces, signer) {
@@ -36,23 +26,51 @@ function submitSwapInvalidate(minimumNonce, signer) {
   return contract.invalidate(minimumNonce)
 }
 
-function submitSwapAuthorize(delegate, expiry, signer) {
+function submitSwapRevokeSender(authorizedSender, signer) {
   const contract = getSwapContract(signer)
-  return contract.authorize(delegate, expiry)
+  return contract.revokeSender(authorizedSender)
 }
 
-function submitSwapRevoke(delegate, signer) {
+function submitSwapRevokeSigner(authorizedSigner, signer) {
   const contract = getSwapContract(signer)
-  return contract.revoke(delegate)
+  return contract.revokeSigner(authorizedSigner)
+}
+
+function getSwapSenderAuthorizations(sender, authorizedSender) {
+  const contract = getSwapContract(constants.httpProvider)
+  return contract.senderAuthorizations(sender, authorizedSender)
+}
+
+function getSwapSignerAuthorizations(signer, authorizedSigner) {
+  const contract = getSwapContract(constants.httpProvider)
+  return contract.signerAuthorizations(signer, authorizedSigner)
+}
+
+function getSwapSignerMinimumNonce(signer) {
+  const contract = getSwapContract(constants.httpProvider)
+  return contract.signerMinimumNonce(signer)
+}
+
+function getSwapSignerNonceStatus(signer, nonce) {
+  const contract = getSwapContract(constants.httpProvider)
+  return contract.signerNonceStatus(signer, nonce)
+}
+
+function submitSwap(order, signer) {
+  const contract = getSwapContract(signer)
+  return contract.swap(order)
 }
 
 module.exports = {
-  getSwapMakerMinimumNonce,
-  getSwapMakerOrderStatus,
-  getSwapDelegateApprovals,
-  submitSwap,
+  submitSwapAuthorizeSender,
+  submitSwapAuthorizeSigner,
   submitSwapCancel,
   submitSwapInvalidate,
-  submitSwapAuthorize,
-  submitSwapRevoke,
+  submitSwapRevokeSender,
+  submitSwapRevokeSigner,
+  getSwapSenderAuthorizations,
+  getSwapSignerAuthorizations,
+  getSwapSignerMinimumNonce,
+  getSwapSignerNonceStatus,
+  submitSwap,
 }

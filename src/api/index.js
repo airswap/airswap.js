@@ -39,9 +39,7 @@ function fetchIndexerIntents() {
         if (!response.ok) {
           reject(response.statusText)
         }
-        return response
-          .json()
-          .then(intents => intents.map(intent => ({ ...intent, makerAddress: intent.address, swapVersion: 1 })))
+        return response.json().then(intents => intents.map(intent => ({ ...intent, makerAddress: intent.address })))
       })
       .then(resolve)
   })

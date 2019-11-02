@@ -54,4 +54,54 @@ function getSwapOrderId(orderParams) {
   return `${wallet}${nonce}`
 }
 
-module.exports = { flatten, nest, getSwapOrderId }
+function mapNested22OrderTo20Order(order) {
+  const { nonce, expiry, signer, sender, affiliate, signature } = order
+  return {
+    nonce,
+    expiry,
+    maker: signer,
+    taker: sender,
+    affiliate,
+    signature,
+  }
+}
+
+function mapNested20OrderTo22Order(order) {
+  const { nonce, expiry, maker, taker, affiliate, signature } = order
+  return {
+    nonce,
+    expiry,
+    signer: maker,
+    sender: taker,
+    affiliate,
+    signature,
+  }
+}
+
+function mapNested22QuoteTo20Quote(quote) {
+  const { swap, signer, sender } = quote
+  return {
+    maker: signer,
+    taker: sender,
+    swap,
+  }
+}
+
+function mapNested20QuoteTo22Quote(quote) {
+  const { swap, maker, taker } = quote
+  return {
+    signer: maker,
+    sender: taker,
+    swap,
+  }
+}
+
+module.exports = {
+  flatten,
+  nest,
+  getSwapOrderId,
+  mapNested22OrderTo20Order,
+  mapNested20OrderTo22Order,
+  mapNested22QuoteTo20Quote,
+  mapNested20QuoteTo22Quote,
+}

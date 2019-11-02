@@ -4,7 +4,7 @@ const {
   hashes: { getOrderHash },
   constants,
 } = require('@airswap/order-utils')
-const { nest } = require('./utils')
+const { nest, mapNested20OrderTo22Order } = require('./utils')
 const { SWAP_CONTRACT_ADDRESS, abis } = require('../constants')
 
 const removeFalsey = obj => _.pickBy(obj, _.identity)
@@ -12,8 +12,8 @@ const removeFalsey = obj => _.pickBy(obj, _.identity)
 const fillOrderDefaults = ({ expiry, nonce, maker, taker, affiliate }) => ({
   expiry: `${expiry}`,
   nonce: `${nonce}`,
-  maker: { ...constants.defaults.Party, ...removeFalsey(maker) },
-  taker: { ...constants.defaults.Party, ...removeFalsey(taker) },
+  signer: { ...constants.defaults.Party, ...removeFalsey(maker) },
+  sender: { ...constants.defaults.Party, ...removeFalsey(taker) },
   affiliate: { ...constants.defaults.Party, ...removeFalsey(affiliate) },
 })
 
@@ -22,8 +22,20 @@ function getSwapContract(signer) {
 }
 
 async function swap(orderParams, signer) {
-  const order = orderParams.maker ? orderParams : nest(orderParams)
+  let order = orderParams
+  if (order.makerToken || order.signerToken) {
+    // order is flat
+    order = nest(order)
+  }
+  // now order is nested
+  if (order.maker) {
+    // order is in 2.0 format and we need to map to 2.2 format
+    order = mapNested20OrderTo22Order(order)
+  }
+
+  // now order is in nested 2.2 format
   order.signature.v = Number(order.signature.v)
+
   const contract = getSwapContract(signer)
   return contract.swap(order)
 }
@@ -39,7 +51,7 @@ async function signSwap(orderParams, signer) {
   const signedOrder = {
     ...order,
     signature: {
-      signer: signerAddress.toLowerCase(), // Version 0x45: personal_sign
+      signatory: signerAddress.toLowerCase(), // Version 0x45: personal_sign
       version: constants.signatures.PERSONAL_SIGN,
       r,
       s,
@@ -52,6 +64,7 @@ async function signSwap(orderParams, signer) {
 
 async function signSwapTypedData(orderParams, signer) {
   const order = fillOrderDefaults(orderParams)
+
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
     domain: {
@@ -68,7 +81,7 @@ async function signSwapTypedData(orderParams, signer) {
   const signedOrder = {
     ...order,
     signature: {
-      signer: signerAddress.toLowerCase(),
+      signatory: signerAddress.toLowerCase(),
       version: constants.signatures.SIGN_TYPED_DATA, // Version 0x01: signTypedData
       r,
       s,
