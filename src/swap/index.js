@@ -64,6 +64,10 @@ async function signSwap(orderParams, signer) {
 
 async function signSwapTypedData(orderParams, signer) {
   const order = fillOrderDefaults(orderParams)
+
+  console.log('pre-defaults', orderParams)
+  console.log('post-defaults', orderParams)
+
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
     domain: {

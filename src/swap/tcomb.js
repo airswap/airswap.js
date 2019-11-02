@@ -40,10 +40,10 @@ const FlatOrder = t.Object
 const QuoteParty = t.struct({
   token: Address,
   param: AtomicAmount,
+  kind: Kind,
 })
 
 const Quote = t.struct({
-  affiliate: QuoteParty,
   maker: QuoteParty,
   taker: QuoteParty,
   swap: t.maybe(t.struct({ version: t.Number })),

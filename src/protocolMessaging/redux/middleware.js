@@ -128,6 +128,8 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
   try {
     const maxQuoteResponse = await maxQuotePromise
+    console.log('maxQuoteResponse', maxQuoteResponse)
+
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
@@ -184,7 +186,6 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
   try {
     const orderResponse = await router.getOrder(makerAddress, { takerAmount, makerToken, takerToken, swapVersion })
     const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
-
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -204,12 +205,14 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   let quote
   try {
     const maxQuoteResponse = await maxQuotePromise
+    console.log('maxQuoteResponse', maxQuoteResponse)
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
   }
   try {
     const quoteResponse = await quotePromise
+
     quote = swapVersion === 2 ? flatten(Quote(quoteResponse)) : LegacyQuote(quoteResponse)
   } catch (e) {
     console.log(e)
@@ -273,6 +276,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
 
   try {
     const orderResponse = await router.getOrder(makerAddress, { makerAmount, makerToken, takerToken, swapVersion })
+
     const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
@@ -492,6 +496,7 @@ export default function routerMiddleware(store) {
         break
       default:
     }
+    console.log(protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(store.getState()))
     return next(action)
   }
 }

@@ -2,7 +2,7 @@ const ethers = require('ethers')
 const WebSocket = require('isomorphic-ws')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
-const { nest, flatten } = require('../swap/utils')
+const { nest, flatten, mapNested22OrderTo20Order, mapNested22QuoteTo20Quote } = require('../swap/utils')
 
 // Class Constructor
 // ----------------
@@ -13,13 +13,13 @@ const quoteQueryDefaults = {
 }
 
 const orderQueryDefaults = {
-  takerWallet: '0x0000000000000000000000000000000000000000',
+  senderWallet: '0x0000000000000000000000000000000000000000',
   affiliateToken: '0x0000000000000000000000000000000000000000',
   affiliateParam: '0',
 }
 
 function typeSafeOrder({ nonce, expiry, signature, ...rest }) {
-  return {
+  return mapNested22OrderTo20Order({
     ...rest,
     signature: {
       ...signature,
@@ -27,7 +27,7 @@ function typeSafeOrder({ nonce, expiry, signature, ...rest }) {
     },
     nonce: `${nonce}`,
     expiry: `${expiry}`,
-  }
+  })
 }
 
 class Router {
@@ -322,9 +322,17 @@ class Router {
 
     if (swapVersion === 2) {
       if (takerAmount) {
-        return this.getSignerSideOrder(makerAddress, { senderParam: takerAmount, makerToken, takerToken })
+        return this.getSignerSideOrder(makerAddress, {
+          senderParam: takerAmount,
+          signerToken: makerToken,
+          senderToken: takerToken,
+        })
       } else if (makerAmount) {
-        return this.getSenderSideOrder(makerAddress, { makerParam: makerAmount, makerToken, takerToken })
+        return this.getSenderSideOrder(makerAddress, {
+          makerParam: makerAmount,
+          signerToken: makerToken,
+          senderToken: takerToken,
+        })
       }
     }
 
@@ -369,12 +377,12 @@ class Router {
   }
 
   getSignerSideQuote(makerAddress, params) {
-    const { makerToken, takerToken, takerParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
-      makerToken,
-      takerToken,
-      takerParam,
+      signerToken,
+      senderToken,
+      senderParam,
       affiliateToken,
       affiliateParam,
     })
@@ -387,17 +395,17 @@ class Router {
         ...flatQuote,
         swapVersion: 2,
       }
-      return nest(combinedQuote)
+      return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
   }
 
   getSenderSideQuote(makerAddress, params) {
-    const { makerToken, takerToken, makerParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
-      makerToken,
-      takerToken,
-      makerParam,
+      signerToken,
+      senderToken,
+      signerParam,
       affiliateToken,
       affiliateParam,
     })
@@ -410,7 +418,7 @@ class Router {
         ...flatQuote,
         swapVersion: 2,
       }
-      return nest(combinedQuote)
+      return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
   }
 
@@ -422,7 +430,10 @@ class Router {
 
     const query =
       swapVersion === 2
-        ? Object.assign({}, quoteQueryDefaults, { makerToken, takerToken })
+        ? {
+            signerToken: makerToken,
+            senderToken: takerToken,
+          }
         : {
             makerToken,
             takerToken,
@@ -437,7 +448,7 @@ class Router {
           ...flatQuote,
           swapVersion: 2,
         }
-        return nest(combinedQuote)
+        return mapNested22QuoteTo20Quote(nest(combinedQuote))
       }
       return { ...quote, ...query, swapVersion }
     })
@@ -450,9 +461,17 @@ class Router {
 
     if (swapVersion === 2) {
       if (takerAmount) {
-        return this.getSignerSideQuote(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
+        return this.getSignerSideQuote(makerAddress, {
+          senderParam: takerAmount,
+          signerToken: makerToken,
+          senderToken: takerToken,
+        })
       } else if (makerAmount) {
-        return this.getSenderSideQuote(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
+        return this.getSenderSideQuote(makerAddress, {
+          makerParam: makerAmount,
+          signerToken: makerToken,
+          senderToken: takerToken,
+        })
       }
     }
 

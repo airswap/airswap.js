@@ -78,4 +78,30 @@ function mapNested20OrderTo22Order(order) {
   }
 }
 
-module.exports = { flatten, nest, getSwapOrderId, mapNested22OrderTo20Order, mapNested20OrderTo22Order }
+function mapNested22QuoteTo20Quote(quote) {
+  const { swap, signer, sender } = quote
+  return {
+    maker: signer,
+    taker: sender,
+    swap,
+  }
+}
+
+function mapNested20QuoteTo22Quote(quote) {
+  const { swap, maker, taker } = quote
+  return {
+    signer: maker,
+    sender: taker,
+    swap,
+  }
+}
+
+module.exports = {
+  flatten,
+  nest,
+  getSwapOrderId,
+  mapNested22OrderTo20Order,
+  mapNested20OrderTo22Order,
+  mapNested22QuoteTo20Quote,
+  mapNested20QuoteTo22Quote,
+}
