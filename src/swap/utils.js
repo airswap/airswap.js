@@ -55,24 +55,24 @@ function getSwapOrderId(orderParams) {
 }
 
 function mapNested22OrderTo20Order(order) {
-  const { nonce, expiry, signer, sender, affiliate, signature } = order
+  const { nonce, expiry, signer, maker, sender, taker, affiliate, signature } = order
   return {
     nonce,
     expiry,
-    maker: signer,
-    taker: sender,
+    maker: signer || maker,
+    taker: sender || taker,
     affiliate,
     signature,
   }
 }
 
 function mapNested20OrderTo22Order(order) {
-  const { nonce, expiry, maker, taker, affiliate, signature } = order
+  const { nonce, expiry, maker, signer, taker, sender, affiliate, signature } = order
   return {
     nonce,
     expiry,
-    signer: maker,
-    sender: taker,
+    signer: maker || signer,
+    sender: taker || sender,
     affiliate,
     signature,
   }

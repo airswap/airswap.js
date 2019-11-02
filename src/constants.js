@@ -98,9 +98,9 @@ const PGP_CONTRACT_ADDRESS = (N => {
 const WRAPPER_CONTRACT_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return '0x0000000000000000000000000000000000000000'
+      return '0x8481a5c5d2c23c8d43a812ec8913f1aa4d739db9'
     case MAIN_ID:
-      return '0x0000000000000000000000000000000000000000'
+      return ''
     default:
   }
 })(NETWORK)
