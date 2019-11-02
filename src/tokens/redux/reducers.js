@@ -62,7 +62,9 @@ const areTokensReady = state => state.tokens.ready
 const getTokenAddresses = createSelector(getTokens, t => _.map(t, 'address'))
 const getTokenBySymbol = (state, symbol) => _.find(getTokens(state), { symbol })
 const getTokensBySymbol = createSelector(getTokens, t => _.keyBy(t, 'symbol'))
+const getAirSwapApprovedTokensBySymbol = createSelector(getAirSwapApprovedTokens, t => _.keyBy(t, 'symbol'))
 const getTokensByAddress = createSelector(getTokens, t => _.keyBy(t, 'address'))
+const getAirSwapApprovedTokensByAddress = createSelector(getAirSwapApprovedTokens, t => _.keyBy(t, 'address'))
 const getTokensSymbols = createSelector(getTokens, t => _.map(t, 'symbol'))
 const getTokensSymbolsByAddress = createSelector(getTokensByAddress, tokensByAddress =>
   _.mapValues(tokensByAddress, t => t.symbol),
@@ -244,6 +246,8 @@ export const selectors = {
   getBaseTokens,
   makeGetReadableOrder,
   getAirSwapApprovedTokens,
+  getAirSwapApprovedTokensBySymbol,
+  getAirSwapApprovedTokensByAddress,
   makeParseByToken,
   makeGetExchangeFillGasLimitByToken,
   makeGetReadableSwapOrder,
