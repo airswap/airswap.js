@@ -128,7 +128,6 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
   try {
     const maxQuoteResponse = await maxQuotePromise
-    console.log('maxQuoteResponse', maxQuoteResponse)
 
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
@@ -205,7 +204,6 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   let quote
   try {
     const maxQuoteResponse = await maxQuotePromise
-    console.log('maxQuoteResponse', maxQuoteResponse)
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
   } catch (e) {
     console.log(e)
