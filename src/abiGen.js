@@ -278,7 +278,7 @@ const modules = [
     contractKey: '',
   },
   {
-    abiLocation: 'abis/Swap.json',
+    abiLocation: 'swap/abi.js',
     namespace: 'swap',
     contractKey: 'SWAP_CONTRACT_ADDRESS',
   },

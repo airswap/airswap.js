@@ -274,39 +274,39 @@ class Router {
     return new Promise((resolve, reject) => this.call(INDEXER_ADDRESS, payload, resolve, reject))
   }
 
-  getMakerSideOrder(makerAddress, params) {
-    const { makerToken, takerToken, takerParam, affiliateToken, affiliateParam } = params
+  getSignerSideOrder(signerAddress, params) {
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
-      makerToken,
-      takerToken,
-      takerParam,
-      takerWallet: this.address.toLowerCase(),
+      signerToken,
+      senderToken,
+      senderParam,
+      senderWallet: this.address.toLowerCase(),
       affiliateToken,
       affiliateParam,
     })
 
-    const payload = Router.makeRPC('getMakerSideOrder', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
+    const payload = Router.makeRPC('getSignerSideOrder', query)
+    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej)).then(order => ({
       ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
   }
 
-  getTakerSideOrder(makerAddress, params) {
-    const { makerToken, takerToken, makerParam, affiliateToken, affiliateParam } = params
+  getSenderSideOrder(signerAddress, params) {
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
-      makerToken,
-      takerToken,
-      makerParam,
-      takerWallet: this.address.toLowerCase(),
+      signerToken,
+      senderToken,
+      signerParam,
+      senderWallet: this.address.toLowerCase(),
       affiliateToken,
       affiliateParam,
     })
 
-    const payload = Router.makeRPC('getTakerSideOrder', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(order => ({
+    const payload = Router.makeRPC('getSenderSideOrder', query)
+    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej)).then(order => ({
       ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
@@ -322,9 +322,9 @@ class Router {
 
     if (swapVersion === 2) {
       if (takerAmount) {
-        return this.getMakerSideOrder(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
+        return this.getSignerSideOrder(makerAddress, { senderParam: takerAmount, makerToken, takerToken })
       } else if (makerAmount) {
-        return this.getTakerSideOrder(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
+        return this.getSenderSideOrder(makerAddress, { makerParam: makerAmount, makerToken, takerToken })
       }
     }
 
@@ -368,7 +368,7 @@ class Router {
     })
   }
 
-  getMakerSideQuote(makerAddress, params) {
+  getSignerSideQuote(makerAddress, params) {
     const { makerToken, takerToken, takerParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
@@ -379,7 +379,7 @@ class Router {
       affiliateParam,
     })
 
-    const payload = Router.makeRPC('getMakerSideQuote', query)
+    const payload = Router.makeRPC('getSignerSideQuote', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
@@ -391,7 +391,7 @@ class Router {
     })
   }
 
-  getTakerSideQuote(makerAddress, params) {
+  getSenderSideQuote(makerAddress, params) {
     const { makerToken, takerToken, makerParam, affiliateToken, affiliateParam } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
@@ -402,7 +402,7 @@ class Router {
       affiliateParam,
     })
 
-    const payload = Router.makeRPC('getTakerSideQuote', query)
+    const payload = Router.makeRPC('getSenderSideQuote', query)
     return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
@@ -450,9 +450,9 @@ class Router {
 
     if (swapVersion === 2) {
       if (takerAmount) {
-        return this.getMakerSideQuote(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
+        return this.getSignerSideQuote(makerAddress, { makerAmount, takerParam: takerAmount, makerToken, takerToken })
       } else if (makerAmount) {
-        return this.getTakerSideQuote(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
+        return this.getSenderSideQuote(makerAddress, { makerAmount, makerParam: makerAmount, makerToken, takerToken })
       }
     }
 

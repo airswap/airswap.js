@@ -28,8 +28,8 @@ const Signature = t.struct({
 const Order = t.struct({
   nonce: t.String,
   expiry: t.String,
-  maker: Party,
-  taker: Party,
+  signer: Party,
+  sender: Party,
   affiliate: Party,
   signature: Signature,
   swap: t.maybe(t.struct({ version: t.Number })),
@@ -40,12 +40,13 @@ const FlatOrder = t.Object
 const QuoteParty = t.struct({
   token: Address,
   param: AtomicAmount,
+  kind: Kind,
 })
 
 const Quote = t.struct({
   affiliate: QuoteParty,
-  maker: QuoteParty,
-  taker: QuoteParty,
+  signer: QuoteParty,
+  sender: QuoteParty,
   swap: t.maybe(t.struct({ version: t.Number })),
 })
 

@@ -93,7 +93,7 @@ const orderFetchingTimeout = 3000 // 3 seconds
 function intentSupportsQuotes({ supportedMethods }) {
   return (
     _.intersection(supportedMethods, ['getQuote', 'getMaxQuote']).length === 2 ||
-    _.intersection(supportedMethods, ['getMakerSideQuote', 'getTakerSideQuote', 'getMaxQuote']).length === 3
+    _.intersection(supportedMethods, ['getSignerSideQuote', 'getSenderSideQuote', 'getMaxQuote']).length === 3
   )
 }
 

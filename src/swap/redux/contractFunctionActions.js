@@ -1,41 +1,19 @@
 // This file is generated code, edits will be overwritten
-export const fetchSwapMakerMinimumNonce = ({ makerWallet }) => dispatch =>
+export const submitSwapAuthorizeSender = ({ authorizedSender }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      makerWallet,
-      type: 'FETCH_SWAP_MAKER_MINIMUM_NONCE',
+      authorizedSender,
+      type: 'SUBMIT_SWAP_AUTHORIZE_SENDER',
       resolve,
       reject,
     }),
   )
 
-export const fetchSwapMakerOrderStatus = ({ makerWallet, nonce }) => dispatch =>
+export const submitSwapAuthorizeSigner = ({ authorizedSigner }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      makerWallet,
-      nonce,
-      type: 'FETCH_SWAP_MAKER_ORDER_STATUS',
-      resolve,
-      reject,
-    }),
-  )
-
-export const fetchSwapDelegateApprovals = ({ approver, delegate }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      approver,
-      delegate,
-      type: 'FETCH_SWAP_DELEGATE_APPROVALS',
-      resolve,
-      reject,
-    }),
-  )
-
-export const submitSwap = ({ order }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      order,
-      type: 'SUBMIT_SWAP',
+      authorizedSigner,
+      type: 'SUBMIT_SWAP_AUTHORIZE_SIGNER',
       resolve,
       reject,
     }),
@@ -61,22 +39,74 @@ export const submitSwapInvalidate = ({ minimumNonce }) => dispatch =>
     }),
   )
 
-export const submitSwapAuthorize = ({ delegate, expiry }) => dispatch =>
+export const submitSwapRevokeSender = ({ authorizedSender }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      delegate,
-      expiry,
-      type: 'SUBMIT_SWAP_AUTHORIZE',
+      authorizedSender,
+      type: 'SUBMIT_SWAP_REVOKE_SENDER',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapRevoke = ({ delegate }) => dispatch =>
+export const submitSwapRevokeSigner = ({ authorizedSigner }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      delegate,
-      type: 'SUBMIT_SWAP_REVOKE',
+      authorizedSigner,
+      type: 'SUBMIT_SWAP_REVOKE_SIGNER',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapSenderAuthorizations = ({ sender, authorizedSender }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      sender,
+      authorizedSender,
+      type: 'FETCH_SWAP_SENDER_AUTHORIZATIONS',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapSignerAuthorizations = ({ signer, authorizedSigner }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      signer,
+      authorizedSigner,
+      type: 'FETCH_SWAP_SIGNER_AUTHORIZATIONS',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapSignerMinimumNonce = ({ signer }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      signer,
+      type: 'FETCH_SWAP_SIGNER_MINIMUM_NONCE',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapSignerNonceStatus = ({ signer, nonce }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      signer,
+      nonce,
+      type: 'FETCH_SWAP_SIGNER_NONCE_STATUS',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwap = ({ order }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      order,
+      type: 'SUBMIT_SWAP',
       resolve,
       reject,
     }),

@@ -6,65 +6,32 @@ import { getSigner } from '../../wallet/redux/actions'
 export default function swapMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'FETCH_SWAP_MAKER_MINIMUM_NONCE':
-        contractFunctions
-          .getSwapMakerMinimumNonce(action.makerWallet)
-          .then(response => {
-            store.dispatch({
-              type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
-              namespace: 'swap',
-              name: 'makerMinimumNonce',
-              timestamp: Date.now(),
-              parameters: { makerWallet: action.makerWallet },
-            })
-            action.resolve(response)
-          })
-          .catch(action.reject)
-        break
-      case 'FETCH_SWAP_MAKER_ORDER_STATUS':
-        contractFunctions
-          .getSwapMakerOrderStatus(action.makerWallet, action.nonce)
-          .then(response => {
-            store.dispatch({
-              type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
-              namespace: 'swap',
-              name: 'makerOrderStatus',
-              timestamp: Date.now(),
-              parameters: { makerWallet: action.makerWallet, nonce: action.nonce },
-            })
-            action.resolve(response)
-          })
-          .catch(action.reject)
-        break
-      case 'FETCH_SWAP_DELEGATE_APPROVALS':
-        contractFunctions
-          .getSwapDelegateApprovals(action.approver, action.delegate)
-          .then(response => {
-            store.dispatch({
-              type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
-              namespace: 'swap',
-              name: 'delegateApprovals',
-              timestamp: Date.now(),
-              parameters: { approver: action.approver, delegate: action.delegate },
-            })
-            action.resolve(response)
-          })
-          .catch(action.reject)
-        break
-      case 'SUBMIT_SWAP':
+      case 'SUBMIT_SWAP_AUTHORIZE_SENDER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwap(action.order, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSender(action.authorizedSender, signer)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'swap',
-            parameters: { order: action.order },
+            name: 'authorizeSender',
+            parameters: { authorizedSender: action.authorizedSender },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_AUTHORIZE_SIGNER':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSigner(action.authorizedSigner, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swap',
+            name: 'authorizeSigner',
+            parameters: { authorizedSigner: action.authorizedSigner },
           })
           action.resolve(id)
         })
@@ -99,32 +66,111 @@ export default function swapMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'SUBMIT_SWAP_AUTHORIZE':
+      case 'SUBMIT_SWAP_REVOKE_SENDER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapAuthorize(action.delegate, action.expiry, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapRevokeSender(action.authorizedSender, signer)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'authorize',
-            parameters: { delegate: action.delegate, expiry: action.expiry },
+            name: 'revokeSender',
+            parameters: { authorizedSender: action.authorizedSender },
           })
           action.resolve(id)
         })
         break
-      case 'SUBMIT_SWAP_REVOKE':
+      case 'SUBMIT_SWAP_REVOKE_SIGNER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapRevoke(action.delegate, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapRevokeSigner(action.authorizedSigner, signer)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'revoke',
-            parameters: { delegate: action.delegate },
+            name: 'revokeSigner',
+            parameters: { authorizedSigner: action.authorizedSigner },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'FETCH_SWAP_SENDER_AUTHORIZATIONS':
+        contractFunctions
+          .getSwapSenderAuthorizations(action.sender, action.authorizedSender)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'senderAuthorizations',
+              timestamp: Date.now(),
+              parameters: { sender: action.sender, authorizedSender: action.authorizedSender },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_SWAP_SIGNER_AUTHORIZATIONS':
+        contractFunctions
+          .getSwapSignerAuthorizations(action.signer, action.authorizedSigner)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'signerAuthorizations',
+              timestamp: Date.now(),
+              parameters: { signer: action.signer, authorizedSigner: action.authorizedSigner },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_SWAP_SIGNER_MINIMUM_NONCE':
+        contractFunctions
+          .getSwapSignerMinimumNonce(action.signer)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'signerMinimumNonce',
+              timestamp: Date.now(),
+              parameters: { signer: action.signer },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_SWAP_SIGNER_NONCE_STATUS':
+        contractFunctions
+          .getSwapSignerNonceStatus(action.signer, action.nonce)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: response && response.toString ? response.toString() : response,
+              namespace: 'swap',
+              name: 'signerNonceStatus',
+              timestamp: Date.now(),
+              parameters: { signer: action.signer, nonce: action.nonce },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'SUBMIT_SWAP':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwap(action.order, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swap',
+            name: 'swap',
+            parameters: { order: action.order },
           })
           action.resolve(id)
         })

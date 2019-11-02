@@ -27,7 +27,7 @@ function parseEventLog(log, abiInterface) {
   const { name, signature, topic } = parsedLog
   return {
     ...{
-      address,
+      address: address.toLowerCase(),
       topics,
       data,
       blockNumber: ethers.utils.bigNumberify(blockNumber).toNumber(),
