@@ -1,70 +1,5 @@
 [
   {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "makerWallet",
-        "type": "address"
-      }
-    ],
-    "name": "makerMinimumNonce",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "makerWallet",
-        "type": "address"
-      },
-      {
-        "name": "nonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "makerOrderStatus",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes1"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "approver",
-        "type": "address"
-      },
-      {
-        "name": "delegate",
-        "type": "address"
-      }
-    ],
-    "name": "delegateApprovals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -75,61 +10,18 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "timestamp",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "name": "makerWallet",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "makerParam",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "makerToken",
+        "internalType": "address",
+        "name": "authorizerAddress",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "takerWallet",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "takerParam",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "takerToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "affiliateWallet",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "affiliateParam",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "affiliateToken",
+        "internalType": "address",
+        "name": "authorizedSender",
         "type": "address"
       }
     ],
-    "name": "Swap",
+    "name": "AuthorizeSender",
     "type": "event"
   },
   {
@@ -137,12 +29,33 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "authorizerAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "authorizedSigner",
+        "type": "address"
+      }
+    ],
+    "name": "AuthorizeSigner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
         "name": "nonce",
         "type": "uint256"
       },
       {
         "indexed": true,
-        "name": "makerWallet",
+        "internalType": "address",
+        "name": "signerWallet",
         "type": "address"
       }
     ],
@@ -154,12 +67,14 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
         "name": "nonce",
         "type": "uint256"
       },
       {
         "indexed": true,
-        "name": "makerWallet",
+        "internalType": "address",
+        "name": "signerWallet",
         "type": "address"
       }
     ],
@@ -171,21 +86,18 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "approver",
+        "internalType": "address",
+        "name": "authorizerAddress",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "delegate",
+        "internalType": "address",
+        "name": "revokedSender",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "expiry",
-        "type": "uint256"
       }
     ],
-    "name": "Authorize",
+    "name": "RevokeSender",
     "type": "event"
   },
   {
@@ -193,129 +105,103 @@
     "inputs": [
       {
         "indexed": true,
-        "name": "approver",
+        "internalType": "address",
+        "name": "authorizerAddress",
         "type": "address"
       },
       {
         "indexed": true,
-        "name": "delegate",
+        "internalType": "address",
+        "name": "revokedSigner",
         "type": "address"
       }
     ],
-    "name": "Revoke",
+    "name": "RevokeSigner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "signerWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "signerParam",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "signerToken",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "senderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "senderParam",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "senderToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "affiliateWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "affiliateParam",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "affiliateToken",
+        "type": "address"
+      }
+    ],
+    "name": "Swap",
     "type": "event"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "components": [
-          {
-            "name": "nonce",
-            "type": "uint256"
-          },
-          {
-            "name": "expiry",
-            "type": "uint256"
-          },
-          {
-            "components": [
-              {
-                "name": "wallet",
-                "type": "address"
-              },
-              {
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "name": "param",
-                "type": "uint256"
-              },
-              {
-                "name": "kind",
-                "type": "bytes4"
-              }
-            ],
-            "name": "maker",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "name": "wallet",
-                "type": "address"
-              },
-              {
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "name": "param",
-                "type": "uint256"
-              },
-              {
-                "name": "kind",
-                "type": "bytes4"
-              }
-            ],
-            "name": "taker",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "name": "wallet",
-                "type": "address"
-              },
-              {
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "name": "param",
-                "type": "uint256"
-              },
-              {
-                "name": "kind",
-                "type": "bytes4"
-              }
-            ],
-            "name": "affiliate",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "name": "signer",
-                "type": "address"
-              },
-              {
-                "name": "v",
-                "type": "uint8"
-              },
-              {
-                "name": "r",
-                "type": "bytes32"
-              },
-              {
-                "name": "s",
-                "type": "bytes32"
-              },
-              {
-                "name": "version",
-                "type": "bytes1"
-              }
-            ],
-            "name": "signature",
-            "type": "tuple"
-          }
-        ],
-        "name": "order",
-        "type": "tuple"
+        "internalType": "address",
+        "name": "authorizedSender",
+        "type": "address"
       }
     ],
-    "name": "swap",
+    "name": "authorizeSender",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -325,6 +211,22 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "address",
+        "name": "authorizedSigner",
+        "type": "address"
+      }
+    ],
+    "name": "authorizeSigner",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256[]",
         "name": "nonces",
         "type": "uint256[]"
       }
@@ -339,6 +241,7 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "uint256",
         "name": "minimumNonce",
         "type": "uint256"
       }
@@ -353,15 +256,12 @@
     "constant": false,
     "inputs": [
       {
-        "name": "delegate",
+        "internalType": "address",
+        "name": "authorizedSender",
         "type": "address"
-      },
-      {
-        "name": "expiry",
-        "type": "uint256"
       }
     ],
-    "name": "authorize",
+    "name": "revokeSender",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -371,11 +271,251 @@
     "constant": false,
     "inputs": [
       {
-        "name": "delegate",
+        "internalType": "address",
+        "name": "authorizedSigner",
         "type": "address"
       }
     ],
-    "name": "revoke",
+    "name": "revokeSigner",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "senderAuthorizations",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "signerAuthorizations",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "signerMinimumNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "signerNonceStatus",
+    "outputs": [
+      {
+        "internalType": "bytes1",
+        "name": "",
+        "type": "bytes1"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "nonce",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes4",
+                "name": "kind",
+                "type": "bytes4"
+              },
+              {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "param",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Types.Party",
+            "name": "signer",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes4",
+                "name": "kind",
+                "type": "bytes4"
+              },
+              {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "param",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Types.Party",
+            "name": "sender",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes4",
+                "name": "kind",
+                "type": "bytes4"
+              },
+              {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "param",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Types.Party",
+            "name": "affiliate",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "signatory",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes1",
+                "name": "version",
+                "type": "bytes1"
+              },
+              {
+                "internalType": "uint8",
+                "name": "v",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "r",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "s",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct Types.Signature",
+            "name": "signature",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Types.Order",
+        "name": "order",
+        "type": "tuple"
+      }
+    ],
+    "name": "swap",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

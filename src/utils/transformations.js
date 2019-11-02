@@ -45,23 +45,23 @@ function parseSwapParameters(parameters) {
   const [
     nonce,
     expiry,
+    makerKind,
     makerWallet,
     makerToken,
     makerParam,
-    makerKind,
+    takerKind,
     takerWallet,
     takerToken,
     takerParam,
-    takerKind,
     affiliateWallet,
     affiliateToken,
     affiliateParam,
     affiliateKind,
     signer,
+    version,
     v,
     r,
     s,
-    version,
   ] = order.split(',')
 
   return {

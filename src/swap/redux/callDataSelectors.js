@@ -4,20 +4,26 @@ import { createSelector } from 'reselect'
 
 const getCallData = state => state.callData
 
-export const getSwapMakerMinimumNonce = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'makerMinimumNonce', namespace: 'swap' })
+export const getSwapSenderAuthorizations = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'senderAuthorizations', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
-export const getSwapMakerOrderStatus = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'makerOrderStatus', namespace: 'swap' })
+export const getSwapSignerAuthorizations = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'signerAuthorizations', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
-export const getSwapDelegateApprovals = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'delegateApprovals', namespace: 'swap' })
+export const getSwapSignerMinimumNonce = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'signerMinimumNonce', namespace: 'swap' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
+export const getSwapSignerNonceStatus = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'signerNonceStatus', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })

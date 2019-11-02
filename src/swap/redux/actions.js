@@ -2,7 +2,7 @@ import abi from '../../abis/Swap.json'
 import { makePromiseAction } from '../../utils/redux'
 import { WRAPPER_CONTRACT_ADDRESS, INFINITE_EXPIRY, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
-import { fetchSwapDelegateApprovals, submitSwapAuthorize } from './contractFunctionActions'
+import { fetchSwapSenderAuthorizations, submitSwapAuthorizeSender } from './contractFunctionActions'
 import { approveToken } from '../../erc20/redux/actions'
 
 export const fillSwap = order => ({
@@ -23,14 +23,14 @@ export const approveTokenForSwap = tokenAddress => approveToken(tokenAddress, SW
 
 export const getEthWrapperApproval = () => (dispatch, getState) =>
   dispatch(
-    fetchSwapDelegateApprovals({
-      approver: getConnectedWalletAddress(getState()),
-      delegate: WRAPPER_CONTRACT_ADDRESS,
+    fetchSwapSenderAuthorizations({
+      sender: getConnectedWalletAddress(getState()),
+      authorizedSender: WRAPPER_CONTRACT_ADDRESS,
     }),
   )
 
 export const submitEthWrapperAuthorize = () =>
-  submitSwapAuthorize({
+  submitSwapAuthorizeSender({
     expiry: INFINITE_EXPIRY,
     delegate: WRAPPER_CONTRACT_ADDRESS,
   })
@@ -38,26 +38,26 @@ export const submitEthWrapperAuthorize = () =>
 export const trackSwapAllContracts = ({
   callback,
   nonce,
-  makerWallet,
-  takerWallet,
+  signerWallet,
+  senderWallet,
   fromBlock,
   backFillBlockCount,
 } = {}) => ({
   callback,
   abi,
   name: 'Swap',
-  params: { nonce, makerWallet, takerWallet },
+  params: { nonce, signerWallet, senderWallet },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
   namespace: 'swap',
 })
 
-export const trackSwapCancelAllContracts = ({ callback, nonce, makerWallet, fromBlock, backFillBlockCount } = {}) => ({
+export const trackSwapCancelAllContracts = ({ callback, nonce, signerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
   name: 'Cancel',
-  params: { nonce, makerWallet },
+  params: { nonce, signerWallet },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',

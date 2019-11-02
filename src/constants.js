@@ -6,7 +6,7 @@ const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
 const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
-const swap = require('./abis/Swap.json')
+const swap = require('./swap/abi.js')
 const swapLegacy = require('./abis/SwapLegacy.json')
 const wrapperABI = require('./abis/wrapper')
 const RetryProvider = require('./utils/retryProvider')
@@ -35,8 +35,8 @@ const NAME_MAPPING = {
 }
 
 const SWAP_CONTRACT_MAPPING = {
-  [MAIN_ID]: '0xd9eef94131305538cd601aee42e57c554c1c1c92',
-  [RINKEBY_ID]: '0x6f337ba064b0a92538a4afdcf0e60f50eeae0d5b',
+  [MAIN_ID]: '',
+  [RINKEBY_ID]: '0x3a42c0ff0e06cc312b093e82bbca79c751654a62',
 }
 
 const SWAP_LEGACY_CONTRACT_MAPPING = {
@@ -66,7 +66,7 @@ const SWAP_CONTRACT_ADDRESS = SWAP_CONTRACT_MAPPING[NETWORK]
 const SWAP_CONTRACT_DEPLOY_BLOCK = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return 5307773
+      return 5359808
     case MAIN_ID:
       return 8574958
     default:
