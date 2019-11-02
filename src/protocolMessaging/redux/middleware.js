@@ -496,7 +496,6 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    console.log(protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(store.getState()))
     return next(action)
   }
 }
