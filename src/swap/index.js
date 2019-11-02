@@ -9,11 +9,11 @@ const { SWAP_CONTRACT_ADDRESS, abis } = require('../constants')
 
 const removeFalsey = obj => _.pickBy(obj, _.identity)
 
-const fillOrderDefaults = ({ expiry, nonce, maker, taker, affiliate }) => ({
+const fillOrderDefaults = ({ expiry, nonce, signer, sender, affiliate }) => ({
   expiry: `${expiry}`,
   nonce: `${nonce}`,
-  signer: { ...constants.defaults.Party, ...removeFalsey(maker) },
-  sender: { ...constants.defaults.Party, ...removeFalsey(taker) },
+  signer: { ...constants.defaults.Party, ...removeFalsey(signer) },
+  sender: { ...constants.defaults.Party, ...removeFalsey(sender) },
   affiliate: { ...constants.defaults.Party, ...removeFalsey(affiliate) },
 })
 
@@ -42,7 +42,7 @@ async function swap(orderParams, signer) {
 
 async function signSwap(orderParams, signer) {
   // TODO: Add automatic ERC20 vs ERC721 type detection
-  const order = fillOrderDefaults(orderParams)
+  const order = fillOrderDefaults(mapNested20OrderTo22Order(orderParams))
   const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
