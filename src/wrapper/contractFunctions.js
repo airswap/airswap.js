@@ -6,14 +6,34 @@ const constants = require('../constants')
 function getWrapperContract(provider) {
   return new ethers.Contract(constants.WRAPPER_CONTRACT_ADDRESS, abi, provider)
 }
-function getWrapperWethContract() {
+function getWrapperContractPaused() {
   const contract = getWrapperContract(constants.httpProvider)
-  return contract.wethContract()
+  return contract.contractPaused()
 }
 
-function getWrapperSwapContract() {
+function getWrapperIsOwner() {
   const contract = getWrapperContract(constants.httpProvider)
-  return contract.swapContract()
+  return contract.isOwner()
+}
+
+function submitWrapperKillContract(recipient, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.killContract(recipient)
+}
+
+function getWrapperOwner() {
+  const contract = getWrapperContract(constants.httpProvider)
+  return contract.owner()
+}
+
+function submitWrapperRenounceOwnership(signer) {
+  const contract = getWrapperContract(signer)
+  return contract.renounceOwnership()
+}
+
+function submitWrapperSetPausedStatus(newStatus, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.setPausedStatus(newStatus)
 }
 
 function submitWrapperSwap(ethAmount, order, signer) {
@@ -21,4 +41,30 @@ function submitWrapperSwap(ethAmount, order, signer) {
   return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
-module.exports = { getWrapperWethContract, getWrapperSwapContract, submitWrapperSwap }
+function getWrapperSwapContract() {
+  const contract = getWrapperContract(constants.httpProvider)
+  return contract.swapContract()
+}
+
+function submitWrapperTransferOwnership(newOwner, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.transferOwnership(newOwner)
+}
+
+function getWrapperWethContract() {
+  const contract = getWrapperContract(constants.httpProvider)
+  return contract.wethContract()
+}
+
+module.exports = {
+  getWrapperContractPaused,
+  getWrapperIsOwner,
+  submitWrapperKillContract,
+  getWrapperOwner,
+  submitWrapperRenounceOwnership,
+  submitWrapperSetPausedStatus,
+  submitWrapperSwap,
+  getWrapperSwapContract,
+  submitWrapperTransferOwnership,
+  getWrapperWethContract,
+}
