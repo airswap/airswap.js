@@ -296,8 +296,9 @@ const makeGetBestOrder = createSelector(
         _.get(submittingApproveToken, bestOrder.takerToken, false)
       const wrapperDelegateApproval = _.find(
         swapAuthorizeSenderTransactions,
-        t => t.parameters.delegate === WRAPPER_CONTRACT_ADDRESS,
+        t => t.parameters.authorizedSender === WRAPPER_CONTRACT_ADDRESS,
       )
+      console.log(wrapperDelegateApproval)
       const miningWrapperDelegateApproval =
         _.get(wrapperDelegateApproval, 'mining', false) || _.get(wrapperDelegateApproval, 'submitting', false)
       const wrapperWethApproval = _.find(

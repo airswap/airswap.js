@@ -329,7 +329,7 @@ class Router {
         })
       } else if (makerAmount) {
         return this.getSenderSideOrder(makerAddress, {
-          makerParam: makerAmount,
+          signerParam: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
         })
@@ -468,7 +468,7 @@ class Router {
         })
       } else if (makerAmount) {
         return this.getSenderSideQuote(makerAddress, {
-          makerParam: makerAmount,
+          signerParam: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
         })
