@@ -1,6 +1,6 @@
 import abi from '../../abis/Swap.json'
 import { makePromiseAction } from '../../utils/redux'
-import { WRAPPER_CONTRACT_ADDRESS, INFINITE_EXPIRY, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
+import { WRAPPER_CONTRACT_ADDRESS, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { fetchSwapSenderAuthorizations, submitSwapAuthorizeSender } from './contractFunctionActions'
 import { approveToken } from '../../erc20/redux/actions'
@@ -31,8 +31,7 @@ export const getEthWrapperApproval = () => (dispatch, getState) =>
 
 export const submitEthWrapperAuthorize = () =>
   submitSwapAuthorizeSender({
-    expiry: INFINITE_EXPIRY,
-    delegate: WRAPPER_CONTRACT_ADDRESS,
+    authorizedSender: WRAPPER_CONTRACT_ADDRESS,
   })
 
 export const trackSwapAllContracts = ({

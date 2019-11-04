@@ -273,7 +273,7 @@ const makeGetBestOrder = createSelector(
     miningApproveToken,
     submittingApproveToken,
     ERC20ApproveTransactions,
-    swapAuthorizeTransactions,
+    swapAuthorizeSenderTransactions,
   ) => orders => {
     if (!orders.length || !isCurrentFrameFinishedQuerying) return undefined
     const sortedOrders = _.sortBy(orders, 'price')
@@ -295,7 +295,7 @@ const makeGetBestOrder = createSelector(
         _.get(miningApproveToken, bestOrder.takerToken, false) ||
         _.get(submittingApproveToken, bestOrder.takerToken, false)
       const wrapperDelegateApproval = _.find(
-        swapAuthorizeTransactions,
+        swapAuthorizeSenderTransactions,
         t => t.parameters.delegate === WRAPPER_CONTRACT_ADDRESS,
       )
       const miningWrapperDelegateApproval =
