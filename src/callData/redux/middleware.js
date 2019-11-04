@@ -8,12 +8,13 @@ export default function callData(store) {
       case 'TRANSACTION_LOG_EVENT':
         const { event, parameters } = action
         const eventName = event.name.toLowerCase()
-        if (eventName === 'authorize') {
+
+        if (eventName === 'authorizesender') {
           store.dispatch(
             fetchSwapSenderAuthorizations({
               // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
-              approver: event.values.approver.toLowerCase(),
-              delegate: event.values.delegate.toLowerCase(),
+              sender: event.values.authorizerAddress.toLowerCase(),
+              authorizedSender: event.values.authorizedSender.toLowerCase(),
             }),
           )
         }

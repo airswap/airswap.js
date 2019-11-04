@@ -407,7 +407,6 @@ function filterIntents(intents, query, queryContext) {
     if (specifiedMakerAddress && specifiedMakerAddress !== intent.address) {
       return false
     }
-
     // for 2.0 special cases (wrapper)
     if (intent.swapVersion === 2) {
       if (query.takerToken === ETH_ADDRESS) {
