@@ -44,8 +44,19 @@ function getSwapOrderId(orderParams) {
   if (!_.isObject(orderParams)) {
     return false
   }
+  let order = orderParams
 
-  const order = orderParams.maker ? orderParams : nest(orderParams)
+  if (order.makerToken || order.signerToken) {
+    // order is flat
+    order = nest(order)
+  }
+  // now order is nested
+  if (order.sender) {
+    // order is 2.2
+    order = mapNested22OrderTo20Order(order)
+  }
+
+  // now order is nested 2.2
 
   const {
     maker: { wallet },
@@ -54,10 +65,10 @@ function getSwapOrderId(orderParams) {
   return `${wallet}${nonce}`
 }
 
-function mapNested22OrderTo20Order(order) {
+function mapNested22OrderTo20Order(order, filter = false) {
   const { nonce, expiry, signer, maker, sender, taker, affiliate, signature, ...rest } = order
   return {
-    ...rest,
+    ...(filter ? {} : rest),
     nonce,
     expiry,
     maker: signer || maker,
@@ -67,10 +78,10 @@ function mapNested22OrderTo20Order(order) {
   }
 }
 
-function mapNested20OrderTo22Order(order) {
+function mapNested20OrderTo22Order(order, filter = false) {
   const { nonce, expiry, maker, signer, taker, sender, affiliate, signature, ...rest } = order
   return {
-    ...rest,
+    ...(filter ? {} : rest),
     nonce,
     expiry,
     signer: maker || signer,

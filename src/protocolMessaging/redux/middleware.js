@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import BigNumber from 'bignumber.js'
-import { flatten, nest } from '../../swap/utils'
+import { flatten, nest, mapNested20OrderTo22Order } from '../../swap/utils'
 import Router from '../index'
 import { getSigner } from '../../wallet/redux/actions'
 import { selectors as apiSelectors } from '../../api/redux'
@@ -384,9 +384,9 @@ async function fillFrameBestOrder(store) {
     protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
 
   if (bestOrder.swapVersion === 2) {
-    const bestSwap = nest(bestOrder)
+    const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
     if (baseAsset === 'ETH') {
-      const ethAmount = bestSwap.taker.token === WETH_CONTRACT_ADDRESS ? bestSwap.taker.param : '0'
+      const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.param : '0'
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {
       store.dispatch(submitSwap({ order: bestSwap }))
