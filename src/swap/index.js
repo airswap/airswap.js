@@ -63,7 +63,7 @@ async function signSwap(orderParams, signer) {
 }
 
 async function signSwapTypedData(orderParams, signer) {
-  const order = fillOrderDefaults(orderParams)
+  const order = fillOrderDefaults(mapNested20OrderTo22Order(orderParams))
 
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4

@@ -55,8 +55,9 @@ function getSwapOrderId(orderParams) {
 }
 
 function mapNested22OrderTo20Order(order) {
-  const { nonce, expiry, signer, maker, sender, taker, affiliate, signature } = order
+  const { nonce, expiry, signer, maker, sender, taker, affiliate, signature, ...rest } = order
   return {
+    ...rest,
     nonce,
     expiry,
     maker: signer || maker,
@@ -67,8 +68,9 @@ function mapNested22OrderTo20Order(order) {
 }
 
 function mapNested20OrderTo22Order(order) {
-  const { nonce, expiry, maker, signer, taker, sender, affiliate, signature } = order
+  const { nonce, expiry, maker, signer, taker, sender, affiliate, signature, ...rest } = order
   return {
+    ...rest,
     nonce,
     expiry,
     signer: maker || signer,
@@ -78,9 +80,122 @@ function mapNested20OrderTo22Order(order) {
   }
 }
 
-function mapNested22QuoteTo20Quote(quote) {
-  const { swap, signer, sender } = quote
+function mapFlat20OrderTo22Order(order) {
+  const {
+    nonce,
+    expiry,
+    signerWallet,
+    signerToken,
+    signerParam,
+    signerKind,
+    makerWallet,
+    makerToken,
+    makerParam,
+    makerKind,
+    senderWallet,
+    senderToken,
+    senderParam,
+    senderKind,
+    takerWallet,
+    takerToken,
+    takerParam,
+    takerKind,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+    affiliateKind,
+    signatureSigner,
+    signatureVersion,
+    signatureR,
+    signatureS,
+    signatureV,
+    ...rest
+  } = order
   return {
+    ...rest,
+    nonce,
+    expiry,
+    signerWallet: makerWallet || signerWallet,
+    signerToken: makerToken || signerToken,
+    signerParam: makerParam || signerParam,
+    signerKind: makerKind || signerKind,
+    senderWallet: takerWallet || senderWallet,
+    senderToken: takerToken || senderToken,
+    senderParam: takerParam || senderParam,
+    senderKind: takerKind || senderKind,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+    affiliateKind,
+    signatureSigner,
+    signatureVersion,
+    signatureR,
+    signatureS,
+    signatureV,
+    ...rest,
+  }
+}
+
+function mapFlat22OrderTo20Order(order) {
+  const {
+    nonce,
+    expiry,
+    signerWallet,
+    signerToken,
+    signerParam,
+    signerKind,
+    makerWallet,
+    makerToken,
+    makerParam,
+    makerKind,
+    senderWallet,
+    senderToken,
+    senderParam,
+    senderKind,
+    takerWallet,
+    takerToken,
+    takerParam,
+    takerKind,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+    affiliateKind,
+    signatureSigner,
+    signatureVersion,
+    signatureR,
+    signatureS,
+    signatureV,
+    ...rest
+  } = order
+  return {
+    ...rest,
+    nonce,
+    expiry,
+    makerWallet: signerWallet || makerWallet,
+    makerToken: signerToken || makerToken,
+    makerParam: signerParam || makerParam,
+    makerKind: signerKind || makerKind,
+    takerWallet: senderWallet || takerWallet,
+    takerToken: senderToken || takerToken,
+    takerParam: senderParam || takerParam,
+    takerKind: senderKind || takerKind,
+    affiliateWallet,
+    affiliateToken,
+    affiliateParam,
+    affiliateKind,
+    signatureSigner,
+    signatureVersion,
+    signatureR,
+    signatureS,
+    signatureV,
+    ...rest,
+  }
+}
+
+function mapNested22QuoteTo20Quote(quote) {
+  const { swap, signer, sender, ...rest } = quote
+  return {
+    ...rest,
     maker: signer,
     taker: sender,
     swap,
@@ -88,8 +203,9 @@ function mapNested22QuoteTo20Quote(quote) {
 }
 
 function mapNested20QuoteTo22Quote(quote) {
-  const { swap, maker, taker } = quote
+  const { swap, maker, taker, ...rest } = quote
   return {
+    ...rest,
     signer: maker,
     sender: taker,
     swap,
@@ -104,4 +220,6 @@ module.exports = {
   mapNested20OrderTo22Order,
   mapNested22QuoteTo20Quote,
   mapNested20QuoteTo22Quote,
+  mapFlat20OrderTo22Order,
+  mapFlat22OrderTo20Order,
 }
