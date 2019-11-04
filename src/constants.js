@@ -234,7 +234,8 @@ const DEFAULT_SERVER_URL = ENV_URL_SNIPPET ? `//connect${ENV_URL_SNIPPET}.airswa
 
 const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL || DEFAULT_SERVER_URL
 
-const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
+// const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
+const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET || '.production'}.airswap.io/`
 
 const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
