@@ -659,7 +659,15 @@ const getCurrentFrameStateSummaryProperties = createSelector(
       case 'bestAlternativeQuote':
         return currentFrameBestAlternativeQuote
       default:
-        return undefined
+        return (
+          currentFrameSelectedOrder ||
+          currentFrameBestOrder ||
+          currentFrameBestAlternativeOrder ||
+          currentFrameBestLowBalanceOrder ||
+          currentFrameBestQuote ||
+          currentFrameBestAlternativeQuote ||
+          undefined
+        )
     }
   },
 )
