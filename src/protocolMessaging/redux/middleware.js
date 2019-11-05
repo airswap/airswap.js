@@ -140,16 +140,23 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     console.log(e)
   }
 
-  const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
-  const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
+  const takerTokenBalance = _.get(
+    deltaBalancesSelectors.getConnectedBalances(store.getState()),
+    action.query.takerToken,
+  )
+  const adjustedTokenBalance =
+    action.query.takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
 
   if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
-    if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount)) {
+    if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount || maxQuote.takerParam)) {
       return store.dispatch(gotAlternativeQuoteResponse(maxQuote, action.stackId))
     } else if (quote) {
       return store.dispatch(gotQuoteResponse(quote, action.stackId))
     }
-  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount)) {
+  } else if (
+    quote &&
+    takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount || quote.takerParam)
+  ) {
     try {
       const lowBalanceResponse = await router.getOrder(makerAddress, {
         takerAmount: adjustedTokenBalance,
@@ -165,10 +172,10 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     }
   }
 
-  if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount)) {
+  if (maxQuote && BigNumber(takerAmount).gt(maxQuote.takerAmount || maxQuote.takerParam)) {
     try {
       const alternativeOrderResponse = await router.getOrder(makerAddress, {
-        takerAmount: maxQuote.takerAmount,
+        takerAmount: maxQuote.takerAmount || maxQuote.takerParam,
         makerToken,
         takerToken,
         swapVersion,
@@ -216,16 +223,23 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
     console.log(e)
   }
 
-  const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
-  const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
+  const takerTokenBalance = _.get(
+    deltaBalancesSelectors.getConnectedBalances(store.getState()),
+    action.query.takerToken,
+  )
+  const adjustedTokenBalance =
+    action.query.takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
 
   if (takerTokenBalanceIsZero(store, action.query.takerToken)) {
-    if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount)) {
+    if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount || maxQuote.makerParam)) {
       return store.dispatch(gotAlternativeQuoteResponse(maxQuote, action.stackId))
     } else if (quote) {
       return store.dispatch(gotQuoteResponse(quote, action.stackId))
     }
-  } else if (quote && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount)) {
+  } else if (
+    quote &&
+    takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, quote.takerAmount || quote.takerParam)
+  ) {
     try {
       const lowBalanceResponse = await router.getOrder(makerAddress, {
         takerAmount: adjustedTokenBalance,
@@ -242,12 +256,18 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
     }
   }
 
-  if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount)) {
+  if (maxQuote && BigNumber(makerAmount).gt(maxQuote.makerAmount || maxQuote.makerParam)) {
     // maker doesn't have as much as was requested
     try {
       let alternativeOrderResponse
       // taker doesn't have enough to fill maker's alternative max amount
-      if (takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, maxQuote.takerAmount)) {
+      if (
+        takerTokenBalanceIsLessThanTakerAmount(
+          store,
+          action.query.takerToken,
+          maxQuote.takerAmount || maxQuote.takerParam,
+        )
+      ) {
         alternativeOrderResponse = await router.getOrder(makerAddress, {
           takerAmount: adjustedTokenBalance,
           makerToken,
@@ -256,7 +276,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
         })
       } else {
         alternativeOrderResponse = await router.getOrder(makerAddress, {
-          makerAmount: maxQuote.makerAmount,
+          makerAmount: maxQuote.makerAmount || maxQuote.makerParam,
           makerToken,
           takerToken,
           swapVersion,
@@ -296,7 +316,8 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
 
   if (takerAmount && takerTokenBalanceIsLessThanTakerAmount(store, action.query.takerToken, takerAmount)) {
     const takerTokenBalance = _.get(deltaBalancesSelectors.getConnectedBalances(store.getState()), takerToken)
-    const adjustedTokenBalance = takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
+    const adjustedTokenBalance =
+      action.query.takerToken === ETH_ADDRESS ? `${Number(takerTokenBalance) * 0.9}` : takerTokenBalance // If takerToken is ETH, we leave 10% of their ETH balance to pay for gas
     try {
       const lowBalanceResponse = await router.getOrder(makerAddress, {
         takerAmount: adjustedTokenBalance,

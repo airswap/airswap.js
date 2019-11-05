@@ -155,7 +155,7 @@ function getTransactionDescription(
     const makerSide =
       takerToken.kind === 'ERC721'
         ? `${makerToken.symbol} #${order.makerParam} `
-        : `${order.takerAmountFormatted} ${makerToken.symbol}`
+        : `${order.makerAmountFormatted} ${makerToken.symbol}`
 
     return `Fill order for ${takerSide} for ${makerSide}`
   } else if (name === 'authorizeSender') {
