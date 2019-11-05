@@ -6,7 +6,7 @@ const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
 const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
-const swap = require('./swap/abi.js')
+const swap = require('./abiMapping/swap.js')
 const swapLegacy = require('./abis/SwapLegacy.json')
 const wrapperABI = require('./abis/wrapper')
 const RetryProvider = require('./utils/retryProvider')
@@ -99,6 +99,16 @@ const WRAPPER_CONTRACT_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
       return '0x8481a5c5d2c23c8d43a812ec8913f1aa4d739db9'
+    case MAIN_ID:
+      return ''
+    default:
+  }
+})(NETWORK)
+
+const INDEXER_CONTRACT_ADDRESS = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return '0x6299e178413d6b7903c365dda1d4f23e37868b25'
     case MAIN_ID:
       return ''
     default:
@@ -373,4 +383,5 @@ module.exports = {
   ALCHEMY_WEBSOCKET_URL,
   alchemyWeb3,
   alchemyWebsocketProvider,
+  INDEXER_CONTRACT_ADDRESS,
 }

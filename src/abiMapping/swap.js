@@ -1,11 +1,12 @@
 const _ = require('lodash')
-const abi = require('../abis/Swap')
+// const abi = require('../abis/Swap')
+const { abi } = require('@airswap/swap/build/contracts/Swap.json')
 
 const overwrites = [
   {
     inputs: [
       {
-        name: 'sender',
+        name: 'authorizerAddress',
       },
       {
         name: 'authorizedSender',
@@ -16,7 +17,7 @@ const overwrites = [
   {
     inputs: [
       {
-        name: 'signer',
+        name: 'authorizerAddress',
       },
       {
         name: 'authorizedSigner',

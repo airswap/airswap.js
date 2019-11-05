@@ -24,7 +24,7 @@ export const approveTokenForSwap = tokenAddress => approveToken(tokenAddress, SW
 export const getEthWrapperApproval = () => (dispatch, getState) =>
   dispatch(
     fetchSwapSenderAuthorizations({
-      sender: getConnectedWalletAddress(getState()),
+      authorizerAddress: getConnectedWalletAddress(getState()),
       authorizedSender: WRAPPER_CONTRACT_ADDRESS,
     }),
   )
