@@ -1,49 +1,19 @@
 // This file is generated code, edits will be overwritten
 const ethers = require('ethers')
-const abi = require('../swap/abi.js')
+const abi = require('../abiMapping/swap.js')
 const constants = require('../constants')
 
 function getSwapContract(provider) {
   return new ethers.Contract(constants.SWAP_CONTRACT_ADDRESS, abi, provider)
 }
-function submitSwapAuthorizeSender(authorizedSender, signer) {
-  const contract = getSwapContract(signer)
-  return contract.authorizeSender(authorizedSender)
-}
-
-function submitSwapAuthorizeSigner(authorizedSigner, signer) {
-  const contract = getSwapContract(signer)
-  return contract.authorizeSigner(authorizedSigner)
-}
-
-function submitSwapCancel(nonces, signer) {
-  const contract = getSwapContract(signer)
-  return contract.cancel(nonces)
-}
-
-function submitSwapInvalidate(minimumNonce, signer) {
-  const contract = getSwapContract(signer)
-  return contract.invalidate(minimumNonce)
-}
-
-function submitSwapRevokeSender(authorizedSender, signer) {
-  const contract = getSwapContract(signer)
-  return contract.revokeSender(authorizedSender)
-}
-
-function submitSwapRevokeSigner(authorizedSigner, signer) {
-  const contract = getSwapContract(signer)
-  return contract.revokeSigner(authorizedSigner)
-}
-
-function getSwapSenderAuthorizations(sender, authorizedSender) {
+function getSwapSenderAuthorizations(authorizerAddress, authorizedSender) {
   const contract = getSwapContract(constants.httpProvider)
-  return contract.senderAuthorizations(sender, authorizedSender)
+  return contract.senderAuthorizations(authorizerAddress, authorizedSender)
 }
 
-function getSwapSignerAuthorizations(signer, authorizedSigner) {
+function getSwapSignerAuthorizations(authorizerAddress, authorizedSigner) {
   const contract = getSwapContract(constants.httpProvider)
-  return contract.signerAuthorizations(signer, authorizedSigner)
+  return contract.signerAuthorizations(authorizerAddress, authorizedSigner)
 }
 
 function getSwapSignerMinimumNonce(signer) {
@@ -61,16 +31,46 @@ function submitSwap(order, signer) {
   return contract.swap(order)
 }
 
+function submitSwapCancel(nonces, signer) {
+  const contract = getSwapContract(signer)
+  return contract.cancel(nonces)
+}
+
+function submitSwapInvalidate(minimumNonce, signer) {
+  const contract = getSwapContract(signer)
+  return contract.invalidate(minimumNonce)
+}
+
+function submitSwapAuthorizeSender(authorizedSender, signer) {
+  const contract = getSwapContract(signer)
+  return contract.authorizeSender(authorizedSender)
+}
+
+function submitSwapAuthorizeSigner(authorizedSigner, signer) {
+  const contract = getSwapContract(signer)
+  return contract.authorizeSigner(authorizedSigner)
+}
+
+function submitSwapRevokeSender(authorizedSender, signer) {
+  const contract = getSwapContract(signer)
+  return contract.revokeSender(authorizedSender)
+}
+
+function submitSwapRevokeSigner(authorizedSigner, signer) {
+  const contract = getSwapContract(signer)
+  return contract.revokeSigner(authorizedSigner)
+}
+
 module.exports = {
-  submitSwapAuthorizeSender,
-  submitSwapAuthorizeSigner,
-  submitSwapCancel,
-  submitSwapInvalidate,
-  submitSwapRevokeSender,
-  submitSwapRevokeSigner,
   getSwapSenderAuthorizations,
   getSwapSignerAuthorizations,
   getSwapSignerMinimumNonce,
   getSwapSignerNonceStatus,
   submitSwap,
+  submitSwapCancel,
+  submitSwapInvalidate,
+  submitSwapAuthorizeSender,
+  submitSwapAuthorizeSigner,
+  submitSwapRevokeSender,
+  submitSwapRevokeSigner,
 }

@@ -1,6 +1,6 @@
 // This file is generated code, edits will be overwritten
 const eventTracker = require('../events/websocketEventTracker')
-const abi = require('../swap/abi.js')
+const abi = require('../abiMapping/swap.js')
 const constants = require('../constants')
 
 const trackSwapAuthorizeSender = ({

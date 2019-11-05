@@ -278,9 +278,14 @@ const modules = [
     contractKey: '',
   },
   {
-    abiLocation: 'swap/abi.js',
+    abiLocation: 'abiMapping/swap.js',
     namespace: 'swap',
     contractKey: 'SWAP_CONTRACT_ADDRESS',
+  },
+  {
+    abiLocation: 'abiMapping/indexer.js',
+    namespace: 'indexer',
+    contractKey: 'INDEXER_CONTRACT_ADDRESS',
   },
   {
     abiLocation: 'abis/deltaBalancesABI.json',
@@ -302,22 +307,23 @@ const modules = [
 modules.map(createSubmodules)
 
 function createSubmodules({ abiLocation, namespace, contractKey }) {
-  const events = getInterfaceEvents(require(`./${abiLocation}`))
-
-  writeFile(
-    `./${namespace.toLowerCase()}/contractFunctions.js`,
-    generateContractFunctions(abiLocation, contractKey, namespace),
-  )
-
-  if (events.length) {
-    writeFile(
-      `./${namespace.toLowerCase()}/eventListeners.js`,
-      generateEventListeners(abiLocation, contractKey, namespace),
-    )
-  }
-
   fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
     if (err) throw err
+
+    const events = getInterfaceEvents(require(`./${abiLocation}`))
+
+    writeFile(
+      `./${namespace.toLowerCase()}/contractFunctions.js`,
+      generateContractFunctions(abiLocation, contractKey, namespace),
+    )
+
+    if (events.length) {
+      writeFile(
+        `./${namespace.toLowerCase()}/eventListeners.js`,
+        generateEventListeners(abiLocation, contractKey, namespace),
+      )
+    }
+
     if (events.length) {
       writeFile(
         `./${namespace.toLowerCase()}/redux/eventTrackingSelectors.js`,

@@ -13,7 +13,7 @@ export default function callData(store) {
           store.dispatch(
             fetchSwapSenderAuthorizations({
               // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
-              sender: event.values.authorizerAddress.toLowerCase(),
+              authorizerAddress: event.values.authorizerAddress.toLowerCase(),
               authorizedSender: event.values.authorizedSender.toLowerCase(),
             }),
           )
