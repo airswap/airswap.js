@@ -1,4 +1,4 @@
-import abi from '../../abis/Swap.json'
+import abi from '../../abis/swap.json'
 import { makePromiseAction } from '../../utils/redux'
 import { WRAPPER_CONTRACT_ADDRESS, SWAP_LEGACY_CONTRACT_ADDRESS } from '../../constants'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'

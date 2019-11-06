@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const fs = require('fs')
 const { abi } = require('@airswap/swap/build/contracts/Swap.json')
+const constants = require('@airswap/swap/deploys.json')
 
 const overwrites = [
   {
@@ -53,6 +54,6 @@ const newAbi = _.map(abi, abiItem => {
   return newItem
 })
 
-fs.writeFileSync(`abis/Swap.json`, JSON.stringify(newAbi, null, 2))
+fs.writeFileSync(`abis/swap.json`, JSON.stringify(newAbi, null, 2))
 
-module.exports = newAbi
+module.exports = constants

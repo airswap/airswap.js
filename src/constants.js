@@ -6,10 +6,11 @@ const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
 const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
-const swap = require('./abis/Swap.json')
+const swap = require('./abis/swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
 const wrapperABI = require('./abis/wrapper')
 const RetryProvider = require('./utils/retryProvider')
+const contractConstants = require('./contractConstants.json')
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
@@ -34,11 +35,6 @@ const NAME_MAPPING = {
   [KOVAN_ID]: 'kovan',
 }
 
-const SWAP_CONTRACT_MAPPING = {
-  [MAIN_ID]: '',
-  [RINKEBY_ID]: '0x3a42c0ff0e06cc312b093e82bbca79c751654a62',
-}
-
 const SWAP_LEGACY_CONTRACT_MAPPING = {
   [MAIN_ID]: '0x8fd3121013a07c57f0d69646e86e7a4880b467b7',
   [RINKEBY_ID]: '0x07fc7c43d8168a2730344e5cf958aaecc3b42b41',
@@ -61,7 +57,7 @@ const NETWORK = (N => {
 
 const NETWORK_NAME = NAME_MAPPING[NETWORK]
 
-const SWAP_CONTRACT_ADDRESS = SWAP_CONTRACT_MAPPING[NETWORK]
+const SWAP_CONTRACT_ADDRESS = contractConstants.swap[String(NETWORK)]
 
 const SWAP_CONTRACT_DEPLOY_BLOCK = (N => {
   switch (N) {
@@ -95,25 +91,9 @@ const PGP_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const WRAPPER_CONTRACT_ADDRESS = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return '0x8481a5c5d2c23c8d43a812ec8913f1aa4d739db9'
-    case MAIN_ID:
-      return ''
-    default:
-  }
-})(NETWORK)
+const WRAPPER_CONTRACT_ADDRESS = contractConstants.wrapper[String(NETWORK)]
 
-const INDEXER_CONTRACT_ADDRESS = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return '0x6299e178413d6b7903c365dda1d4f23e37868b25'
-    case MAIN_ID:
-      return ''
-    default:
-  }
-})(NETWORK)
+const INDEXER_CONTRACT_ADDRESS = contractConstants.indexer[String(NETWORK)]
 
 const ENS_NULL_ADDRESS = '0x00000000000000000000000000000000'
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000'
