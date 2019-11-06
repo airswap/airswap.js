@@ -423,16 +423,16 @@ class Router {
   }
 
   getMaxQuote(makerAddress, params) {
-    const { makerToken, takerToken } = params
+    const { makerToken, takerToken, signerToken, senderToken } = params
     const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
     const swapVersion = params.swapVersion || 1
-    if (!takerToken || !makerToken) throw BadArgumentsError
+    if (!((takerToken && makerToken) || (signerToken && senderToken))) throw BadArgumentsError
 
     const query =
       swapVersion === 2
         ? {
-            signerToken: makerToken,
-            senderToken: takerToken,
+            signerToken: signerToken || makerToken,
+            senderToken: senderToken || takerToken,
           }
         : {
             makerToken,
