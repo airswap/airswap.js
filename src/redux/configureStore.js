@@ -1,10 +1,9 @@
 // @flow
 import _ from 'lodash'
-import * as ReselectTools from 'reselect-tools'
 import { applyMiddleware, createStore, combineReducers } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
-import queryString from 'query-string'
+import queryString from 'querystring'
 import * as storage from 'redux-storage'
 import createEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
@@ -50,6 +49,5 @@ export default function configureStore(
       console.log('Loaded state:', newState)
     })
     .catch(() => console.log('Failed to load previous state'))
-  ReselectTools.getStateWith(() => store.getState())
   return store
 }

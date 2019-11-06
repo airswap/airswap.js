@@ -193,106 +193,16 @@
     "type": "event"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "authorizedSender",
-        "type": "address"
-      }
-    ],
-    "name": "authorizeSender",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "authorizedSigner",
-        "type": "address"
-      }
-    ],
-    "name": "authorizeSigner",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "nonces",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "cancel",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "minimumNonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "invalidate",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "authorizedSender",
-        "type": "address"
-      }
-    ],
-    "name": "revokeSender",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "authorizedSigner",
-        "type": "address"
-      }
-    ],
-    "name": "revokeSigner",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "constant": true,
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "authorizerAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "authorizedSender",
         "type": "address"
       }
     ],
@@ -313,12 +223,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "authorizerAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "authorizedSigner",
         "type": "address"
       }
     ],
@@ -339,7 +249,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "signer",
         "type": "address"
       }
     ],
@@ -360,12 +270,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "signer",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "nonce",
         "type": "uint256"
       }
     ],
@@ -516,6 +426,96 @@
       }
     ],
     "name": "swap",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "nonces",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "cancel",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "minimumNonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "invalidate",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "authorizedSender",
+        "type": "address"
+      }
+    ],
+    "name": "authorizeSender",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "authorizedSigner",
+        "type": "address"
+      }
+    ],
+    "name": "authorizeSigner",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "authorizedSender",
+        "type": "address"
+      }
+    ],
+    "name": "revokeSender",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "authorizedSigner",
+        "type": "address"
+      }
+    ],
+    "name": "revokeSigner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

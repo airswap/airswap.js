@@ -1,6 +1,6 @@
 // This file is generated code, edits will be overwritten
 const eventTracker = require('../events/websocketEventTracker')
-const abi = require('../abiMapping/indexer.js')
+const abi = require('../abis/Indexer.json')
 const constants = require('../constants')
 
 const trackIndexerAddTokenToBlacklist = ({ callback, fromBlock, backFillBlockCount, parser } = {}) =>

@@ -1,5 +1,5 @@
 // This file is generated code, edits will be overwritten
-const abi = require('../../abiMapping/swap.js')
+const abi = require('../../abis/Swap.json')
 const constants = require('../../constants')
 
 export const trackSwapAuthorizeSender = ({
