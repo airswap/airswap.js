@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const _ = require('lodash')
+require('./abiMapping')
 const generateContractFunctions = require('./abiGen/generateContractFunctions')
 const generateEventListeners = require('./abiGen/generateEventListeners')
 
@@ -278,12 +279,12 @@ const modules = [
     contractKey: '',
   },
   {
-    abiLocation: 'abiMapping/swap.js',
+    abiLocation: 'abis/Swap.json',
     namespace: 'swap',
     contractKey: 'SWAP_CONTRACT_ADDRESS',
   },
   {
-    abiLocation: 'abiMapping/indexer.js',
+    abiLocation: 'abis/Indexer.json',
     namespace: 'indexer',
     contractKey: 'INDEXER_CONTRACT_ADDRESS',
   },
