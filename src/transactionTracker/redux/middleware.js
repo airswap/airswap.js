@@ -88,6 +88,7 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     store.dispatch(errorSubmitting({ id, namespace, name, error: formatErrorMessage(err) }))
     return
   }
+
   const transaction = stringBNValues(txn)
   const abis = getAbis(store.getState())
   transaction.parsedInput = getParsedInputFromTransaction(transaction, abis)
@@ -102,6 +103,7 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     store.dispatch(errorMining({ id, namespace, name, error: formatErrorMessage(err) }))
     return
   }
+
   const transactionReceipt = stringBNValues(minedTxn)
   if (transactionReceipt.status === 0) {
     const reason = await getRevertReason(transactionReceipt.transactionHash)

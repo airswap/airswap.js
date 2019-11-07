@@ -53,6 +53,7 @@ async function signSwap(orderParams, signer) {
     signature: {
       signatory: signerAddress.toLowerCase(), // Version 0x45: personal_sign
       version: constants.signatures.PERSONAL_SIGN,
+      validator: SWAP_CONTRACT_ADDRESS,
       r,
       s,
       v: `${v}`,
@@ -83,6 +84,7 @@ async function signSwapTypedData(orderParams, signer) {
     signature: {
       signatory: signerAddress.toLowerCase(),
       version: constants.signatures.SIGN_TYPED_DATA, // Version 0x01: signTypedData
+      validator: SWAP_CONTRACT_ADDRESS,
       r,
       s,
       v: `${v}`,

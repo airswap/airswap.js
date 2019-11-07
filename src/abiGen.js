@@ -279,12 +279,12 @@ const modules = [
     contractKey: '',
   },
   {
-    abiLocation: 'abis/Swap.json',
+    abiLocation: 'abis/swap.json',
     namespace: 'swap',
     contractKey: 'SWAP_CONTRACT_ADDRESS',
   },
   {
-    abiLocation: 'abis/Indexer.json',
+    abiLocation: 'abis/indexer.json',
     namespace: 'indexer',
     contractKey: 'INDEXER_CONTRACT_ADDRESS',
   },

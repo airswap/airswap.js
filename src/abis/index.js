@@ -4,7 +4,7 @@ const astAbi = require('./AirSwapToken_rinkeby.json')
 const wethAbi = require('./WETH_ABI.json')
 const deltaBalancesABI = require('./deltaBalancesABI.json')
 const pgpABI = require('./pgpABI.json')
-const swap = require('./Swap.json')
+const swap = require('./swap.json')
 const swapLegacy = require('./SwapLegacy.json')
 const wrapperABI = require('./wrapper')
 const {

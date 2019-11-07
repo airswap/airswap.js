@@ -19,6 +19,7 @@ const SignatureVersion = t.union([
 
 const Signature = t.struct({
   signatory: Address,
+  validator: Address,
   r: t.String,
   s: t.String,
   v: t.String,
