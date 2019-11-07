@@ -303,6 +303,16 @@ const modules = [
     namespace: 'ERC721',
     contractKey: '',
   },
+  {
+    abiLocation: 'abis/delegate.json',
+    namespace: 'delegate',
+    contractKey: '',
+  },
+  {
+    abiLocation: 'abis/delegateFactory.json',
+    namespace: 'delegateFactory',
+    contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
+  },
 ]
 
 modules.map(createSubmodules)
