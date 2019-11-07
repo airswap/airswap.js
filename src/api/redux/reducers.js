@@ -124,7 +124,6 @@ const getAvailableMarketsByBaseTokenAddress = createSelector(
       if (!token) return
       markets[token.address] = 0
     })
-
     intents.forEach(intent => {
       if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
         markets[intent.takerToken]++
