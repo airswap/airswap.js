@@ -88,8 +88,8 @@
   "dependencies": {
     "@airswap/order-utils": "^0.3.3",
     "@alch/alchemy-web3": "^0.1.4",
-    "@ledgerhq/hw-app-eth": "^4.55.0",
-    "@ledgerhq/hw-transport-u2f": "^4.55.0",
+    "@ledgerhq/hw-app-eth": "^4.73.4",
+    "@ledgerhq/hw-transport-u2f": "^4.73.4",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",
     "ethereumjs-wallet": "^0.6.3",
