@@ -12,7 +12,15 @@ function isAtomicAmount(str) {
 }
 
 const Address = t.refinement(t.String, isAddress)
+
+Address.getValidationErrorMessage = (value, path) =>
+  `"${value}" at "${path}" is invalid. A valid address format is lowercased, starts with 0x, and is 42 chars.`
+
 const AtomicAmount = t.refinement(t.String, isAtomicAmount)
+
+AtomicAmount.getValidationErrorMessage = (value, path) =>
+  `"${value}" at "${path}" is invalid. An atomic amount is a string, chars 0-9 (no decimal values).`
+
 const UUID = t.refinement(t.String, validator.isUUID)
 
 const stringLiteral = str => t.refinement(t.String, val => val === str)

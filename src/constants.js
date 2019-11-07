@@ -95,6 +95,8 @@ const WRAPPER_CONTRACT_ADDRESS = contractConstants.wrapper[String(NETWORK)]
 
 const INDEXER_CONTRACT_ADDRESS = contractConstants.indexer[String(NETWORK)]
 
+const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[String(NETWORK)]
+
 const ENS_NULL_ADDRESS = '0x00000000000000000000000000000000'
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -364,4 +366,5 @@ module.exports = {
   alchemyWeb3,
   alchemyWebsocketProvider,
   INDEXER_CONTRACT_ADDRESS,
+  DELEGATE_FACTORY_CONTRACT_ADDRESS,
 }
