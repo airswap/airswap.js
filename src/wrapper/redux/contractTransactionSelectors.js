@@ -5,14 +5,14 @@ import { selectors as transactionSelectors } from '../../transactionTracker/redu
 
 const { getTransactions } = transactionSelectors
 
-export const getWrapperKillContractTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'killContract', namespace: 'wrapper' })
+export const getWrapperRenounceOwnershipTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'renounceOwnership', namespace: 'wrapper' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
-export const getWrapperRenounceOwnershipTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'renounceOwnership', namespace: 'wrapper' })
+export const getWrapperTransferOwnershipTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'transferOwnership', namespace: 'wrapper' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
@@ -23,14 +23,14 @@ export const getWrapperSetPausedStatusTransactions = createSelector(getTransacti
   return sortedValues
 })
 
-export const getWrapperSwapTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'swap', namespace: 'wrapper' })
+export const getWrapperKillContractTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'killContract', namespace: 'wrapper' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
-export const getWrapperTransferOwnershipTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'transferOwnership', namespace: 'wrapper' })
+export const getWrapperSwapTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'swap', namespace: 'wrapper' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })

@@ -16,11 +16,6 @@ function getWrapperIsOwner() {
   return contract.isOwner()
 }
 
-function submitWrapperKillContract(recipient, signer) {
-  const contract = getWrapperContract(signer)
-  return contract.killContract(recipient)
-}
-
 function getWrapperOwner() {
   const contract = getWrapperContract(constants.httpProvider)
   return contract.owner()
@@ -29,16 +24,6 @@ function getWrapperOwner() {
 function submitWrapperRenounceOwnership(signer) {
   const contract = getWrapperContract(signer)
   return contract.renounceOwnership()
-}
-
-function submitWrapperSetPausedStatus(newStatus, signer) {
-  const contract = getWrapperContract(signer)
-  return contract.setPausedStatus(newStatus)
-}
-
-function submitWrapperSwap(ethAmount, order, signer) {
-  const contract = getWrapperContract(signer)
-  return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
 function getWrapperSwapContract() {
@@ -56,15 +41,30 @@ function getWrapperWethContract() {
   return contract.wethContract()
 }
 
+function submitWrapperSetPausedStatus(newStatus, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.setPausedStatus(newStatus)
+}
+
+function submitWrapperKillContract(recipient, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.killContract(recipient)
+}
+
+function submitWrapperSwap(ethAmount, order, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
+}
+
 module.exports = {
   getWrapperContractPaused,
   getWrapperIsOwner,
-  submitWrapperKillContract,
   getWrapperOwner,
   submitWrapperRenounceOwnership,
-  submitWrapperSetPausedStatus,
-  submitWrapperSwap,
   getWrapperSwapContract,
   submitWrapperTransferOwnership,
   getWrapperWethContract,
+  submitWrapperSetPausedStatus,
+  submitWrapperKillContract,
+  submitWrapperSwap,
 }

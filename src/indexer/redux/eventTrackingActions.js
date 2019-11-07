@@ -1,5 +1,5 @@
 // This file is generated code, edits will be overwritten
-const abi = require('../../abis/Indexer.json')
+const abi = require('../../abis/indexer.json')
 const constants = require('../../constants')
 
 export const trackIndexerAddTokenToBlacklist = ({ callback, fromBlock, backFillBlockCount } = {}) => ({

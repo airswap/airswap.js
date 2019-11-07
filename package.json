@@ -1,11 +1,14 @@
 {
   "name": "airswap.js",
-  "version": "0.1.60",
+  "version": "0.1.61",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@airswap/indexer": "^0.3.1",
+    "@airswap/swap": "^2.2.1",
+    "@airswap/wrapper": "^0.3.1",
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -38,9 +41,7 @@
     "md5": "^2.2.1",
     "npm-watch": "^0.6.0",
     "pre-commit": "^1.2.2",
-    "prettier": "1.13.5",
-    "@airswap/swap": "^2.2.1",
-    "@airswap/indexer": "^0.3.1"
+    "prettier": "1.13.5"
   },
   "watch": {
     "jsdoc": "src/**/*.js"
@@ -56,6 +57,7 @@
     "lint-staged": "lint-staged",
     "lint": "eslint src --ext .js,.jsx",
     "prettify": "prettier --write src/**/*.js",
+    "upgrade-contracts": "yarn upgrade @airswap/indexer @airswap/swap @airswap/wrapper --dev && yarn upgrade @airswap/order-utils",
     "generate": "cd src && node abiGen.js && yarn lint --fix"
   },
   "pre-commit": [
@@ -82,8 +84,6 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
-    "redux": "^3.7.2",
-    "reselect": "^3.0.1",
     "@airswap/order-utils": "^0.3.3",
     "@alch/alchemy-web3": "^0.1.4",
     "@ledgerhq/hw-app-eth": "^4.55.0",
@@ -106,11 +106,13 @@
     "openpgp": "^4.0.2",
     "querystring": "^0.2.0",
     "react-redux": "^5.1.1",
+    "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.7",
     "redux-storage": "^4.1.2",
     "redux-storage-decorator-filter": "^1.1.8",
     "redux-storage-engine-localstorage": "^1.1.4",
     "redux-thunk": "^2.3.0",
+    "reselect": "^3.0.1",
     "rlp": "^2.2.2",
     "tcomb": "^3.2.29",
     "tcomb-validation": "^3.4.1",

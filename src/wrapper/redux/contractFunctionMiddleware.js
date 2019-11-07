@@ -36,21 +36,6 @@ export default function wrapperMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'SUBMIT_WRAPPER_KILL_CONTRACT':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWrapperKillContract(action.recipient, signer)
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'wrapper',
-            name: 'killContract',
-            parameters: { recipient: action.recipient },
-          })
-          action.resolve(id)
-        })
-        break
       case 'FETCH_WRAPPER_OWNER':
         contractFunctions
           .getWrapperOwner()
@@ -76,36 +61,6 @@ export default function wrapperMiddleware(store) {
             id,
             namespace: 'wrapper',
             name: 'renounceOwnership',
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_WRAPPER_SET_PAUSED_STATUS':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWrapperSetPausedStatus(action.newStatus, signer)
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'wrapper',
-            name: 'setPausedStatus',
-            parameters: { newStatus: action.newStatus },
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_WRAPPER_SWAP':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWrapperSwap(action.ethAmount, action.order, signer)
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'wrapper',
-            name: 'swap',
-            parameters: { ethAmount: action.ethAmount, order: action.order },
           })
           action.resolve(id)
         })
@@ -154,6 +109,51 @@ export default function wrapperMiddleware(store) {
             action.resolve(response)
           })
           .catch(action.reject)
+        break
+      case 'SUBMIT_WRAPPER_SET_PAUSED_STATUS':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWrapperSetPausedStatus(action.newStatus, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'wrapper',
+            name: 'setPausedStatus',
+            parameters: { newStatus: action.newStatus },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_WRAPPER_KILL_CONTRACT':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWrapperKillContract(action.recipient, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'wrapper',
+            name: 'killContract',
+            parameters: { recipient: action.recipient },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_WRAPPER_SWAP':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWrapperSwap(action.ethAmount, action.order, signer)
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'wrapper',
+            name: 'swap',
+            parameters: { ethAmount: action.ethAmount, order: action.order },
+          })
+          action.resolve(id)
+        })
         break
       default:
     }
