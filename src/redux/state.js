@@ -23,6 +23,7 @@ import * as callData from '../callData/redux'
 import * as abis from '../abis/redux'
 import * as indexer from '../indexer/redux'
 import * as index from '../index/redux'
+import * as delegateFactory from '../delegateFactory/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -51,6 +52,7 @@ const state = {
   abis,
   indexer,
   index,
+  delegateFactory,
 }
 
 const middleware = _.flatten(_.map(_.values(state), 'middleware'))

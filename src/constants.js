@@ -8,6 +8,7 @@ const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/swap.json')
 const swapLegacy = require('./abis/SwapLegacy.json')
+const delegateFactoryABI = require('./abis/delegateFactory')
 const wrapperABI = require('./abis/wrapper')
 const RetryProvider = require('./utils/retryProvider')
 const contractConstants = require('./contractConstants.json')
@@ -106,6 +107,16 @@ const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
 })(NETWORK)
 
 const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[String(NETWORK)]
+
+const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 5388617
+    case MAIN_ID:
+      return null
+    default:
+  }
+})(NETWORK)
 
 const ENS_NULL_ADDRESS = '0x00000000000000000000000000000000'
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -217,6 +228,7 @@ const baseAbis = {
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
   [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
+  [DELEGATE_FACTORY_CONTRACT_ADDRESS]: delegateFactoryABI,
 }
 
 const abis = new Proxy(baseAbis, {
@@ -383,4 +395,5 @@ module.exports = {
   DELEGATE_FACTORY_CONTRACT_ADDRESS,
   INDEXER_CONTRACT_DEPLOY_BLOCK,
   INDEX_HEAD,
+  DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
 }

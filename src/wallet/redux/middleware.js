@@ -85,12 +85,14 @@ const startWalletAction = async (store, actionType, argParams) => {
     })
 
     let gasLimit = 300000 // a value left over frome trade-flow for all non-fills, has worked without issue
-    if (parsed.name === 'fill') {
+    if (parsed.name === 'fill' || parsed.name === 'swap') {
       const tokens = tokenSelectors.getTokens(state)
       const order = tokenSelectors.makeGetReadableOrder(state)(parameters)
 
       const { tokenAddress } = order
       gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 300000)
+    } else if (parsed.name === 'createDelegate') {
+      gasLimit = 3000000
     }
 
     const { gwei } = gasSelectors.getCurrentGasPriceSettings(state)
