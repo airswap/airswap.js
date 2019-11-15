@@ -95,6 +95,16 @@ const WRAPPER_CONTRACT_ADDRESS = contractConstants.wrapper[String(NETWORK)]
 
 const INDEXER_CONTRACT_ADDRESS = contractConstants.indexer[String(NETWORK)]
 
+const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 5359874
+    case MAIN_ID:
+      return null
+    default:
+  }
+})(NETWORK)
+
 const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[String(NETWORK)]
 
 const ENS_NULL_ADDRESS = '0x00000000000000000000000000000000'
@@ -307,6 +317,8 @@ const IS_INSTANT = process.env.REACT_APP_INSTANT
 
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
+const INDEX_HEAD = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
+
 module.exports = {
   ENV,
   MAIN_ID,
@@ -367,4 +379,6 @@ module.exports = {
   alchemyWebsocketProvider,
   INDEXER_CONTRACT_ADDRESS,
   DELEGATE_FACTORY_CONTRACT_ADDRESS,
+  INDEXER_CONTRACT_DEPLOY_BLOCK,
+  INDEX_HEAD,
 }

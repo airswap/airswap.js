@@ -22,11 +22,14 @@ import DebouncedQueue from '../../utils/debouncedQueue'
 
 let queue
 
-function processEventLogs(logs, store) {
+function processEventLogs(logs, store, callback) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
   const newEvents = _.filter(logs, event => event && !_.includes(eventIds, getEventId(event)))
   if (logs && logs.length && newEvents.length) {
     queue.push(newEvents)
+    if (callback) {
+      callback(newEvents)
+    }
   }
 }
 
@@ -148,7 +151,7 @@ export default function eventsMiddleware(store) {
       case 'TRACK_EVENT':
         eventTracker.trackEvent({
           ...action,
-          callback: logs => processEventLogs(logs, store),
+          callback: logs => processEventLogs(logs, store, action.callback),
         })
         break
       case 'ROUTER_CONNECTED':

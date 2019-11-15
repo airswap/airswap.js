@@ -14,6 +14,7 @@ import { getTransactionDescription, getTransactionTextStatus } from '../utils/tr
 import { Quote } from '../swap/tcomb'
 import { LegacyQuote } from '../swapLegacy/tcomb'
 import { getAbis } from '../abis/redux/reducers'
+import { getLocatorIntentsFormatted } from '../indexer/redux/selectors'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -223,4 +224,15 @@ const makeGetFormattedMaxOrderLiquidityByTokenPair = createSelector(
   },
 )
 
-export { getTransactionHistory, makeGetFormattedLiquidityByTokenPair, makeGetFormattedMaxOrderLiquidityByTokenPair }
+const getOnAndOffChainIntents = createSelector(
+  getLocatorIntentsFormatted,
+  apiSelectors.getConnectedIndexerIntents,
+  (intents, apiIntents) => [...intents, apiIntents],
+)
+
+export {
+  getTransactionHistory,
+  makeGetFormattedLiquidityByTokenPair,
+  makeGetFormattedMaxOrderLiquidityByTokenPair,
+  getOnAndOffChainIntents,
+}

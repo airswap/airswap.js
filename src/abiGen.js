@@ -309,6 +309,11 @@ const modules = [
     contractKey: '',
   },
   {
+    abiLocation: 'abis/index.json',
+    namespace: 'index',
+    contractKey: '',
+  },
+  {
     abiLocation: 'abis/delegateFactory.json',
     namespace: 'delegateFactory',
     contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
