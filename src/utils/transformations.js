@@ -94,7 +94,8 @@ function getParsedInputFromTransaction(transaction, abis = constantAbis) {
     return {}
   }
   const to = transaction.to.toLowerCase()
-  const contractInterface = new ethers.utils.Interface(abis[to])
+
+  const contractInterface = new ethers.utils.Interface(abis[to.toLowerCase()])
   const { data } = transaction
   const parsed = contractInterface.parseTransaction({ data })
   const name = parsed.name

@@ -6,6 +6,9 @@ const deltaBalancesABI = require('./deltaBalancesABI.json')
 const pgpABI = require('./pgpABI.json')
 const swap = require('./swap.json')
 const swapLegacy = require('./SwapLegacy.json')
+const delegateFactory = require('./delegateFactory.json')
+const indexer = require('./indexer.json')
+
 const wrapperABI = require('./wrapper')
 const {
   WETH_CONTRACT_ADDRESS,
@@ -15,6 +18,8 @@ const {
   DELTA_BALANCES_CONTRACT_ADDRESS,
   PGP_CONTRACT_ADDRESS,
   WRAPPER_CONTRACT_ADDRESS,
+  DELEGATE_FACTORY_CONTRACT_ADDRESS,
+  INDEXER_CONTRACT_ADDRESS,
 } = require('../constants')
 
 const abis = {
@@ -25,6 +30,8 @@ const abis = {
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
   [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
+  [DELEGATE_FACTORY_CONTRACT_ADDRESS]: delegateFactory,
+  [INDEXER_CONTRACT_ADDRESS]: indexer,
 }
 
 module.exports = { abis, erc20, erc721 }
