@@ -1,5 +1,8 @@
+const _ = require('lodash')
 const ethers = require('ethers')
 const WebSocket = require('isomorphic-ws')
+const jaysonBrowserClient = require('jayson/lib/client/browser')
+const fetch = require('node-fetch')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
 const { nest, flatten, mapNested22OrderTo20Order, mapNested22QuoteTo20Quote } = require('../swap/utils')
@@ -83,28 +86,64 @@ class Router {
   // Send a JSON-RPC `message` to a `receiver` address.
   // Optionally pass `resolve` and `reject` callbacks to handle a response
   call(receiver, message, resolve, reject) {
-    const messageString = JSON.stringify({
-      sender: this.address.toLowerCase(),
-      receiver,
-      message: JSON.stringify(message),
-      id: uuid(),
-    })
-    this.socket.send(messageString)
+    if (_.startsWith(receiver, 'http')) {
+      const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
 
-    // Set the promise resolvers and rejectors for this call
-    if (typeof resolve === 'function') {
-      this.RESOLVERS[message.id] = resolve
-    }
-    if (typeof reject === 'function') {
-      this.REJECTORS[message.id] = reject
-    }
+      const callServer = function(request, callback) {
+        const options = {
+          method: 'POST',
+          body: request,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
 
-    // Set a timeout for this call
-    this.TIMEOUTS[message.id] = setTimeout(() => {
-      if (typeof reject === 'function') {
-        reject({ message: `Request timed out. [${message.id}]`, code: -1 })
+        fetch(receiver, options)
+          .then(res => res.text())
+          .then(text => {
+            callback(null, text)
+          })
+          .catch(err => {
+            callback(err)
+          })
       }
-    }, this.timeout)
+
+      const client = jaysonBrowserClient(callServer)
+
+      client.request(message.method, message.params, (err, error, response) => {
+        clearTimeout(timeout)
+        if (err) {
+          reject(err)
+        } else if (error) {
+          reject(`Maker Error: ${error.message}`)
+        } else {
+          resolve(null, response)
+        }
+      })
+    } else {
+      const messageString = JSON.stringify({
+        sender: this.address.toLowerCase(),
+        receiver,
+        message: JSON.stringify(message),
+        id: uuid(),
+      })
+      this.socket.send(messageString)
+
+      // Set the promise resolvers and rejectors for this call
+      if (typeof resolve === 'function') {
+        this.RESOLVERS[message.id] = resolve
+      }
+      if (typeof reject === 'function') {
+        this.REJECTORS[message.id] = reject
+      }
+
+      // Set a timeout for this call
+      this.TIMEOUTS[message.id] = setTimeout(() => {
+        if (typeof reject === 'function') {
+          reject({ message: `Request timed out. [${message.id}]`, code: -1 })
+        }
+      }, this.timeout)
+    }
   }
 
   // WebSocket Interaction
@@ -275,7 +314,7 @@ class Router {
   }
 
   getSignerSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
@@ -287,14 +326,14 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideOrder', query)
-    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej)).then(order => ({
+    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej)).then(order => ({
       ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
   }
 
   getSenderSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
@@ -306,7 +345,7 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideOrder', query)
-    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej)).then(order => ({
+    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej)).then(order => ({
       ...typeSafeOrder(order),
       swap: { version: 2 },
     }))
@@ -316,7 +355,7 @@ class Router {
   // * `makerAddress`: `string` - the maker address to request an order from
   // * `params`: `Object` - order parameters. Must specify 1 of either `makerAmount` or `takerAmount`. Must also specify `makerToken` and `takerToken` addresses
   getOrder(makerAddress, params) {
-    const { makerAmount, takerAmount, makerToken, takerToken } = params
+    const { makerAmount, takerAmount, makerToken, takerToken, locator } = params
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
     const swapVersion = params.swapVersion || 1
 
@@ -326,12 +365,14 @@ class Router {
           senderParam: takerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
+          locator,
         })
       } else if (makerAmount) {
         return this.getSenderSideOrder(makerAddress, {
           signerParam: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
+          locator,
         })
       }
     }
@@ -377,7 +418,7 @@ class Router {
   }
 
   getSignerSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
@@ -388,7 +429,7 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
@@ -400,7 +441,7 @@ class Router {
   }
 
   getSenderSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam } = params
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
@@ -411,7 +452,7 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
@@ -423,7 +464,7 @@ class Router {
   }
 
   getMaxQuote(makerAddress, params) {
-    const { makerToken, takerToken, signerToken, senderToken } = params
+    const { makerToken, takerToken, signerToken, senderToken, locator } = params
     const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
     const swapVersion = params.swapVersion || 1
     if (!((takerToken && makerToken) || (signerToken && senderToken))) throw BadArgumentsError
@@ -440,7 +481,7 @@ class Router {
           }
 
     const payload = Router.makeRPC('getMaxQuote', query)
-    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
       if (swapVersion === 2) {
         const flatQuote = flatten(quote)
         const combinedQuote = {
@@ -455,7 +496,7 @@ class Router {
   }
 
   getQuote(makerAddress, params) {
-    const { makerAmount, takerAmount, makerToken, takerToken } = params
+    const { makerAmount, takerAmount, makerToken, takerToken, locator } = params
     const swapVersion = params.swapVersion || 1
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
 
@@ -465,12 +506,14 @@ class Router {
           senderParam: takerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
+          locator,
         })
       } else if (makerAmount) {
         return this.getSenderSideQuote(makerAddress, {
           signerParam: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
+          locator,
         })
       }
     }

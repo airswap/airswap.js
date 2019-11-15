@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { ERC20abi } from '../../constants'
+import { ERC20abi, IS_INSTANT, IS_EXPLORER } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
@@ -22,11 +22,14 @@ import DebouncedQueue from '../../utils/debouncedQueue'
 
 let queue
 
-function processEventLogs(logs, store) {
+function processEventLogs(logs, store, callback) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
   const newEvents = _.filter(logs, event => event && !_.includes(eventIds, getEventId(event)))
   if (logs && logs.length && newEvents.length) {
     queue.push(newEvents)
+    if (callback) {
+      callback(newEvents)
+    }
   }
 }
 
@@ -50,7 +53,7 @@ const initTrackWeth = store => {
 const initPollExchangeFills = _.once(store => {
   const callback = logs => processEventLogs(logs, store)
   // TODO: this if/else is temporary, these need to be dispatched from instant/airswap-trader repos respectively
-  if (process.env.REACT_APP_INSTANT) {
+  if (IS_INSTANT || IS_EXPLORER) {
     eventTracker.trackEvent(
       trackSwapLegacyFilled({
         callback,
@@ -148,7 +151,7 @@ export default function eventsMiddleware(store) {
       case 'TRACK_EVENT':
         eventTracker.trackEvent({
           ...action,
-          callback: logs => processEventLogs(logs, store),
+          callback: logs => processEventLogs(logs, store, action.callback),
         })
         break
       case 'ROUTER_CONNECTED':
