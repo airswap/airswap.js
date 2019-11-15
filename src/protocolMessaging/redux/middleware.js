@@ -532,7 +532,7 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    console.log(apiSelectors.getConnectedIndexerIntents(state), getLocatorIntentsFormatted(state))
+
     return next(action)
   }
 }
