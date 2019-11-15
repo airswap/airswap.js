@@ -5,6 +5,7 @@ const wrapper = require('./wrapper')
 const swap = require('./swap')
 const delegateFactory = require('./delegateFactory')
 require('./delegate') // delegate doesn't have a deployed contract addres, so no return valu
+require('./indexContract')
 
 const combined = _.mapValues(
   {

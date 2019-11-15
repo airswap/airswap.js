@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.62",
+  "version": "0.1.63",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -8,6 +8,7 @@
   "devDependencies": {
     "@airswap/delegate": "^0.4.1",
     "@airswap/delegate-factory": "^0.2.2",
+    "@airswap/index": "^0.3.1",
     "@airswap/indexer": "^0.3.1",
     "@airswap/swap": "^2.2.1",
     "@airswap/wrapper": "^0.3.1",
@@ -103,6 +104,7 @@
     "ismobilejs": "^0.5.1",
     "isomorphic-fetch": "^2.2.1",
     "isomorphic-ws": "^4.0.1",
+    "jayson": "^3.1.2",
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
     "openpgp": "^4.0.2",
