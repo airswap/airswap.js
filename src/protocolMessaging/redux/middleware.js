@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import { flatten, nest, mapNested20OrderTo22Order } from '../../swap/utils'
 import Router from '../index'
 import { getSigner } from '../../wallet/redux/actions'
-import { selectors as apiSelectors } from '../../api/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as protocolMessagingSelectors } from './reducers'
 import { newCheckoutFrame } from './actions'
@@ -21,7 +20,7 @@ import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { waitForState } from '../../utils/redux/waitForState'
-import { getLocatorIntentsFormatted } from '../../indexer/redux/selectors'
+import { getOnAndOffChainIntents } from '../../redux/combinedSelectors'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -501,7 +500,7 @@ export default function routerMiddleware(store) {
       case 'SET_CHECKOUT_FRAME_QUERY':
         trackMissingTokensForConnectedAddress(action.query, store)
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
-        const intents = [...apiSelectors.getConnectedIndexerIntents(state), ...getLocatorIntentsFormatted(state)]
+        const intents = getOnAndOffChainIntents(state)
         const filteredIntents = filterIntents(intents, action.query, action.queryContext)
         store.dispatch(gotIntents(filteredIntents, action.stackId))
         store.dispatch(getEthWrapperApproval())

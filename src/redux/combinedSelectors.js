@@ -227,7 +227,7 @@ const makeGetFormattedMaxOrderLiquidityByTokenPair = createSelector(
 const getOnAndOffChainIntents = createSelector(
   getLocatorIntentsFormatted,
   apiSelectors.getConnectedIndexerIntents,
-  (intents, apiIntents) => [...intents, apiIntents],
+  (intents, apiIntents) => [...intents, ...apiIntents],
 )
 
 export {
