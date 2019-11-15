@@ -1,6 +1,6 @@
 import * as api from '../index'
 import { makeMiddlewareHTTPFn } from '../../utils/redux/templates/http'
-import { IS_INSTANT } from '../../constants'
+import { IS_INSTANT, IS_EXPLORER } from '../../constants'
 import { selectors } from './reducers'
 import { addTrackedAddresses } from '../../deltaBalances/redux/actions'
 
@@ -30,7 +30,7 @@ export default function apiMiddleware(store) {
     }
 
     next(action)
-    if (IS_INSTANT) {
+    if (IS_INSTANT || IS_EXPLORER) {
       trackMakerTokens(selectors.getConnectedIndexerIntents(store.getState()))
     }
   }
