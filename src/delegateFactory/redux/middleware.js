@@ -1,5 +1,6 @@
 import { IS_INSTANT, DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 import { trackDelegateFactoryCreateDelegate } from './eventTrackingActions'
+import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 
 /*
  import { createDelegateForConnectedWallet } from 'airswap.js/src/delegateFactory/redux/actions'
@@ -17,15 +18,17 @@ import { trackDelegateFactoryCreateDelegate } from './eventTrackingActions'
 export default function delegateFactoryMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'REDUX_STORAGE_LOAD':
+      case 'CONNECTED_WALLET':
+        next(action)
         if (IS_INSTANT) {
+          const address = getConnectedWalletAddress(store.getState())
           store.dispatch(
             trackDelegateFactoryCreateDelegate({
               fromBlock: DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
+              delegateContractOwner: address,
             }),
           )
         }
-        next(action)
         break
       default:
         next(action)

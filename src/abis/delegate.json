@@ -119,7 +119,6 @@
     "name": "indexer",
     "outputs": [
       {
-        "internalType": "contract IIndexer",
         "name": "",
         "type": "address"
       }
