@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function wethMiddleware(store) {
@@ -12,7 +14,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'name',
               timestamp: Date.now(),
@@ -42,7 +44,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'totalSupply',
               timestamp: Date.now(),
@@ -92,7 +94,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'decimals',
               timestamp: Date.now(),
@@ -107,7 +109,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'balanceOf',
               timestamp: Date.now(),
@@ -123,7 +125,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'symbol',
               timestamp: Date.now(),
@@ -168,7 +170,7 @@ export default function wethMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'weth',
               name: 'allowance',
               timestamp: Date.now(),

@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function ERC20Middleware(store) {
@@ -12,7 +14,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'name',
               timestamp: Date.now(),
@@ -48,7 +50,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'totalSupply',
               timestamp: Date.now(),
@@ -90,7 +92,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'decimals',
               timestamp: Date.now(),
@@ -106,7 +108,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'version',
               timestamp: Date.now(),
@@ -122,7 +124,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'balanceOf',
               timestamp: Date.now(),
@@ -138,7 +140,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'symbol',
               timestamp: Date.now(),
@@ -200,7 +202,7 @@ export default function ERC20Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC20',
               name: 'allowance',
               timestamp: Date.now(),

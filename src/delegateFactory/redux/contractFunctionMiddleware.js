@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function delegateFactoryMiddleware(store) {
@@ -12,7 +14,7 @@ export default function delegateFactoryMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegateFactory',
               name: 'indexerContract',
               timestamp: Date.now(),
@@ -27,7 +29,7 @@ export default function delegateFactoryMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegateFactory',
               name: 'swapContract',
               timestamp: Date.now(),
@@ -64,7 +66,7 @@ export default function delegateFactoryMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegateFactory',
               name: 'has',
               timestamp: Date.now(),
