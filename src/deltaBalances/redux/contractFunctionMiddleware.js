@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function deltaBalancesMiddleware(store) {
@@ -12,7 +14,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'allBalancesForManyAccounts',
               timestamp: Date.now(),
@@ -28,7 +30,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'tokenBalance',
               timestamp: Date.now(),
@@ -58,7 +60,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'walletAllowances',
               timestamp: Date.now(),
@@ -88,7 +90,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'walletBalances',
               timestamp: Date.now(),
@@ -104,7 +106,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'tokenAllowance',
               timestamp: Date.now(),
@@ -139,7 +141,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'allWETHbalances',
               timestamp: Date.now(),
@@ -155,7 +157,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'allAllowancesForManyAccounts',
               timestamp: Date.now(),
@@ -171,7 +173,7 @@ export default function deltaBalancesMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'deltaBalances',
               name: 'admin',
               timestamp: Date.now(),

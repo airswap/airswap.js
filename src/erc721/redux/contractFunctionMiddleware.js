@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function ERC721Middleware(store) {
@@ -12,7 +14,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'supportsInterface',
               timestamp: Date.now(),
@@ -28,7 +30,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'balanceOf',
               timestamp: Date.now(),
@@ -44,7 +46,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'ownerOf',
               timestamp: Date.now(),
@@ -106,7 +108,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'getApproved',
               timestamp: Date.now(),
@@ -146,7 +148,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'isApprovedForAll',
               timestamp: Date.now(),
@@ -162,7 +164,7 @@ export default function ERC721Middleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'ERC721',
               name: 'kittyIndexToApproved',
               timestamp: Date.now(),

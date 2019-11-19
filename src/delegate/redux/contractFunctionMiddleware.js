@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function delegateMiddleware(store) {
@@ -12,7 +14,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'indexer',
               timestamp: Date.now(),
@@ -28,7 +30,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'isOwner',
               timestamp: Date.now(),
@@ -44,7 +46,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'owner',
               timestamp: Date.now(),
@@ -78,7 +80,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'rules',
               timestamp: Date.now(),
@@ -98,7 +100,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'swapContract',
               timestamp: Date.now(),
@@ -114,7 +116,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'tradeWallet',
               timestamp: Date.now(),
@@ -298,7 +300,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'getSignerSideQuote',
               timestamp: Date.now(),
@@ -324,7 +326,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'getSenderSideQuote',
               timestamp: Date.now(),
@@ -345,7 +347,7 @@ export default function delegateMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'delegate',
               name: 'getMaxQuote',
               timestamp: Date.now(),

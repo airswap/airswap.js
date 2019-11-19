@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function indexMiddleware(store) {
@@ -12,7 +14,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'entries',
               timestamp: Date.now(),
@@ -28,7 +30,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'isOwner',
               timestamp: Date.now(),
@@ -44,7 +46,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'length',
               timestamp: Date.now(),
@@ -60,7 +62,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'owner',
               timestamp: Date.now(),
@@ -155,7 +157,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'getScore',
               timestamp: Date.now(),
@@ -171,7 +173,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'getLocator',
               timestamp: Date.now(),
@@ -187,7 +189,7 @@ export default function indexMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'index',
               name: 'getLocators',
               timestamp: Date.now(),

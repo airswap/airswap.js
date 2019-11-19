@@ -152,7 +152,7 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
       caseContent = `contractFunctions.${functionName}(${functionArguments}).then(response => {
         store.dispatch({
          type: 'GOT_CALL_RESPONSE',
-         response: response && response.toString ? response.toString() : response,
+         response: resolveBigNumbers(response),
          namespace: '${eventNamespace}',
          name: '${name}',
          timestamp: Date.now(),${parameters}
@@ -189,6 +189,8 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
 
   return `
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 ${getSigner}  
 export default function ${eventNamespace}Middleware(store) {
   return next => action => {
