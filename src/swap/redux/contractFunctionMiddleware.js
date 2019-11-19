@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function swapMiddleware(store) {
@@ -12,7 +14,7 @@ export default function swapMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'swap',
               name: 'senderAuthorizations',
               timestamp: Date.now(),
@@ -28,7 +30,7 @@ export default function swapMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'swap',
               name: 'signerAuthorizations',
               timestamp: Date.now(),
@@ -44,7 +46,7 @@ export default function swapMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'swap',
               name: 'signerMinimumNonce',
               timestamp: Date.now(),
@@ -60,7 +62,7 @@ export default function swapMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'swap',
               name: 'signerNonceStatus',
               timestamp: Date.now(),

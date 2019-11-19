@@ -1,15 +1,12 @@
 {
   "indexer": {
-    "4": "0x6299e178413d6b7903c365dda1d4f23e37868b25",
-    "1": "0x2242a5f95d227b4e29b5d87a71def0c3ef2335db"
+    "4": "0x6299e178413d6b7903c365dda1d4f23e37868b25"
   },
   "swap": {
-    "4": "0x43f18d371f388abe40b9ddaac44d1c9c9185a078",
-    "1": "0x80f7e4f58dc7ad93609f956ac5065cab9de78067"
+    "4": "0x43f18d371f388abe40b9ddaac44d1c9c9185a078"
   },
   "wrapper": {
-    "4": "0x7aa243dff538fa83e28e80134d2415bc2cf72f53",
-    "1": "0x8d2155687441d234ae3ee33514d520d8cffd93c9"
+    "4": "0x7aa243dff538fa83e28e80134d2415bc2cf72f53"
   },
   "delegateFactory": {
     "4": "0x72d6e964816c3faaacfd4de76a3a5b037ed6aeba"

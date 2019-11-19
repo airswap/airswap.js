@@ -6,7 +6,6 @@ import { fetchSwapSenderAuthorizations } from '../../swap/redux/contractFunction
 import { trackDelegateSetRule, trackDelegateUnsetRule } from './eventTrackingActions'
 import { fetchDelegateRules } from './contractFunctionActions'
 import { DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK } from '../../constants'
-import { getDelegateRules } from './callDataSelectors'
 
 async function waitForDelegateContract(store) {
   return store.dispatch(
@@ -19,7 +18,6 @@ async function waitForDelegateContract(store) {
 
 export default function delegateMiddleware(store) {
   return next => action => {
-    console.log(getDelegateRules(store.getState()))
     switch (action.type) {
       case 'REDUX_STORAGE_LOAD':
         next(action)

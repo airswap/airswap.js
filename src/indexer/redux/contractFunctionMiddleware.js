@@ -1,6 +1,8 @@
 // This file is generated code, edits will be overwritten
 
 import * as contractFunctions from '../contractFunctions'
+import resolveBigNumbers from '../../utils/resolveBigNumbers'
+
 import { getSigner } from '../../wallet/redux/actions'
 
 export default function indexerMiddleware(store) {
@@ -12,7 +14,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'contractPaused',
               timestamp: Date.now(),
@@ -27,7 +29,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'indexes',
               timestamp: Date.now(),
@@ -43,7 +45,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'isOwner',
               timestamp: Date.now(),
@@ -58,7 +60,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'locatorWhitelist',
               timestamp: Date.now(),
@@ -73,7 +75,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'owner',
               timestamp: Date.now(),
@@ -102,7 +104,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'stakingToken',
               timestamp: Date.now(),
@@ -117,7 +119,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'tokenBlacklist',
               timestamp: Date.now(),
@@ -310,7 +312,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'getLocators',
               timestamp: Date.now(),
@@ -331,7 +333,7 @@ export default function indexerMiddleware(store) {
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
-              response: response && response.toString ? response.toString() : response,
+              response: resolveBigNumbers(response),
               namespace: 'indexer',
               name: 'getStakedAmount',
               timestamp: Date.now(),

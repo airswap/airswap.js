@@ -6,29 +6,29 @@ import { getContractPriceFromDisplayPrice } from '../utils' //eslint-disable-lin
 // EXAMPLE ACTION: sell 25 AST at 0.005 AST/WETH
 // TODO: These example actions should be removed after trade-bot is successfully hooked up
 export const exampleSetRuleAndIntent = () => dispatch =>
-  getContractPriceFromDisplayPrice({
-    senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
-    signerToken: '0xc778417e063141139fce010982780140aa0cd5ab',
-    senderAmountDisplayValue: '25',
-    priceDisplayValue: '0.005',
-  }).then(rule =>
-    dispatch(
-      submitConnectedDelegateSetRuleAndIntent({
+  dispatch(
+    submitConnectedDelegateSetRuleAndIntent({
+      senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
+      signerToken: '0xc778417e063141139fce010982780140aa0cd5ab',
+      rule: getContractPriceFromDisplayPrice({
         senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
         signerToken: '0xc778417e063141139fce010982780140aa0cd5ab',
-        rule,
-        amountToStake: '0',
+        senderAmountDisplayValue: '25',
+        priceDisplayValue: '0.005',
       }),
-    ),
+      amountToStake: '0',
+    }),
   )
 
-export const exampleSetRule = () => dispatch =>
-  getContractPriceFromDisplayPrice({
-    senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
-    signerToken: '0xc778417e063141139fce010982780140aa0cd5ab',
-    senderAmountDisplayValue: '25',
-    priceDisplayValue: '0.005',
-  }).then(rule => dispatch(submitConnectedDelegateSetRule(rule)))
+export const exampleSetRule = () =>
+  submitConnectedDelegateSetRule(
+    getContractPriceFromDisplayPrice({
+      senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
+      signerToken: '0xc778417e063141139fce010982780140aa0cd5ab',
+      senderAmountDisplayValue: '25',
+      priceDisplayValue: '0.005',
+    }),
+  )
 
 export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerToken, rule, amountToStake }) => (
   dispatch,

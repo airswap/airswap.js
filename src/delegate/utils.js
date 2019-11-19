@@ -20,13 +20,7 @@ const precision = str => (str.toString ? str.toString() : str)
  * MAPPING DISPLAY PRICES TO CONTRACT PRICES
  */
 
-async function getDisplayAmountsFromDisplayPrice({
-  senderToken,
-  signerToken,
-  senderAmountDisplayValue,
-  priceDisplayValue,
-}) {
-  await tokenMetadata.ready
+function getDisplayAmountsFromDisplayPrice({ senderToken, signerToken, senderAmountDisplayValue, priceDisplayValue }) {
   let signerAmountDisplayValue
 
   if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
@@ -40,13 +34,12 @@ async function getDisplayAmountsFromDisplayPrice({
   return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
 }
 
-async function getAtomicAmountsFromDisplayAmounts({
+function getAtomicAmountsFromDisplayAmounts({
   senderToken,
   signerToken,
   senderAmountDisplayValue,
   signerAmountDisplayValue,
 }) {
-  await tokenMetadata.ready
   const senderAmountAtomic = tokenMetadata.formatAtomicValueByToken({ address: senderToken }, senderAmountDisplayValue)
   const signerAmountAtomic = tokenMetadata.formatAtomicValueByToken(
     //eslint-disable-line
@@ -56,12 +49,12 @@ async function getAtomicAmountsFromDisplayAmounts({
   return { senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }
 }
 
-async function getAtomicPriceFromAtomicAmounts({ senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }) {
+function getAtomicPriceFromAtomicAmounts({ senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }) {
   const priceAtomic = bn(senderAmountAtomic).div(signerAmountAtomic)
   return { senderToken, signerToken, senderAmountAtomic, atomicPrice: priceAtomic.toString() }
 }
 
-async function getContractPriceFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
+function getContractPriceFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
   const [int, decimalVal] = atomicPrice.split('.') // eslint-disable-line'
   const decimal = decimalVal || ''
   let priceExp
@@ -89,24 +82,19 @@ async function getContractPriceFromAtomicPrice({ senderToken, signerToken, sende
   throw new Error('error calculating contract price')
 }
 
-async function getContractPriceFromDisplayPrice({
-  senderToken,
-  signerToken,
-  senderAmountDisplayValue,
-  priceDisplayValue,
-}) {
-  const displayAmounts = await getDisplayAmountsFromDisplayPrice({
+function getContractPriceFromDisplayPrice({ senderToken, signerToken, senderAmountDisplayValue, priceDisplayValue }) {
+  const displayAmounts = getDisplayAmountsFromDisplayPrice({
     senderToken,
     signerToken,
     senderAmountDisplayValue,
     priceDisplayValue,
   })
 
-  const atomicAmounts = await getAtomicAmountsFromDisplayAmounts(displayAmounts)
+  const atomicAmounts = getAtomicAmountsFromDisplayAmounts(displayAmounts)
 
-  const atomicPrice = await getAtomicPriceFromAtomicAmounts(atomicAmounts)
+  const atomicPrice = getAtomicPriceFromAtomicAmounts(atomicAmounts)
 
-  const contractPrice = await getContractPriceFromAtomicPrice(atomicPrice)
+  const contractPrice = getContractPriceFromAtomicPrice(atomicPrice)
 
   return contractPrice
 }
@@ -115,7 +103,7 @@ async function getContractPriceFromDisplayPrice({
  * MAPPING CONTRACT PRICES TO DISPLAY PRICES
  */
 
-async function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
+function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
   const atomicPrice = bn(priceCoef)
     .times(bn(10).pow(-Number(priceExp)))
     .toString()
@@ -126,7 +114,7 @@ async function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSe
   return { senderToken, signerToken, senderAmountAtomic: maxSenderAmount, atomicPrice }
 }
 
-async function getAtomicAmountsFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
+function getAtomicAmountsFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
   const signerAmountAtomic = bn(senderAmountAtomic)
     .div(atomicPrice)
     .toFixed(0)
@@ -134,26 +122,18 @@ async function getAtomicAmountsFromAtomicPrice({ senderToken, signerToken, sende
   return { senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }
 }
 
-async function getDisplayAmountsFromAtomicAmounts({
-  senderToken,
-  signerToken,
-  senderAmountAtomic,
-  signerAmountAtomic,
-}) {
-  await tokenMetadata.ready
+function getDisplayAmountsFromAtomicAmounts({ senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }) {
   const signerAmountDisplayValue = tokenMetadata.formatFullValueByToken({ address: signerToken }, signerAmountAtomic)
   const senderAmountDisplayValue = tokenMetadata.formatFullValueByToken({ address: senderToken }, senderAmountAtomic)
   return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
 }
 
-async function getDisplayPriceFromDisplayAmounts({
+function getDisplayPriceFromDisplayAmounts({
   senderToken,
   signerToken,
   senderAmountDisplayValue,
   signerAmountDisplayValue,
 }) {
-  await tokenMetadata.ready
-
   let priceDisplayValue
   if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
     priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
@@ -171,8 +151,8 @@ async function getDisplayPriceFromDisplayAmounts({
   }
 }
 
-async function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
-  const atomicPrice = await getAtomicPriceFromContractPrice({
+function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
+  const atomicPrice = getAtomicPriceFromContractPrice({
     senderToken,
     signerToken,
     maxSenderAmount,
@@ -180,11 +160,11 @@ async function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxS
     priceExp,
   })
 
-  const atomicAmounts = await getAtomicAmountsFromAtomicPrice(atomicPrice)
+  const atomicAmounts = getAtomicAmountsFromAtomicPrice(atomicPrice)
 
-  const displayAmounts = await getDisplayAmountsFromAtomicAmounts(atomicAmounts)
+  const displayAmounts = getDisplayAmountsFromAtomicAmounts(atomicAmounts)
 
-  const displayPrice = await getDisplayPriceFromDisplayAmounts(displayAmounts)
+  const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
 
   return displayPrice
 }
