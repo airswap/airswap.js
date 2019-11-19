@@ -20,6 +20,7 @@ const getFormattedDelegateRules = createSelector(
         ...getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }),
         senderSymbol: tokensSymbolsByAddress[senderToken],
         signerSymbol: tokensSymbolsByAddress[signerToken],
+        maxSenderAmount,
       }),
     )
   },
