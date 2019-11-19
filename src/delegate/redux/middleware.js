@@ -5,7 +5,6 @@ import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { fetchSwapSenderAuthorizations } from '../../swap/redux/contractFunctionActions'
 import { trackDelegateSetRule, trackDelegateUnsetRule } from './eventTrackingActions'
 import { fetchDelegateRules } from './contractFunctionActions'
-import { exampleSetRuleAndIntent } from './actions'
 import { DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 import { getDelegateRules } from './callDataSelectors'
 
@@ -29,8 +28,6 @@ export default function delegateMiddleware(store) {
           const state = store.getState()
           const walletAddress = getConnectedWalletAddress(state)
           const delegateAddress = getConnectedDelegateContract(state)
-
-          store.dispatch(exampleSetRuleAndIntent())
 
           // listen to swap sender authorizations for the delegate and update the state accordingly
           store.dispatch(

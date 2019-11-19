@@ -4,6 +4,7 @@ import { submitSwapAuthorizeSender } from '../../swap/redux/contractFunctionActi
 import { getContractPriceFromDisplayPrice } from '../utils' //eslint-disable-line
 
 // EXAMPLE ACTION: sell 25 AST at 0.005 AST/WETH
+// TODO: These example actions should be removed after trade-bot is successfully hooked up
 export const exampleSetRuleAndIntent = () => dispatch =>
   getContractPriceFromDisplayPrice({
     senderToken: '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8',
