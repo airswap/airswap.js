@@ -2,6 +2,19 @@ const bn = require('bignumber.js')
 const tokenMetadata = require('../tokens')
 const _ = require('lodash')
 
+bn.set({ DECIMAL_PLACES: 18, ROUNDING_MODE: 4 })
+
+// const PRECISION = 128
+// const precision = str => {
+//   const precisionStr = bn(str).toFixed(PRECISION)
+//   const cutInsignificantDecimals = precisionStr.slice(0, precisionStr.length - 32)
+//   const trimZero = _.trimEnd(cutInsignificantDecimals, '0') || '0'
+//   const trimDot = _.trimEnd(trimZero, '.')
+//   return trimDot
+// }
+
+const precision = str => (str.toString ? str.toString() : str)
+
 /** ***
  * MAPPING DISPLAY PRICES TO CONTRACT PRICES
  */
@@ -16,20 +29,14 @@ async function getDisplayAmountsFromDisplayPrice({
   let signerAmountDisplayValue
 
   if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-    signerAmountDisplayValue = tokenMetadata.formatSignificantDigitsByToken(
-      { address: signerToken },
-      Number(senderAmountDisplayValue) / Number(priceDisplayValue),
-    )
+    signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
   } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
-    signerAmountDisplayValue = tokenMetadata.formatSignificantDigitsByToken(
-      { address: signerToken },
-      Number(senderAmountDisplayValue) * Number(priceDisplayValue),
-    )
+    signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
   } else {
     throw new Error('unable to calculate baseAsset')
   }
 
-  return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue: `${signerAmountDisplayValue}` }
+  return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
 }
 
 async function getAtomicAmountsFromDisplayAmounts({
@@ -74,9 +81,10 @@ async function getContractPriceFromAtomicPrice({ senderToken, signerToken, sende
       signerToken,
       maxSenderAmount: senderAmountAtomic,
       priceCoef,
-      priceExp,
+      priceExp: `${priceExp}`,
     }
   }
+
   throw new Error('error calculating contract price')
 }
 
@@ -86,18 +94,20 @@ async function getContractPriceFromDisplayPrice({
   senderAmountDisplayValue,
   priceDisplayValue,
 }) {
-  return getContractPriceFromAtomicPrice(
-    await getAtomicPriceFromAtomicAmounts(
-      await getAtomicAmountsFromDisplayAmounts(
-        await getDisplayAmountsFromDisplayPrice({
-          senderToken,
-          signerToken,
-          senderAmountDisplayValue,
-          priceDisplayValue,
-        }),
-      ),
-    ),
-  )
+  const displayAmounts = await getDisplayAmountsFromDisplayPrice({
+    senderToken,
+    signerToken,
+    senderAmountDisplayValue,
+    priceDisplayValue,
+  })
+
+  const atomicAmounts = await getAtomicAmountsFromDisplayAmounts(displayAmounts)
+
+  const atomicPrice = await getAtomicPriceFromAtomicAmounts(atomicAmounts)
+
+  const contractPrice = await getContractPriceFromAtomicPrice(atomicPrice)
+
+  return contractPrice
 }
 
 /** ***
@@ -108,6 +118,10 @@ async function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSe
   const atomicPrice = bn(priceCoef)
     .times(bn(10).pow(-Number(priceExp)))
     .toString()
+
+  if (atomicPrice === '0') {
+    throw new Error('atomicPrice cannot be 0')
+  }
   return { senderToken, signerToken, senderAmountAtomic: maxSenderAmount, atomicPrice }
 }
 
@@ -125,8 +139,9 @@ async function getDisplayAmountsFromAtomicAmounts({
   senderAmountAtomic,
   signerAmountAtomic,
 }) {
-  const signerAmountDisplayValue = tokenMetadata.formatDisplayValueByToken({ address: signerToken }, signerAmountAtomic)
-  const senderAmountDisplayValue = tokenMetadata.formatDisplayValueByToken({ address: senderToken }, senderAmountAtomic)
+  await tokenMetadata.ready
+  const signerAmountDisplayValue = tokenMetadata.formatFullValueByToken({ address: signerToken }, signerAmountAtomic)
+  const senderAmountDisplayValue = tokenMetadata.formatFullValueByToken({ address: senderToken }, senderAmountAtomic)
   return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
 }
 
@@ -137,17 +152,12 @@ async function getDisplayPriceFromDisplayAmounts({
   signerAmountDisplayValue,
 }) {
   await tokenMetadata.ready
+
   let priceDisplayValue
   if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-    priceDisplayValue = tokenMetadata.formatSignificantDigitsByToken(
-      { address: signerToken },
-      Number(senderAmountDisplayValue) / Number(signerAmountDisplayValue),
-    )
+    priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
   } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
-    priceDisplayValue = tokenMetadata.formatSignificantDigitsByToken(
-      { address: signerToken },
-      Number(signerAmountDisplayValue) / Number(senderAmountDisplayValue),
-    )
+    priceDisplayValue = precision(bn(signerAmountDisplayValue).div(senderAmountDisplayValue), 24)
   } else {
     throw new Error('unable to calculate baseAsset')
   }
@@ -155,19 +165,27 @@ async function getDisplayPriceFromDisplayAmounts({
   return {
     senderToken,
     signerToken,
-    senderAmountDisplayValue: `${senderAmountDisplayValue}`,
-    priceDisplayValue: `${priceDisplayValue}`,
+    senderAmountDisplayValue,
+    priceDisplayValue,
   }
 }
 
 async function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
-  return getDisplayPriceFromDisplayAmounts(
-    await getDisplayAmountsFromAtomicAmounts(
-      await getAtomicAmountsFromAtomicPrice(
-        await getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }),
-      ),
-    ),
-  )
+  const atomicPrice = await getAtomicPriceFromContractPrice({
+    senderToken,
+    signerToken,
+    maxSenderAmount,
+    priceCoef,
+    priceExp,
+  })
+
+  const atomicAmounts = await getAtomicAmountsFromAtomicPrice(atomicPrice)
+
+  const displayAmounts = await getDisplayAmountsFromAtomicAmounts(atomicAmounts)
+
+  const displayPrice = await getDisplayPriceFromDisplayAmounts(displayAmounts)
+
+  return displayPrice
 }
 
 /** ***
