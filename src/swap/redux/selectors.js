@@ -35,7 +35,7 @@ export const getSwapDelegateApprovals = createSelector(callDataSelectors.getSwap
   _.reduce(
     approvals,
     (agg, val) => {
-      const approved = val.response === 'true'
+      const approved = val.response
       const { authorizerAddress, authorizedSender } = val.parameters
       return _.merge({}, agg, { [authorizerAddress]: { [authorizedSender]: approved } })
     },

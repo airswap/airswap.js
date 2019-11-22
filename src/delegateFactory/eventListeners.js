@@ -10,6 +10,8 @@ const trackDelegateFactoryCreateDelegate = ({
   fromBlock,
   backFillBlockCount,
   parser,
+  onFetchingHistoricalEvents,
+  onFetchedHistoricalEvents,
 } = {}) =>
   eventTracker.trackEvent({
     callback,
@@ -22,6 +24,8 @@ const trackDelegateFactoryCreateDelegate = ({
     topic: '0xff8beab89e8c26a642d622a3afc4cddcb2f06b35a39b280a98b1f7a465080115',
     namespace: 'delegateFactory',
     parser,
+    onFetchingHistoricalEvents,
+    onFetchedHistoricalEvents,
   })
 
 module.exports = { trackDelegateFactoryCreateDelegate }

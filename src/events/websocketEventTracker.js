@@ -2,7 +2,7 @@ const _ = require('lodash')
 const ethers = require('ethers')
 const blockTracker = require('../blockTracker')
 const { alchemyWeb3 } = require('../constants')
-const { parseEventLog } = require('./utils')
+const { parseEventLog, fetchLogs } = require('./utils')
 
 const { Interface } = ethers.utils
 
@@ -11,7 +11,6 @@ async function subscribe(contractAddress, abi, topic, fromBlock, callback, parse
     address: contractAddress || undefined,
     topics: topic,
   }
-
   const logParams = _.pickBy(
     {
       ...query,
@@ -46,19 +45,63 @@ class EventTracker {
     this.subscribeToEvent(event, latestBlockNumber)
     this.trackedEvents.push(event)
   }
+  // eslint-disable-next-line
+  fetchHistoricalLogs(
+    event,
+    contractAddress,
+    abi,
+    topics,
+    fromBlock,
+    toBlock,
+    callback,
+    onFetchingHistoricalEvents = _.identity,
+    onFetchedHistoricalEvents = _.identity,
+    parser,
+  ) {
+    onFetchingHistoricalEvents()
+    fetchLogs(contractAddress, abi, topics, fromBlock, toBlock, parser).then(events => {
+      onFetchedHistoricalEvents(events)
+      callback(events)
+    })
+  }
   subscribeToEvent(event, blockNumber) {
     //eslint-disable-line
-    const { contract, abi, callback, parser, backFillBlockCount, fromBlock } = event
+    const {
+      contract,
+      abi,
+      callback,
+      parser,
+      backFillBlockCount,
+      fromBlock,
+      onFetchingHistoricalEvents,
+      onFetchedHistoricalEvents,
+    } = event
     let fromBlockNumberOverride
+
     if (!_.isUndefined(fromBlock)) {
       fromBlockNumberOverride = Number(fromBlock)
     } else if (!_.isUndefined(backFillBlockCount)) {
       fromBlockNumberOverride = blockNumber - Number(backFillBlockCount)
-    } else {
-      fromBlockNumberOverride = blockNumber
     }
+
     const topics = this.getEventTopics(event)
-    subscribe(contract, abi, topics, fromBlockNumberOverride, callback, parser)
+
+    if (fromBlockNumberOverride) {
+      this.fetchHistoricalLogs(
+        event,
+        contract,
+        abi,
+        topics,
+        fromBlockNumberOverride,
+        blockNumber,
+        callback,
+        onFetchingHistoricalEvents,
+        onFetchedHistoricalEvents,
+        parser,
+      )
+    }
+
+    subscribe(contract, abi, topics, blockNumber, callback, parser)
   }
   // eslint-disable-next-line
   getEventTopics({ name, params: paramsInputs, abi }) {
