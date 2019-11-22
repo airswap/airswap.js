@@ -10,6 +10,8 @@ const trackWrapperOwnershipTransferred = ({
   fromBlock,
   backFillBlockCount,
   parser,
+  onFetchingHistoricalEvents,
+  onFetchedHistoricalEvents,
 } = {}) =>
   eventTracker.trackEvent({
     callback,
@@ -22,6 +24,8 @@ const trackWrapperOwnershipTransferred = ({
     topic: '0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0',
     namespace: 'wrapper',
     parser,
+    onFetchingHistoricalEvents,
+    onFetchedHistoricalEvents,
   })
 
 module.exports = { trackWrapperOwnershipTransferred }

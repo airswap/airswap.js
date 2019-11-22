@@ -1,9 +1,8 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
-import { ethers } from 'ethers'
 import { getIndexerGetLocators, getIndexerIndexes } from './callDataSelectors'
 import { getIndexSetLocatorEvents } from '../../index/redux/eventTrackingSelectors'
-import { mapOnChainIntentToOffChain } from '../utils'
+import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils'
 
 // TODO: this selector is a work in progress, currently being replaced by the selector below which is event driven instead of callData driven
 const getLocators = createSelector(getIndexerGetLocators, responses =>
@@ -47,7 +46,7 @@ const getLocatorIntents = createSelector(
         signerToken,
         index: address,
         identifier,
-        locator: ethers.utils.parseBytes32String(locator),
+        ...parseLocatorAndLocatorType(locator),
         score,
       }
     })

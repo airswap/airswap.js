@@ -11,7 +11,7 @@ function generateEventListeners(abiLocation, contractKey, eventNamespace = '') {
     const inputsOuterParam = filteredInputs.length ? `${filteredInputs.join(', ')}, ` : ''
     const functionName = `track${_.upperFirst(eventNamespace)}${name}`
 
-    return `const ${functionName} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount, parser } = {}) => eventTracker.trackEvent({
+    return `const ${functionName} = ({ callback, ${inputsOuterParam}fromBlock, backFillBlockCount, parser, onFetchingHistoricalEvents, onFetchedHistoricalEvents } = {}) => eventTracker.trackEvent({
   callback,${contractString}
   abi,
   name: '${name}',
@@ -21,6 +21,8 @@ function generateEventListeners(abiLocation, contractKey, eventNamespace = '') {
   topic: '${topic}',
   namespace: '${eventNamespace}',
   parser,
+  onFetchingHistoricalEvents,
+  onFetchedHistoricalEvents
 })
 `
   })
