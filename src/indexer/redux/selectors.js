@@ -46,7 +46,7 @@ const getLocatorIntents = createSelector(
         signerToken,
         index: address,
         identifier,
-        ...parseLocatorAndLocatorType(locator),
+        ...parseLocatorAndLocatorType(locator, identifier),
         score,
       }
     })

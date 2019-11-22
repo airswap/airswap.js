@@ -21,6 +21,7 @@ import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { waitForState } from '../../utils/redux/waitForState'
 import { getOnAndOffChainIntents } from '../../redux/combinedSelectors'
+import { getLocatorIntentsFormatted } from '../../indexer/redux/selectors'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -118,11 +119,24 @@ function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) 
 
 async function getOrderTakerTokenWithQuotes(intent, store, action) {
   const { takerAmount } = action.query
-  const { makerToken, takerToken, locator } = intent
+  const { makerToken, takerToken, locator, locatorType } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
-  const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken, swapVersion, locator })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion, locator })
+  const quotePromise = router.getQuote(makerAddress, {
+    takerAmount,
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, {
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
   let maxQuote
   let quote
 
@@ -164,6 +178,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
       const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
       store.dispatch(gotQuoteResponse(quote, action.stackId))
@@ -181,6 +196,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
       const alternativeOrder =
         swapVersion === 2 ? flatten(Order(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
@@ -198,6 +214,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
       takerToken,
       swapVersion,
       locator,
+      locatorType,
     })
     const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
     return store.dispatch(gotOrderResponse(order, action.stackId))
@@ -210,11 +227,24 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
 async function getOrderMakerTokenWithQuotes(intent, store, action) {
   const { makerAmount } = action.query
-  const { makerToken, takerToken, locator } = intent
+  const { makerToken, takerToken, locator, locatorType } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
-  const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken, swapVersion, locator })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion, locator })
+  const quotePromise = router.getQuote(makerAddress, {
+    makerAmount,
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, {
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
   let maxQuote
   let quote
   try {
@@ -255,6 +285,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
       const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
 
@@ -283,6 +314,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
           takerToken,
           swapVersion,
           locator,
+          locatorType,
         })
       } else {
         alternativeOrderResponse = await router.getOrder(makerAddress, {
@@ -291,6 +323,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
           takerToken,
           swapVersion,
           locator,
+          locatorType,
         })
       }
 
@@ -310,6 +343,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
       takerToken,
       swapVersion,
       locator,
+      locatorType,
     })
 
     const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
@@ -385,16 +419,6 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   }
 
   return null // If we can't get an order or quote, we simply resolve the async function with nothing
-}
-
-async function waitForConnectedTakerTokenBalance(takerToken, store) {
-  return store.dispatch(
-    waitForState({
-      selector: state =>
-        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
-      result: true,
-    }),
-  )
 }
 
 async function mapIntentFetchProtocolOrder(intent, store, action) {
@@ -479,6 +503,25 @@ function trackMissingTokensForConnectedAddress(query, store) {
   }
 }
 
+async function waitForConnectedTakerTokenBalance(takerToken, store) {
+  return store.dispatch(
+    waitForState({
+      selector: state =>
+        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
+      result: true,
+    }),
+  )
+}
+
+async function waitForOnChainIntents(store) {
+  return store.dispatch(
+    waitForState({
+      selector: state => !!getLocatorIntentsFormatted(state).length,
+      result: true,
+    }),
+  )
+}
+
 export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
@@ -498,23 +541,26 @@ export default function routerMiddleware(store) {
         }
         break
       case 'SET_CHECKOUT_FRAME_QUERY':
-        trackMissingTokensForConnectedAddress(action.query, store)
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
-        const intents = getOnAndOffChainIntents(state)
-        const filteredIntents = filterIntents(intents, action.query, action.queryContext)
-        store.dispatch(gotIntents(filteredIntents, action.stackId))
-        store.dispatch(getEthWrapperApproval())
-        store.dispatch(getWrapperWethTokenApproval())
+        waitForOnChainIntents(store).then(() => {
+          trackMissingTokensForConnectedAddress(action.query, store)
+          const intents = getOnAndOffChainIntents(store.getState())
+          const filteredIntents = filterIntents(intents, action.query, action.queryContext)
 
-        Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
-          store.dispatch(allIntentsResolved(action.stackId)),
-        )
-        // we don't start querying intents until connected takerToken balance is loaded
-        // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
-        waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
-          window.setTimeout(() => {
-            store.dispatch(frameTimeoutReached(action.stackId))
-          }, orderFetchingTimeout)
+          store.dispatch(gotIntents(filteredIntents, action.stackId))
+          store.dispatch(getEthWrapperApproval())
+          store.dispatch(getWrapperWethTokenApproval())
+
+          Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
+            store.dispatch(allIntentsResolved(action.stackId)),
+          )
+          // we don't start querying intents until connected takerToken balance is loaded
+          // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
+          waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+            window.setTimeout(() => {
+              store.dispatch(frameTimeoutReached(action.stackId))
+            }, orderFetchingTimeout)
+          })
         })
 
         break

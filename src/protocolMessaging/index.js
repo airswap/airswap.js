@@ -6,6 +6,7 @@ const fetch = require('node-fetch')
 const uuid = require('uuid4')
 const { REACT_APP_SERVER_URL, INDEXER_ADDRESS } = require('../constants')
 const { nest, flatten, mapNested22OrderTo20Order, mapNested22QuoteTo20Quote } = require('../swap/utils')
+const { routeDelegateCall } = require('../delegate')
 
 // Class Constructor
 // ----------------
@@ -85,8 +86,9 @@ class Router {
 
   // Send a JSON-RPC `message` to a `receiver` address.
   // Optionally pass `resolve` and `reject` callbacks to handle a response
-  call(receiver, message, resolve, reject) {
-    if (_.startsWith(receiver, 'http')) {
+  call(receiver, message, resolve, reject, locatorType) {
+    console.log('locatorType', receiver, locatorType)
+    if (locatorType && _.includes(['http', 'https'], locatorType)) {
       const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
 
       const callServer = function(request, callback) {
@@ -120,6 +122,14 @@ class Router {
           resolve(null, response)
         }
       })
+    } else if (locatorType === 'contract') {
+      routeDelegateCall(receiver, message)
+        .then(resp => {
+          resolve(resp)
+        })
+        .catch(e => {
+          reject(e)
+        })
     } else {
       const messageString = JSON.stringify({
         sender: this.address.toLowerCase(),
@@ -314,7 +324,7 @@ class Router {
   }
 
   getSignerSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator } = params
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator, locatorType } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
@@ -326,14 +336,16 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideOrder', query)
-    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej)).then(order => ({
-      ...typeSafeOrder(order),
-      swap: { version: 2 },
-    }))
+    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
+      order => ({
+        ...typeSafeOrder(order),
+        swap: { version: 2 },
+      }),
+    )
   }
 
   getSenderSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator } = params
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator, locatorType } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
@@ -345,17 +357,19 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideOrder', query)
-    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej)).then(order => ({
-      ...typeSafeOrder(order),
-      swap: { version: 2 },
-    }))
+    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
+      order => ({
+        ...typeSafeOrder(order),
+        swap: { version: 2 },
+      }),
+    )
   }
 
   // Make a JSON-RPC `getOrder` call on a maker and recieve back a signed order (or a timeout if they fail to respond)
   // * `makerAddress`: `string` - the maker address to request an order from
   // * `params`: `Object` - order parameters. Must specify 1 of either `makerAmount` or `takerAmount`. Must also specify `makerToken` and `takerToken` addresses
   getOrder(makerAddress, params) {
-    const { makerAmount, takerAmount, makerToken, takerToken, locator } = params
+    const { makerAmount, takerAmount, makerToken, takerToken, locator, locatorType } = params
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
     const swapVersion = params.swapVersion || 1
 
@@ -366,6 +380,7 @@ class Router {
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
+          locatorType,
         })
       } else if (makerAmount) {
         return this.getSenderSideOrder(makerAddress, {
@@ -373,6 +388,7 @@ class Router {
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
+          locatorType,
         })
       }
     }
@@ -418,7 +434,7 @@ class Router {
   }
 
   getSignerSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator } = params
+    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
@@ -429,7 +445,7 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
@@ -441,7 +457,7 @@ class Router {
   }
 
   getSenderSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator } = params
+    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
@@ -452,7 +468,7 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
@@ -464,7 +480,7 @@ class Router {
   }
 
   getMaxQuote(makerAddress, params) {
-    const { makerToken, takerToken, signerToken, senderToken, locator } = params
+    const { makerToken, takerToken, signerToken, senderToken, locator, locatorType } = params
     const BadArgumentsError = new Error('bad arguments passed to getMaxQuote')
     const swapVersion = params.swapVersion || 1
     if (!((takerToken && makerToken) || (signerToken && senderToken))) throw BadArgumentsError
@@ -481,7 +497,7 @@ class Router {
           }
 
     const payload = Router.makeRPC('getMaxQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej)).then(quote => {
+    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
       if (swapVersion === 2) {
         const flatQuote = flatten(quote)
         const combinedQuote = {
@@ -496,7 +512,7 @@ class Router {
   }
 
   getQuote(makerAddress, params) {
-    const { makerAmount, takerAmount, makerToken, takerToken, locator } = params
+    const { makerAmount, takerAmount, makerToken, takerToken, locator, locatorType } = params
     const swapVersion = params.swapVersion || 1
     const BadArgumentsError = new Error('bad arguments passed to getOrder')
 
@@ -507,6 +523,7 @@ class Router {
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
+          locatorType,
         })
       } else if (makerAmount) {
         return this.getSenderSideQuote(makerAddress, {
@@ -514,6 +531,7 @@ class Router {
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
+          locatorType,
         })
       }
     }

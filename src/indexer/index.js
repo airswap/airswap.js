@@ -6,59 +6,70 @@ const { parseLocatorAndLocatorType } = require('./utils')
 const { INDEXER_CONTRACT_DEPLOY_BLOCK } = require('../constants')
 
 class Indexer {
-  constructor({ onIndexAdded, onLocatorAdded, cursorLimit, onReadyForQuery } = {}) {
-    this.cursorLimit = cursorLimit || 100
+  constructor({ onIndexAdded, onLocatorAdded } = {}) {
     this.indexes = []
     this.locators = []
+    this.indexMapping = {}
     this.onIndexAdded = onIndexAdded || _.identity
     this.onLocatorAdded = onLocatorAdded || _.identity
-    this.onReadyForQuery = onReadyForQuery || _.identity
-    trackIndexerCreateIndex({
-      callback: events => this.addIndexesFromEvents(events),
-      fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
-      onFetchedHistoricalEvents: events => this.addIndexesFromEvents(events, true),
-    })
-    trackIndexSetLocator({
-      callback: events => this.addLocatorFromEvents(events),
-      fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
-      onFetchedHistoricalEvents: events => this.addLocatorFromEvents(events, true),
-    })
+    const initialIndexLoad = new Promise(resolve =>
+      trackIndexerCreateIndex({
+        callback: async events => {
+          await this.addIndexesFromEvents(events)
+          resolve()
+        },
+        fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
+      }),
+    )
+    const initialLocatorLoad = new Promise(resolve =>
+      trackIndexSetLocator({
+        callback: async events => {
+          this.addLocatorFromEvents(events)
+          resolve()
+        },
+        fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
+      }),
+    )
+    this.ready = Promise.all([initialIndexLoad, initialLocatorLoad])
   }
-  async addIndexesFromEvents(events, initialLoad) {
+  async addIndexesFromEvents(events) {
     const indexes = events.map(({ values }) => values)
     const indexAddresses = await Promise.all(
       indexes.map(index =>
         getIndexerIndexes(index.signerToken, index.senderToken).then(address => address.toLowerCase()),
       ),
     )
-    this.indexMapping = _.zipObject(indexes, indexAddresses)
+    this.indexMapping = _.zipObject(indexAddresses, indexes)
     indexes.forEach(index => {
-      this.onIndexAdded(index, initialLoad)
-      // this.getLocatorsForIndex(index, initialLoad)
+      this.onIndexAdded(index)
     })
     this.indexes = [...this.indexes, ...indexes]
+    return this.indexes
   }
-  addLocatorFromEvents(events, initialLoad) {
-    const locators = events.map(({ values, address }) => ({
-      ...values,
-      ...parseLocatorAndLocatorType(values.locator),
-      index: address.toLowerCase(),
-    }))
+  async addLocatorFromEvents(events) {
+    const locators = events.map(({ values, address }) => {
+      const index = address.toLowerCase()
+      return {
+        ...values,
+        ...parseLocatorAndLocatorType(values.locator, values.identifier),
+        index,
+      }
+    })
     locators.forEach(locator => {
       this.onLocatorAdded(locator)
-      // this.getLocatorsForIndex(index, initialLoad)
     })
-    this.locators = [...this.locators, ...locators]
-    if (initialLoad) {
-      this.onReadyForQuery(this.indexes, this.locators)
-    }
+    this.locators = _.sortBy([...this.locators, ...locators], 'score').reverse()
+    return this.locators
+  }
+  getIntents() {
+    return this.locators.map(locator => ({
+      ...locator,
+      ...this.indexMapping[locator.index],
+    }))
   }
 }
 // TODO: remove this after active development is complete
-// const i = new Indexer({
-//   // onIndexAdded: index => console.log('got index', index),
-//   // onLocatorAdded: locator => console.log('got locator', locator),
-//   onReadyForQuery: (indexes, locators) => console.log(indexes, locators),
-// })
+// const i = new Indexer()
+// i.ready.then(() => console.log(_.filter(i.getIntents(), { locatorType: 'contract' })))
 
 module.exports = Indexer
