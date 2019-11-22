@@ -9,7 +9,6 @@ export const getConnectedDelegateContract = createSelector(
     if (events.length) {
       let contract
       events.forEach(event => {
-        console.log(event.values)
         const {
           values: { delegateContract, delegateContractOwner, delegateTradeWallet },
         } = event

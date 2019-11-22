@@ -93,6 +93,8 @@ const startWalletAction = async (store, actionType, argParams) => {
       gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 300000)
     } else if (parsed.name === 'createDelegate') {
       gasLimit = 3000000
+    } else if (parsed.name === 'createIndex') {
+      gasLimit = 1500000
     }
 
     const { gwei } = gasSelectors.getCurrentGasPriceSettings(state)
