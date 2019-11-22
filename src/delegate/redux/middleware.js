@@ -18,7 +18,6 @@ async function waitForDelegateContract(store) {
 
 export default function delegateMiddleware(store) {
   return next => action => {
-    // console.log(JSON.stringify(getDelegateRules(store.getState()), null, 2))
     switch (action.type) {
       case 'REDUX_STORAGE_LOAD':
         next(action)
