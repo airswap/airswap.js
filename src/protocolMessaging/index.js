@@ -27,15 +27,18 @@ function typeSafeOrder({ nonce, expiry, signature, ...rest }, locatorType) {
     return mapNested22QuoteTo20Quote(rest)
   }
 
-  return mapNested22OrderTo20Order({
-    ...rest,
-    signature: {
-      ...signature,
-      v: `${signature.v}`,
+  return mapNested22OrderTo20Order(
+    {
+      ...rest,
+      signature: {
+        ...signature,
+        v: `${signature.v}`,
+      },
+      nonce: `${nonce}`,
+      expiry: `${expiry}`,
     },
-    nonce: `${nonce}`,
-    expiry: `${expiry}`,
-  })
+    true,
+  )
 }
 
 class Router {
@@ -439,14 +442,12 @@ class Router {
   }
 
   getSignerSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator, locatorType } = params
+    const { signerToken, senderToken, senderParam, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
       senderToken,
       senderParam,
-      affiliateToken,
-      affiliateParam,
     })
 
     const payload = Router.makeRPC('getSignerSideQuote', query)
@@ -463,14 +464,12 @@ class Router {
   }
 
   getSenderSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator, locatorType } = params
+    const { signerToken, senderToken, signerParam, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
       senderToken,
       signerParam,
-      affiliateToken,
-      affiliateParam,
     })
 
     const payload = Router.makeRPC('getSenderSideQuote', query)

@@ -34,7 +34,7 @@ const Order = t.struct({
   affiliate: Party,
   signature: Signature,
   swap: t.maybe(t.struct({ version: t.Number })),
-  locator: t.maybe(t.struct({ type: t.String })),
+  locator: t.maybe(t.Object),
 })
 
 const FlatOrder = t.Object
@@ -50,7 +50,7 @@ const Quote = t.struct({
   maker: QuoteParty,
   taker: QuoteParty,
   swap: t.maybe(t.struct({ version: t.Number })),
-  locator: t.maybe(t.struct({ type: t.String })),
+  locator: t.maybe(t.Object),
 })
 
 const FlatQuote = t.Object

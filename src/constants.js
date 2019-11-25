@@ -13,6 +13,8 @@ const wrapperABI = require('./abis/wrapper')
 const RetryProvider = require('./utils/retryProvider')
 const contractConstants = require('./contractConstants.json')
 
+const JEST_IS_TESTING = process.env.JEST_WORKER_ID !== undefined
+
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
   process.env.REACT_APP_SERVER_ENV ||
@@ -209,14 +211,14 @@ const NODESMITH_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const alchemyWeb3 = createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
 const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 // alchemy provider has built in retry
 // https://github.com/alchemyplatform/alchemy-web3
-const alchemyWebsocketProvider = new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
+const alchemyWebsocketProvider = JEST_IS_TESTING ? null : new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
