@@ -543,24 +543,27 @@ export default function routerMiddleware(store) {
       case 'SET_CHECKOUT_FRAME_QUERY':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
         waitForOnChainIntents(store).then(() => {
-          trackMissingTokensForConnectedAddress(action.query, store)
-          const intents = getOnAndOffChainIntents(store.getState())
-          const filteredIntents = filterIntents(intents, action.query, action.queryContext)
+          // THERE IS CURRENTLY A RACE CONDITION WITH LOADING ON_CHAIN INDEXER VALUES
+          // THE LATEST CONTRACT VERSION FIXES THIS, AFTER UPGRADING DELETE THIS window.setTimeout
+          window.setTimeout(() => {
+            trackMissingTokensForConnectedAddress(action.query, store)
+            const intents = getOnAndOffChainIntents(store.getState())
+            const filteredIntents = filterIntents(intents, action.query, action.queryContext)
+            store.dispatch(gotIntents(filteredIntents, action.stackId))
+            store.dispatch(getEthWrapperApproval())
+            store.dispatch(getWrapperWethTokenApproval())
 
-          store.dispatch(gotIntents(filteredIntents, action.stackId))
-          store.dispatch(getEthWrapperApproval())
-          store.dispatch(getWrapperWethTokenApproval())
-
-          Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
-            store.dispatch(allIntentsResolved(action.stackId)),
-          )
-          // we don't start querying intents until connected takerToken balance is loaded
-          // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
-          waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
-            window.setTimeout(() => {
-              store.dispatch(frameTimeoutReached(action.stackId))
-            }, orderFetchingTimeout)
-          })
+            Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
+              store.dispatch(allIntentsResolved(action.stackId)),
+            )
+            // we don't start querying intents until connected takerToken balance is loaded
+            // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
+            waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+              window.setTimeout(() => {
+                store.dispatch(frameTimeoutReached(action.stackId))
+              }, orderFetchingTimeout)
+            })
+          }, 500)
         })
 
         break

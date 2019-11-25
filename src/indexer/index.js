@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { getIndexerIndexes } = require('./contractFunctions')
 const { trackIndexSetLocator } = require('../index/eventListeners')
 const { trackIndexerCreateIndex } = require('./eventListeners')
-const { parseLocatorAndLocatorType } = require('./utils')
+const { parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents } = require('./utils')
 const { INDEXER_CONTRACT_DEPLOY_BLOCK } = require('../constants')
 
 class Indexer {
@@ -47,18 +47,23 @@ class Indexer {
     return this.indexes
   }
   async addLocatorFromEvents(events) {
-    const locators = events.map(({ values, address }) => {
+    const locators = events.map(({ values, address, blockNumber }) => {
       const index = address.toLowerCase()
       return {
         ...values,
         ...parseLocatorAndLocatorType(values.locator, values.identifier),
         index,
+        blockNumber,
       }
     })
     locators.forEach(locator => {
       this.onLocatorAdded(locator)
     })
-    this.locators = _.sortBy([...this.locators, ...locators], 'score').reverse()
+
+    const combinedLocators = [...this.locators, ...locators]
+    const uniqueLocators = getUniqueLocatorsFromBlockEvents(combinedLocators)
+
+    this.locators = _.sortBy(uniqueLocators, 'score').reverse()
     return this.locators
   }
   getIntents() {

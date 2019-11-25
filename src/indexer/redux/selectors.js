@@ -29,6 +29,7 @@ const getLocatorIntents = createSelector(
       const {
         values: { identifier, locator, score },
         address,
+        blockNumber,
       } = event
 
       const indexMap = _.find(indexesResponse, r => r.response.toLowerCase() === address.toLowerCase())
@@ -48,9 +49,24 @@ const getLocatorIntents = createSelector(
         identifier,
         ...parseLocatorAndLocatorType(locator, identifier),
         score,
+        blockNumber,
       }
     })
-    return _.sortBy(_.compact(parsedEvents), 'score').reverse()
+    const uniqueLocators = _.reduce(
+      _.compact(parsedEvents),
+      (agg, val) => {
+        const existingLocator = _.find(agg, { index: val.index, identifier: val.identifier })
+        if (!existingLocator) {
+          return [...agg, val]
+        } else if (existingLocator.blockNumber < val.blockNumber) {
+          const existingLocatorIndex = _.findIndex(agg, { index: val.index, identifier: val.identifier })
+          return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+        }
+        return agg
+      },
+      [],
+    )
+    return _.sortBy(uniqueLocators, 'score').reverse()
   },
 )
 
