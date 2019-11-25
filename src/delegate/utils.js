@@ -40,9 +40,9 @@ function getDisplayAmountsFromDisplayPrice(params) {
     let senderAmountDisplayValue
 
     if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-      senderAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
-      senderAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
     } else {
       throw new Error('unable to calculate baseAsset')
     }
@@ -99,11 +99,18 @@ function getContractPriceFromAtomicPrice({ senderToken, signerToken, senderAmoun
   throw new Error('error calculating contract price')
 }
 
-function getContractPriceFromDisplayPrice({ senderToken, signerToken, senderAmountDisplayValue, priceDisplayValue }) {
+function getContractPriceFromDisplayPrice({
+  senderToken,
+  signerToken,
+  senderAmountDisplayValue,
+  signerAmountDisplayValue,
+  priceDisplayValue,
+}) {
   const displayAmounts = getDisplayAmountsFromDisplayPrice({
     senderToken,
     signerToken,
     senderAmountDisplayValue,
+    signerAmountDisplayValue,
     priceDisplayValue,
   })
 
