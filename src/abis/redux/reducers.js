@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 import _ from 'lodash'
 import { abis, erc20, erc721 } from '../index'
-import { getConnectedDelegateContract } from '../../delegateFactory/redux/selectors'
+import { getDelegateContractAddresses } from '../../delegateFactory/redux/selectors'
 import delegateABI from '../delegate.json'
 
 function getAbiForToken(token) {
@@ -39,16 +39,12 @@ function abiReducer(state = abis, action) {
 
 const getAbisState = state => state.abis
 
-export const getAbis = createSelector(
-  getAbisState,
-  getConnectedDelegateContract,
-  (abi, delegateContract) =>
-    delegateContract
-      ? {
-          ...abi,
-          [delegateContract]: delegateABI,
-        }
-      : abi,
-)
+export const getAbis = createSelector(getAbisState, getDelegateContractAddresses, (abi, delegateContracts) => {
+  const delegateContractMapping = _.zipObject(delegateContracts, delegateContracts.map(() => delegateABI))
+  return {
+    ...abi,
+    ...delegateContractMapping,
+  }
+})
 
 export default abiReducer

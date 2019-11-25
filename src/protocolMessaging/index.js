@@ -22,7 +22,11 @@ const orderQueryDefaults = {
   affiliateParam: '0',
 }
 
-function typeSafeOrder({ nonce, expiry, signature, ...rest }) {
+function typeSafeOrder({ nonce, expiry, signature, ...rest }, locatorType) {
+  if (locatorType === 'contract') {
+    return mapNested22QuoteTo20Quote(rest)
+  }
+
   return mapNested22OrderTo20Order({
     ...rest,
     signature: {
@@ -87,7 +91,6 @@ class Router {
   // Send a JSON-RPC `message` to a `receiver` address.
   // Optionally pass `resolve` and `reject` callbacks to handle a response
   call(receiver, message, resolve, reject, locatorType) {
-    console.log('locatorType', receiver, locatorType)
     if (locatorType && _.includes(['http', 'https'], locatorType)) {
       const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
 
@@ -338,8 +341,9 @@ class Router {
     const payload = Router.makeRPC('getSignerSideOrder', query)
     return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
       order => ({
-        ...typeSafeOrder(order),
+        ...typeSafeOrder(order, locatorType),
         swap: { version: 2 },
+        locator: { type: locatorType },
       }),
     )
   }
@@ -359,8 +363,9 @@ class Router {
     const payload = Router.makeRPC('getSenderSideOrder', query)
     return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
       order => ({
-        ...typeSafeOrder(order),
+        ...typeSafeOrder(order, locatorType),
         swap: { version: 2 },
+        locator: { type: locatorType },
       }),
     )
   }
@@ -451,6 +456,7 @@ class Router {
         ...query,
         ...flatQuote,
         swapVersion: 2,
+        locator: { type: locatorType },
       }
       return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
@@ -474,6 +480,7 @@ class Router {
         ...query,
         ...flatQuote,
         swapVersion: 2,
+        locator: { type: locatorType },
       }
       return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
@@ -504,6 +511,7 @@ class Router {
           ...query,
           ...flatQuote,
           swapVersion: 2,
+          locator: { type: locatorType },
         }
         return mapNested22QuoteTo20Quote(nest(combinedQuote))
       }

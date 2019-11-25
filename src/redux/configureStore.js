@@ -16,7 +16,7 @@ if (qs.hardReset) localStorage.removeItem(storageKey)
 
 window._ = _
 
-const actionsBlacklist = [] // ['GOT_CONNECTED_USERS', 'GOT_GAS_SETTINGS', 'GOT_ETH_PRICES', 'GOT_GAS_DATA']
+const actionsBlacklist = ['GOT_LATEST_BLOCK'] // ['GOT_CONNECTED_USERS', 'GOT_GAS_SETTINGS', 'GOT_ETH_PRICES', 'GOT_GAS_DATA']
 
 const composeEnhancers = composeWithDevTools({
   actionsBlacklist: [...actionsBlacklist, 'REDUX_STORAGE_SAVE'],

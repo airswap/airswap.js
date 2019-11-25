@@ -65,14 +65,19 @@ function getSwapOrderId(orderParams) {
   return `${wallet}${nonce}`
 }
 
+function mapParty(party, filter = false) {
+  const { wallet, kind, param, token } = party
+  return filter ? { wallet, kind, param, token } : party
+}
+
 function mapNested22OrderTo20Order(order, filter = false) {
   const { nonce, expiry, signer, maker, sender, taker, affiliate, signature, ...rest } = order
   return {
     ...(filter ? {} : rest),
     nonce,
     expiry,
-    maker: signer || maker,
-    taker: sender || taker,
+    maker: mapParty(signer || maker, filter),
+    taker: mapParty(sender || taker, filter),
     affiliate,
     signature,
   }
@@ -84,8 +89,8 @@ function mapNested20OrderTo22Order(order, filter = false) {
     ...(filter ? {} : rest),
     nonce,
     expiry,
-    signer: maker || signer,
-    sender: taker || sender,
+    signer: mapParty(maker || signer, filter),
+    sender: mapParty(taker || sender, filter),
     affiliate,
     signature,
   }

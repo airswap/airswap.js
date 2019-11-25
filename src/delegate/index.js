@@ -42,6 +42,7 @@ async function routeDelegateCall(receiver, { method, params: { signerToken, send
     case 'getSignerSideOrder':
       return getDelegateGetSignerSideQuote(receiver, senderParam, senderToken, signerToken).then(resp =>
         format({
+          senderWallet: receiver,
           signerToken,
           senderToken,
           signerParam: resolveBigNumbers(resp),
@@ -51,6 +52,7 @@ async function routeDelegateCall(receiver, { method, params: { signerToken, send
     case 'getSenderSideOrder':
       return getDelegateGetSenderSideQuote(receiver, signerParam, signerToken, senderToken).then(resp =>
         format({
+          senderWallet: receiver,
           signerToken,
           senderToken,
           signerParam,

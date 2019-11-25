@@ -72,4 +72,22 @@ const getLocatorIntents = createSelector(
 
 const getLocatorIntentsFormatted = createSelector(getLocatorIntents, intents => intents.map(mapOnChainIntentToOffChain))
 
-export { getLocators, getLocatorIntents, getLocatorIntentsFormatted }
+// This selector falsely claims to return "makerAddresses" that are "connected":
+// - they are not connected because there is currently no efficient way to determine if a off-chain maker is online
+// - the makerAddress values aren't maker addresses, they are "identifiers"
+// there's no way to get the data I need, but I need to provide these values or things like the token dropdown in instant will break
+const getConnectedOnChainMakerAddresses = createSelector(getLocatorIntentsFormatted, intents =>
+  intents.map(({ makerAddress }) => makerAddress),
+)
+
+const getContractLocatorIntentsFormatted = createSelector(getLocatorIntentsFormatted, intents =>
+  _.filter(intents, { locatorType: 'contract' }),
+)
+
+export {
+  getLocators,
+  getLocatorIntents,
+  getLocatorIntentsFormatted,
+  getContractLocatorIntentsFormatted,
+  getConnectedOnChainMakerAddresses,
+}
