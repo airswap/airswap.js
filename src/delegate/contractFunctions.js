@@ -64,14 +64,14 @@ function submitDelegateUnsetRule(contractAddress, senderToken, signerToken, sign
   return contract.unsetRule(senderToken, signerToken)
 }
 
-function submitDelegateSetRuleAndIntent(contractAddress, senderToken, signerToken, rule, amountToStake, signer) {
+function submitDelegateSetRuleAndIntent(contractAddress, senderToken, signerToken, rule, newStakeAmount, signer) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.setRuleAndIntent(senderToken, signerToken, rule, amountToStake)
+  return contract.setRuleAndIntent(senderToken, signerToken, rule, newStakeAmount)
 }
 
-function submitDelegateUnsetRuleAndIntent(contractAddress, signerToken, senderToken, signer) {
+function submitDelegateUnsetRuleAndIntent(contractAddress, senderToken, signerToken, signer) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.unsetRuleAndIntent(signerToken, senderToken)
+  return contract.unsetRuleAndIntent(senderToken, signerToken)
 }
 
 function submitDelegateProvideOrder(contractAddress, order, signer) {

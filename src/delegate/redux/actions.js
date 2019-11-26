@@ -44,7 +44,7 @@ export const exampleSetRule = () =>
     }),
   )
 
-export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerToken, rule, amountToStake }) => (
+export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerToken, rule, newStakeAmount }) => (
   dispatch,
   getState,
 ) => {
@@ -55,7 +55,7 @@ export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerTok
       senderToken,
       signerToken,
       rule,
-      amountToStake,
+      newStakeAmount,
     }),
   )
 }

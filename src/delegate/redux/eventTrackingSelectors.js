@@ -24,6 +24,23 @@ export const getDelegateOwnershipTransferredHistoricalFetchStatus = createSelect
   },
 )
 
+export const getDelegateProvideOrderEvents = createSelector(getFetchedTrackedEvents, events =>
+  _.filter(events, { topic: '0x0189daca1660a5f26ed6b6d45a91d45b31911dc06e9f69c24838beac4b3f502d' }),
+)
+
+export const getDelegateProvideOrderHistoricalFetchStatus = createSelector(
+  getFetchingHistoricalEvents,
+  getFetchedHistoricalEvents,
+  (fetchingValues, fetchedValues) => {
+    const fetching = fetchingValues.delegateProvideOrder
+    const fetched = fetchedValues.delegateProvideOrder
+    return {
+      fetching,
+      fetched,
+    }
+  },
+)
+
 export const getDelegateSetRuleEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, { topic: '0xeef1056edebc4703267ec0a6f9845851c98be3eefddf0eb8927e7de6b2732e8e' }),
 )
