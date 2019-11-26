@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@airswap/delegate-factory@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@airswap/delegate-factory/-/delegate-factory-0.4.4.tgz#ebe25ab3e8b233902b5444a92e84533be856a147"
-  integrity sha512-EPnFSGW03CHc4b2LGtcE/Sq2+NYKbFMBLgdzAhfbPbqwbHvok5T/X4NATJlRHlBwIFdRDjkL4qtlFIyMQME64g==
+"@airswap/delegate-factory@^1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@airswap/delegate-factory/-/delegate-factory-1.4.4.tgz#4b6cd32b89523986e8ee94cdfab5c57af099ef81"
+  integrity sha512-1V6fd8YqnUHFWrmD5Nc7x8CnMBwX8mVPufqDJi15Gqi9OXB2YvT2lgkACp+PxgHBR3KZkFfYA1Gx19qvm97B1Q==
   dependencies:
     "@airswap/delegate" "0.5.3"
     openzeppelin-solidity "2.3"
@@ -9680,9 +9680,9 @@ resolve@1.1.7:
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
 resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.4.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.13.0.tgz#e879eb397efb40511056ede7300b6ac28c51290b"
-  integrity sha512-HHZ3hmOrk5SvybTb18xq4Ek2uLqLO5/goFCYUyvn26nWox4hdlKlfC/+dChIZ6qc4ZeYcN9ekTz0yyHsFgumMw==
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.13.1.tgz#be0aa4c06acd53083505abb35f4d66932ab35d16"
+  integrity sha512-CxqObCX8K8YtAhOBRg+lrcdn+LK+WYOS8tSjqSFbjtrI5PnS63QPhZl4+yKfrU9tdsbMu9Anr/amegT87M9Z6w==
   dependencies:
     path-parse "^1.0.6"
 
