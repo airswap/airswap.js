@@ -102,16 +102,16 @@ export default function swapMiddleware(store) {
           action.resolve(id)
         })
         break
-      case 'SUBMIT_SWAP_INVALIDATE':
+      case 'SUBMIT_SWAP_CANCEL_UP_TO':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapInvalidate(action.minimumNonce, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapCancelUpTo(action.minimumNonce, signer)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'invalidate',
+            name: 'cancelUpTo',
             parameters: { minimumNonce: action.minimumNonce },
           })
           action.resolve(id)

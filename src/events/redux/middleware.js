@@ -19,6 +19,7 @@ import {
 import { trackWethDeposit, trackWethWithdrawal } from '../../weth/redux/eventTrackingActions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import DebouncedQueue from '../../utils/debouncedQueue'
+import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
 
 let queue
 
@@ -149,10 +150,17 @@ export default function eventsMiddleware(store) {
         break
 
       case 'TRACK_EVENT':
+        if (action.fromBlock || action.backFillBlockCount) {
+          store.dispatch(fetchingHistoricalEvents(action))
+        }
         eventTracker.trackEvent({
           ...action,
           callback: logs => processEventLogs(logs, store, action.callback),
+          onFetchedHistoricalEvents: () => {
+            store.dispatch(fetchedHistoricalEvents(action))
+          },
         })
+
         break
       case 'ROUTER_CONNECTED':
         initTrackWeth(store)

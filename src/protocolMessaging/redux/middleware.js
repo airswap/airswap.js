@@ -9,7 +9,7 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS, ENV } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
@@ -21,8 +21,8 @@ import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { waitForState } from '../../utils/redux/waitForState'
 import { getOnAndOffChainIntents } from '../../redux/combinedSelectors'
-import { getLocatorIntentsFormatted } from '../../indexer/redux/selectors'
 import { submitDelegateProvideOrder } from '../../delegate/redux/contractFunctionActions'
+import { getIndexerIntentsLoaded } from '../../indexer/redux/selectors'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -516,8 +516,7 @@ function trackMissingTokensForConnectedAddress(query, store) {
 async function waitForConnectedTakerTokenBalance(takerToken, store) {
   return store.dispatch(
     waitForState({
-      selector: state =>
-        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
+      selector: state => getIndexerIntentsLoaded(state),
       result: true,
     }),
   )
@@ -526,7 +525,7 @@ async function waitForConnectedTakerTokenBalance(takerToken, store) {
 async function waitForOnChainIntents(store) {
   return store.dispatch(
     waitForState({
-      selector: state => (ENV === 'development' ? !!getLocatorIntentsFormatted(state).length : true),
+      selector: state => !!state, // (ENV === 'development' ? !!getLocatorIntentsFormatted(state).length : true),
       result: true,
     }),
   )
@@ -590,13 +589,6 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-    // console.log(JSON.stringify(getContractLocatorIntentsFormatted(state), null, 2))
-    // console.log(
-    //   'locators',
-    //   getContractLocatorIntentsFormatted(state).filter(v =>
-    //     [v.makerToken, v.takerToken].includes('0x0bd3a1c841211bbb989b35494f661e52e9071fe9'),
-    //   ),
-    // )
     return next(action)
   }
 }

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { fetchSwapSenderAuthorizations } from '../../swap/redux/contractFunctionActions'
 import { fetchERC20Allowance } from '../../erc20/redux/contractFunctionActions'
 import { fetchERC721GetApproved } from '../../erc721/redux/contractFunctionActions'
@@ -28,12 +29,13 @@ export default function callData(store) {
               }),
             )
           } else {
+            const parsedEventValues = _.mapKeys(event.values, (val, key) => _.trimStart(key, '_'))
             store.dispatch(
               fetchERC20Allowance({
                 // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
                 contractAddress: event.address.toLowerCase(),
-                owner: event.values.owner.toLowerCase(),
-                spender: event.values.spender.toLowerCase(),
+                owner: parsedEventValues.owner.toLowerCase(),
+                spender: parsedEventValues.spender.toLowerCase(),
               }),
             )
           }

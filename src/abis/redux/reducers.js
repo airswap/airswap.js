@@ -3,6 +3,11 @@ import _ from 'lodash'
 import { abis, erc20, erc721 } from '../index'
 import { getDelegateContractAddresses } from '../../delegateFactory/redux/selectors'
 import delegateABI from '../delegate.json'
+import indexABI from '../index.json'
+
+import { getIndexAddresses } from '../../indexer/redux/selectors'
+
+const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 function getAbiForToken(token) {
   if (token.kind === 'ERC721') {
@@ -15,7 +20,7 @@ function abiReducer(state = abis, action) {
   switch (action.type) {
     case 'ADD_TOKEN':
       if (action.tokens) {
-        const addresses = action.tokens.map(({ address }) => address.toLowerCase())
+        const addresses = _.without(action.tokens.map(({ address }) => address.toLowerCase()), NULL_ADDRESS)
         const tokenAbis = action.tokens.map(getAbiForToken)
         const newAbis = _.zipObject(addresses, tokenAbis)
         // old state remains, new state fills in gaps, but doesn't overwrite
@@ -39,12 +44,20 @@ function abiReducer(state = abis, action) {
 
 const getAbisState = state => state.abis
 
-export const getAbis = createSelector(getAbisState, getDelegateContractAddresses, (abi, delegateContracts) => {
-  const delegateContractMapping = _.zipObject(delegateContracts, delegateContracts.map(() => delegateABI))
-  return {
-    ...abi,
-    ...delegateContractMapping,
-  }
-})
+export const getAbis = createSelector(
+  getAbisState,
+  getDelegateContractAddresses,
+  getIndexAddresses,
+  (abi, delegateContracts, indexContracts) => {
+    const delegateContractMapping = _.zipObject(delegateContracts, delegateContracts.map(() => delegateABI))
+    const indexContractMapping = _.zipObject(indexContracts, indexContracts.map(() => indexABI))
+
+    return {
+      ...abi,
+      ...delegateContractMapping,
+      ...indexContractMapping,
+    }
+  },
+)
 
 export default abiReducer

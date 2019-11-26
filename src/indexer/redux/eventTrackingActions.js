@@ -14,12 +14,18 @@ export const trackIndexerAddTokenToBlacklist = ({ callback, fromBlock, backFillB
   namespace: 'indexer',
 })
 
-export const trackIndexerCreateIndex = ({ callback, fromBlock, backFillBlockCount } = {}) => ({
+export const trackIndexerCreateIndex = ({
+  callback,
+  signerToken,
+  senderToken,
+  fromBlock,
+  backFillBlockCount,
+} = {}) => ({
   callback,
   contract: constants.INDEXER_CONTRACT_ADDRESS,
   abi,
   name: 'CreateIndex',
-  params: {},
+  params: { signerToken, senderToken },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',

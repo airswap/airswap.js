@@ -28,15 +28,21 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "signerToken",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "senderToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "indexAddress",
         "type": "address"
       }
     ],
@@ -136,21 +142,6 @@
     ],
     "name": "Unstake",
     "type": "event"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "contractPaused",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "constant": true,
@@ -399,61 +390,6 @@
       }
     ],
     "name": "unsetIntent",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "signerToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "senderToken",
-        "type": "address"
-      }
-    ],
-    "name": "unsetIntentForUser",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "newStatus",
-        "type": "bool"
-      }
-    ],
-    "name": "setPausedStatus",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "recipient",
-        "type": "address"
-      }
-    ],
-    "name": "killContract",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

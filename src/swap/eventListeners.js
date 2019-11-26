@@ -78,7 +78,7 @@ const trackSwapCancel = ({
     onFetchedHistoricalEvents,
   })
 
-const trackSwapInvalidate = ({
+const trackSwapCancelUpTo = ({
   callback,
   nonce,
   signerWallet,
@@ -92,11 +92,11 @@ const trackSwapInvalidate = ({
     callback,
     contract: constants.SWAP_CONTRACT_ADDRESS,
     abi,
-    name: 'Invalidate',
+    name: 'CancelUpTo',
     params: { nonce, signerWallet },
     fromBlock,
     backFillBlockCount,
-    topic: '0x13271a4112377cb8d98566817cc69dc66ed3ee25fdcea309a9f6696475640b78',
+    topic: '0x863123978d9b13946753a916c935c0688a01802440d3ffc668d04d2720c4e110',
     namespace: 'swap',
     parser,
     onFetchingHistoricalEvents,
@@ -183,7 +183,7 @@ module.exports = {
   trackSwapAuthorizeSender,
   trackSwapAuthorizeSigner,
   trackSwapCancel,
-  trackSwapInvalidate,
+  trackSwapCancelUpTo,
   trackSwapRevokeSender,
   trackSwapRevokeSigner,
   trackSwapSwap,

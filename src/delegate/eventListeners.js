@@ -26,9 +26,34 @@ const trackDelegateOwnershipTransferred = ({
     onFetchedHistoricalEvents,
   })
 
+const trackDelegateProvideOrder = ({
+  callback,
+  owner,
+  senderToken,
+  signerToken,
+  fromBlock,
+  backFillBlockCount,
+  parser,
+  onFetchingHistoricalEvents,
+  onFetchedHistoricalEvents,
+} = {}) =>
+  eventTracker.trackEvent({
+    callback,
+    abi,
+    name: 'ProvideOrder',
+    params: { owner, senderToken, signerToken },
+    fromBlock,
+    backFillBlockCount,
+    topic: '0x0189daca1660a5f26ed6b6d45a91d45b31911dc06e9f69c24838beac4b3f502d',
+    namespace: 'delegate',
+    parser,
+    onFetchingHistoricalEvents,
+    onFetchedHistoricalEvents,
+  })
+
 const trackDelegateSetRule = ({
   callback,
-  ruleOwner,
+  owner,
   senderToken,
   signerToken,
   fromBlock,
@@ -41,7 +66,7 @@ const trackDelegateSetRule = ({
     callback,
     abi,
     name: 'SetRule',
-    params: { ruleOwner, senderToken, signerToken },
+    params: { owner, senderToken, signerToken },
     fromBlock,
     backFillBlockCount,
     topic: '0xeef1056edebc4703267ec0a6f9845851c98be3eefddf0eb8927e7de6b2732e8e',
@@ -53,7 +78,7 @@ const trackDelegateSetRule = ({
 
 const trackDelegateUnsetRule = ({
   callback,
-  ruleOwner,
+  owner,
   senderToken,
   signerToken,
   fromBlock,
@@ -66,7 +91,7 @@ const trackDelegateUnsetRule = ({
     callback,
     abi,
     name: 'UnsetRule',
-    params: { ruleOwner, senderToken, signerToken },
+    params: { owner, senderToken, signerToken },
     fromBlock,
     backFillBlockCount,
     topic: '0x8a5de2720528dbd2e4fe17889175d99555344219a0e2ef60298dc68801f57c98',
@@ -76,4 +101,9 @@ const trackDelegateUnsetRule = ({
     onFetchedHistoricalEvents,
   })
 
-module.exports = { trackDelegateOwnershipTransferred, trackDelegateSetRule, trackDelegateUnsetRule }
+module.exports = {
+  trackDelegateOwnershipTransferred,
+  trackDelegateProvideOrder,
+  trackDelegateSetRule,
+  trackDelegateUnsetRule,
+}

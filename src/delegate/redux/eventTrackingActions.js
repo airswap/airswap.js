@@ -18,9 +18,27 @@ export const trackDelegateOwnershipTransferred = ({
   namespace: 'delegate',
 })
 
+export const trackDelegateProvideOrder = ({
+  callback,
+  owner,
+  senderToken,
+  signerToken,
+  fromBlock,
+  backFillBlockCount,
+} = {}) => ({
+  callback,
+  abi,
+  name: 'ProvideOrder',
+  params: { owner, senderToken, signerToken },
+  fromBlock,
+  backFillBlockCount,
+  type: 'TRACK_EVENT',
+  namespace: 'delegate',
+})
+
 export const trackDelegateSetRule = ({
   callback,
-  ruleOwner,
+  owner,
   senderToken,
   signerToken,
   fromBlock,
@@ -29,7 +47,7 @@ export const trackDelegateSetRule = ({
   callback,
   abi,
   name: 'SetRule',
-  params: { ruleOwner, senderToken, signerToken },
+  params: { owner, senderToken, signerToken },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',
@@ -38,7 +56,7 @@ export const trackDelegateSetRule = ({
 
 export const trackDelegateUnsetRule = ({
   callback,
-  ruleOwner,
+  owner,
   senderToken,
   signerToken,
   fromBlock,
@@ -47,7 +65,7 @@ export const trackDelegateUnsetRule = ({
   callback,
   abi,
   name: 'UnsetRule',
-  params: { ruleOwner, senderToken, signerToken },
+  params: { owner, senderToken, signerToken },
   fromBlock,
   backFillBlockCount,
   type: 'TRACK_EVENT',

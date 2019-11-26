@@ -50,11 +50,11 @@ export const trackSwapCancel = ({ callback, nonce, signerWallet, fromBlock, back
   namespace: 'swap',
 })
 
-export const trackSwapInvalidate = ({ callback, nonce, signerWallet, fromBlock, backFillBlockCount } = {}) => ({
+export const trackSwapCancelUpTo = ({ callback, nonce, signerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   contract: constants.SWAP_CONTRACT_ADDRESS,
   abi,
-  name: 'Invalidate',
+  name: 'CancelUpTo',
   params: { nonce, signerWallet },
   fromBlock,
   backFillBlockCount,

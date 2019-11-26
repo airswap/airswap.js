@@ -3,5 +3,5 @@ import { submitDelegateFactoryCreateDelegate } from './contractFunctionActions'
 
 export const createDelegateForConnectedWallet = () => (dispatch, getState) => {
   const address = getConnectedWalletAddress(getState())
-  dispatch(submitDelegateFactoryCreateDelegate({ delegateContractOwner: address, delegateTradeWallet: address }))
+  dispatch(submitDelegateFactoryCreateDelegate({ delegateTradeWallet: address }))
 }

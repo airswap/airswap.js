@@ -1,8 +1,12 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
-import { getIndexerGetLocators, getIndexerIndexes } from './callDataSelectors'
-import { getIndexSetLocatorEvents } from '../../index/redux/eventTrackingSelectors'
+import { getIndexerGetLocators } from './callDataSelectors'
+import {
+  getIndexSetLocatorEvents,
+  getIndexSetLocatorHistoricalFetchStatus,
+} from '../../index/redux/eventTrackingSelectors'
 import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils'
+import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus } from './eventTrackingSelectors'
 
 // TODO: this selector is a work in progress, currently being replaced by the selector below which is event driven instead of callData driven
 const getLocators = createSelector(getIndexerGetLocators, responses =>
@@ -21,54 +25,61 @@ const getLocators = createSelector(getIndexerGetLocators, responses =>
   }),
 )
 
-const getLocatorIntents = createSelector(
-  getIndexSetLocatorEvents,
-  getIndexerIndexes,
-  (setLocatorEvents, indexesResponse) => {
-    const parsedEvents = setLocatorEvents.map(event => {
-      const {
-        values: { identifier, locator, score },
-        address,
-        blockNumber,
-      } = event
-
-      const indexMap = _.find(indexesResponse, r => r.response.toLowerCase() === address.toLowerCase())
-      if (!indexMap) {
-        return null
-      }
-      const { senderToken, signerToken } = _.get(indexMap, 'parameters', {})
-
-      if (!(senderToken && signerToken)) {
-        return null
-      }
-
-      return {
+const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
+  _.uniqBy(
+    events.map(
+      ({ values: { senderToken, signerToken, indexAddress } }) => ({
         senderToken,
         signerToken,
-        index: address,
-        identifier,
-        ...parseLocatorAndLocatorType(locator, identifier),
-        score,
-        blockNumber,
-      }
-    })
-    const uniqueLocators = _.reduce(
-      _.compact(parsedEvents),
-      (agg, val) => {
-        const existingLocator = _.find(agg, { index: val.index, identifier: val.identifier })
-        if (!existingLocator) {
-          return [...agg, val]
-        } else if (existingLocator.blockNumber < val.blockNumber) {
-          const existingLocatorIndex = _.findIndex(agg, { index: val.index, identifier: val.identifier })
-          return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
-        }
-        return agg
-      },
-      [],
-    )
-    return _.sortBy(uniqueLocators, 'score').reverse()
-  },
+        indexAddress,
+      }),
+      v => JSON.stringify(v, ['senderToken', 'signerToken', 'indexAddress']),
+    ),
+  ),
 )
+
+const getIndexAddresses = createSelector(getIndexes, indexes => indexes.map(({ indexAddress }) => indexAddress))
+
+const getLocatorIntents = createSelector(getIndexSetLocatorEvents, getIndexes, (setLocatorEvents, indexes) => {
+  const parsedEvents = setLocatorEvents.map(event => {
+    const {
+      values: { identifier, locator, score },
+      address: indexAddress,
+      blockNumber,
+    } = event
+
+    const { senderToken, signerToken } = _.find(indexes, { indexAddress }) || {}
+
+    if (!(senderToken && signerToken)) {
+      return null
+    }
+
+    return {
+      senderToken,
+      signerToken,
+      indexAddress,
+      identifier,
+      ...parseLocatorAndLocatorType(locator, identifier),
+      score,
+      blockNumber,
+    }
+  })
+  const uniqueLocators = _.reduce(
+    _.compact(parsedEvents),
+    (agg, val) => {
+      const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
+      if (!existingLocator) {
+        return [...agg, val]
+      } else if (existingLocator.blockNumber < val.blockNumber) {
+        const existingLocatorIndex = _.findIndex(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
+        return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+      }
+      return agg
+    },
+    [],
+  )
+  return _.sortBy(uniqueLocators, 'score').reverse()
+})
 
 const getLocatorIntentsFormatted = createSelector(getLocatorIntents, intents => intents.map(mapOnChainIntentToOffChain))
 
@@ -84,10 +95,19 @@ const getContractLocatorIntentsFormatted = createSelector(getLocatorIntentsForma
   _.filter(intents, { locatorType: 'contract' }),
 )
 
+const getIndexerIntentsLoaded = createSelector(
+  getIndexerCreateIndexHistoricalFetchStatus,
+  getIndexSetLocatorHistoricalFetchStatus,
+  (createIndex, setLocator) => createIndex.fetched && setLocator.fetched,
+)
+
 export {
   getLocators,
   getLocatorIntents,
   getLocatorIntentsFormatted,
   getContractLocatorIntentsFormatted,
   getConnectedOnChainMakerAddresses,
+  getIndexes,
+  getIndexAddresses,
+  getIndexerIntentsLoaded,
 }

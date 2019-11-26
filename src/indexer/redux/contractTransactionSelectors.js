@@ -52,21 +52,3 @@ export const getIndexerUnsetIntentTransactions = createSelector(getTransactions,
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
-
-export const getIndexerUnsetIntentForUserTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'unsetIntentForUser', namespace: 'indexer' })
-  const sortedValues = _.sortBy(filteredValues, 'id')
-  return sortedValues
-})
-
-export const getIndexerSetPausedStatusTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'setPausedStatus', namespace: 'indexer' })
-  const sortedValues = _.sortBy(filteredValues, 'id')
-  return sortedValues
-})
-
-export const getIndexerKillContractTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'killContract', namespace: 'indexer' })
-  const sortedValues = _.sortBy(filteredValues, 'id')
-  return sortedValues
-})

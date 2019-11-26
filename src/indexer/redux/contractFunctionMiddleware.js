@@ -8,21 +8,6 @@ import { getSigner } from '../../wallet/redux/actions'
 export default function indexerMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'FETCH_INDEXER_CONTRACT_PAUSED':
-        contractFunctions
-          .getIndexerContractPaused()
-          .then(response => {
-            store.dispatch({
-              type: 'GOT_CALL_RESPONSE',
-              response: resolveBigNumbers(response),
-              namespace: 'indexer',
-              name: 'contractPaused',
-              timestamp: Date.now(),
-            })
-            action.resolve(response)
-          })
-          .catch(action.reject)
-        break
       case 'FETCH_INDEXER_INDEXES':
         contractFunctions
           .getIndexerIndexes(action.signerToken, action.senderToken)
@@ -252,56 +237,6 @@ export default function indexerMiddleware(store) {
             namespace: 'indexer',
             name: 'unsetIntent',
             parameters: { signerToken: action.signerToken, senderToken: action.senderToken },
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_INDEXER_UNSET_INTENT_FOR_USER':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerUnsetIntentForUser(
-            action.user,
-            action.signerToken,
-            action.senderToken,
-            signer,
-          )
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'indexer',
-            name: 'unsetIntentForUser',
-            parameters: { user: action.user, signerToken: action.signerToken, senderToken: action.senderToken },
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_INDEXER_SET_PAUSED_STATUS':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerSetPausedStatus(action.newStatus, signer)
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'indexer',
-            name: 'setPausedStatus',
-            parameters: { newStatus: action.newStatus },
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_INDEXER_KILL_CONTRACT':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerKillContract(action.recipient, signer)
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'indexer',
-            name: 'killContract',
-            parameters: { recipient: action.recipient },
           })
           action.resolve(id)
         })

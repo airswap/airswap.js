@@ -16,7 +16,7 @@ export const exampleSetRuleAndIntent = () => dispatch => {
         senderAmountDisplayValue: '1',
         priceDisplayValue: '1',
       }),
-      amountToStake: '0',
+      newStakeAmount: '0',
     }),
   )
   dispatch(
@@ -29,7 +29,7 @@ export const exampleSetRuleAndIntent = () => dispatch => {
         senderAmountDisplayValue: '1',
         priceDisplayValue: '1',
       }),
-      amountToStake: '0',
+      newStakeAmount: '0',
     }),
   )
 }
@@ -44,7 +44,7 @@ export const exampleSetRule = () =>
     }),
   )
 
-export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerToken, rule, amountToStake }) => (
+export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerToken, rule, newStakeAmount }) => (
   dispatch,
   getState,
 ) => {
@@ -55,7 +55,7 @@ export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerTok
       senderToken,
       signerToken,
       rule,
-      amountToStake,
+      newStakeAmount,
     }),
   )
 }

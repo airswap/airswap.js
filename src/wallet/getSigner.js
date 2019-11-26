@@ -5,6 +5,7 @@ const ethUtil = require('ethereumjs-util')
 const { httpProvider, NETWORK, NETWORK_MAPPING } = require('../constants')
 const walletTypes = require('./static/walletTypes.json')
 const UncheckedJsonRpcSigner = require('./uncheckedJsonRpcSigner')
+const { Gas } = require('../gas')
 
 function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, walletType) {
   const supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletType }), 'supportsSignTypedData')
@@ -104,6 +105,14 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
 }
 
 function getSigner(params, walletActions = {}, walletType) {
+  if (!walletActions.startWalletAction) {
+    const gas = new Gas()
+    walletActions.startWalletAction = () => {
+      // eslint-disable-line
+      gas.getGasSettingsForTransaction('average')
+    }
+  }
+
   const { privateKey, web3Provider } = params
   if (!(privateKey || web3Provider)) {
     throw new Error("must set 'privateKey' or 'web3Provider' in params")

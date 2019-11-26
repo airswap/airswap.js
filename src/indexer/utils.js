@@ -54,11 +54,11 @@ function getUniqueLocatorsFromBlockEvents(parsedEvents) {
   return _.reduce(
     _.compact(parsedEvents),
     (agg, val) => {
-      const existingLocator = _.find(agg, { index: val.index, identifier: val.identifier })
+      const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
       if (!existingLocator) {
         return [...agg, val]
       } else if (existingLocator.blockNumber < val.blockNumber) {
-        const existingLocatorIndex = _.findIndex(agg, { index: val.index, identifier: val.identifier })
+        const existingLocatorIndex = _.findIndex(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
         return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
       }
       return agg

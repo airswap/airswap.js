@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { getIndexerIndexes } = require('./contractFunctions')
 const { trackIndexSetLocator } = require('../index/eventListeners')
 const { trackIndexerCreateIndex } = require('./eventListeners')
 const { parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents } = require('./utils')
@@ -9,7 +8,6 @@ class Indexer {
   constructor({ onIndexAdded, onLocatorAdded } = {}) {
     this.indexes = []
     this.locators = []
-    this.indexMapping = {}
     this.onIndexAdded = onIndexAdded || _.identity
     this.onLocatorAdded = onLocatorAdded || _.identity
     const initialIndexLoad = new Promise(resolve =>
@@ -34,12 +32,7 @@ class Indexer {
   }
   async addIndexesFromEvents(events) {
     const indexes = events.map(({ values }) => values)
-    const indexAddresses = await Promise.all(
-      indexes.map(index =>
-        getIndexerIndexes(index.signerToken, index.senderToken).then(address => address.toLowerCase()),
-      ),
-    )
-    this.indexMapping = _.zipObject(indexAddresses, indexes)
+
     indexes.forEach(index => {
       this.onIndexAdded(index)
     })
@@ -48,11 +41,11 @@ class Indexer {
   }
   async addLocatorFromEvents(events) {
     const locators = events.map(({ values, address, blockNumber }) => {
-      const index = address.toLowerCase()
+      const indexAddress = address.toLowerCase()
       return {
         ...values,
         ...parseLocatorAndLocatorType(values.locator, values.identifier),
-        index,
+        indexAddress,
         blockNumber,
       }
     })
@@ -69,12 +62,13 @@ class Indexer {
   getIntents() {
     return this.locators.map(locator => ({
       ...locator,
-      ...this.indexMapping[locator.index],
+      ...(this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}),
     }))
   }
 }
 // TODO: remove this after active development is complete
-// const i = new Indexer()
+const i = new Indexer()
 // i.ready.then(() => console.log(_.filter(i.getIntents(), { locatorType: 'contract' })))
+i.ready.then(() => console.log(i.indexes))
 
 module.exports = Indexer
