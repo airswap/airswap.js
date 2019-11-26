@@ -8,7 +8,7 @@
   "devDependencies": {
     "@airswap/delegate": "^0.4.1",
     "@airswap/delegate-factory": "^0.2.2",
-    "@airswap/index": "^0.3.1",
+    "@airswap/index": "^0.3.2",
     "@airswap/indexer": "^0.4.4",
     "@airswap/swap": "^2.3.4",
     "@airswap/wrapper": "^0.3.1",

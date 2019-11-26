@@ -18,10 +18,10 @@
     "@airswap/swap" "2.2.0"
     openzeppelin-solidity "2.3"
 
-"@airswap/index@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@airswap/index/-/index-0.3.1.tgz#c63f0b366ba9085f223a920784dfa392cd965dbb"
-  integrity sha512-ghcKLIv2XbvO9hrsKeCcZ09IhTwuzycNb2bbuetIq6L63B4V4uWSxmsVznjRPzo41Trk4TY3yiUi97sOOaVibg==
+"@airswap/index@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@airswap/index/-/index-0.3.2.tgz#0f2403e480c83a07503b01b30137db052f07c7c6"
+  integrity sha512-HCGF1V0M+AgIlWIS26vLdXLrblh2TlDlUTOuREcdxHeBT3f1U4rUYHsYccoEBWnV8MMq4GIWv+1OLxhlY2vU9A==
   dependencies:
     openzeppelin-solidity "2.3"
 
