@@ -1,13 +1,13 @@
 {
   "name": "airswap.js",
-  "version": "0.1.70",
+  "version": "0.1.71",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
   "license": "Apache-2.0",
   "devDependencies": {
     "@airswap/delegate": "^0.5.3",
-    "@airswap/delegate-factory": "^0.4.4",
+    "@airswap/delegate-factory": "^1.4.4",
     "@airswap/index": "^0.3.2",
     "@airswap/indexer": "^1.5.4",
     "@airswap/swap": "^3.3.4",
