@@ -9,12 +9,14 @@ import { selectors as tokenSelectors } from '../tokens/redux'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
 import { selectors as apiSelectors } from '../api/redux'
 import { selectors as transactionSelectors } from '../transactionTracker/redux'
+import { BASE_ASSET_TOKENS_SYMBOLS, ETH_BASE_ADDRESSES } from '../constants'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
 import { LegacyQuote } from '../swapLegacy/tcomb'
 import { getAbis } from '../abis/redux/reducers'
-import { getLocatorIntentsFormatted } from '../indexer/redux/selectors'
+import { getConnectedOnChainMakerAddresses, getLocatorIntentsFormatted } from '../indexer/redux/selectors'
+import { getTokensBySymbol } from '../tokens/redux/reducers'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -118,9 +120,139 @@ const getTransactionHistory = createSelector(
   },
 )
 
+const getOnAndOffChainIntents = createSelector(
+  getLocatorIntentsFormatted,
+  apiSelectors.getIndexerIntents,
+  (intents, apiIntents) => [..._.filter(intents, i => i.locatorType !== 'contract'), ...apiIntents],
+)
+
+/*
+ filters down all indexer intents to only those that have a makerAddress that is router-connected or on-chain
+ */
+const getConnectedIndexerIntents = createSelector(
+  getOnAndOffChainIntents,
+  apiSelectors.getFetchedConnectedUsers,
+  getConnectedOnChainMakerAddresses,
+  (intents, connectedMakers, onChainMakers) =>
+    _.filter(intents, ({ makerAddress }) => _.includes([...onChainMakers, ...connectedMakers], makerAddress)),
+)
+
+/*
+ filters down all indexer intents to only those that have a makerAddress that is router-connected
+ */
+const getConnectedMakerAddressesWithIndexerIntents = createSelector(getConnectedIndexerIntents, intents =>
+  _.map(intents, 'makerAddress'),
+)
+
+/*
+ filters down router-connected intents to tokenAddresses that are
+ - router-connected
+ - have an intent
+ */
+const getConnectedIndexerTokenAddresses = createSelector(getConnectedIndexerIntents, intents => [
+  ..._.reduce(
+    intents,
+    (set, intent) => {
+      set.add(intent.makerToken)
+      set.add(intent.takerToken)
+      return set
+    },
+    new Set(),
+  ),
+])
+
+/*
+"AVAILABLE MARKETS" ARE INTENTS THAT MEET BOTH CRITERIA BELOW
+ - either the makertoken or takertoken of the intent involves a "BASE ASSET"
+ - the maker responsible for the intent is connected to the network
+*/
+
+const getAvailableMarketsByBaseTokenAddress = createSelector(
+  getConnectedIndexerIntents,
+  getTokensBySymbol,
+  (intents, tokensBySymbol) => {
+    const markets = {}
+
+    if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
+    BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
+      if (!token) return
+      markets[token.address] = 0
+    })
+    intents.forEach(intent => {
+      if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
+        markets[intent.takerToken]++
+        return
+      }
+
+      if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
+        markets[intent.makerToken]++
+      }
+    })
+
+    return markets
+  },
+)
+
+/*
+"AVAILABLE" TOKENS MEET THE FOLLOWING REQUIREMENTS
+ - APPROVED (airswapUI: 'yes')
+ - INDEXER (there exist an intent on the indexer for this token)
+ - CONNECTED (the makerAddress of that intent is currently connected to the router)
+*/
+
+const getAvailableTokens = createSelector(
+  tokenSelectors.getAirSwapApprovedTokens, // APPROVED
+  getConnectedIndexerTokenAddresses, // INDEXER & CONNECTED
+  (approvedTokens, indexerTokenAddresses) =>
+    _.filter(approvedTokens, token => _.includes(indexerTokenAddresses, token.address)),
+)
+
+/*
+"INDEXER" TOKENS MEET THE FOLLOWING REQUIREMENTS
+ - there exist an intent on the indexer for this token
+*/
+
+const getIndexerTokens = createSelector(getOnAndOffChainIntents, intents => [
+  ..._.reduce(
+    intents,
+    (set, intent) => {
+      set.add(intent.makerToken)
+      set.add(intent.takerToken)
+      return set
+    },
+    new Set(),
+  ),
+])
+
+/*
+AVAILABLE MARKETPLACE TOKENS MEET THE FOLLOWING REQUIREMENTS
+ - APPROVED (airswapUI: 'yes')
+ - INDEXER (there exist an intent on the indexer for this token)
+ - CONNECTED (the makerAddress of that intent is currently connected to the router)
+ - Current base tokens are excluded (by default this is ETH/WETH)
+*/
+
+const getAvailableMarketplaceTokens = createSelector(
+  tokenSelectors.getAirSwapApprovedTokens, // APPROVED
+  getConnectedIndexerTokenAddresses, // INDEXER & CONNECTED
+  (approvedTokens, indexerTokenAddresses) =>
+    _.filter(
+      approvedTokens,
+      token => _.includes(indexerTokenAddresses, token.address) && !_.includes(ETH_BASE_ADDRESSES, token.address),
+    ),
+)
+
+/*
+TOKENS BY ADDRESS
+*/
+const getAvailableTokensByAddress = createSelector(getAvailableTokens, tokens => _.keyBy(tokens, 'address'))
+const getAvailableMarketplaceTokensByAddress = createSelector(getAvailableMarketplaceTokens, tokens =>
+  _.keyBy(tokens, 'address'),
+)
+
 const getLiquidity = createSelector(
   apiSelectors.getMaxQuotes,
-  apiSelectors.getConnectedIndexerIntents,
+  getConnectedIndexerIntents,
   deltaBalancesSelectors.getBalances,
   (responses, intents, balances) => {
     const [quoteResponses] = _.partition(
@@ -154,7 +286,7 @@ const getLiquidity = createSelector(
 
 const getMaxOrderLiquidity = createSelector(
   apiSelectors.getMaxQuotes,
-  apiSelectors.getConnectedIndexerIntents,
+  getConnectedIndexerIntents,
   deltaBalancesSelectors.getBalances,
   (responses, intents, balances) => {
     const [quoteResponses] = _.partition(
@@ -224,15 +356,17 @@ const makeGetFormattedMaxOrderLiquidityByTokenPair = createSelector(
   },
 )
 
-const getOnAndOffChainIntents = createSelector(
-  getLocatorIntentsFormatted,
-  apiSelectors.getConnectedIndexerIntents,
-  (intents, apiIntents) => [...intents, ...apiIntents],
-)
-
 export {
   getTransactionHistory,
   makeGetFormattedLiquidityByTokenPair,
   makeGetFormattedMaxOrderLiquidityByTokenPair,
   getOnAndOffChainIntents,
+  getConnectedIndexerIntents,
+  getConnectedMakerAddressesWithIndexerIntents,
+  getAvailableMarketsByBaseTokenAddress,
+  getAvailableTokens,
+  getAvailableTokensByAddress,
+  getAvailableMarketplaceTokensByAddress,
+  getIndexerTokens,
+  getAvailableMarketplaceTokens,
 }

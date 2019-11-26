@@ -20,18 +20,35 @@ const precision = str => (str.toString ? str.toString() : str)
  * MAPPING DISPLAY PRICES TO CONTRACT PRICES
  */
 
-function getDisplayAmountsFromDisplayPrice({ senderToken, signerToken, senderAmountDisplayValue, priceDisplayValue }) {
-  let signerAmountDisplayValue
+function getDisplayAmountsFromDisplayPrice(params) {
+  const { senderToken, signerToken, priceDisplayValue } = params
+  if (params.senderAmountDisplayValue) {
+    const { senderAmountDisplayValue } = params
+    let signerAmountDisplayValue
 
-  if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-    signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
-  } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
-    signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
-  } else {
-    throw new Error('unable to calculate baseAsset')
+    if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+    } else {
+      throw new Error('unable to calculate baseAsset')
+    }
+
+    return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
+  } else if (params.signerAmountDisplayValue) {
+    const { signerAmountDisplayValue } = params
+    let senderAmountDisplayValue
+
+    if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
+    } else {
+      throw new Error('unable to calculate baseAsset')
+    }
+
+    return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
   }
-
-  return { senderToken, signerToken, senderAmountDisplayValue, signerAmountDisplayValue }
 }
 
 function getAtomicAmountsFromDisplayAmounts({
@@ -82,11 +99,18 @@ function getContractPriceFromAtomicPrice({ senderToken, signerToken, senderAmoun
   throw new Error('error calculating contract price')
 }
 
-function getContractPriceFromDisplayPrice({ senderToken, signerToken, senderAmountDisplayValue, priceDisplayValue }) {
+function getContractPriceFromDisplayPrice({
+  senderToken,
+  signerToken,
+  senderAmountDisplayValue,
+  signerAmountDisplayValue,
+  priceDisplayValue,
+}) {
   const displayAmounts = getDisplayAmountsFromDisplayPrice({
     senderToken,
     signerToken,
     senderAmountDisplayValue,
+    signerAmountDisplayValue,
     priceDisplayValue,
   })
 
@@ -147,6 +171,7 @@ function getDisplayPriceFromDisplayAmounts({
     senderToken,
     signerToken,
     senderAmountDisplayValue,
+    signerAmountDisplayValue,
     priceDisplayValue,
   }
 }

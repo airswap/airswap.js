@@ -26,7 +26,6 @@ export default function delegateMiddleware(store) {
           const state = store.getState()
           const walletAddress = getConnectedWalletAddress(state)
           const delegateAddress = getConnectedDelegateContract(state)
-
           // listen to swap sender authorizations for the delegate and update the state accordingly
           store.dispatch(
             trackSwapAuthorizeSender({

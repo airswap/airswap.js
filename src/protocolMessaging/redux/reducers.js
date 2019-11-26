@@ -288,6 +288,7 @@ const makeGetBestOrder = createSelector(
     if (side !== 'sell') {
       ethTotal += ethGasCost
     }
+
     let missingApprovals
 
     if (bestOrder.swapVersion === 2) {

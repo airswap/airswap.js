@@ -28,7 +28,7 @@ const DexIndexResponses = t.list(DexIndexResponse)
 
 const Intents = t.list(Intent)
 
-const OrderResponses = t.list(t.union([LegacyOrder, FlatOrder]))
+const OrderResponses = t.list(t.union([LegacyOrder, FlatOrder, FlatQuote]))
 
 const QuoteResponses = t.list(t.union([LegacyQuote, FlatQuote]))
 
