@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { ERC20abi } from '../../constants'
+import { ERC20abi, IS_INSTANT, IS_EXPLORER } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
@@ -53,7 +53,7 @@ const initTrackWeth = store => {
 const initPollExchangeFills = _.once(store => {
   const callback = logs => processEventLogs(logs, store)
   // TODO: this if/else is temporary, these need to be dispatched from instant/airswap-trader repos respectively
-  if (process.env.REACT_APP_INSTANT) {
+  if (IS_INSTANT || IS_EXPLORER) {
     eventTracker.trackEvent(
       trackSwapLegacyFilled({
         callback,
