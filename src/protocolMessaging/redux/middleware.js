@@ -9,18 +9,20 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS, ENV } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
 import { submitSwap } from '../../swap/redux/contractFunctionActions'
-import { getEthWrapperApproval } from '../../swap/redux/actions'
+import { getEthWrapperApproval, signSwap } from '../../swap/redux/actions'
 import { getWrapperWethTokenApproval } from '../../erc20/redux/actions'
 import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { waitForState } from '../../utils/redux/waitForState'
 import { getOnAndOffChainIntents } from '../../redux/combinedSelectors'
+import { getLocatorIntentsFormatted } from '../../indexer/redux/selectors'
+import { submitDelegateProvideOrder } from '../../delegate/redux/contractFunctionActions'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -118,11 +120,24 @@ function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) 
 
 async function getOrderTakerTokenWithQuotes(intent, store, action) {
   const { takerAmount } = action.query
-  const { makerToken, takerToken, locator } = intent
+  const { makerToken, takerToken, locator, locatorType } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
-  const quotePromise = router.getQuote(makerAddress, { takerAmount, makerToken, takerToken, swapVersion, locator })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion, locator })
+  const quotePromise = router.getQuote(makerAddress, {
+    takerAmount,
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, {
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
   let maxQuote
   let quote
 
@@ -139,6 +154,8 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
   } catch (e) {
     console.log(e)
   }
+
+  const OrderResponseType = locatorType === 'contract' ? Quote : Order
 
   const takerTokenBalance = _.get(
     deltaBalancesSelectors.getConnectedBalances(store.getState()),
@@ -164,8 +181,10 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
-      const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
+      const lowBalanceOrder =
+        swapVersion === 2 ? flatten(OrderResponseType(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
@@ -181,9 +200,10 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
       const alternativeOrder =
-        swapVersion === 2 ? flatten(Order(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
+        swapVersion === 2 ? flatten(OrderResponseType(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
 
       return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
@@ -198,8 +218,9 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
       takerToken,
       swapVersion,
       locator,
+      locatorType,
     })
-    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
+    const order = swapVersion === 2 ? flatten(OrderResponseType(orderResponse)) : LegacyOrder(orderResponse)
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
     console.log(e)
@@ -210,11 +231,24 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
 
 async function getOrderMakerTokenWithQuotes(intent, store, action) {
   const { makerAmount } = action.query
-  const { makerToken, takerToken, locator } = intent
+  const { makerToken, takerToken, locator, locatorType } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
-  const quotePromise = router.getQuote(makerAddress, { makerAmount, makerToken, takerToken, swapVersion, locator })
-  const maxQuotePromise = router.getMaxQuote(makerAddress, { makerToken, takerToken, swapVersion, locator })
+  const quotePromise = router.getQuote(makerAddress, {
+    makerAmount,
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
+  const maxQuotePromise = router.getMaxQuote(makerAddress, {
+    makerToken,
+    takerToken,
+    swapVersion,
+    locator,
+    locatorType,
+  })
   let maxQuote
   let quote
   try {
@@ -230,6 +264,8 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   } catch (e) {
     console.log(e)
   }
+
+  const OrderResponseType = locatorType === 'contract' ? Quote : Order
 
   const takerTokenBalance = _.get(
     deltaBalancesSelectors.getConnectedBalances(store.getState()),
@@ -255,8 +291,10 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
         takerToken,
         swapVersion,
         locator,
+        locatorType,
       })
-      const lowBalanceOrder = swapVersion === 2 ? flatten(Order(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
+      const lowBalanceOrder =
+        swapVersion === 2 ? flatten(OrderResponseType(lowBalanceResponse)) : LegacyOrder(lowBalanceResponse)
 
       store.dispatch(gotQuoteResponse(quote, action.stackId))
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
@@ -283,6 +321,7 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
           takerToken,
           swapVersion,
           locator,
+          locatorType,
         })
       } else {
         alternativeOrderResponse = await router.getOrder(makerAddress, {
@@ -291,11 +330,12 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
           takerToken,
           swapVersion,
           locator,
+          locatorType,
         })
       }
 
       const alternativeOrder =
-        swapVersion === 2 ? flatten(Order(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
+        swapVersion === 2 ? flatten(OrderResponseType(alternativeOrderResponse)) : LegacyOrder(alternativeOrderResponse)
 
       return store.dispatch(gotAlternativeOrderResponse(alternativeOrder, action.stackId))
     } catch (e) {
@@ -310,9 +350,10 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
       takerToken,
       swapVersion,
       locator,
+      locatorType,
     })
 
-    const order = swapVersion === 2 ? flatten(Order(orderResponse)) : LegacyOrder(orderResponse)
+    const order = swapVersion === 2 ? flatten(OrderResponseType(orderResponse)) : LegacyOrder(orderResponse)
 
     return store.dispatch(gotOrderResponse(order, action.stackId))
   } catch (e) {
@@ -387,16 +428,6 @@ async function getOrderMakerTokenWithoutQuotes(intent, store, action) {
   return null // If we can't get an order or quote, we simply resolve the async function with nothing
 }
 
-async function waitForConnectedTakerTokenBalance(takerToken, store) {
-  return store.dispatch(
-    waitForState({
-      selector: state =>
-        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
-      result: true,
-    }),
-  )
-}
-
 async function mapIntentFetchProtocolOrder(intent, store, action) {
   // wait to start querying intents until connected takerToken balance is loaded
   await waitForConnectedTakerTokenBalance(action.query.takerToken, store)
@@ -421,7 +452,10 @@ async function fillFrameBestOrder(store) {
     protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
     protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
 
-  if (bestOrder.swapVersion === 2) {
+  if (bestOrder.locatorType === 'contract') {
+    const signedOrder = await store.dispatch(signSwap(nest(bestOrder)))
+    store.dispatch(submitDelegateProvideOrder({ contractAddress: signedOrder.sender.wallet, order: signedOrder }))
+  } else if (bestOrder.swapVersion === 2) {
     const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
     if (baseAsset === 'ETH') {
       const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.param : '0'
@@ -479,6 +513,25 @@ function trackMissingTokensForConnectedAddress(query, store) {
   }
 }
 
+async function waitForConnectedTakerTokenBalance(takerToken, store) {
+  return store.dispatch(
+    waitForState({
+      selector: state =>
+        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
+      result: true,
+    }),
+  )
+}
+
+async function waitForOnChainIntents(store) {
+  return store.dispatch(
+    waitForState({
+      selector: state => (ENV === 'development' ? !!getLocatorIntentsFormatted(state).length : true),
+      result: true,
+    }),
+  )
+}
+
 export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
@@ -498,23 +551,29 @@ export default function routerMiddleware(store) {
         }
         break
       case 'SET_CHECKOUT_FRAME_QUERY':
-        trackMissingTokensForConnectedAddress(action.query, store)
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
-        const intents = getOnAndOffChainIntents(state)
-        const filteredIntents = filterIntents(intents, action.query, action.queryContext)
-        store.dispatch(gotIntents(filteredIntents, action.stackId))
-        store.dispatch(getEthWrapperApproval())
-        store.dispatch(getWrapperWethTokenApproval())
-
-        Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
-          store.dispatch(allIntentsResolved(action.stackId)),
-        )
-        // we don't start querying intents until connected takerToken balance is loaded
-        // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
-        waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+        waitForOnChainIntents(store).then(() => {
+          // THERE IS CURRENTLY A RACE CONDITION WITH LOADING ON_CHAIN INDEXER VALUES
+          // THE LATEST CONTRACT VERSION FIXES THIS, AFTER UPGRADING DELETE THIS window.setTimeout
           window.setTimeout(() => {
-            store.dispatch(frameTimeoutReached(action.stackId))
-          }, orderFetchingTimeout)
+            trackMissingTokensForConnectedAddress(action.query, store)
+            const intents = getOnAndOffChainIntents(store.getState())
+            const filteredIntents = filterIntents(intents, action.query, action.queryContext)
+            store.dispatch(gotIntents(filteredIntents, action.stackId))
+            store.dispatch(getEthWrapperApproval())
+            store.dispatch(getWrapperWethTokenApproval())
+
+            Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
+              store.dispatch(allIntentsResolved(action.stackId)),
+            )
+            // we don't start querying intents until connected takerToken balance is loaded
+            // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
+            waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+              window.setTimeout(() => {
+                store.dispatch(frameTimeoutReached(action.stackId))
+              }, orderFetchingTimeout)
+            })
+          }, 500)
         })
 
         break
@@ -531,7 +590,13 @@ export default function routerMiddleware(store) {
         break
       default:
     }
-
+    // console.log(JSON.stringify(getContractLocatorIntentsFormatted(state), null, 2))
+    // console.log(
+    //   'locators',
+    //   getContractLocatorIntentsFormatted(state).filter(v =>
+    //     [v.makerToken, v.takerToken].includes('0x0bd3a1c841211bbb989b35494f661e52e9071fe9'),
+    //   ),
+    // )
     return next(action)
   }
 }

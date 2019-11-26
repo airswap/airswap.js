@@ -9,13 +9,17 @@ const { SWAP_CONTRACT_ADDRESS, abis } = require('../constants')
 
 const removeFalsey = obj => _.pickBy(obj, _.identity)
 
-const fillOrderDefaults = ({ expiry, nonce, signer, sender, affiliate }) => ({
-  expiry: `${expiry}`,
-  nonce: `${nonce}`,
-  signer: { ...constants.defaults.Party, ...removeFalsey(signer) },
-  sender: { ...constants.defaults.Party, ...removeFalsey(sender) },
-  affiliate: { ...constants.defaults.Party, ...removeFalsey(affiliate) },
-})
+const fillOrderDefaults = (signerAddress, { expiry, nonce, signer, sender, affiliate }) => {
+  const defaultExpiry = expiry || Math.floor(Date.now() / 1000) + 60 * 60 // 1 hour in the future if not specified
+  const defaultNonce = nonce || Date.now()
+  return {
+    expiry: `${defaultExpiry}`,
+    nonce: `${defaultNonce}`,
+    signer: { ...constants.defaults.Party, wallet: signerAddress, ...removeFalsey(signer) },
+    sender: { ...constants.defaults.Party, ...removeFalsey(sender) },
+    affiliate: { ...constants.defaults.Party, ...removeFalsey(affiliate) },
+  }
+}
 
 function getSwapContract(signer) {
   return new ethers.Contract(SWAP_CONTRACT_ADDRESS, abis[SWAP_CONTRACT_ADDRESS], signer)
@@ -42,11 +46,12 @@ async function swap(orderParams, signer) {
 
 async function signSwap(orderParams, signer) {
   // TODO: Add automatic ERC20 vs ERC721 type detection
-  const order = fillOrderDefaults(mapNested20OrderTo22Order(orderParams))
+  const signerAddress = await signer.getAddress()
+  const order = fillOrderDefaults(signerAddress, mapNested20OrderTo22Order(orderParams, true))
   const orderHashHex = getOrderHash(order, SWAP_CONTRACT_ADDRESS)
   const signedMsg = await signer.signMessage(ethers.utils.arrayify(orderHashHex))
   const sig = ethers.utils.splitSignature(signedMsg)
-  const signerAddress = await signer.getAddress()
+
   const { r, s, v } = sig
   const signedOrder = {
     ...order,
@@ -64,7 +69,9 @@ async function signSwap(orderParams, signer) {
 }
 
 async function signSwapTypedData(orderParams, signer) {
-  const order = fillOrderDefaults(mapNested20OrderTo22Order(orderParams))
+  const signerAddress = await signer.getAddress()
+
+  const order = fillOrderDefaults(signerAddress, mapNested20OrderTo22Order(orderParams, true))
 
   const data = {
     types: constants.types, // See: @airswap/order-utils/src/constants.js:4
@@ -76,7 +83,6 @@ async function signSwapTypedData(orderParams, signer) {
     primaryType: 'Order',
     message: order, // remove falsey values on order
   }
-  const signerAddress = await signer.getAddress()
   const sig = await signer.signTypedData(data)
   const { r, s, v } = ethers.utils.splitSignature(sig)
   const signedOrder = {

@@ -1,13 +1,14 @@
 const _ = require('lodash')
 const ethers = require('ethers')
 
-function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, locator }) {
+function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, locator, locatorType }) {
   return {
     address: identifier,
     makerAddress: identifier,
     makerToken: signerToken,
     takerToken: senderToken,
     locator,
+    locatorType,
     supportedMethods: [
       'getSignerSideOrder',
       'getSenderSideOrder',
@@ -21,10 +22,14 @@ function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, loca
 
 const prefixes = ['https', 'http']
 
-function parseLocatorAndLocatorType(bytes32Locator) {
+function parseLocatorAndLocatorType(bytes32Locator, identifier) {
   let locator
   let locatorType
-  try {
+
+  if (_.startsWith(bytes32Locator.toLowerCase(), identifier.toLowerCase())) {
+    locator = identifier.toLowerCase()
+    locatorType = 'contract'
+  } else {
     locator = ethers.utils.parseBytes32String(bytes32Locator)
 
     locatorType = _.reduce(
@@ -40,11 +45,26 @@ function parseLocatorAndLocatorType(bytes32Locator) {
       },
       '',
     )
-  } catch (e) {
-    locator = _.trimEnd(bytes32Locator, '0')
-    locatorType = 'contract'
   }
+
   return { locator, locatorType }
 }
 
-module.exports = { mapOnChainIntentToOffChain, parseLocatorAndLocatorType }
+function getUniqueLocatorsFromBlockEvents(parsedEvents) {
+  return _.reduce(
+    _.compact(parsedEvents),
+    (agg, val) => {
+      const existingLocator = _.find(agg, { index: val.index, identifier: val.identifier })
+      if (!existingLocator) {
+        return [...agg, val]
+      } else if (existingLocator.blockNumber < val.blockNumber) {
+        const existingLocatorIndex = _.findIndex(agg, { index: val.index, identifier: val.identifier })
+        return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+      }
+      return agg
+    },
+    [],
+  )
+}
+
+module.exports = { mapOnChainIntentToOffChain, parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents }

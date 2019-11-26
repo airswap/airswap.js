@@ -29,6 +29,7 @@ const getLocatorIntents = createSelector(
       const {
         values: { identifier, locator, score },
         address,
+        blockNumber,
       } = event
 
       const indexMap = _.find(indexesResponse, r => r.response.toLowerCase() === address.toLowerCase())
@@ -46,14 +47,47 @@ const getLocatorIntents = createSelector(
         signerToken,
         index: address,
         identifier,
-        ...parseLocatorAndLocatorType(locator),
+        ...parseLocatorAndLocatorType(locator, identifier),
         score,
+        blockNumber,
       }
     })
-    return _.sortBy(_.compact(parsedEvents), 'score').reverse()
+    const uniqueLocators = _.reduce(
+      _.compact(parsedEvents),
+      (agg, val) => {
+        const existingLocator = _.find(agg, { index: val.index, identifier: val.identifier })
+        if (!existingLocator) {
+          return [...agg, val]
+        } else if (existingLocator.blockNumber < val.blockNumber) {
+          const existingLocatorIndex = _.findIndex(agg, { index: val.index, identifier: val.identifier })
+          return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+        }
+        return agg
+      },
+      [],
+    )
+    return _.sortBy(uniqueLocators, 'score').reverse()
   },
 )
 
 const getLocatorIntentsFormatted = createSelector(getLocatorIntents, intents => intents.map(mapOnChainIntentToOffChain))
 
-export { getLocators, getLocatorIntents, getLocatorIntentsFormatted }
+// This selector falsely claims to return "makerAddresses" that are "connected":
+// - they are not connected because there is currently no efficient way to determine if a off-chain maker is online
+// - the makerAddress values aren't maker addresses, they are "identifiers"
+// there's no way to get the data I need, but I need to provide these values or things like the token dropdown in instant will break
+const getConnectedOnChainMakerAddresses = createSelector(getLocatorIntentsFormatted, intents =>
+  intents.map(({ makerAddress }) => makerAddress),
+)
+
+const getContractLocatorIntentsFormatted = createSelector(getLocatorIntentsFormatted, intents =>
+  _.filter(intents, { locatorType: 'contract' }),
+)
+
+export {
+  getLocators,
+  getLocatorIntents,
+  getLocatorIntentsFormatted,
+  getContractLocatorIntentsFormatted,
+  getConnectedOnChainMakerAddresses,
+}

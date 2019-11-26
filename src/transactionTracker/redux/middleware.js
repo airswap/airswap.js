@@ -115,7 +115,14 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
   store.dispatch(mined({ id, namespace, name, transactionReceipt }))
 
   transactionReceipt.logs.map(log => {
-    const abiInterface = new ethers.utils.Interface(abis[log.address.toLowerCase()])
+    const abi = abis[log.address.toLowerCase()]
+    if (!abi) {
+      console.log(
+        `MISSING ABI FOR CONTRACT AT ${log.address.toLowerCase()}, MAKE SURE DYNAMIC ABI LOADING FOR THIS CONTRACT TYPE IS SET IN abis REDUCER`,
+      )
+      return
+    }
+    const abiInterface = new ethers.utils.Interface(abi)
     const parsedLog = parseEventLog(log, abiInterface)
     store.dispatch({
       type: 'TRANSACTION_LOG_EVENT',
