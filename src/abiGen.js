@@ -50,19 +50,32 @@ function generateEventTrackingSelectors(abiLocation, contractKey, eventNamespace
 export const get${_.upperFirst(eventNamespace)}${_.upperFirst(name)}Events = createSelector(
   getFetchedTrackedEvents,
   events => _.filter(events, { topic: '${topic}'${contractKey ? `, address: constants.${contractKey},` : ''} })
-)`,
+)
+
+export const get${_.upperFirst(eventNamespace)}${_.upperFirst(name)}HistoricalFetchStatus = createSelector(
+  getFetchingHistoricalEvents,
+  getFetchedHistoricalEvents,
+  (fetchingValues, fetchedValues) => {
+    const fetching = fetchingValues.${eventNamespace}${name}
+    const fetched = fetchedValues.${eventNamespace}${name}
+    return {
+      fetching, 
+      fetched,
+    }
+  }
+)
+
+`,
   )
   const contractConstantsImport = contractKey
     ? `
 import constants from '../../constants'`
     : ''
-  return [
-    `import _ from 'lodash'
+  return `import _ from 'lodash'
 import { createSelector } from 'reselect'${contractConstantsImport}
-
-const getFetchedTrackedEvents = state => state.events.trackedEvents.fetched`,
-    ...selectorTextArray,
-  ].join('\n')
+import { getFetchedTrackedEvents, getFetchingHistoricalEvents, getFetchedHistoricalEvents } from '../../events/redux/reducers'
+${selectorTextArray.join('\n')}
+`
 }
 
 function generateReduxIndex() {

@@ -3,6 +3,7 @@ const { constants } = require('@airswap/order-utils')
 const { Address, AtomicAmount, stringLiteral } = require('../tcombTypes')
 
 const { ERC721_INTERFACE_ID, ERC20_INTERFACE_ID } = constants
+
 const Kind = t.union([stringLiteral(ERC721_INTERFACE_ID), stringLiteral(ERC20_INTERFACE_ID)])
 
 const Party = t.struct({

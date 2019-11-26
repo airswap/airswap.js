@@ -1,9 +1,12 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
 import { getIndexerGetLocators } from './callDataSelectors'
-import { getIndexSetLocatorEvents } from '../../index/redux/eventTrackingSelectors'
+import {
+  getIndexSetLocatorEvents,
+  getIndexSetLocatorHistoricalFetchStatus,
+} from '../../index/redux/eventTrackingSelectors'
 import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils'
-import { getIndexerCreateIndexEvents } from './eventTrackingSelectors'
+import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus } from './eventTrackingSelectors'
 
 // TODO: this selector is a work in progress, currently being replaced by the selector below which is event driven instead of callData driven
 const getLocators = createSelector(getIndexerGetLocators, responses =>
@@ -92,6 +95,12 @@ const getContractLocatorIntentsFormatted = createSelector(getLocatorIntentsForma
   _.filter(intents, { locatorType: 'contract' }),
 )
 
+const getIndexerIntentsLoaded = createSelector(
+  getIndexerCreateIndexHistoricalFetchStatus,
+  getIndexSetLocatorHistoricalFetchStatus,
+  (createIndex, setLocator) => createIndex.fetched && setLocator.fetched,
+)
+
 export {
   getLocators,
   getLocatorIntents,
@@ -100,4 +109,5 @@ export {
   getConnectedOnChainMakerAddresses,
   getIndexes,
   getIndexAddresses,
+  getIndexerIntentsLoaded,
 }
