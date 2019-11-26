@@ -6,7 +6,7 @@ import { makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 import * as callDataSelectors from './callDataSelectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { WRAPPER_CONTRACT_ADDRESS } from '../../constants'
-import { mapNested22OrderTo20Order, nest, flatten } from '../../swap/utils'
+import { mapFlat22OrderTo20Order } from '../../swap/utils'
 
 export const getFormattedSwapFills = createSelector(
   getSwapSwapEvents,
@@ -15,7 +15,7 @@ export const getFormattedSwapFills = createSelector(
   (events, getReadableSwapOrder, blockObj) =>
     events.map(({ transactionHash, blockNumber, values }) => ({
       transactionHash,
-      ...getReadableSwapOrder(flatten(mapNested22OrderTo20Order(nest(values)))),
+      ...getReadableSwapOrder(mapFlat22OrderTo20Order(values)),
       timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
     })),
 )
@@ -26,7 +26,7 @@ export const getFormattedSwapCancels = createSelector(
   (events, blockObj) =>
     events.map(({ transactionHash, blockNumber, values }) => ({
       transactionHash,
-      ...flatten(mapNested22OrderTo20Order(nest(values))),
+      ...mapFlat22OrderTo20Order(values),
       timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
     })),
 )
@@ -60,7 +60,7 @@ export const getSwapSwapEventsAllContracts = createSelector(getFetchedTrackedEve
     topic: '0xdb667502ab054fbfc1011315893dab3481c36c50f60b5ad16f1c14e6035e7a9e',
   }).map(event => ({
     ...event,
-    values: flatten(mapNested22OrderTo20Order(nest(event.values))),
+    values: mapFlat22OrderTo20Order(event.values),
   })),
 )
 
@@ -69,6 +69,6 @@ export const getSwapCancelEventsAllContracts = createSelector(getFetchedTrackedE
     topic: '0x8dd3c361eb2366ff27c2db0eb07b9261f1d052570742ab8c9a0c326f37aa576d',
   }).map(event => ({
     ...event,
-    values: flatten(mapNested22OrderTo20Order(nest(event.values))),
+    values: mapFlat22OrderTo20Order(event.values),
   })),
 )

@@ -46,7 +46,7 @@ function getSwapOrderId(orderParams) {
   }
   let order = orderParams
 
-  if (order.makerToken || order.signerToken) {
+  if (order.makerToken || order.signerToken || order.makerWallet) {
     // order is flat
     order = nest(order)
   }
@@ -57,7 +57,6 @@ function getSwapOrderId(orderParams) {
   }
 
   // now order is nested 2.2
-
   const {
     maker: { wallet },
     nonce,
