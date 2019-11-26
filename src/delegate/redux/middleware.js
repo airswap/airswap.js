@@ -44,7 +44,7 @@ export default function delegateMiddleware(store) {
           // listen to rule creation on the delegate and update the contract accordingly
           store.dispatch(
             trackDelegateSetRule({
-              ruleOwner: walletAddress,
+              owner: walletAddress,
               fromBlock: DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
               callback: events => {
                 events.map(({ values: { senderToken, signerToken } }) => {
@@ -62,7 +62,7 @@ export default function delegateMiddleware(store) {
           // listen to rule delegation on the delegate and update the contract accordingly
           store.dispatch(
             trackDelegateUnsetRule({
-              ruleOwner: walletAddress,
+              owner: walletAddress,
               callback: events =>
                 events.map(({ values: { senderToken, signerToken } }) => {
                   store.dispatch(

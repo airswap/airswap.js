@@ -16,7 +16,7 @@ export const exampleSetRuleAndIntent = () => dispatch => {
         senderAmountDisplayValue: '1',
         priceDisplayValue: '1',
       }),
-      amountToStake: '0',
+      newStakeAmount: '0',
     }),
   )
   dispatch(
@@ -29,7 +29,7 @@ export const exampleSetRuleAndIntent = () => dispatch => {
         senderAmountDisplayValue: '1',
         priceDisplayValue: '1',
       }),
-      amountToStake: '0',
+      newStakeAmount: '0',
     }),
   )
 }
