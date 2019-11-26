@@ -36,9 +36,9 @@ function submitSwapCancel(nonces, signer) {
   return contract.cancel(nonces)
 }
 
-function submitSwapInvalidate(minimumNonce, signer) {
+function submitSwapCancelUpTo(minimumNonce, signer) {
   const contract = getSwapContract(signer)
-  return contract.invalidate(minimumNonce)
+  return contract.cancelUpTo(minimumNonce)
 }
 
 function submitSwapAuthorizeSender(authorizedSender, signer) {
@@ -68,7 +68,7 @@ module.exports = {
   getSwapSignerNonceStatus,
   submitSwap,
   submitSwapCancel,
-  submitSwapInvalidate,
+  submitSwapCancelUpTo,
   submitSwapAuthorizeSender,
   submitSwapAuthorizeSigner,
   submitSwapRevokeSender,

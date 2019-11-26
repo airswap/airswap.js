@@ -26,9 +26,9 @@ export const getSwapCancelEvents = createSelector(getFetchedTrackedEvents, event
   }),
 )
 
-export const getSwapInvalidateEvents = createSelector(getFetchedTrackedEvents, events =>
+export const getSwapCancelUpToEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0x13271a4112377cb8d98566817cc69dc66ed3ee25fdcea309a9f6696475640b78',
+    topic: '0x863123978d9b13946753a916c935c0688a01802440d3ffc668d04d2720c4e110',
     address: constants.SWAP_CONTRACT_ADDRESS,
   }),
 )

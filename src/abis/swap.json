@@ -78,7 +78,7 @@
         "type": "address"
       }
     ],
-    "name": "Invalidate",
+    "name": "CancelUpTo",
     "type": "event"
   },
   {
@@ -460,7 +460,7 @@
         "type": "uint256"
       }
     ],
-    "name": "invalidate",
+    "name": "cancelUpTo",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

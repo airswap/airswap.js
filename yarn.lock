@@ -52,12 +52,20 @@
     solidity-docgen "0.3.0-beta.3"
     truffle-hdwallet-provider-privkey "1.0.3"
 
-"@airswap/swap@2.2.2", "@airswap/swap@^2.2.1":
+"@airswap/swap@2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-2.2.2.tgz#62f5801bbe48691c6c19790303c8488e5a2658b1"
   integrity sha512-tqXTPeTjbfY+MTwS0L1EoxlqL6BM6/iNk8uumldJYeikaXdPllNK1MrRDetTJonyb6HwZ/MSnIRI1j+iIohHTw==
   dependencies:
     "@airswap/types" "0.3.2"
+    openzeppelin-solidity "2.3"
+
+"@airswap/swap@^2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-2.3.4.tgz#b3534d5c8f72585d293e01facc9d8942a6b6ba33"
+  integrity sha512-1+DiBxw1gNX0zqBnUIWQGnw0m8HjQahOir3R/rczVY3uSafePd0VWp7oluiFKkjPU9j6ZQ5M0EfQe0C1KlZVYw==
+  dependencies:
+    "@airswap/types" "0.4.3"
     openzeppelin-solidity "2.3"
 
 "@airswap/tokens@0.1.2":
@@ -78,6 +86,13 @@
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@airswap/types/-/types-0.3.2.tgz#d7d6e059e52a4ee7e62e6ec9d9a738065cac5748"
   integrity sha512-5KxbP6EVevDr+MXaxzKX8mFquZSq6aE3VuptAp/HEFga2S3IPXPgpdA58BxaxBPE4cFS/AB+2aGBbGKySQMhDQ==
+  dependencies:
+    openzeppelin-solidity "2.3"
+
+"@airswap/types@0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@airswap/types/-/types-0.4.3.tgz#7344637dfb3328ef32bd656a6fc343c8cd96afba"
+  integrity sha512-f1UjilkI8Rv3zHyrR5hjOj7PYNK8U+0DAMkN85flF/x1op6XP4D/htXZKouGvYmFU284CxPznH6AfbMKjGK18w==
   dependencies:
     openzeppelin-solidity "2.3"
 
