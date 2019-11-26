@@ -16,9 +16,9 @@ function getDelegateFactorySwapContract() {
   return contract.swapContract()
 }
 
-function submitDelegateFactoryCreateDelegate(delegateContractOwner, delegateTradeWallet, signer) {
+function submitDelegateFactoryCreateDelegate(delegateTradeWallet, signer) {
   const contract = getDelegateFactoryContract(signer)
-  return contract.createDelegate(delegateContractOwner, delegateTradeWallet)
+  return contract.createDelegate(delegateTradeWallet)
 }
 
 function getDelegateFactoryHas(locator) {

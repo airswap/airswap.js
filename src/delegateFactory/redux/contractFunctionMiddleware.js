@@ -41,7 +41,6 @@ export default function delegateFactoryMiddleware(store) {
       case 'SUBMIT_DELEGATE_FACTORY_CREATE_DELEGATE':
         store.dispatch(getSigner()).then(signer => {
           const contractFunctionPromise = contractFunctions.submitDelegateFactoryCreateDelegate(
-            action.delegateContractOwner,
             action.delegateTradeWallet,
             signer,
           )
@@ -52,10 +51,7 @@ export default function delegateFactoryMiddleware(store) {
             id,
             namespace: 'delegateFactory',
             name: 'createDelegate',
-            parameters: {
-              delegateContractOwner: action.delegateContractOwner,
-              delegateTradeWallet: action.delegateTradeWallet,
-            },
+            parameters: { delegateTradeWallet: action.delegateTradeWallet },
           })
           action.resolve(id)
         })

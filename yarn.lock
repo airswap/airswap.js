@@ -2,15 +2,24 @@
 # yarn lockfile v1
 
 
-"@airswap/delegate-factory@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@airswap/delegate-factory/-/delegate-factory-0.2.2.tgz#f77256d98382ad26e9f827e54ee74ea3dbf7cd2a"
-  integrity sha512-ir+XjP1/qrk0vfs1/a5E54TCtJjjftKJMmvU1gM0GlJc00gFM9Ec0Kr9zvZaeIX6EpBxvPYf72IlzcDjLD+BwQ==
+"@airswap/delegate-factory@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@airswap/delegate-factory/-/delegate-factory-0.3.4.tgz#ff06d15db40db6bdb5f6c71f02785c50c4457e2b"
+  integrity sha512-AcB8V5q38BVpgMiMojopUGgzY3rSBHeCyfEnIRW6KgxiieXK+K1O3ywqKylKeY/dQ6I7e4CAzkZOfFz4Rq5UdQ==
   dependencies:
-    "@airswap/delegate" "0.4.1"
+    "@airswap/delegate" "0.5.3"
     openzeppelin-solidity "2.3"
 
-"@airswap/delegate@0.4.1", "@airswap/delegate@^0.4.1":
+"@airswap/delegate@0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-0.5.3.tgz#80d6e7f415c722dd81fe3246ea7caecbf78b2be8"
+  integrity sha512-k1Mt1TkBIIFEo6TIs07QmV70UmQ3JStRWFYePfGCKAQoXZCp4JDpjQ8xSPMX9vTnxDnyverBYyups9V58KfOVA==
+  dependencies:
+    "@airswap/indexer" "0.4.4"
+    "@airswap/swap" "2.3.4"
+    openzeppelin-solidity "2.3"
+
+"@airswap/delegate@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-0.4.1.tgz#4c25539a4aca35f506b04fc8bc6d39c1b45a30c8"
   integrity sha512-fz+13zHAruUr0Ks54IsJ6XYHCk3Ga33oRZ0vUc/5psdX8X25r84C1OYEgdMpgQN4/wQHBfrZs6+sbvQYvuAoVQ==
@@ -25,7 +34,7 @@
   dependencies:
     openzeppelin-solidity "2.3"
 
-"@airswap/indexer@^0.4.4":
+"@airswap/indexer@0.4.4", "@airswap/indexer@^0.4.4":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-0.4.4.tgz#ebe7a9a775f6b8ba294c96d79e0d60200cba154d"
   integrity sha512-vfC70POeMKIua/vqwmX2XCSQ7C5G9PQMvB8jJVWsd46AqGJbL0auh3lBZ5NQd0zN6evEwiBmDAz/dStdTlerSA==
@@ -60,7 +69,7 @@
     "@airswap/types" "0.3.2"
     openzeppelin-solidity "2.3"
 
-"@airswap/swap@^2.3.4":
+"@airswap/swap@2.3.4", "@airswap/swap@^2.3.4":
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-2.3.4.tgz#b3534d5c8f72585d293e01facc9d8942a6b6ba33"
   integrity sha512-1+DiBxw1gNX0zqBnUIWQGnw0m8HjQahOir3R/rczVY3uSafePd0VWp7oluiFKkjPU9j6ZQ5M0EfQe0C1KlZVYw==
