@@ -7,6 +7,8 @@ import indexABI from '../index.json'
 
 import { getIndexAddresses } from '../../indexer/redux/selectors'
 
+const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 function getAbiForToken(token) {
   if (token.kind === 'ERC721') {
     return erc721
@@ -18,7 +20,7 @@ function abiReducer(state = abis, action) {
   switch (action.type) {
     case 'ADD_TOKEN':
       if (action.tokens) {
-        const addresses = action.tokens.map(({ address }) => address.toLowerCase())
+        const addresses = _.without(action.tokens.map(({ address }) => address.toLowerCase()), NULL_ADDRESS)
         const tokenAbis = action.tokens.map(getAbiForToken)
         const newAbis = _.zipObject(addresses, tokenAbis)
         // old state remains, new state fills in gaps, but doesn't overwrite
