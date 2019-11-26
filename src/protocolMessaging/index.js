@@ -22,23 +22,38 @@ const orderQueryDefaults = {
   affiliateParam: '0',
 }
 
-function typeSafeOrder({ nonce, expiry, signature, ...rest }, locatorType) {
+function typeSafeOrder(params, locatorType) {
   if (locatorType === 'contract') {
-    return mapNested22QuoteTo20Quote(rest)
+    return mapNested22QuoteTo20Quote(params)
   }
-
-  return mapNested22OrderTo20Order(
+  const { nonce, expiry, signature, signer, sender, affiliate } = params
+  const safeOrder = mapNested22OrderTo20Order(
     {
-      ...rest,
+      signer: {
+        ...signer,
+        wallet: signer.wallet.toLowerCase(),
+      },
+      sender: {
+        ...sender,
+        wallet: sender.wallet.toLowerCase(),
+      },
+      affiliate: {
+        ...affiliate,
+        wallet: affiliate.wallet.toLowerCase(),
+      },
       signature: {
         ...signature,
         v: `${signature.v}`,
+        signatory: signature.signatory.toLowerCase(),
+        validator: signature.validator.toLowerCase(),
       },
       nonce: `${nonce}`,
       expiry: `${expiry}`,
     },
     true,
   )
+
+  return safeOrder
 }
 
 class Router {
@@ -125,7 +140,7 @@ class Router {
         } else if (error) {
           reject(`Maker Error: ${error.message}`)
         } else {
-          resolve(null, response)
+          resolve(response)
         }
       })
     } else if (locatorType === 'contract') {

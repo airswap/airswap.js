@@ -9,7 +9,7 @@ import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
 import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
-import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
+import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS, ENV } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
 
 import { Order, Quote } from '../../swap/tcomb'
@@ -526,7 +526,7 @@ async function waitForConnectedTakerTokenBalance(takerToken, store) {
 async function waitForOnChainIntents(store) {
   return store.dispatch(
     waitForState({
-      selector: state => !!getLocatorIntentsFormatted(state).length,
+      selector: state => (ENV === 'development' ? !!getLocatorIntentsFormatted(state).length : true),
       result: true,
     }),
   )
