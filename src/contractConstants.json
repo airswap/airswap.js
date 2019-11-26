@@ -1,17 +1,17 @@
 {
   "indexer": {
-    "4": "0x6299e178413d6b7903c365dda1d4f23e37868b25",
-    "1": "0x2242a5f95d227b4e29b5d87a71def0c3ef2335db"
+    "1": "0x393c25ab96913a80b17069a2b061ee74813d3866",
+    "4": "0xb7eec6973876211eb0222290282fb09e9314fcb6"
   },
   "swap": {
-    "4": "0x43f18d371f388abe40b9ddaac44d1c9c9185a078",
-    "1": "0x80f7e4f58dc7ad93609f956ac5065cab9de78067"
+    "1": "0x5fc1d62123558feabad1b806fdefec1de61162de",
+    "4": "0xe032c9585ff89fe9e9e99a3e49c9f302aa636d77"
   },
   "wrapper": {
-    "4": "0x7aa243dff538fa83e28e80134d2415bc2cf72f53",
-    "1": "0x8d2155687441d234ae3ee33514d520d8cffd93c9"
+    "1": "0x200c6958f6b5dfb463f84f67792b9e8a9966829f",
+    "4": "0x56b5236826836c722b70b1e9785ae829acfccc6d"
   },
   "delegateFactory": {
-    "4": "0x72d6e964816c3faaacfd4de76a3a5b037ed6aeba"
+    "4": "0x19a7cfcfff9c4adc4fd4139a27d2d36a2f7f1a59"
   }
 }

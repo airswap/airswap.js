@@ -28,6 +28,8 @@ const trackIndexerAddTokenToBlacklist = ({
 
 const trackIndexerCreateIndex = ({
   callback,
+  signerToken,
+  senderToken,
   fromBlock,
   backFillBlockCount,
   parser,
@@ -39,10 +41,10 @@ const trackIndexerCreateIndex = ({
     contract: constants.INDEXER_CONTRACT_ADDRESS,
     abi,
     name: 'CreateIndex',
-    params: {},
+    params: { signerToken, senderToken },
     fromBlock,
     backFillBlockCount,
-    topic: '0xb9df3a00fbc06a855c8b21697886482e3df2bb8e1e7f6872ce00d50b69700051',
+    topic: '0x20cbc92354b230c7cc3e03e86e970490c1bfadae113827bca7a04496c4659681',
     namespace: 'indexer',
     parser,
     onFetchingHistoricalEvents,

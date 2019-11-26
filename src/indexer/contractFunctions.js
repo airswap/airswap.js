@@ -6,11 +6,6 @@ const constants = require('../constants')
 function getIndexerContract(provider) {
   return new ethers.Contract(constants.INDEXER_CONTRACT_ADDRESS, abi, provider)
 }
-function getIndexerContractPaused() {
-  const contract = getIndexerContract(constants.httpProvider)
-  return contract.contractPaused()
-}
-
 function getIndexerIndexes(signerToken, senderToken) {
   const contract = getIndexerContract(constants.httpProvider)
   return contract.indexes(signerToken, senderToken)
@@ -81,21 +76,6 @@ function submitIndexerUnsetIntent(signerToken, senderToken, signer) {
   return contract.unsetIntent(signerToken, senderToken)
 }
 
-function submitIndexerUnsetIntentForUser(user, signerToken, senderToken, signer) {
-  const contract = getIndexerContract(signer)
-  return contract.unsetIntentForUser(user, signerToken, senderToken)
-}
-
-function submitIndexerSetPausedStatus(newStatus, signer) {
-  const contract = getIndexerContract(signer)
-  return contract.setPausedStatus(newStatus)
-}
-
-function submitIndexerKillContract(recipient, signer) {
-  const contract = getIndexerContract(signer)
-  return contract.killContract(recipient)
-}
-
 function getIndexerGetLocators(signerToken, senderToken, cursor, limit) {
   const contract = getIndexerContract(constants.httpProvider)
   return contract.getLocators(signerToken, senderToken, cursor, limit)
@@ -107,7 +87,6 @@ function getIndexerGetStakedAmount(user, signerToken, senderToken) {
 }
 
 module.exports = {
-  getIndexerContractPaused,
   getIndexerIndexes,
   getIndexerIsOwner,
   getIndexerLocatorWhitelist,
@@ -122,9 +101,6 @@ module.exports = {
   submitIndexerRemoveTokenFromBlacklist,
   submitIndexerSetIntent,
   submitIndexerUnsetIntent,
-  submitIndexerUnsetIntentForUser,
-  submitIndexerSetPausedStatus,
-  submitIndexerKillContract,
   getIndexerGetLocators,
   getIndexerGetStakedAmount,
 }

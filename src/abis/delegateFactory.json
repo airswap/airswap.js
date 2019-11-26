@@ -88,11 +88,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "delegateContractOwner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "delegateTradeWallet",
         "type": "address"
       }

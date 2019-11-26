@@ -206,7 +206,7 @@ export default function delegateMiddleware(store) {
             action.senderToken,
             action.signerToken,
             action.rule,
-            action.amountToStake,
+            action.newStakeAmount,
             signer,
           )
           const id = Date.now().toString()
@@ -221,7 +221,7 @@ export default function delegateMiddleware(store) {
               senderToken: action.senderToken,
               signerToken: action.signerToken,
               rule: action.rule,
-              amountToStake: action.amountToStake,
+              newStakeAmount: action.newStakeAmount,
             },
           })
           action.resolve(id)
@@ -231,8 +231,8 @@ export default function delegateMiddleware(store) {
         store.dispatch(getSigner()).then(signer => {
           const contractFunctionPromise = contractFunctions.submitDelegateUnsetRuleAndIntent(
             action.contractAddress,
-            action.signerToken,
             action.senderToken,
+            action.signerToken,
             signer,
           )
           const id = Date.now().toString()
@@ -244,8 +244,8 @@ export default function delegateMiddleware(store) {
             name: 'unsetRuleAndIntent',
             parameters: {
               contractAddress: action.contractAddress,
-              signerToken: action.signerToken,
               senderToken: action.senderToken,
+              signerToken: action.signerToken,
             },
           })
           action.resolve(id)

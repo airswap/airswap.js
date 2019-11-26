@@ -7,3 +7,15 @@ export const fetchHistoricalSwapFillsByMakerAddress = signerWallet =>
 
 export const fetchHistoricalSwapCancelsByMakerAddress = signerWallet =>
   trackSwapCancelAllContracts({ signerWallet, fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK })
+
+export const fetchingHistoricalEvents = ({ name, namespace }) => ({
+  name,
+  namespace,
+  type: 'FETCHING_HISTORICAL_EVENTS',
+})
+
+export const fetchedHistoricalEvents = ({ name, namespace }) => ({
+  name,
+  namespace,
+  type: 'FETCHED_HISTORICAL_EVENTS',
+})

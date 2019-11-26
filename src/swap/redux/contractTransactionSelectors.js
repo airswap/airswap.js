@@ -17,8 +17,8 @@ export const getSwapCancelTransactions = createSelector(getTransactions, transac
   return sortedValues
 })
 
-export const getSwapInvalidateTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'invalidate', namespace: 'swap' })
+export const getSwapCancelUpToTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'cancelUpTo', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })

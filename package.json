@@ -1,17 +1,17 @@
 {
   "name": "airswap.js",
-  "version": "0.1.68",
+  "version": "0.1.69",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@airswap/delegate": "^0.4.1",
-    "@airswap/delegate-factory": "^0.2.2",
-    "@airswap/index": "^0.3.1",
-    "@airswap/indexer": "^0.3.1",
-    "@airswap/swap": "^2.2.1",
-    "@airswap/wrapper": "^0.3.1",
+    "@airswap/delegate": "^0.5.3",
+    "@airswap/delegate-factory": "^0.4.4",
+    "@airswap/index": "^0.3.2",
+    "@airswap/indexer": "^1.5.4",
+    "@airswap/swap": "^3.3.4",
+    "@airswap/wrapper": "^1.5.3",
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -87,7 +87,7 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
-    "@airswap/order-utils": "^0.3.3",
+    "@airswap/order-utils": "^0.3.12",
     "@alch/alchemy-web3": "^0.1.4",
     "@ledgerhq/hw-app-eth": "^4.73.4",
     "@ledgerhq/hw-transport-u2f": "^4.73.4",

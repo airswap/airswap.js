@@ -121,7 +121,7 @@ export const submitDelegateSetRuleAndIntent = ({
   senderToken,
   signerToken,
   rule,
-  amountToStake,
+  newStakeAmount,
 }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
@@ -129,19 +129,19 @@ export const submitDelegateSetRuleAndIntent = ({
       senderToken,
       signerToken,
       rule,
-      amountToStake,
+      newStakeAmount,
       type: 'SUBMIT_DELEGATE_SET_RULE_AND_INTENT',
       resolve,
       reject,
     }),
   )
 
-export const submitDelegateUnsetRuleAndIntent = ({ contractAddress, signerToken, senderToken }) => dispatch =>
+export const submitDelegateUnsetRuleAndIntent = ({ contractAddress, senderToken, signerToken }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      signerToken,
       senderToken,
+      signerToken,
       type: 'SUBMIT_DELEGATE_UNSET_RULE_AND_INTENT',
       resolve,
       reject,

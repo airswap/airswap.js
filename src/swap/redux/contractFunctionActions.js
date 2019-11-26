@@ -62,11 +62,11 @@ export const submitSwapCancel = ({ nonces }) => dispatch =>
     }),
   )
 
-export const submitSwapInvalidate = ({ minimumNonce }) => dispatch =>
+export const submitSwapCancelUpTo = ({ minimumNonce }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       minimumNonce,
-      type: 'SUBMIT_SWAP_INVALIDATE',
+      type: 'SUBMIT_SWAP_CANCEL_UP_TO',
       resolve,
       reject,
     }),

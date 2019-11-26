@@ -51,7 +51,56 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "ruleOwner",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tradeWallet",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "senderToken",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "signerToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "senderAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "priceCoef",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "priceExp",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProvideOrder",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
         "type": "address"
       },
       {
@@ -94,7 +143,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "ruleOwner",
+        "name": "owner",
         "type": "address"
       },
       {
@@ -340,7 +389,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "amountToStake",
+        "name": "newStakeAmount",
         "type": "uint256"
       }
     ],
@@ -355,12 +404,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "signerToken",
+        "name": "senderToken",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "senderToken",
+        "name": "signerToken",
         "type": "address"
       }
     ],
@@ -471,6 +520,11 @@
               {
                 "internalType": "address",
                 "name": "signatory",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "validator",
                 "type": "address"
               },
               {
