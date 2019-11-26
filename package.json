@@ -11,7 +11,7 @@
     "@airswap/index": "^0.3.2",
     "@airswap/indexer": "^0.4.4",
     "@airswap/swap": "^2.3.4",
-    "@airswap/wrapper": "^0.3.1",
+    "@airswap/wrapper": "^0.4.3",
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
