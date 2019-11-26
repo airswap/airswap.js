@@ -1,13 +1,4 @@
 // This file is generated code, edits will be overwritten
-export const fetchIndexerContractPaused = () => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      type: 'FETCH_INDEXER_CONTRACT_PAUSED',
-      resolve,
-      reject,
-    }),
-  )
-
 export const fetchIndexerIndexes = ({ signerToken, senderToken }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
@@ -144,38 +135,6 @@ export const submitIndexerUnsetIntent = ({ signerToken, senderToken }) => dispat
       signerToken,
       senderToken,
       type: 'SUBMIT_INDEXER_UNSET_INTENT',
-      resolve,
-      reject,
-    }),
-  )
-
-export const submitIndexerUnsetIntentForUser = ({ user, signerToken, senderToken }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      user,
-      signerToken,
-      senderToken,
-      type: 'SUBMIT_INDEXER_UNSET_INTENT_FOR_USER',
-      resolve,
-      reject,
-    }),
-  )
-
-export const submitIndexerSetPausedStatus = ({ newStatus }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      newStatus,
-      type: 'SUBMIT_INDEXER_SET_PAUSED_STATUS',
-      resolve,
-      reject,
-    }),
-  )
-
-export const submitIndexerKillContract = ({ recipient }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      recipient,
-      type: 'SUBMIT_INDEXER_KILL_CONTRACT',
       resolve,
       reject,
     }),
