@@ -516,7 +516,8 @@ function trackMissingTokensForConnectedAddress(query, store) {
 async function waitForConnectedTakerTokenBalance(takerToken, store) {
   return store.dispatch(
     waitForState({
-      selector: state => getIndexerIntentsLoaded(state),
+      selector: state =>
+        !_.isUndefined(_.get(deltaBalancesSelectors.getConnectedBalances(state), takerToken.toLowerCase())),
       result: true,
     }),
   )
@@ -525,7 +526,7 @@ async function waitForConnectedTakerTokenBalance(takerToken, store) {
 async function waitForOnChainIntents(store) {
   return store.dispatch(
     waitForState({
-      selector: state => !!state, // (ENV === 'development' ? !!getLocatorIntentsFormatted(state).length : true),
+      selector: state => getIndexerIntentsLoaded(state),
       result: true,
     }),
   )
@@ -551,28 +552,27 @@ export default function routerMiddleware(store) {
         break
       case 'SET_CHECKOUT_FRAME_QUERY':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
+
         waitForOnChainIntents(store).then(() => {
           // THERE IS CURRENTLY A RACE CONDITION WITH LOADING ON_CHAIN INDEXER VALUES
           // THE LATEST CONTRACT VERSION FIXES THIS, AFTER UPGRADING DELETE THIS window.setTimeout
-          window.setTimeout(() => {
-            trackMissingTokensForConnectedAddress(action.query, store)
-            const intents = getOnAndOffChainIntents(store.getState())
-            const filteredIntents = filterIntents(intents, action.query, action.queryContext)
-            store.dispatch(gotIntents(filteredIntents, action.stackId))
-            store.dispatch(getEthWrapperApproval())
-            store.dispatch(getWrapperWethTokenApproval())
+          trackMissingTokensForConnectedAddress(action.query, store)
+          const intents = getOnAndOffChainIntents(store.getState())
+          const filteredIntents = filterIntents(intents, action.query, action.queryContext)
+          store.dispatch(gotIntents(filteredIntents, action.stackId))
+          store.dispatch(getEthWrapperApproval())
+          store.dispatch(getWrapperWethTokenApproval())
 
-            Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
-              store.dispatch(allIntentsResolved(action.stackId)),
-            )
-            // we don't start querying intents until connected takerToken balance is loaded
-            // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
-            waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
-              window.setTimeout(() => {
-                store.dispatch(frameTimeoutReached(action.stackId))
-              }, orderFetchingTimeout)
-            })
-          }, 500)
+          Promise.all(filteredIntents.map(intent => mapIntentFetchProtocolOrder(intent, store, action))).then(() =>
+            store.dispatch(allIntentsResolved(action.stackId)),
+          )
+          // we don't start querying intents until connected takerToken balance is loaded
+          // so the timeout for the query also shouldn't begin until the connected takerToken balance is loaded
+          waitForConnectedTakerTokenBalance(action.query.takerToken, store).then(() => {
+            window.setTimeout(() => {
+              store.dispatch(frameTimeoutReached(action.stackId))
+            }, orderFetchingTimeout)
+          })
         })
 
         break
