@@ -132,9 +132,6 @@ function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAm
     .times(bn(10).pow(-Number(priceExp)))
     .toString()
 
-  if (atomicPrice === '0') {
-    throw new Error('atomicPrice cannot be 0')
-  }
   return { senderToken, signerToken, senderAmountAtomic: maxSenderAmount, atomicPrice }
 }
 

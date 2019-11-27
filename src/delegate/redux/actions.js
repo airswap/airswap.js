@@ -79,5 +79,6 @@ export const submitConnectedDelegateSetRule = ({ senderToken, signerToken, maxSe
 
 export const authorizeConnectedDelegateSender = () => (dispatch, getState) => {
   const contractAddress = getConnectedDelegateContract(getState())
+
   dispatch(submitSwapAuthorizeSender({ authorizedSender: contractAddress }))
 }
