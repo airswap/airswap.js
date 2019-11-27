@@ -103,7 +103,7 @@ const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
     case RINKEBY_ID:
       return 5359874
     case MAIN_ID:
-      return null
+      return 9005083
     default:
   }
 })(NETWORK)
@@ -115,7 +115,7 @@ const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
     case RINKEBY_ID:
       return 5388617
     case MAIN_ID:
-      return null
+      return 9006065
     default:
   }
 })(NETWORK)
