@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const t = require('tcomb-validation')
-const { Address, AtomicAmount, UUID } = require('../tcombTypes')
+const { Address, AtomicAmount, UUID, throwTypeError } = require('../tcombTypes')
 const { FlatOrder, FlatQuote } = require('../swap/tcomb')
 const { LegacyOrder, LegacyQuote } = require('../swapLegacy/tcomb')
 
@@ -32,21 +32,23 @@ const OrderResponses = t.list(t.union([LegacyOrder, FlatOrder, FlatQuote]))
 
 const QuoteResponses = t.list(t.union([LegacyQuote, FlatQuote]))
 
-const CheckoutFrame = t.struct({
-  stackId: UUID,
-  query: t.maybe(Query),
-  queryContext: t.maybe(QueryContext),
-  intents: t.maybe(Intents),
-  orderResponses: OrderResponses,
-  alternativeOrderResponses: OrderResponses,
-  lowBalanceOrderResponses: OrderResponses,
-  quoteResponses: QuoteResponses,
-  alternativeQuoteResponses: QuoteResponses,
-  timeoutReached: t.Boolean,
-  allIntentsResolved: t.Boolean,
-  selectedOrderId: t.String,
-  isDexIndexQuerying: t.maybe(t.Boolean),
-  dexIndexResponses: DexIndexResponses,
-})
+const CheckoutFrame = throwTypeError(
+  t.struct({
+    stackId: UUID,
+    query: t.maybe(Query),
+    queryContext: t.maybe(QueryContext),
+    intents: t.maybe(Intents),
+    orderResponses: OrderResponses,
+    alternativeOrderResponses: OrderResponses,
+    lowBalanceOrderResponses: OrderResponses,
+    quoteResponses: QuoteResponses,
+    alternativeQuoteResponses: QuoteResponses,
+    timeoutReached: t.Boolean,
+    allIntentsResolved: t.Boolean,
+    selectedOrderId: t.String,
+    isDexIndexQuerying: t.maybe(t.Boolean),
+    dexIndexResponses: DexIndexResponses,
+  }),
+)
 
 module.exports = { Query, CheckoutFrame }
