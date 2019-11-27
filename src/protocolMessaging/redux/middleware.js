@@ -554,8 +554,6 @@ export default function routerMiddleware(store) {
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
 
         waitForOnChainIntents(store).then(() => {
-          // THERE IS CURRENTLY A RACE CONDITION WITH LOADING ON_CHAIN INDEXER VALUES
-          // THE LATEST CONTRACT VERSION FIXES THIS, AFTER UPGRADING DELETE THIS window.setTimeout
           trackMissingTokensForConnectedAddress(action.query, store)
           const intents = getOnAndOffChainIntents(store.getState())
           const filteredIntents = filterIntents(intents, action.query, action.queryContext)
