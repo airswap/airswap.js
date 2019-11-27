@@ -5,10 +5,10 @@ import { createSelector } from 'reselect'
 import { selectors as erc20Selectors } from '../erc20/redux'
 import { selectors as swapLegacySelectors } from '../swapLegacy/redux'
 import { selectors as swapSelectors } from '../swap/redux'
-import { selectors as tokenSelectors } from '../tokens/redux'
-import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux'
-import { selectors as apiSelectors } from '../api/redux'
-import { selectors as transactionSelectors } from '../transactionTracker/redux'
+import { selectors as tokenSelectors } from '../tokens/redux/reducers'
+import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux/reducers'
+import { selectors as apiSelectors } from '../api/redux/reducers'
+import { selectors as transactionSelectors } from '../transactionTracker/redux/reducers'
 import { BASE_ASSET_TOKENS_SYMBOLS, ETH_BASE_ADDRESSES } from '../constants'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
@@ -16,7 +16,6 @@ import { Quote } from '../swap/tcomb'
 import { LegacyQuote } from '../swapLegacy/tcomb'
 import { getAbis } from '../abis/redux/reducers'
 import { getConnectedOnChainMakerAddresses, getLocatorIntentsFormatted } from '../indexer/redux/selectors'
-import { getTokensBySymbol } from '../tokens/redux/reducers'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -169,7 +168,7 @@ const getConnectedIndexerTokenAddresses = createSelector(getConnectedIndexerInte
 
 const getAvailableMarketsByBaseTokenAddress = createSelector(
   getConnectedIndexerIntents,
-  getTokensBySymbol,
+  tokenSelectors.getTokensBySymbol,
   (intents, tokensBySymbol) => {
     const markets = {}
 

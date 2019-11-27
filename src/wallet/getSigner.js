@@ -125,7 +125,11 @@ function getSigner(params, walletActions = {}, walletType) {
     } else if (web3Provider.networkVersion) {
       networkVersion = Number(web3Provider.networkVersion)
     } else {
-      networkVersion = Number(web3Provider.send({ method: 'net_version' }).result)
+      try {
+        networkVersion = Number(web3Provider.send({ method: 'net_version' }).result)
+      } catch (e) {
+        networkVersion = NETWORK
+      }
     }
 
     if (NETWORK !== networkVersion) {
