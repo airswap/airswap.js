@@ -1,6 +1,6 @@
 const t = require('tcomb-validation')
 const { constants } = require('@airswap/order-utils')
-const { Address, AtomicAmount, stringLiteral } = require('../tcombTypes')
+const { Address, AtomicAmount, stringLiteral, throwTypeError } = require('../tcombTypes')
 
 const { ERC721_INTERFACE_ID, ERC20_INTERFACE_ID } = constants
 
@@ -27,16 +27,18 @@ const Signature = t.struct({
   version: SignatureVersion,
 })
 
-const Order = t.struct({
-  nonce: t.String,
-  expiry: t.String,
-  maker: Party,
-  taker: Party,
-  affiliate: Party,
-  signature: Signature,
-  swap: t.maybe(t.struct({ version: t.Number })),
-  locator: t.maybe(t.Object),
-})
+const Order = throwTypeError(
+  t.struct({
+    nonce: t.String,
+    expiry: t.String,
+    maker: Party,
+    taker: Party,
+    affiliate: Party,
+    signature: Signature,
+    swap: t.maybe(t.struct({ version: t.Number })),
+    locator: t.maybe(t.Object),
+  }),
+)
 
 const FlatOrder = t.Object
 
@@ -47,12 +49,14 @@ const QuoteParty = t.struct({
   kind: Kind,
 })
 
-const Quote = t.struct({
-  maker: QuoteParty,
-  taker: QuoteParty,
-  swap: t.maybe(t.struct({ version: t.Number })),
-  locator: t.maybe(t.Object),
-})
+const Quote = throwTypeError(
+  t.struct({
+    maker: QuoteParty,
+    taker: QuoteParty,
+    swap: t.maybe(t.struct({ version: t.Number })),
+    locator: t.maybe(t.Object),
+  }),
+)
 
 const FlatQuote = t.Object
 

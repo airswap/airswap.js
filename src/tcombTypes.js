@@ -29,4 +29,12 @@ const gasLevel = t.refinement(t.String, s => _.includes(GAS_LEVELS, s))
 
 const Currency = t.refinement(t.String, s => _.includes(Object.keys(FIAT_CURRENCIES), s))
 
-module.exports = { Address, gasLevel, Currency, AtomicAmount, stringLiteral, UUID }
+const throwTypeError = type => value => {
+  const validation = t.validate(value, type)
+  if (validation.isValid()) {
+    return type(value)
+  }
+  throw new Error(validation.firstError().message)
+}
+
+module.exports = { Address, gasLevel, Currency, AtomicAmount, stringLiteral, UUID, throwTypeError }
