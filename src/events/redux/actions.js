@@ -14,8 +14,9 @@ export const fetchingHistoricalEvents = ({ name, namespace }) => ({
   type: 'FETCHING_HISTORICAL_EVENTS',
 })
 
-export const fetchedHistoricalEvents = ({ name, namespace }) => ({
+export const fetchedHistoricalEvents = ({ name, namespace }, events) => ({
   name,
   namespace,
+  events,
   type: 'FETCHED_HISTORICAL_EVENTS',
 })

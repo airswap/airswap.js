@@ -130,6 +130,7 @@ function getTransactionDescription(
   const { data } = transaction
   const parsed = contractInterface.parseTransaction({ data })
   const name = parsed.name
+
   const parameterKeys = _.map(contractInterface.functions[name].inputs, 'name')
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
   const parameters = _.zipObject(parameterKeys, parameterValues)
@@ -148,7 +149,7 @@ function getTransactionDescription(
   } else if (name === 'fill') {
     const order = getReadableOrder(parameters)
     return `Fill order for ${order.tokenAmount} ${_.get(tokensByAddress, `${order.tokenAddress}.symbol`)}`
-  } else if (name === 'swap') {
+  } else if (name === 'swap' || name === 'provideOrder') {
     const order = getReadableSwapOrder(parseSwapParameters(parameters))
     const takerToken = tokensByAddress[order.takerToken.toLowerCase()]
     const makerToken = tokensByAddress[order.makerToken.toLowerCase()]
@@ -169,6 +170,7 @@ function getTransactionDescription(
   } else if (name === 'authorizedSigner') {
     return `Authorize signer`
   }
+  return name
 }
 
 function parseTransactionFailureEventCode(code) {

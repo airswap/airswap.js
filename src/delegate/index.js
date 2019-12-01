@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { constants } = require('@airswap/order-utils')
 const {
   getDelegateGetMaxQuote,
@@ -12,14 +13,53 @@ const { ERC20_INTERFACE_ID } = constants
 const resolveBigNumbers = require('../utils/resolveBigNumbers')
 
 function format(resp) {
-  return nest({
-    ...resp,
-    senderKind: ERC20_INTERFACE_ID,
-    signerKind: ERC20_INTERFACE_ID,
-  })
+  return nest(
+    reverseObjectMethods({
+      ...resp,
+      senderKind: ERC20_INTERFACE_ID,
+      signerKind: ERC20_INTERFACE_ID,
+    }),
+  )
 }
 
-async function routeDelegateCall(receiver, { method, params: { signerToken, senderToken, signerParam, senderParam } }) {
+function toggleMethod(str) {
+  if (str.includes('Signer')) {
+    return str.replace('Signer', 'Sender')
+  } else if (str.includes('Sender')) {
+    return str.replace('Sender', 'Signer')
+  } else if (str.includes('signer')) {
+    return str.replace('signer', 'sender')
+  } else if (str.includes('sender')) {
+    return str.replace('sender', 'signer')
+  } else if (str.includes('Maker')) {
+    return str.replace('Maker', 'Taker')
+  } else if (str.includes('Taker')) {
+    return str.replace('Taker', 'Maker')
+  } else if (str.includes('maker')) {
+    return str.replace('maker', 'taker')
+  } else if (str.includes('taker')) {
+    return str.replace('taker', 'maker')
+  }
+  return str
+}
+
+function reverseObjectMethods(params) {
+  return _.mapKeys(params, (p, k) => toggleMethod(k))
+}
+
+function reverseParams({ method, params }) {
+  return {
+    method: toggleMethod(method),
+    params: reverseObjectMethods(params),
+  }
+}
+
+async function routeDelegateCall(receiver, request, tradeWallet, signerWallet) {
+  const {
+    method,
+    params: { signerToken, senderToken, signerParam, senderParam },
+  } = reverseParams(request)
+
   switch (method) {
     case 'getSignerSideQuote':
       return getDelegateGetSignerSideQuote(receiver, senderParam, senderToken, signerToken).then(resp =>
@@ -42,21 +82,25 @@ async function routeDelegateCall(receiver, { method, params: { signerToken, send
     case 'getSignerSideOrder':
       return getDelegateGetSignerSideQuote(receiver, senderParam, senderToken, signerToken).then(resp =>
         format({
-          senderWallet: receiver,
+          senderWallet: tradeWallet,
+          signerWallet,
           signerToken,
           senderToken,
           signerParam: resolveBigNumbers(resp),
           senderParam,
+          nonce: `${Date.now()}`,
         }),
       )
     case 'getSenderSideOrder':
       return getDelegateGetSenderSideQuote(receiver, signerParam, signerToken, senderToken).then(resp =>
         format({
-          senderWallet: receiver,
+          senderWallet: tradeWallet,
+          signerWallet,
           signerToken,
           senderToken,
           signerParam,
           senderParam: resolveBigNumbers(resp),
+          nonce: `${Date.now()}`,
         }),
       )
     case 'getMaxQuote':
@@ -75,4 +119,4 @@ async function routeDelegateCall(receiver, { method, params: { signerToken, send
   }
 }
 
-module.exports = { routeDelegateCall }
+module.exports = { routeDelegateCall, reverseObjectMethods }

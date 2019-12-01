@@ -7,6 +7,8 @@ import {
 } from '../../index/redux/eventTrackingSelectors'
 import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils'
 import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus } from './eventTrackingSelectors'
+import { getDelegates } from '../../delegateFactory/redux/selectors'
+import { getDelegateFactoryCreateDelegateHistoricalFetchStatus } from '../../delegateFactory/redux/eventTrackingSelectors'
 
 // TODO: this selector is a work in progress, currently being replaced by the selector below which is event driven instead of callData driven
 const getLocators = createSelector(getIndexerGetLocators, responses =>
@@ -40,46 +42,64 @@ const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
 
 const getIndexAddresses = createSelector(getIndexes, indexes => indexes.map(({ indexAddress }) => indexAddress))
 
-const getLocatorIntents = createSelector(getIndexSetLocatorEvents, getIndexes, (setLocatorEvents, indexes) => {
-  const parsedEvents = setLocatorEvents.map(event => {
-    const {
-      values: { identifier, locator, score },
-      address: indexAddress,
-      blockNumber,
-    } = event
+const getLocatorIntents = createSelector(
+  getIndexSetLocatorEvents,
+  getIndexes,
+  getDelegates,
+  (setLocatorEvents, indexes, delegates) => {
+    const parsedEvents = setLocatorEvents.map(event => {
+      const {
+        values: { identifier, locator: unformattedLocator, score },
+        address: indexAddress,
+        blockNumber,
+      } = event
 
-    const { senderToken, signerToken } = _.find(indexes, { indexAddress }) || {}
+      const { senderToken, signerToken } = _.find(indexes, { indexAddress }) || {}
 
-    if (!(senderToken && signerToken)) {
-      return null
-    }
-
-    return {
-      senderToken,
-      signerToken,
-      indexAddress,
-      identifier,
-      ...parseLocatorAndLocatorType(locator, identifier),
-      score,
-      blockNumber,
-    }
-  })
-  const uniqueLocators = _.reduce(
-    _.compact(parsedEvents),
-    (agg, val) => {
-      const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
-      if (!existingLocator) {
-        return [...agg, val]
-      } else if (existingLocator.blockNumber < val.blockNumber) {
-        const existingLocatorIndex = _.findIndex(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
-        return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+      if (!(senderToken && signerToken)) {
+        return null
       }
-      return agg
-    },
-    [],
-  )
-  return _.sortBy(uniqueLocators, 'score').reverse()
-})
+      const { locator, locatorType } = parseLocatorAndLocatorType(unformattedLocator, identifier)
+
+      let delegateTradeWallet
+
+      if (locatorType === 'contract') {
+        const delegate = _.find(delegates, { delegateContract: locator })
+        if (!delegate) {
+          return null
+        }
+        delegateTradeWallet = delegate.delegateTradeWallet
+      }
+
+      return {
+        senderToken,
+        signerToken,
+        indexAddress,
+        identifier,
+        tradeWallet: delegateTradeWallet,
+        locator,
+        locatorType,
+        score,
+        blockNumber,
+      }
+    })
+    const uniqueLocators = _.reduce(
+      _.compact(parsedEvents),
+      (agg, val) => {
+        const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
+        if (!existingLocator) {
+          return [...agg, val]
+        } else if (existingLocator.blockNumber < val.blockNumber) {
+          const existingLocatorIndex = _.findIndex(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
+          return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+        }
+        return agg
+      },
+      [],
+    )
+    return _.sortBy(uniqueLocators, 'score').reverse()
+  },
+)
 
 const getLocatorIntentsFormatted = createSelector(getLocatorIntents, intents => intents.map(mapOnChainIntentToOffChain))
 
@@ -98,7 +118,8 @@ const getContractLocatorIntentsFormatted = createSelector(getLocatorIntentsForma
 const getIndexerIntentsLoaded = createSelector(
   getIndexerCreateIndexHistoricalFetchStatus,
   getIndexSetLocatorHistoricalFetchStatus,
-  (createIndex, setLocator) => createIndex.fetched && setLocator.fetched,
+  getDelegateFactoryCreateDelegateHistoricalFetchStatus,
+  (createIndex, setLocator, createDelegate) => createIndex.fetched && setLocator.fetched && createDelegate.fetched,
 )
 
 export {

@@ -23,6 +23,7 @@ import { waitForState } from '../../utils/redux/waitForState'
 import { getOnAndOffChainIntents } from '../../redux/combinedSelectors'
 import { submitDelegateProvideOrder } from '../../delegate/redux/contractFunctionActions'
 import { getIndexerIntentsLoaded } from '../../indexer/redux/selectors'
+import { reverseObjectMethods } from '../../delegate/index'
 
 async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
@@ -113,6 +114,10 @@ function takerTokenBalanceIsZero(store, takerToken) {
   return Number(connectedBalances[takerToken]) === 0
 }
 
+function makerTokenBalanceIsZero(maxQuote, swapVersion) {
+  return swapVersion === 2 ? Number(maxQuote.makerParam) === 0 : Number(maxQuote.makerAmount) === 0
+}
+
 function takerTokenBalanceIsLessThanTakerAmount(store, takerToken, takerAmount) {
   const connectedBalances = deltaBalancesSelectors.getConnectedBalances(store.getState())
   return BigNumber(connectedBalances[takerToken]).lt(takerAmount)
@@ -145,6 +150,10 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
     const maxQuoteResponse = await maxQuotePromise
 
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
+    if (makerTokenBalanceIsZero(maxQuote, swapVersion)) {
+      // exit function if no liquidity is available
+      return null
+    }
   } catch (e) {
     console.log(e)
   }
@@ -254,6 +263,10 @@ async function getOrderMakerTokenWithQuotes(intent, store, action) {
   try {
     const maxQuoteResponse = await maxQuotePromise
     maxQuote = swapVersion === 2 ? flatten(Quote(maxQuoteResponse)) : LegacyQuote(maxQuoteResponse)
+    if (makerTokenBalanceIsZero(maxQuote, swapVersion)) {
+      // exit function if no liquidity is available
+      return null
+    }
   } catch (e) {
     console.log(e)
   }
@@ -453,8 +466,9 @@ async function fillFrameBestOrder(store) {
     protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
 
   if (bestOrder.locatorType === 'contract') {
-    const signedOrder = await store.dispatch(signSwap(nest(bestOrder)))
-    store.dispatch(submitDelegateProvideOrder({ contractAddress: signedOrder.sender.wallet, order: signedOrder }))
+    const reversedOrder = reverseObjectMethods(bestOrder)
+    const signedOrder = await store.dispatch(signSwap(nest(reversedOrder)))
+    store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
   } else if (bestOrder.swapVersion === 2) {
     const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
     if (baseAsset === 'ETH') {

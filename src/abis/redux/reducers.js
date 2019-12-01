@@ -51,7 +51,6 @@ export const getAbis = createSelector(
   (abi, delegateContracts, indexContracts) => {
     const delegateContractMapping = _.zipObject(delegateContracts, delegateContracts.map(() => delegateABI))
     const indexContractMapping = _.zipObject(indexContracts, indexContracts.map(() => indexABI))
-
     return {
       ...abi,
       ...delegateContractMapping,
