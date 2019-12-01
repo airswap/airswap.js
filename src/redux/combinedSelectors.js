@@ -122,7 +122,7 @@ const getTransactionHistory = createSelector(
 const getOnAndOffChainIntents = createSelector(
   getLocatorIntentsFormatted,
   apiSelectors.getIndexerIntents,
-  (intents, apiIntents) => [...intents, ...apiIntents], // [..._.filter(intents, i => i.locatorType !== 'contract'), ...apiIntents],
+  (intents, apiIntents) => [...intents, ...apiIntents],
 )
 
 /*
