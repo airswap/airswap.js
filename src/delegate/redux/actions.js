@@ -64,18 +64,13 @@ export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerTok
   )
 }
 
-export const submitConnectedDelegateUnsetRuleAndIntent = ({ senderToken, signerToken, rule, newStakeAmount }) => (
-  dispatch,
-  getState,
-) => {
+export const submitConnectedDelegateUnsetRuleAndIntent = ({ senderToken, signerToken }) => (dispatch, getState) => {
   const contractAddress = getConnectedDelegateContractAddress(getState())
   dispatch(
     submitDelegateUnsetRuleAndIntent({
       contractAddress,
       senderToken,
       signerToken,
-      rule,
-      newStakeAmount,
     }),
   )
 }
