@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { ERC20abi, IS_INSTANT, IS_EXPLORER } from '../../constants'
+import { ERC20abi, IS_INSTANT, IS_EXPLORER, SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
@@ -11,11 +11,7 @@ import { buildGlobalERC20TransfersTopics, fetchLogs } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
 import eventTracker from '../websocketEventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
-import {
-  trackSwapLegacyCanceled,
-  trackSwapLegacyFailed,
-  trackSwapLegacyFilled,
-} from '../../swapLegacy/redux/eventTrackingActions'
+import { trackSwapLegacyFilled } from '../../swapLegacy/redux/eventTrackingActions'
 import { trackWethDeposit, trackWethWithdrawal } from '../../weth/redux/eventTrackingActions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import DebouncedQueue from '../../utils/debouncedQueue'
@@ -64,38 +60,22 @@ const initPollExchangeFills = _.once(store => {
     )
 
     eventTracker.trackEvent(
-      trackSwapLegacyCanceled({
-        callback,
-      }),
-    )
-
-    eventTracker.trackEvent(
-      trackSwapLegacyFailed({
-        callback,
-      }),
-    )
-
-    eventTracker.trackEvent(
       trackSwapSwap({
         callback,
         backFillBlockCount: 7000,
-      }),
-    )
-
-    eventTracker.trackEvent(
-      trackSwapCancel({
-        callback,
       }),
     )
   } else {
     eventTracker.trackEvent(
       trackSwapSwap({
         callback,
+        fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
       }),
     )
     eventTracker.trackEvent(
       trackSwapCancel({
         callback,
+        fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
       }),
     )
   }
@@ -122,7 +102,9 @@ const pollERC20Transfers = (store, block) => {
 
 function fetchMissingBlocksForFetchedEvents(store, action) {
   const fetchedBlockNumbers = blockTrackerSelectors.getBlockNumbers(store.getState())
-  const eventBlockNumbers = _.get(action, 'response', []).map(({ blockNumber }) => blockNumber)
+  const eventBlockNumbers = _.get(action, 'response', [])
+    .filter(event => event.name === 'Filled')
+    .map(({ blockNumber }) => blockNumber)
   const blockPromises = _.without(eventBlockNumbers, ...fetchedBlockNumbers).map(async blockNumber =>
     gethRead.fetchBlock(blockNumber),
   )
@@ -140,7 +122,7 @@ export default function eventsMiddleware(store) {
 
     store.dispatch(newEventsAction)
   })
-
+  initPollExchangeFills(store)
   return next => action => {
     switch (action.type) {
       case makeEventActionTypes('trackedEvents').got:
@@ -170,9 +152,5 @@ export default function eventsMiddleware(store) {
       default:
     }
     next(action)
-    if (action.type === 'GOT_LATEST_BLOCK') {
-      // needs to initialize after next(action) is called to have access to the latest state
-      initPollExchangeFills(store) // only executes once since it is wrapped in _.once
-    }
   }
 }

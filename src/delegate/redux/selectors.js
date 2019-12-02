@@ -12,13 +12,17 @@ import { getDelegateProvideOrderEvents, getDelegateSetRuleEvents } from './event
 import { getDelegateRules } from './callDataSelectors'
 
 const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =>
-  _.sortBy(
-    events.map(({ values, blockNumber }) => ({
-      blockNumber,
-      ...values,
-    })),
-    'blockNumber',
-  ).reverse(),
+  _.uniqBy(
+    _.sortBy(
+      events.map(({ values, blockNumber, address }) => ({
+        blockNumber,
+        address,
+        ...values,
+      })),
+      'blockNumber',
+    ).reverse(),
+    ({ senderToken, signerToken, address }) => [senderToken, signerToken, address].join(''),
+  ),
 )
 
 const getConnectedDelegateSenderAuthorization = createSelector(
@@ -56,7 +60,7 @@ const getFormattedDelegateRules = createSelector(
   getConnectedDelegateSenderAuthorization,
   makeDisplayByToken,
   (
-    rules,
+    allRules,
     rulesEvents,
     providedOrders,
     tokensSymbolsByAddress,
@@ -67,6 +71,7 @@ const getFormattedDelegateRules = createSelector(
     if (_.isEmpty(tokensSymbolsByAddress)) {
       return []
     }
+    const rules = allRules.filter(rule => !(rule.response.priceCoef === '0' && rule.response.priceExp === '0')) // this is the only deterministic way to tell if a rule has been unset
 
     return _.compact(
       rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
@@ -109,6 +114,8 @@ const getFormattedDelegateRules = createSelector(
           senderAmountDisplayValue,
           signerAmountDisplayValue,
           priceDisplayValue,
+          senderToken,
+          signerToken,
           providedOrdersSenderSumDisplayValue,
           fillRatio,
           senderSymbol: tokensSymbolsByAddress[senderToken],
