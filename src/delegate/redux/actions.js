@@ -1,4 +1,8 @@
-import { submitDelegateSetRule, submitDelegateSetRuleAndIntent } from './contractFunctionActions'
+import {
+  submitDelegateSetRule,
+  submitDelegateSetRuleAndIntent,
+  submitDelegateUnsetRuleAndIntent,
+} from './contractFunctionActions'
 import { getConnectedDelegateContractAddress } from '../../delegateFactory/redux/selectors'
 import { submitSwapAuthorizeSender } from '../../swap/redux/contractFunctionActions'
 import { getContractPriceFromDisplayPrice } from '../utils' //eslint-disable-line
@@ -51,6 +55,22 @@ export const submitConnectedDelegateSetRuleAndIntent = ({ senderToken, signerTok
   const contractAddress = getConnectedDelegateContractAddress(getState())
   dispatch(
     submitDelegateSetRuleAndIntent({
+      contractAddress,
+      senderToken,
+      signerToken,
+      rule,
+      newStakeAmount,
+    }),
+  )
+}
+
+export const submitConnectedDelegateUnsetRuleAndIntent = ({ senderToken, signerToken, rule, newStakeAmount }) => (
+  dispatch,
+  getState,
+) => {
+  const contractAddress = getConnectedDelegateContractAddress(getState())
+  dispatch(
+    submitDelegateUnsetRuleAndIntent({
       contractAddress,
       senderToken,
       signerToken,
