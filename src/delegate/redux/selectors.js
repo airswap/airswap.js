@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
+import bn from 'bignumber.js'
 // import { getDelegateRules } from './callDataSelectors'
 import { getDisplayPriceFromContractPrice } from '../utils'
-import { getTokensSymbolsByAddress } from '../../tokens/redux/reducers'
+import { getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
 import { getConnectedSwapApprovals } from '../../deltaBalances/redux/reducers'
 import { getSwapSenderAuthorizations } from '../../swap/redux/callDataSelectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
@@ -53,31 +54,74 @@ const getFormattedDelegateRules = createSelector(
   getTokensSymbolsByAddress,
   getConnectedSwapApprovals,
   getConnectedDelegateSenderAuthorization,
-  (rules, rulesEvents, providedOrders, tokensSymbolsByAddress, connectedSwapApprovals, delegateSenderApproval) => {
+  makeDisplayByToken,
+  (
+    rules,
+    rulesEvents,
+    providedOrders,
+    tokensSymbolsByAddress,
+    connectedSwapApprovals,
+    delegateSenderApproval,
+    displayByToken,
+  ) => {
     if (_.isEmpty(tokensSymbolsByAddress)) {
       return []
     }
 
-    return rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
-      const { blockNumber, maxSenderAmount, priceCoef, priceExp } = _.find(rulesEvents, { senderToken, signerToken })
-      const providedOrdersForRule = _.filter(
-        providedOrders,
-        order =>
-          order.blockNumber >= blockNumber && order.senderToken === senderToken && order.signerToken === signerToken,
-      )
-      return {
-        delegateAddress,
-        ...getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }),
-        senderSymbol: tokensSymbolsByAddress[senderToken],
-        signerSymbol: tokensSymbolsByAddress[signerToken],
-        maxSenderAmount,
-        providedOrders: providedOrdersForRule,
-        approvals: {
-          tokenSwapApproval: _.get(connectedSwapApprovals, senderToken),
-          delegateSenderApproval,
-        },
-      }
-    })
+    return _.compact(
+      rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
+        const rule = _.find(rulesEvents, { senderToken, signerToken })
+        if (!rule) {
+          return null
+        }
+        const { blockNumber, maxSenderAmount, priceCoef, priceExp } = rule
+        const providedOrdersForRule = _.filter(
+          providedOrders || [],
+          order =>
+            order.blockNumber >= blockNumber && order.senderToken === senderToken && order.signerToken === signerToken,
+        )
+        const providedOrdersSenderSum = _.reduce(
+          providedOrdersForRule,
+          (sum, order) =>
+            bn(sum)
+              .add(order.senderAmount)
+              .toString(),
+          '0',
+        )
+
+        const providedOrdersSenderSumDisplayValue = `${displayByToken(
+          { address: senderToken },
+          providedOrdersSenderSum,
+        )}`
+
+        const {
+          senderAmountDisplayValue,
+          signerAmountDisplayValue,
+          priceDisplayValue,
+        } = getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp })
+
+        const fillRatio = bn(providedOrdersSenderSum)
+          .div(maxSenderAmount)
+          .toNumber()
+
+        return {
+          delegateAddress,
+          senderAmountDisplayValue,
+          signerAmountDisplayValue,
+          priceDisplayValue,
+          providedOrdersSenderSumDisplayValue,
+          fillRatio,
+          senderSymbol: tokensSymbolsByAddress[senderToken],
+          signerSymbol: tokensSymbolsByAddress[signerToken],
+          maxSenderAmount,
+          providedOrders: providedOrdersForRule,
+          approvals: {
+            tokenSwapApproval: _.get(connectedSwapApprovals, senderToken),
+            delegateSenderApproval,
+          },
+        }
+      }),
+    )
   },
 )
 
