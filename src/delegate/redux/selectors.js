@@ -56,7 +56,7 @@ const getFormattedDelegateRules = createSelector(
   getConnectedDelegateSenderAuthorization,
   makeDisplayByToken,
   (
-    rules,
+    allRules,
     rulesEvents,
     providedOrders,
     tokensSymbolsByAddress,
@@ -67,6 +67,7 @@ const getFormattedDelegateRules = createSelector(
     if (_.isEmpty(tokensSymbolsByAddress)) {
       return []
     }
+    const rules = allRules.filter(rule => !(rule.response.priceCoef === '0' && rule.response.priceExp === '0')) // this is the only deterministic way to tell if a rule has been unset
 
     return _.compact(
       rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
@@ -109,6 +110,8 @@ const getFormattedDelegateRules = createSelector(
           senderAmountDisplayValue,
           signerAmountDisplayValue,
           priceDisplayValue,
+          senderToken,
+          signerToken,
           providedOrdersSenderSumDisplayValue,
           fillRatio,
           senderSymbol: tokensSymbolsByAddress[senderToken],
