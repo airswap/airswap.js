@@ -12,13 +12,17 @@ import { getDelegateProvideOrderEvents, getDelegateSetRuleEvents } from './event
 import { getDelegateRules } from './callDataSelectors'
 
 const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =>
-  _.sortBy(
-    events.map(({ values, blockNumber }) => ({
-      blockNumber,
-      ...values,
-    })),
-    'blockNumber',
-  ).reverse(),
+  _.uniqBy(
+    _.sortBy(
+      events.map(({ values, blockNumber, address }) => ({
+        blockNumber,
+        address,
+        ...values,
+      })),
+      'blockNumber',
+    ).reverse(),
+    ({ senderToken, signerToken, address }) => [senderToken, signerToken, address].join(''),
+  ),
 )
 
 const getConnectedDelegateSenderAuthorization = createSelector(
