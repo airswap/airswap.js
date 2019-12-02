@@ -55,6 +55,7 @@ const Quote = throwTypeError(
     taker: QuoteParty,
     swap: t.maybe(t.struct({ version: t.Number })),
     locator: t.maybe(t.Object),
+    nonce: t.maybe(t.String),
   }),
 )
 

@@ -1,5 +1,4 @@
 // HTTP ASYNC FETCH REDUX GENERATORS
-import _ from 'lodash'
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
 
 const EVENT_ACTIONS = [
@@ -39,7 +38,7 @@ const EVENT_REDUCERS = {
   fetched: {
     defaultState: [],
     switch: {
-      got: ({ response }, state) => _.uniqBy([...state, ...response], 'transactionHash'),
+      got: ({ response }, state) => [...state, ...response],
     },
   },
 }

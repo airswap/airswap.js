@@ -26,6 +26,7 @@ let queue
 function processEventLogs(logs, store, callback) {
   const eventIds = _.map(eventSelectors.getFetchedTrackedEvents(store.getState()), getEventId)
   const newEvents = _.filter(logs, event => event && !_.includes(eventIds, getEventId(event)))
+
   if (logs && logs.length && newEvents.length) {
     queue.push(newEvents)
     if (callback) {
@@ -136,6 +137,7 @@ function fetchMissingBlocksForFetchedEvents(store, action) {
 export default function eventsMiddleware(store) {
   queue = new DebouncedQueue(newEvents => {
     const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
+
     store.dispatch(newEventsAction)
   })
 
@@ -156,8 +158,8 @@ export default function eventsMiddleware(store) {
         eventTracker.trackEvent({
           ...action,
           callback: logs => processEventLogs(logs, store, action.callback),
-          onFetchedHistoricalEvents: () => {
-            store.dispatch(fetchedHistoricalEvents(action))
+          onFetchedHistoricalEvents: events => {
+            store.dispatch(fetchedHistoricalEvents(action, events))
           },
         })
 

@@ -21,6 +21,7 @@ import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
 import { getERC20ApproveTransactions } from '../../erc20/redux/contractTransactionSelectors'
 import { getSwapAuthorizeSenderTransactions } from '../../swap/redux/contractTransactionSelectors'
+import { reverseObjectMethods } from '../../delegate/index'
 
 function updateCheckoutFrame(state, frameIndex, frameUpdateObj) {
   return [
@@ -561,7 +562,9 @@ const getCurrentFrameBestOrderExecution = createSelector(
     if (!order) return {}
     let vals
     if (order.swapVersion === 2) {
-      const orderId = getSwapOrderId(order)
+      const lookupOrder = order.locatorType === 'contract' ? reverseObjectMethods(order) : order
+      const orderId = getSwapOrderId(lookupOrder)
+
       const tx = _.find(transactions, t => getSwapOrderId(t.parameters.order) === orderId)
       vals = _.mapKeys(
         tx,
