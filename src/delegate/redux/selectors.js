@@ -68,7 +68,6 @@ const getFormattedDelegateRules = createSelector(
       return []
     }
     const rules = allRules.filter(rule => !(rule.response.priceCoef === '0' && rule.response.priceExp === '0')) // this is the only deterministic way to tell if a rule has been unset
-    console.log(rules)
     return _.compact(
       rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
         const rule = _.find(rulesEvents, { senderToken, signerToken })
