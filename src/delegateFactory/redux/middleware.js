@@ -17,8 +17,7 @@ import { trackDelegateFactoryCreateDelegate } from './eventTrackingActions'
 export default function delegateFactoryMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'CONNECTED_WALLET':
-        next(action)
+      case 'REDUX_STORAGE_LOAD':
         if (IS_INSTANT) {
           store.dispatch(
             trackDelegateFactoryCreateDelegate({
@@ -26,6 +25,7 @@ export default function delegateFactoryMiddleware(store) {
             }),
           )
         }
+        next(action)
         break
       default:
         next(action)

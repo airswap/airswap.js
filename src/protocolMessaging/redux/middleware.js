@@ -401,6 +401,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
       console.log(e)
+      return null
     }
   }
 

@@ -28,6 +28,7 @@ export const getDelegates = createSelector(getDelegateFactoryCreateDelegateEvent
       ({ swapContract, indexerContract }) =>
         swapContract === SWAP_CONTRACT_ADDRESS && indexerContract === INDEXER_CONTRACT_ADDRESS,
     )
+
   return _.sortBy(delegates, 'blockNumber') // sorts from lowest blockNumber to highest
     .reverse() // sorts from highest blockNumber to lowest
 })
