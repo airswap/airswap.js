@@ -19,11 +19,6 @@ async function waitForDelegateContract(store) {
 async function setUpDelegateListeners(store) {
   await waitForDelegateContract(store)
   // as soon as a delegate contract is found for the connected address, invoke the following listeners:
-  // store.dispatch(submitIndexerCreateIndex({
-  //   signerToken: '0x0bd3a1c841211bbb989b35494f661e52e9071fe9', // DAI
-  //   senderToken: '0xc778417e063141139fce010982780140aa0cd5ab',
-  // }))
-  // store.dispatch(exampleSetRuleAndIntent())
   const state = store.getState()
   const walletAddress = getConnectedWalletAddress(state)
   const delegateAddress = getConnectedDelegateContractAddress(state)
