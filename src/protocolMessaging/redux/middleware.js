@@ -401,6 +401,7 @@ async function getOrderTakerTokenWithoutQuotes(intent, store, action) {
       return store.dispatch(gotLowBalanceOrderResponse(lowBalanceOrder, action.stackId))
     } catch (e) {
       console.log(e)
+      return null // escape function if low balance order fails, fetching a full order below would lead to taker getting an order they couldn't fill
     }
   }
 
