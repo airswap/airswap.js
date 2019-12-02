@@ -26,6 +26,7 @@ function typeSafeOrder(params, locatorType) {
   if (locatorType === 'contract') {
     return mapNested22QuoteTo20Quote(params)
   }
+
   const { nonce, expiry, signature, signer, sender, affiliate } = params
   const safeOrder = mapNested22OrderTo20Order(
     {
@@ -67,7 +68,7 @@ class Router {
 
     // Create an ethereum wallet object for signing orders
     this.messageSigner = messageSigner
-    this.address = address
+    this.address = address.toLowerCase()
     this.requireAuthentication = requireAuthentication
     this.timeout = timeout
 
@@ -108,7 +109,7 @@ class Router {
 
   // Send a JSON-RPC `message` to a `receiver` address.
   // Optionally pass `resolve` and `reject` callbacks to handle a response
-  call(receiver, message, resolve, reject, locatorType) {
+  call(signerAddress, message, resolve, reject, locator, locatorType) {
     if (locatorType && _.includes(['http', 'https'], locatorType)) {
       const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
 
@@ -121,7 +122,7 @@ class Router {
           },
         }
 
-        fetch(receiver, options)
+        fetch(locator, options)
           .then(res => res.text())
           .then(text => {
             callback(null, text)
@@ -144,7 +145,7 @@ class Router {
         }
       })
     } else if (locatorType === 'contract') {
-      routeDelegateCall(receiver, message)
+      routeDelegateCall(locator, message, signerAddress, this.address)
         .then(resp => {
           resolve(resp)
         })
@@ -154,7 +155,7 @@ class Router {
     } else {
       const messageString = JSON.stringify({
         sender: this.address.toLowerCase(),
-        receiver,
+        receiver: signerAddress,
         message: JSON.stringify(message),
         id: uuid(),
       })
@@ -357,13 +358,11 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideOrder', query)
-    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
-      order => ({
-        ...typeSafeOrder(order, locatorType),
-        swap: { version: 2 },
-        locator: { type: locatorType },
-      }),
-    )
+    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej, locator, locatorType)).then(order => ({
+      ...typeSafeOrder(order, locatorType),
+      swap: { version: 2 },
+      locator: { type: locatorType, value: locator },
+    }))
   }
 
   getSenderSideOrder(signerAddress, params) {
@@ -379,13 +378,11 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideOrder', query)
-    return new Promise((res, rej) => this.call(locator || signerAddress, payload, res, rej, locatorType)).then(
-      order => ({
-        ...typeSafeOrder(order, locatorType),
-        swap: { version: 2 },
-        locator: { type: locatorType },
-      }),
-    )
+    return new Promise((res, rej) => this.call(signerAddress, payload, res, rej, locator, locatorType)).then(order => ({
+      ...typeSafeOrder(order, locatorType),
+      swap: { version: 2 },
+      locator: { type: locatorType, value: locator },
+    }))
   }
 
   // Make a JSON-RPC `getOrder` call on a maker and recieve back a signed order (or a timeout if they fail to respond)
@@ -466,13 +463,13 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSignerSideQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej, locator, locatorType)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
         ...flatQuote,
         swapVersion: 2,
-        locator: { type: locatorType },
+        locator: { type: locatorType, value: locator },
       }
       return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
@@ -488,13 +485,13 @@ class Router {
     })
 
     const payload = Router.makeRPC('getSenderSideQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej, locator, locatorType)).then(quote => {
       const flatQuote = flatten(quote)
       const combinedQuote = {
         ...query,
         ...flatQuote,
         swapVersion: 2,
-        locator: { type: locatorType },
+        locator: { type: locatorType, value: locator },
       }
       return mapNested22QuoteTo20Quote(nest(combinedQuote))
     })
@@ -518,14 +515,14 @@ class Router {
           }
 
     const payload = Router.makeRPC('getMaxQuote', query)
-    return new Promise((res, rej) => this.call(locator || makerAddress, payload, res, rej, locatorType)).then(quote => {
+    return new Promise((res, rej) => this.call(makerAddress, payload, res, rej, locator, locatorType)).then(quote => {
       if (swapVersion === 2) {
         const flatQuote = flatten(quote)
         const combinedQuote = {
           ...query,
           ...flatQuote,
           swapVersion: 2,
-          locator: { type: locatorType },
+          locator: { type: locatorType, value: locator },
         }
         return mapNested22QuoteTo20Quote(nest(combinedQuote))
       }

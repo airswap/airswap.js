@@ -1,7 +1,25 @@
 const _ = require('lodash')
 const ethers = require('ethers')
 
-function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, locator, locatorType }) {
+function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, tradeWallet, locator, locatorType }) {
+  if (locatorType === 'contract') {
+    return {
+      address: tradeWallet,
+      makerAddress: tradeWallet,
+      makerToken: senderToken, // we reverse signerToken and senderToken for delegates since the connected wallet is the signer instead of the sender
+      takerToken: signerToken,
+      locator,
+      locatorType,
+      supportedMethods: [
+        'getSignerSideOrder',
+        'getSenderSideOrder',
+        'getSignerSideQuote',
+        'getSenderSideQuote',
+        'getMaxQuote',
+      ],
+      swapVersion: 2,
+    }
+  }
   return {
     address: identifier,
     makerAddress: identifier,
