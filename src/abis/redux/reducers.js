@@ -11,9 +11,14 @@ const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 function getAbiForToken(token) {
   if (token.kind === 'ERC721') {
-    return erc721
+    return 'erc721'
   }
-  return erc20
+  return 'erc20'
+}
+
+const keyMapping = {
+  erc721,
+  erc20,
 }
 
 function abiReducer(state = abis, action) {
@@ -51,8 +56,14 @@ export const getAbis = createSelector(
   (abi, delegateContracts, indexContracts) => {
     const delegateContractMapping = _.zipObject(delegateContracts, delegateContracts.map(() => delegateABI))
     const indexContractMapping = _.zipObject(indexContracts, indexContracts.map(() => indexABI))
+    const abiMapping = _.mapValues(abi, val => {
+      if (_.isArray(val)) {
+        return val
+      }
+      return keyMapping[val]
+    })
     return {
-      ...abi,
+      ...abiMapping,
       ...delegateContractMapping,
       ...indexContractMapping,
     }
