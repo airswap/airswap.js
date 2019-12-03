@@ -10,6 +10,8 @@ import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { getConnectedDelegateContractAddress } from '../../delegateFactory/redux/selectors'
 import { getDelegateProvideOrderEvents, getDelegateSetRuleEvents } from './eventTrackingSelectors'
 import { getDelegateRules } from './callDataSelectors'
+import { getConnectedERC20Approvals } from '../../erc20/redux/selectors'
+import { AST_CONTRACT_ADDRESS } from '../../constants'
 
 const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =>
   _.sortBy(
@@ -125,6 +127,12 @@ const getFormattedDelegateRules = createSelector(
       }),
     )
   },
+)
+
+export const getConnectedDelegateASTApproval = createSelector(
+  getConnectedERC20Approvals,
+  getConnectedDelegateContractAddress,
+  (approvals, delegateAddress) => _.get(approvals, `${delegateAddress}.${AST_CONTRACT_ADDRESS}`),
 )
 
 export { getFormattedDelegateRules, getConnectedDelegateSenderAuthorization, getDelegateProvidedOrders }
