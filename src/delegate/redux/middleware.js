@@ -23,8 +23,6 @@ async function setUpDelegateListeners(store) {
   const walletAddress = getConnectedWalletAddress(state)
   const delegateAddress = getConnectedDelegateContractAddress(state)
 
-  // store.dispatch(approveDelegateTransferAST())
-
   // listen to swap sender authorizations for the delegate and update the state accordingly
   store.dispatch(
     trackSwapAuthorizeSender({
