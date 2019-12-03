@@ -5,7 +5,9 @@ import {
 } from './contractFunctionActions'
 import { getConnectedDelegateContractAddress } from '../../delegateFactory/redux/selectors'
 import { submitSwapAuthorizeSender } from '../../swap/redux/contractFunctionActions'
-import { getContractPriceFromDisplayPrice } from '../utils' //eslint-disable-line
+import { getContractPriceFromDisplayPrice } from '../utils'
+import { submitERC20Approve } from '../../erc20/redux/contractFunctionActions' //eslint-disable-line
+import { AST_CONTRACT_ADDRESS, TOKEN_APPROVAL_AMOUNT } from '../../constants'
 
 // EXAMPLE ACTION: sell 25 AST at 0.005 AST/WETH
 // TODO: These example actions should be removed after trade-bot is successfully hooked up
@@ -36,6 +38,17 @@ export const exampleSetRuleAndIntent = () => dispatch => {
   //     newStakeAmount: '0',
   //   }),
   // )
+}
+
+export const approveDelegateTransferAST = () => (dispatch, getState) => {
+  const delegateAddress = getConnectedDelegateContractAddress(getState())
+  dispatch(
+    submitERC20Approve({
+      contractAddress: AST_CONTRACT_ADDRESS,
+      spender: delegateAddress,
+      value: TOKEN_APPROVAL_AMOUNT,
+    }),
+  )
 }
 
 export const exampleSetRule = () =>
