@@ -10,6 +10,8 @@ import {
   getAllAllowancesForConnectedAddress,
   getAllBalancesForConnectedAddress,
 } from '../../deltaBalances/redux/actions'
+import { trackERC20Approval } from './eventTrackingActions'
+import { SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 
 async function approveToken(store, action) {
   const signer = await store.dispatch(getSigner())
@@ -29,7 +31,16 @@ async function unwrapWeth(store, action) {
 
 export default function walletMiddleware(store) {
   return next => action => {
+    next(action)
     switch (action.type) {
+      case 'CONNECTED_WALLET':
+        store.dispatch(
+          trackERC20Approval({
+            owner: action.address.toLowerCase(),
+            fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
+          }),
+        )
+        break
       case 'APPROVE_TOKEN':
         makeMiddlewareEthersTransactionsFn(approveToken, 'approveToken', store, action, action.tokenAddress)
         break
@@ -50,6 +61,5 @@ export default function walletMiddleware(store) {
         break
       default:
     }
-    return next(action)
   }
 }
