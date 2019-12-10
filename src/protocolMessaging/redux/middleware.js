@@ -551,7 +551,7 @@ export default function routerMiddleware(store) {
   store.dispatch(newCheckoutFrame())
   return next => action => {
     const state = store.getState()
-
+    console.log(protocolMessagingSelectors.getCurrentFrameStateSummaryProperties(store.getState()))
     switch (action.type) {
       case 'CONNECTED_WALLET':
         if (!protocolMessagingSelectors.getRouterRequireAuth(state) && IS_INSTANT) {

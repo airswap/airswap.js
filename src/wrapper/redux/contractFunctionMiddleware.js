@@ -53,6 +53,26 @@ export default function wrapperMiddleware(store) {
           action.resolve(id)
         })
         break
+      case 'SUBMIT_WRAPPER_PROVIDE_DELEGATE_ORDER':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitWrapperProvideDelegateOrder(
+            action.ethAmount,
+            action.order,
+            action.delegate,
+            signer,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'wrapper',
+            name: 'provideDelegateOrder',
+            parameters: { ethAmount: action.ethAmount, order: action.order, delegate: action.delegate },
+          })
+          action.resolve(id)
+        })
+        break
       default:
     }
     return next(action)

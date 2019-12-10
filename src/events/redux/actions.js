@@ -8,15 +8,19 @@ export const fetchHistoricalSwapFillsByMakerAddress = signerWallet =>
 export const fetchHistoricalSwapCancelsByMakerAddress = signerWallet =>
   trackSwapCancelAllContracts({ signerWallet, fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK })
 
-export const fetchingHistoricalEvents = ({ name, namespace }) => ({
+export const fetchingHistoricalEvents = ({ name, namespace, contract, params }) => ({
   name,
   namespace,
+  contract,
+  params,
   type: 'FETCHING_HISTORICAL_EVENTS',
 })
 
-export const fetchedHistoricalEvents = ({ name, namespace }, events) => ({
+export const fetchedHistoricalEvents = ({ name, namespace, contract, params }, events) => ({
   name,
   namespace,
   events,
+  contract,
+  params,
   type: 'FETCHED_HISTORICAL_EVENTS',
 })
