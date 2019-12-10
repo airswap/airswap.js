@@ -1,7 +1,7 @@
 {
   "indexer": {
-    "1": "0x393c25ab96913a80b17069a2b061ee74813d3866",
-    "4": "0xb7eec6973876211eb0222290282fb09e9314fcb6"
+    "1": "0x08fadac1e47e92c8c01d590147208bda84594db3",
+    "4": "0x18c90516a38dd7b779a8f6c19fa698f0f4efc7fc"
   },
   "swap": {
     "1": "0x5fc1d62123558feabad1b806fdefec1de61162de",
@@ -12,7 +12,7 @@
     "4": "0x56b5236826836c722b70b1e9785ae829acfccc6d"
   },
   "delegateFactory": {
-    "1": "0x707197aa4f32e1ce56240396efc4da1ccbfe8141",
-    "4": "0x19a7cfcfff9c4adc4fd4139a27d2d36a2f7f1a59"
+    "1": "0xa55523eed98ba64ff7673b22963df34e3a0305fe",
+    "4": "0x79fb4604f2d7bd558cda0dfadb7d61d98b28ca9f"
   }
 }

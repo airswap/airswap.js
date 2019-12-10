@@ -21,4 +21,14 @@ function submitWrapperSwap(ethAmount, order, signer) {
   return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
-module.exports = { getWrapperSwapContract, getWrapperWethContract, submitWrapperSwap }
+function submitWrapperProvideDelegateOrder(ethAmount, order, delegate, signer) {
+  const contract = getWrapperContract(signer)
+  return contract.provideDelegateOrder(order, delegate, { value: ethers.utils.bigNumberify(ethAmount || '0') })
+}
+
+module.exports = {
+  getWrapperSwapContract,
+  getWrapperWethContract,
+  submitWrapperSwap,
+  submitWrapperProvideDelegateOrder,
+}

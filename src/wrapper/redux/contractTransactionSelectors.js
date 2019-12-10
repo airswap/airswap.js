@@ -10,3 +10,9 @@ export const getWrapperSwapTransactions = createSelector(getTransactions, transa
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
+
+export const getWrapperProvideDelegateOrderTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'provideDelegateOrder', namespace: 'wrapper' })
+  const sortedValues = _.sortBy(filteredValues, 'id')
+  return sortedValues
+})
