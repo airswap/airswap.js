@@ -97,6 +97,7 @@ const getLocatorIntents = createSelector(
       },
       [],
     )
+
     return _.sortBy(uniqueLocators, 'score').reverse()
   },
 )
