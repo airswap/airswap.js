@@ -90,7 +90,7 @@ const startWalletAction = async (store, actionType, argParams) => {
       const order = tokenSelectors.makeGetReadableOrder(state)(parameters)
 
       const { tokenAddress } = order
-      gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 300000)
+      gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 400000)
     } else if (parsed.name === 'createDelegate') {
       gasLimit = 3000000
     } else if (parsed.name === 'createIndex') {
