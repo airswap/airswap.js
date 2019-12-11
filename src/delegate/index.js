@@ -106,7 +106,6 @@ async function routeDelegateCall(receiver, request, tradeWallet, signerWallet) {
     case 'getMaxQuote':
       return getDelegateGetMaxQuote(receiver, senderToken, signerToken).then(resp => {
         const formattedResp = resolveBigNumbers(resp)
-
         return format({
           signerToken,
           senderToken,
