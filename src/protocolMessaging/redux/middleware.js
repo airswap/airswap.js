@@ -571,6 +571,7 @@ export default function routerMiddleware(store) {
           trackMissingTokensForConnectedAddress(action.query, store)
           const intents = getOnAndOffChainIntents(store.getState())
           const filteredIntents = filterIntents(intents, action.query, action.queryContext)
+
           store.dispatch(gotIntents(filteredIntents, action.stackId))
           store.dispatch(getEthWrapperApproval())
           store.dispatch(getWrapperWethTokenApproval())
