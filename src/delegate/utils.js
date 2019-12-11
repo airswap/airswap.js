@@ -27,9 +27,9 @@ function getDisplayAmountsFromDisplayPrice(params) {
     let signerAmountDisplayValue
 
     if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
-    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
       signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
     } else {
       throw new Error('unable to calculate baseAsset')
     }
@@ -40,9 +40,9 @@ function getDisplayAmountsFromDisplayPrice(params) {
     let senderAmountDisplayValue
 
     if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
-    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
       senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
     } else {
       throw new Error('unable to calculate baseAsset')
     }
@@ -157,9 +157,9 @@ function getDisplayPriceFromDisplayAmounts({
 }) {
   let priceDisplayValue
   if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-    priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
-  } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
     priceDisplayValue = precision(bn(signerAmountDisplayValue).div(senderAmountDisplayValue), 24)
+  } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
+    priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
   } else {
     throw new Error('unable to calculate baseAsset')
   }
