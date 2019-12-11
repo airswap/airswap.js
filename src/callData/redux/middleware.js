@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { fetchSwapSenderAuthorizations } from '../../swap/redux/contractFunctionActions'
 import { fetchERC20Allowance } from '../../erc20/redux/contractFunctionActions'
-import { fetchERC721GetApproved } from '../../erc721/redux/contractFunctionActions'
+import { fetchERC721GetApprovedOverride } from '../../erc721/redux/actions'
 
 export default function callData(store) {
   return next => action => {
@@ -23,7 +23,7 @@ export default function callData(store) {
         if (eventName === 'approval') {
           if (action.namespace === 'ERC721') {
             store.dispatch(
-              fetchERC721GetApproved({
+              fetchERC721GetApprovedOverride({
                 contractAddress: parameters.contractAddress.toLowerCase(),
                 tokenId: parameters.tokenId.toLowerCase(),
               }),
