@@ -138,7 +138,7 @@ const makeDisplayByToken = createSelector(
     if (!token) {
       return '0'
     }
-    if (!token.decimals) return displayAmount
+    if (!Number(token.decimals)) return displayAmount
     const power = window.Math.pow(10, Number(token.decimals))
     const val = parseBySymbol[token.symbol](new BigNumber(displayAmount).div(power).toString())
 
