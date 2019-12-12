@@ -40,7 +40,7 @@ async function initialzeRouter(store) {
   }
 
   router = new Router(config)
-  return router.connect()
+  return router.connect(false)
 }
 
 let router
@@ -555,7 +555,7 @@ export default function routerMiddleware(store) {
       case 'CONNECTED_WALLET':
         if (!protocolMessagingSelectors.getRouterRequireAuth(state) && IS_INSTANT) {
           const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
-          routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
+          routerPromise.catch(error => store.dispatch({ type: 'ROUTER_CONNECTED', error }))
         }
         break
       case 'KEYSPACE_READY':

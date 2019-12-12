@@ -187,50 +187,50 @@ class Router {
   // 3. Sign the data and send it back over the wire
   // 4. Receive an "ok" and start sending and receiving RPC
   connect(reconnect = true) {
-    this.socket = new WebSocket(this.socketUrl)
-
-    // Check socket health every 30 seconds
-    this.socket.onopen = function healthCheck() {
-      this.isAlive = true
-      // trying to make this isomorphic, and ping/pong isn't supported in browser websocket api
-      if (this.ping) {
-        this.addEventListener('pong', () => {
-          this.isAlive = true
-        })
-
-        this.interval = setInterval(() => {
-          if (this.isAlive === false) {
-            console.log('no response for 30s; closing socket')
-            this.close()
-          }
-          this.isAlive = false
-          this.ping()
-        }, 30000)
-      }
-    }
-
-    // The connection was closed
-    this.socket.onclose = () => {
-      this.isAuthenticated = false
-      clearInterval(this.socket.interval)
-      if (reconnect) {
-        console.log('socket closed; attempting reconnect in 10s')
-        setTimeout(() => {
-          this.connect()
-        }, 10000)
-      } else {
-        console.log('socket closed')
-      }
-    }
-
-    // There was an error on the connection
-    this.socket.onerror = event => {
-      throw new Error(event)
-    }
-
     // Promisify the `onmessage` handler. Allows us to return information
     // about the connection state after the authentication handshake
     return new Promise((resolve, reject) => {
+      this.socket = new WebSocket(this.socketUrl)
+
+      // Check socket health every 30 seconds
+      this.socket.onopen = function healthCheck() {
+        this.isAlive = true
+        // trying to make this isomorphic, and ping/pong isn't supported in browser websocket api
+        if (this.ping) {
+          this.addEventListener('pong', () => {
+            this.isAlive = true
+          })
+
+          this.interval = setInterval(() => {
+            if (this.isAlive === false) {
+              console.log('no response for 30s; closing socket')
+              this.close()
+            }
+            this.isAlive = false
+            this.ping()
+          }, 30000)
+        }
+      }
+
+      // The connection was closed
+      this.socket.onclose = () => {
+        this.isAuthenticated = false
+        clearInterval(this.socket.interval)
+        if (reconnect) {
+          console.log('socket closed; attempting reconnect in 10s')
+          setTimeout(() => {
+            this.connect()
+          }, 10000)
+        } else {
+          reject('socket closed')
+        }
+      }
+
+      // There was an error on the connection
+      this.socket.onerror = event => {
+        reject(event)
+      }
+
       // Received a message
       this.socket.onmessage = event => {
         // We are authenticating
