@@ -456,8 +456,6 @@ async function mapIntentFetchProtocolOrder(intent, store, action) {
   }
 }
 
-const baseAsset = 'ETH'
-
 async function fillFrameBestOrder(store) {
   const state = store.getState()
   const bestOrder =
@@ -471,8 +469,10 @@ async function fillFrameBestOrder(store) {
     const signedOrder = await store.dispatch(signSwap(nest(reversedOrder)))
     store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
   } else if (bestOrder.swapVersion === 2) {
+    const baseToken = _.get(protocolMessagingSelectors.getCurrentFrameQueryContext(state), 'baseToken')
+
     const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
-    if (baseAsset === 'ETH') {
+    if (baseToken === 'ETH') {
       const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.param : '0'
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {

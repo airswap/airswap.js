@@ -293,6 +293,8 @@ const makeGetBestOrder = createSelector(
     let missingApprovals
 
     if (bestOrder.swapVersion === 2) {
+      const baseToken = _.get(currentFrameQueryContext, 'baseToken')
+
       const miningTakerTokenSwapApproval =
         _.get(miningApproveToken, bestOrder.takerToken, false) ||
         _.get(submittingApproveToken, bestOrder.takerToken, false)
@@ -313,6 +315,24 @@ const makeGetBestOrder = createSelector(
 
       const takerTokenSwapApproval = _.get(connectedSwapApprovals, bestOrder.takerToken, false)
 
+      const wrapperApprovals =
+        baseToken === 'ETH'
+          ? [
+              {
+                id: 'wrapperDelegateApproval',
+                payload: submitEthWrapperAuthorize(),
+                approved: connectedWrapperDelegateApproval,
+                isMining: miningWrapperDelegateApproval,
+              },
+              {
+                id: 'wrapperWethApproval',
+                payload: approveWrapperWethToken(),
+                approved: connectedWrapperWethApproval,
+                isMining: miningWrapperWethApproval,
+              },
+            ]
+          : []
+
       missingApprovals = [
         {
           id: 'takerTokenSwapApproval',
@@ -320,18 +340,7 @@ const makeGetBestOrder = createSelector(
           approved: takerTokenSwapApproval,
           isMining: miningTakerTokenSwapApproval,
         },
-        {
-          id: 'wrapperDelegateApproval',
-          payload: submitEthWrapperAuthorize(),
-          approved: connectedWrapperDelegateApproval,
-          isMining: miningWrapperDelegateApproval,
-        },
-        {
-          id: 'wrapperWethApproval',
-          payload: approveWrapperWethToken(),
-          approved: connectedWrapperWethApproval,
-          isMining: miningWrapperWethApproval,
-        },
+        ...wrapperApprovals,
       ]
     } else {
       const takerTokenApproval = _.get(connectedApprovals, bestOrder.takerToken, false)
