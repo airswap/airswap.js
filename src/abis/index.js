@@ -9,6 +9,7 @@ const swapLegacy = require('./SwapLegacy.json')
 const delegateFactory = require('./delegateFactory.json')
 const indexer = require('./indexer.json')
 const cryptoKitties = require('./cryptoKitties.json')
+const { ENV } = require('../constants')
 
 const wrapperABI = require('./wrapper')
 const {
@@ -35,7 +36,7 @@ const abis = {
   [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
   [DELEGATE_FACTORY_CONTRACT_ADDRESS]: delegateFactory,
   [INDEXER_CONTRACT_ADDRESS]: indexer,
-  [CRYPTO_KITTIES_CONTRACT_ADDRESS]: cryptoKitties,
+  [CRYPTO_KITTIES_CONTRACT_ADDRESS]: ENV === 'production' ? cryptoKitties : erc721,
 }
 
 module.exports = { abis, erc20, erc721, cryptoKitties }
