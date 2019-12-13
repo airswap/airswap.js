@@ -263,18 +263,20 @@ class TokenMetadata {
     let takerAmountFormatted
     let makerAmountFull
     let makerAmountFormatted
+    const makerKind = _.get(tokensByAddress[takerToken], 'kind')
+    const takerKind = _.get(tokensByAddress[makerToken], 'kind')
 
-    if (_.get(tokensByAddress[takerToken], 'kind') === 'ERC721') {
-      takerAmountFull = ''
-      takerAmountFormatted = ''
+    if (makerKind === 'ERC721') {
+      takerAmountFull = takerParam
+      takerAmountFormatted = takerAmountFull
     } else {
       takerAmountFull = fullByToken({ address: takerToken }, takerParam)
       takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
     }
 
-    if (_.get(tokensByAddress[makerToken], 'kind') === 'ERC721') {
-      makerAmountFull = ''
-      makerAmountFormatted = ''
+    if (takerKind === 'ERC721') {
+      makerAmountFull = makerParam
+      makerAmountFormatted = makerAmountFull
     } else {
       makerAmountFull = fullByToken({ address: makerToken }, makerParam)
       makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
@@ -295,6 +297,7 @@ class TokenMetadata {
 
     let tokenSymbol = ''
     let tokenAddress = ''
+    let tokenKind = ''
 
     let price
 
@@ -305,6 +308,7 @@ class TokenMetadata {
       tokenAmountFull = makerAmountFull
       tokenSymbol = makerSymbol
       tokenAddress = makerToken
+      tokenKind = makerKind
     } else if (makerSymbol === 'ETH' || makerSymbol === 'WETH') {
       ethAmount = makerAmountFormatted
       ethAmountFull = makerAmountFull
@@ -312,6 +316,7 @@ class TokenMetadata {
       tokenAmountFull = takerAmountFull
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
+      tokenKind = takerKind
     } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
       baseTokenAmount = takerAmountFormatted
       baseTokenAmountFull = takerAmountFull
@@ -320,6 +325,7 @@ class TokenMetadata {
       tokenAmountFull = makerAmountFull
       tokenSymbol = makerSymbol
       tokenAddress = makerToken
+      tokenKind = makerKind
     } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
       baseTokenAmount = makerAmountFormatted
       baseTokenAmountFull = makerAmountFull
@@ -328,6 +334,7 @@ class TokenMetadata {
       tokenAmountFull = takerAmountFull
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
+      tokenKind = takerKind
     }
 
     // set price in base token terms if there is a base token
@@ -366,6 +373,9 @@ class TokenMetadata {
       tokenAddress,
       baseTokenAmount,
       baseTokenSymbol,
+      makerKind,
+      takerKind,
+      tokenKind,
     }
   }
 }
