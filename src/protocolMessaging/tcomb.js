@@ -14,6 +14,7 @@ const Query = t.struct({
 const QueryContext = t.struct({
   specifiedAmount: t.refinement(t.String, s => _.includes(['token', 'base'], s)),
   side: t.refinement(t.String, s => _.includes(['buy', 'sell'], s)),
+  baseToken: t.String,
 })
 
 const Intent = t.struct({
