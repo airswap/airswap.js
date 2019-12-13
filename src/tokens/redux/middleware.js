@@ -2,7 +2,7 @@ import tokenMetadata from '../index'
 
 async function dispatchTokenInit(store) {
   const tokens = await tokenMetadata.ready
-  store.dispatch(addTokens(tokens))
+  store.dispatch(addTokens([...tokens]))
   store.dispatch({ type: 'TOKENS_LOADED' })
 }
 
