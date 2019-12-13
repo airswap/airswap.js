@@ -263,8 +263,8 @@ class TokenMetadata {
     let takerAmountFormatted
     let makerAmountFull
     let makerAmountFormatted
-    const makerKind = _.get(tokensByAddress[takerToken], 'kind')
-    const takerKind = _.get(tokensByAddress[makerToken], 'kind')
+    const makerKind = _.get(tokensByAddress[makerToken], 'kind')
+    const takerKind = _.get(tokensByAddress[takerToken], 'kind')
 
     if (makerKind === 'ERC721') {
       takerAmountFull = takerParam
