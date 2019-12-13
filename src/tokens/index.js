@@ -373,8 +373,6 @@ class TokenMetadata {
       tokenAddress,
       baseTokenAmount,
       baseTokenSymbol,
-      makerKind,
-      takerKind,
       tokenKind,
     }
   }
