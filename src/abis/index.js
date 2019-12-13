@@ -8,6 +8,7 @@ const swap = require('./swap.json')
 const swapLegacy = require('./SwapLegacy.json')
 const delegateFactory = require('./delegateFactory.json')
 const indexer = require('./indexer.json')
+const cryptoKitties = require('./cryptoKitties.json')
 
 const wrapperABI = require('./wrapper')
 const {
@@ -22,6 +23,8 @@ const {
   INDEXER_CONTRACT_ADDRESS,
 } = require('../constants')
 
+const { CRYPTO_KITTIES_CONTRACT_ADDRESS } = require('../erc721/constants')
+
 const abis = {
   [WETH_CONTRACT_ADDRESS]: wethAbi,
   [AST_CONTRACT_ADDRESS]: astAbi.abi,
@@ -32,6 +35,7 @@ const abis = {
   [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
   [DELEGATE_FACTORY_CONTRACT_ADDRESS]: delegateFactory,
   [INDEXER_CONTRACT_ADDRESS]: indexer,
+  [CRYPTO_KITTIES_CONTRACT_ADDRESS]: cryptoKitties,
 }
 
-module.exports = { abis, erc20, erc721 }
+module.exports = { abis, erc20, erc721, cryptoKitties }
