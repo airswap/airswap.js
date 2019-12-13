@@ -113,18 +113,18 @@ const makeParseByToken = createSelector(getTokens, tokens => (tokenQuery, displa
 
 const makeFullByToken = createSelector(getTokens, tokens => (tokenQuery, displayAmount) => {
   const token = _.find(tokens, tokenQuery)
-  if (!token) {
-    return '0'
-  }
+  if (!token) return '0'
+  if (Number(token.decimals)) return displayAmount
+
   const power = window.Math.pow(10, Number(token.decimals))
   return new BigNumber(displayAmount).div(power).toString()
 })
 
 const makeAtomicByToken = createSelector(getTokens, tokens => (tokenQuery, displayAmount) => {
   const token = _.find(tokens, tokenQuery)
-  if (!token) {
-    return '0'
-  }
+  if (!token) return '0'
+  if (!Number(token.decimals)) return displayAmount
+
   const power = window.Math.pow(10, Number(token.decimals))
   return new BigNumber(displayAmount).mul(power).toString()
 })
@@ -134,10 +134,9 @@ const makeDisplayByToken = createSelector(
   makeParseBySymbol,
   (tokens, parseBySymbol) => (tokenQuery, displayAmount) => {
     const token = _.find(tokens, tokenQuery)
+    if (!token) return '0'
+    if (!Number(token.decimals)) return displayAmount
 
-    if (!token) {
-      return '0'
-    }
     const power = window.Math.pow(10, Number(token.decimals))
     const val = parseBySymbol[token.symbol](new BigNumber(displayAmount).div(power).toString())
 
