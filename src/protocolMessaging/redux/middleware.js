@@ -474,6 +474,7 @@ async function fillFrameBestOrder(store) {
     const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
     if (baseToken === 'ETH') {
       const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.param : '0'
+
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {
       store.dispatch(submitSwap({ order: bestSwap }))
