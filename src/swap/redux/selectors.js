@@ -11,12 +11,11 @@ import { mapFlat22OrderTo20Order } from '../../swap/utils'
 export const getFormattedSwapFills = createSelector(
   getSwapSwapEvents,
   makeGetReadableSwapOrder,
-  blockTrackerSelectors.getBlocks,
-  (events, getReadableSwapOrder, blockObj) =>
-    events.map(({ transactionHash, blockNumber, values }) => ({
+  (events, getReadableSwapOrder) =>
+    events.map(({ transactionHash, values }) => ({
       transactionHash,
       ...getReadableSwapOrder(mapFlat22OrderTo20Order(values)),
-      timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
+      timestamp: values.timestamp,
     })),
 )
 
