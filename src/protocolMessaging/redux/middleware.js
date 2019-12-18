@@ -458,14 +458,16 @@ async function mapIntentFetchProtocolOrder(intent, store, action) {
 
 async function fillFrameBestOrder(store) {
   const state = store.getState()
-  const bestOrder =
+  const bestOrder = _.omit(
     protocolMessagingSelectors.getCurrentFrameSelectedOrder(state) ||
-    protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
-    protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
-    protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state)
+      protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
+      protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
+      protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state),
+    ['takerAmountFormatted', 'makerAmountFormatted'],
+  )
 
   if (bestOrder.locatorType === 'contract') {
-    const reversedOrder = _.omit(reverseObjectMethods(bestOrder), ['takerAmountFormatted', 'makerAmountFormatted'])
+    const reversedOrder = reverseObjectMethods(bestOrder)
 
     const signedOrder = await store.dispatch(signSwap(nest(reversedOrder)))
     store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
@@ -473,8 +475,9 @@ async function fillFrameBestOrder(store) {
     const baseToken = _.get(protocolMessagingSelectors.getCurrentFrameQueryContext(state), 'baseToken')
 
     const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
+
     if (baseToken === 'ETH') {
-      const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.param : '0'
+      const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.amount : '0'
 
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {

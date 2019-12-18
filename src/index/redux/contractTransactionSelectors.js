@@ -28,3 +28,9 @@ export const getIndexUnsetLocatorTransactions = createSelector(getTransactions, 
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
+
+export const getIndexUpdateLocatorTransactions = createSelector(getTransactions, transactions => {
+  const filteredValues = _.filter(transactions, { name: 'updateLocator', namespace: 'index' })
+  const sortedValues = _.sortBy(filteredValues, 'id')
+  return sortedValues
+})
