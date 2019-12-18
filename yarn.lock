@@ -19,13 +19,13 @@
     "@airswap/swap" "3.3.5"
     openzeppelin-solidity "2.3"
 
-"@airswap/delegate@0.5.6-beta.1", "@airswap/delegate@^0.5.6-beta.1":
-  version "0.5.6-beta.1"
-  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-0.5.6-beta.1.tgz#40a84e69228591ae8f84842c2e505c68c3cf1034"
-  integrity sha512-v05AeJ1e+88G08Qasv92xRDl2/PIv65OWJN8ZZJSJkEWSzidnt632Xyk5zcXmLi0GCtZtgZhJam2lnYbPSSDkA==
+"@airswap/delegate@0.5.6-beta.2", "@airswap/delegate@^0.5.6-beta.2":
+  version "0.5.6-beta.2"
+  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-0.5.6-beta.2.tgz#6c56a12a80e5104182603d1b58a4ac1225ecb439"
+  integrity sha512-KL3mNyhxtzwuBNXPuX+bWVlrmUM2WbDT+iJFgA4RkyCe+KPzsFTrfOsAZL+IT8Kw2Hhwn2WQn20BjuPAOVmPng==
   dependencies:
-    "@airswap/indexer" "2.6.7-beta.1"
-    "@airswap/swap" "3.3.5-beta.2"
+    "@airswap/indexer" "2.6.7-beta.2"
+    "@airswap/swap" "3.3.5-beta.3"
     openzeppelin-solidity "2.4"
 
 "@airswap/index@0.3.4":
@@ -50,19 +50,19 @@
     "@airswap/index" "0.3.4"
     openzeppelin-solidity "2.3"
 
-"@airswap/indexer@2.6.7-beta.1", "@airswap/indexer@^2.6.7-beta.1":
-  version "2.6.7-beta.1"
-  resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-2.6.7-beta.1.tgz#f21634c8829929ca85e17e4a6bcef0c8fbe04988"
-  integrity sha512-KGolO6RHfDTfsFJ6chnlAHO2VsV6ZHwtV/hBQliMkuRz/heIE0lcuoGiBZXrXDy0vQdGBRkNAiOuqk0WOMnvnw==
+"@airswap/indexer@2.6.7-beta.2", "@airswap/indexer@^2.6.7-beta.2":
+  version "2.6.7-beta.2"
+  resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-2.6.7-beta.2.tgz#6405230d6f068b751cb3b729ea9d0933b115445b"
+  integrity sha512-ZERmFwnBP8aqjfpi0Ysw9xFsesfOIPphAigYvfOsUrI39uJXed/91i+LiPbphyRNYYn+k8lHTojTqGH5+svrmw==
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/order-utils@^0.3.15-beta.1":
-  version "0.3.15-beta.1"
-  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.15-beta.1.tgz#bf6820de248869459f9c3137b99e2f6f58063dc4"
-  integrity sha512-nVaIljhQRalM0zWUN1BhRAZfafGiOycDjrdkAUxyCpanvDvEYKB1ShjmXwsE9k3qrTf+2hT6zY37qriQlOw16Q==
+"@airswap/order-utils@^0.3.15-beta.2":
+  version "0.3.15-beta.2"
+  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.15-beta.2.tgz#7de5fba180fc2ea6305b789759dfd33295e9747c"
+  integrity sha512-Q6aHp+6WopNqvg9QR1WaIa1mRzDQdal423RIFRQm0SaXfrN4FJVW7gxD77L6CV2SWB/DHlErKvRebtvJcfSdzw==
   dependencies:
-    "@airswap/swap" "3.3.5-beta.2"
+    "@airswap/swap" "3.3.5-beta.3"
     "@airswap/tokens" "0.1.3"
     eth-sig-util "^2.2.0"
     ethereumjs-abi "^0.6.7"
@@ -79,10 +79,10 @@
     "@airswap/types" "1.4.4"
     openzeppelin-solidity "2.3"
 
-"@airswap/swap@3.3.5-beta.2", "@airswap/swap@^3.3.5-beta.2":
-  version "3.3.5-beta.2"
-  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-3.3.5-beta.2.tgz#9fee9cc9f8c2e09a6ef521ade6ed9f14df3dbdb0"
-  integrity sha512-oTtQLVE04aw6wMvOK/oWZoo0A1XSlhuG+NvucFvLgQ4U8QSLrebCSJm6HHUIk5a/WmW0ZWiT0Vc0zQ0lpnNG+Q==
+"@airswap/swap@3.3.5-beta.3", "@airswap/swap@^3.3.5-beta.3":
+  version "3.3.5-beta.3"
+  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-3.3.5-beta.3.tgz#5aa45cb9a7951d25ca92e81816d62c908f563f08"
+  integrity sha512-QHK16dT0Mx49/JgoNg2DnDHdlPV8i42v5mWjnK7Bt0tSNvjpjxTrmwF+g7kAExs/F9BDqE89v27y9ch6RcPa7w==
   dependencies:
     "@airswap/types" "1.4.4-beta.2"
     openzeppelin-solidity "2.4"
@@ -108,13 +108,13 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/wrapper@^1.5.7-beta.1":
-  version "1.5.7-beta.1"
-  resolved "https://registry.yarnpkg.com/@airswap/wrapper/-/wrapper-1.5.7-beta.1.tgz#fe4551e2cf6a41099a2d126372f08ddc00c268c0"
-  integrity sha512-ZL23ocLdhv0sWgr6o4ix2UhRQQymgqUrSPS1xj6vHypmCckF1cGt9zqd/8YEN0b8VjxPV5BieeKwpDId63q42g==
+"@airswap/wrapper@^1.5.7-beta.2":
+  version "1.5.7-beta.2"
+  resolved "https://registry.yarnpkg.com/@airswap/wrapper/-/wrapper-1.5.7-beta.2.tgz#8e4a3ee7cd453fa94bdaa4e74827da1875299e0d"
+  integrity sha512-9FaSCTDVKl8x9NaiapHMTah3b975aqzurkmKzmCEi577XZg/TxfVx+1mtTgMe8PJEWrgKK5h2aejyjxq9ArHKQ==
   dependencies:
-    "@airswap/delegate" "0.5.6-beta.1"
-    "@airswap/swap" "3.3.5-beta.2"
+    "@airswap/delegate" "0.5.6-beta.2"
+    "@airswap/swap" "3.3.5-beta.3"
     "@airswap/tokens" "0.1.3"
 
 "@alch/alchemy-web3@^0.1.4":
