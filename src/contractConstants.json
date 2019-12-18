@@ -1,18 +1,18 @@
 {
   "indexer": {
     "1": "0x08fadac1e47e92c8c01d590147208bda84594db3",
-    "4": "0x18c90516a38dd7b779a8f6c19fa698f0f4efc7fc"
+    "4": "0x90c3555c5aa7693b201b8ea22007cf8a8ab8069a"
   },
   "swap": {
     "1": "0x5fc1d62123558feabad1b806fdefec1de61162de",
-    "4": "0xe032c9585ff89fe9e9e99a3e49c9f302aa636d77"
+    "4": "0x14f3e7e25ec3e46bfb748ab782ba4059fdfe51ed"
   },
   "wrapper": {
     "1": "0x200c6958f6b5dfb463f84f67792b9e8a9966829f",
-    "4": "0x56b5236826836c722b70b1e9785ae829acfccc6d"
+    "4": "0x30a4444e9522eac60d29d7fbb762bc7e05434714"
   },
   "delegateFactory": {
     "1": "0xa55523eed98ba64ff7673b22963df34e3a0305fe",
-    "4": "0x79fb4604f2d7bd558cda0dfadb7d61d98b28ca9f"
+    "4": "0x9df26cc6b5237b11855f0a4193927bf321261824"
   }
 }

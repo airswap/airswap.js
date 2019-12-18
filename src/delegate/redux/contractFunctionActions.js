@@ -29,6 +29,16 @@ export const fetchDelegateOwner = ({ contractAddress }) => dispatch =>
     }),
   )
 
+export const fetchDelegateProtocol = ({ contractAddress }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      contractAddress,
+      type: 'FETCH_DELEGATE_PROTOCOL',
+      resolve,
+      reject,
+    }),
+  )
+
 export const submitDelegateRenounceOwnership = ({ contractAddress }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
@@ -172,14 +182,14 @@ export const submitDelegateSetTradeWallet = ({ contractAddress, newTradeWallet }
 
 export const fetchDelegateGetSignerSideQuote = ({
   contractAddress,
-  senderParam,
+  senderAmount,
   senderToken,
   signerToken,
 }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      senderParam,
+      senderAmount,
       senderToken,
       signerToken,
       type: 'FETCH_DELEGATE_GET_SIGNER_SIDE_QUOTE',
@@ -190,14 +200,14 @@ export const fetchDelegateGetSignerSideQuote = ({
 
 export const fetchDelegateGetSenderSideQuote = ({
   contractAddress,
-  signerParam,
+  signerAmount,
   signerToken,
   senderToken,
 }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
-      signerParam,
+      signerAmount,
       signerToken,
       senderToken,
       type: 'FETCH_DELEGATE_GET_SENDER_SIDE_QUOTE',

@@ -103,7 +103,7 @@ const INDEXER_CONTRACT_ADDRESS = contractConstants.indexer[String(NETWORK)]
 const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return 5359874
+      return 5626023
     case MAIN_ID:
       return 9005083
     default:
@@ -115,7 +115,7 @@ const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[Stri
 const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return 5388617
+      return 5626024
     case MAIN_ID:
       return 9006065
     default:

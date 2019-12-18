@@ -56,6 +56,22 @@ export default function delegateMiddleware(store) {
           })
           .catch(action.reject)
         break
+      case 'FETCH_DELEGATE_PROTOCOL':
+        contractFunctions
+          .getDelegateProtocol(action.contractAddress)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'delegate',
+              name: 'protocol',
+              timestamp: Date.now(),
+              parameters: { contractAddress: action.contractAddress },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
       case 'SUBMIT_DELEGATE_RENOUNCE_OWNERSHIP':
         store.dispatch(getSigner()).then(signer => {
           const contractFunctionPromise = contractFunctions.submitDelegateRenounceOwnership(
@@ -293,7 +309,7 @@ export default function delegateMiddleware(store) {
         contractFunctions
           .getDelegateGetSignerSideQuote(
             action.contractAddress,
-            action.senderParam,
+            action.senderAmount,
             action.senderToken,
             action.signerToken,
           )
@@ -306,7 +322,7 @@ export default function delegateMiddleware(store) {
               timestamp: Date.now(),
               parameters: {
                 contractAddress: action.contractAddress,
-                senderParam: action.senderParam,
+                senderAmount: action.senderAmount,
                 senderToken: action.senderToken,
                 signerToken: action.signerToken,
               },
@@ -319,7 +335,7 @@ export default function delegateMiddleware(store) {
         contractFunctions
           .getDelegateGetSenderSideQuote(
             action.contractAddress,
-            action.signerParam,
+            action.signerAmount,
             action.signerToken,
             action.senderToken,
           )
@@ -332,7 +348,7 @@ export default function delegateMiddleware(store) {
               timestamp: Date.now(),
               parameters: {
                 contractAddress: action.contractAddress,
-                signerParam: action.signerParam,
+                signerAmount: action.signerAmount,
                 signerToken: action.signerToken,
                 senderToken: action.senderToken,
               },

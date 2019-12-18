@@ -23,6 +23,21 @@ export default function delegateFactoryMiddleware(store) {
           })
           .catch(action.reject)
         break
+      case 'FETCH_DELEGATE_FACTORY_PROTOCOL':
+        contractFunctions
+          .getDelegateFactoryProtocol()
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'delegateFactory',
+              name: 'protocol',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
       case 'FETCH_DELEGATE_FACTORY_SWAP_CONTRACT':
         contractFunctions
           .getDelegateFactorySwapContract()

@@ -21,6 +21,11 @@ function getDelegateOwner(contractAddress) {
   return contract.owner()
 }
 
+function getDelegateProtocol(contractAddress) {
+  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  return contract.protocol()
+}
+
 function submitDelegateRenounceOwnership(contractAddress, signer) {
   const contract = getDelegateContract(signer, contractAddress)
   return contract.renounceOwnership()
@@ -84,14 +89,14 @@ function submitDelegateSetTradeWallet(contractAddress, newTradeWallet, signer) {
   return contract.setTradeWallet(newTradeWallet)
 }
 
-function getDelegateGetSignerSideQuote(contractAddress, senderParam, senderToken, signerToken) {
+function getDelegateGetSignerSideQuote(contractAddress, senderAmount, senderToken, signerToken) {
   const contract = getDelegateContract(constants.httpProvider, contractAddress)
-  return contract.getSignerSideQuote(senderParam, senderToken, signerToken)
+  return contract.getSignerSideQuote(senderAmount, senderToken, signerToken)
 }
 
-function getDelegateGetSenderSideQuote(contractAddress, signerParam, signerToken, senderToken) {
+function getDelegateGetSenderSideQuote(contractAddress, signerAmount, signerToken, senderToken) {
   const contract = getDelegateContract(constants.httpProvider, contractAddress)
-  return contract.getSenderSideQuote(signerParam, signerToken, senderToken)
+  return contract.getSenderSideQuote(signerAmount, signerToken, senderToken)
 }
 
 function getDelegateGetMaxQuote(contractAddress, senderToken, signerToken) {
@@ -103,6 +108,7 @@ module.exports = {
   getDelegateIndexer,
   getDelegateIsOwner,
   getDelegateOwner,
+  getDelegateProtocol,
   submitDelegateRenounceOwnership,
   getDelegateRules,
   getDelegateSwapContract,
