@@ -11,7 +11,8 @@ export default function indexerMiddleware(store) {
             trackIndexerCreateIndex({
               fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
               callback: events => {
-                events.map(({ values: { senderToken, signerToken } }) => {
+                events.map(event => {
+                  const { senderToken, signerToken } = event.values
                   store.dispatch(fetchIndexerIndexes({ senderToken, signerToken }))
                 })
               },
