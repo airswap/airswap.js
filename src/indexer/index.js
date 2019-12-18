@@ -1,34 +1,53 @@
 const _ = require('lodash')
-const { trackIndexSetLocator } = require('../index/eventListeners')
+const { trackIndexSetLocator, trackIndexUnsetLocator } = require('../index/eventListeners')
 const { trackIndexerCreateIndex } = require('./eventListeners')
-const { parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents } = require('./utils')
+const { parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents, mapOnChainIntentToOffChain } = require('./utils')
 const { INDEXER_CONTRACT_DEPLOY_BLOCK } = require('../constants')
 
 class Indexer {
   constructor({ onIndexAdded, onLocatorAdded } = {}) {
+    this.indexEvents = []
     this.indexes = []
+    this.locatorEvents = []
     this.locators = []
+    this.unsetLocatorEvents = []
+    this.unsetLocators = []
+
     this.onIndexAdded = onIndexAdded || _.identity
     this.onLocatorAdded = onLocatorAdded || _.identity
     const initialIndexLoad = new Promise(resolve =>
       trackIndexerCreateIndex({
         callback: async events => {
-          await this.addIndexesFromEvents(events)
-          resolve()
+          this.indexEvents.push(events)
+          this.addIndexesFromEvents(events)
         },
+        onFetchedHistoricalEvents: events => resolve(events),
         fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
       }),
     )
     const initialLocatorLoad = new Promise(resolve =>
       trackIndexSetLocator({
         callback: async events => {
+          this.locatorEvents.push(events)
           this.addLocatorFromEvents(events)
-          resolve()
         },
         fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
+        onFetchedHistoricalEvents: events => resolve(events),
       }),
     )
-    this.ready = Promise.all([initialIndexLoad, initialLocatorLoad])
+
+    const initialUnsetLocatorLoad = new Promise(resolve =>
+      trackIndexUnsetLocator({
+        callback: async events => {
+          this.unsetLocatorEvents.push(events)
+          // this.addUnsetLocatorFromEvents(events)
+        },
+        fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
+        onFetchedHistoricalEvents: events => resolve(events),
+      }),
+    )
+
+    this.ready = Promise.all([initialIndexLoad, initialLocatorLoad, initialUnsetLocatorLoad])
   }
   async addIndexesFromEvents(events) {
     const indexes = events.map(({ values }) => values)
@@ -37,7 +56,6 @@ class Indexer {
       this.onIndexAdded(index)
     })
     this.indexes = [...this.indexes, ...indexes]
-    return this.indexes
   }
   async addLocatorFromEvents(events) {
     const locators = events.map(({ values, address, blockNumber }) => {
@@ -57,18 +75,26 @@ class Indexer {
     const uniqueLocators = getUniqueLocatorsFromBlockEvents(combinedLocators)
 
     this.locators = _.sortBy(uniqueLocators, 'score').reverse()
-    return this.locators
   }
+  // eslint-disable-next-line
+  // async addUnsetLocatorFromEvents(events) {
+  //   // TODO: use unset locator events to remove active locators from the locator list
+  // }
   getIntents() {
-    return this.locators.map(locator => ({
-      ...locator,
-      ...(this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}),
-    }))
+    return this.locators
+      .map(locator => ({
+        ...locator,
+        ...(this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}),
+        swapVersion: 2, // version number is used in downstream dependencies like the protocolMessaging Router
+      }))
+      .filter(
+        ({ identifier, locator, locatorType, senderToken, signerToken }) =>
+          identifier && locator && locatorType && senderToken && signerToken,
+      )
+  }
+  getLegacyFormattedIntents() {
+    return this.getIntents().map(intent => mapOnChainIntentToOffChain(intent))
   }
 }
-// TODO: remove this after active development is complete
-const i = new Indexer()
-// i.ready.then(() => console.log(_.filter(i.getIntents(), { locatorType: 'contract' })))
-i.ready.then(() => console.log(i.indexes))
 
 module.exports = Indexer

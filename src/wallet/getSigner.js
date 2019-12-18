@@ -107,10 +107,9 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
 function getSigner(params, walletActions = {}, walletType) {
   if (!walletActions.startWalletAction) {
     const gas = new Gas()
-    walletActions.startWalletAction = () => {
+    walletActions.startWalletAction = () =>
       // eslint-disable-line
       gas.getGasSettingsForTransaction('average')
-    }
   }
 
   const { privateKey, web3Provider } = params
