@@ -65,8 +65,8 @@ function getSwapOrderId(orderParams) {
 }
 
 function mapParty(party, filter = false) {
-  const { wallet, kind, amount, token } = party
-  return filter ? { wallet, kind, amount, token } : party
+  const { wallet, kind, amount, token, id } = party
+  return filter ? { wallet, kind, amount, token, id } : party
 }
 
 function mapNested22OrderTo20Order(order, filter = false) {

@@ -62,7 +62,6 @@ class Indexer {
       const indexAddress = address.toLowerCase()
       return {
         ...values,
-        ...parseLocatorAndLocatorType(values.locator, values.identifier),
         indexAddress,
         blockNumber,
       }
@@ -82,11 +81,19 @@ class Indexer {
   // }
   getIntents() {
     return this.locators
-      .map(locator => ({
-        ...locator,
-        ...(this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}),
-        swapVersion: 2, // version number is used in downstream dependencies like the protocolMessaging Router
-      }))
+      .map(locator => {
+        const { signerToken, senderToken, protocol } =
+          this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}
+        parseLocatorAndLocatorType(locator.locator, locator.identifier)
+        return {
+          signerToken,
+          senderToken,
+          protocol,
+          identifier: locator.identifier,
+          ...parseLocatorAndLocatorType(locator.locator, locator.identifier, protocol),
+          swapVersion: 2,
+        }
+      })
       .filter(
         ({ identifier, locator, locatorType, senderToken, signerToken }) =>
           identifier && locator && locatorType && senderToken && signerToken,

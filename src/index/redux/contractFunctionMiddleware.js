@@ -151,6 +151,32 @@ export default function indexMiddleware(store) {
           action.resolve(id)
         })
         break
+      case 'SUBMIT_INDEX_UPDATE_LOCATOR':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitIndexUpdateLocator(
+            action.contractAddress,
+            action.identifier,
+            action.score,
+            action.locator,
+            signer,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'index',
+            name: 'updateLocator',
+            parameters: {
+              contractAddress: action.contractAddress,
+              identifier: action.identifier,
+              score: action.score,
+              locator: action.locator,
+            },
+          })
+          action.resolve(id)
+        })
+        break
       case 'FETCH_INDEX_GET_SCORE':
         contractFunctions
           .getIndexGetScore(action.contractAddress, action.identifier)

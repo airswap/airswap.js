@@ -10,6 +10,7 @@ const router = new Router({
 
 async function queryHttpIntents(query) {
   await indexer.ready
+
   const intents = indexer.getIntents()
 
   const filteredIntents = intents.filter(
