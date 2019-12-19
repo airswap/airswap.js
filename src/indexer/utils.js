@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const ethers = require('ethers')
+const { INDEX_TYPES } = require('./constants')
 
 function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, tradeWallet, locator, locatorType }) {
   if (locatorType === 'contract') {
@@ -38,31 +39,16 @@ function mapOnChainIntentToOffChain({ senderToken, signerToken, identifier, trad
   }
 }
 
-const prefixes = ['https', 'http']
-
-function parseLocatorAndLocatorType(bytes32Locator, identifier) {
+function parseLocatorAndLocatorType(bytes32Locator, identifier, protocol) {
   let locator
-  let locatorType
+  const locatorType = INDEX_TYPES[protocol]
 
-  if (_.startsWith(bytes32Locator.toLowerCase(), identifier.toLowerCase())) {
+  if (locatorType === 'contract') {
     locator = identifier.toLowerCase()
-    locatorType = 'contract'
-  } else {
+  } else if (locatorType === 'https') {
     locator = ethers.utils.parseBytes32String(bytes32Locator)
-
-    locatorType = _.reduce(
-      prefixes,
-      (agg, val) => {
-        if (agg) {
-          return agg
-        }
-
-        if (_.startsWith(locator, val)) {
-          return val
-        }
-      },
-      '',
-    )
+  } else if (!locatorType) {
+    return {}
   }
 
   return { locator, locatorType }

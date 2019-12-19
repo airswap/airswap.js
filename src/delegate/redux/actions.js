@@ -8,6 +8,7 @@ import { submitSwapAuthorizeSender } from '../../swap/redux/contractFunctionActi
 import { getContractPriceFromDisplayPrice } from '../utils'
 import { submitERC20Approve } from '../../erc20/redux/contractFunctionActions' //eslint-disable-line
 import { AST_CONTRACT_ADDRESS, TOKEN_APPROVAL_AMOUNT } from '../../constants'
+import { waitForState } from '../../utils/redux/waitForState'
 
 // EXAMPLE ACTION: sell 25 AST at 0.005 AST/WETH
 // TODO: These example actions should be removed after trade-bot is successfully hooked up
@@ -105,8 +106,13 @@ export const submitConnectedDelegateSetRule = ({ senderToken, signerToken, maxSe
   )
 }
 
-export const authorizeConnectedDelegateSender = () => (dispatch, getState) => {
+export const authorizeConnectedDelegateSender = () => async (dispatch, getState) => {
+  await dispatch(
+    waitForState({
+      selector: state => !!getConnectedDelegateContractAddress(state),
+      result: true,
+    }),
+  )
   const contractAddress = getConnectedDelegateContractAddress(getState())
-
   dispatch(submitSwapAuthorizeSender({ authorizedSender: contractAddress }))
 }

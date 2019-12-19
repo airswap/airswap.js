@@ -1,17 +1,17 @@
 {
   "name": "airswap.js",
-  "version": "0.1.96",
+  "version": "0.1.98",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@airswap/delegate": "^0.5.6",
+    "@airswap/delegate": "^0.5.6-beta.2",
     "@airswap/delegate-factory": "^2.5.7",
     "@airswap/index": "^0.3.2",
-    "@airswap/indexer": "^2.6.7",
-    "@airswap/swap": "^3.3.5",
-    "@airswap/wrapper": "^1.5.7",
+    "@airswap/indexer": "^2.6.7-beta.2",
+    "@airswap/swap": "^3.3.5-beta.3",
+    "@airswap/wrapper": "^1.5.7-beta.2",
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -60,7 +60,8 @@
     "lint-staged": "lint-staged",
     "lint": "eslint src --ext .js,.jsx",
     "prettify": "prettier --write src/**/*.js",
-    "upgrade-contracts": "yarn upgrade @airswap/indexer @airswap/swap @airswap/wrapper @airswap/delegate @airswap/delegate-factory --latest --dev && yarn upgrade @airswap/order-utils",
+    "upgrade-contracts": "yarn add @airswap/indexer@latest @airswap/swap@latest @airswap/wrapper@latest @airswap/delegate@latest --dev && yarn add @airswap/order-utils@latest",
+    "upgrade-contracts-beta": "yarn add @airswap/indexer@beta @airswap/swap@beta @airswap/wrapper@beta @airswap/delegate@beta --dev && yarn add @airswap/order-utils@beta",
     "generate": "cd src && node abiGen.js && yarn lint --fix"
   },
   "pre-commit": [
@@ -87,7 +88,7 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
-    "@airswap/order-utils": "^0.3.12",
+    "@airswap/order-utils": "^0.3.15-beta.2",
     "@alch/alchemy-web3": "^0.1.4",
     "@ledgerhq/hw-app-eth": "^4.73.4",
     "@ledgerhq/hw-transport-u2f": "^4.73.4",

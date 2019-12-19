@@ -11,6 +11,11 @@ function getDelegateFactoryIndexerContract() {
   return contract.indexerContract()
 }
 
+function getDelegateFactoryProtocol() {
+  const contract = getDelegateFactoryContract(constants.httpProvider)
+  return contract.protocol()
+}
+
 function getDelegateFactorySwapContract() {
   const contract = getDelegateFactoryContract(constants.httpProvider)
   return contract.swapContract()
@@ -28,6 +33,7 @@ function getDelegateFactoryHas(locator) {
 
 module.exports = {
   getDelegateFactoryIndexerContract,
+  getDelegateFactoryProtocol,
   getDelegateFactorySwapContract,
   submitDelegateFactoryCreateDelegate,
   getDelegateFactoryHas,

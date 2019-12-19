@@ -67,6 +67,7 @@ async function setUpDelegateListeners(store) {
   store.dispatch(
     trackDelegateUnsetRule({
       owner: walletAddress,
+      fromBlock: DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
       callback: events =>
         events.map(({ values: { senderToken, signerToken } }) => {
           store.dispatch(

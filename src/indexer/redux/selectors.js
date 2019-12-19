@@ -30,12 +30,13 @@ const getLocators = createSelector(getIndexerGetLocators, responses =>
 const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
   _.uniqBy(
     events.map(
-      ({ values: { senderToken, signerToken, indexAddress } }) => ({
+      ({ values: { senderToken, signerToken, indexAddress, protocol } }) => ({
         senderToken,
         signerToken,
+        protocol,
         indexAddress,
       }),
-      v => JSON.stringify(v, ['senderToken', 'signerToken', 'indexAddress']),
+      v => JSON.stringify(v, ['senderToken', 'signerToken', 'indexAddress', 'protocol']),
     ),
   ),
 )
@@ -54,12 +55,19 @@ const getLocatorIntents = createSelector(
         blockNumber,
       } = event
 
-      const { senderToken, signerToken } = _.find(indexes, { indexAddress }) || {}
+      const { senderToken, signerToken, protocol } = _.find(indexes, { indexAddress }) || {}
 
       if (!(senderToken && signerToken)) {
+        // index doesn't exist for this locator
         return null
       }
-      const { locator, locatorType } = parseLocatorAndLocatorType(unformattedLocator, identifier)
+
+      const { locator, locatorType } = parseLocatorAndLocatorType(unformattedLocator, identifier, protocol)
+
+      if (!(locator && locatorType)) {
+        // protocol isn't recognized in ./constants.js
+        return null
+      }
 
       let delegateTradeWallet
 

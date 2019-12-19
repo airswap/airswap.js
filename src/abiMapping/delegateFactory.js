@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const fs = require('fs')
-const { abi } = require('@airswap/delegate-factory/build/contracts/DelegateFactory.json')
-const constants = require('@airswap/delegate-factory/deploys.json')
+const { abi } = require('@airswap/delegate/build/contracts/DelegateFactory.json')
+const constants = require('@airswap/delegate/deploys.json')
 
 const overwrites = []
 

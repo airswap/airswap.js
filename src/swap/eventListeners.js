@@ -172,7 +172,7 @@ const trackSwapSwap = ({
     params: { nonce, signerWallet, senderWallet },
     fromBlock,
     backFillBlockCount,
-    topic: '0xdb667502ab054fbfc1011315893dab3481c36c50f60b5ad16f1c14e6035e7a9e',
+    topic: '0xd5fe17cd50e0d3d39b905ea598bbabccf2f8cda62a3b2fc64e09de00247a4724',
     namespace: 'swap',
     parser,
     onFetchingHistoricalEvents,

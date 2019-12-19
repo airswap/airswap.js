@@ -22,6 +22,12 @@ export const getDelegateOwner = createSelector(getCallData, values => {
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
+export const getDelegateProtocol = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'protocol', namespace: 'delegate' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
 export const getDelegateRules = createSelector(getCallData, values => {
   const filteredValues = _.filter(values, { name: 'rules', namespace: 'delegate' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()

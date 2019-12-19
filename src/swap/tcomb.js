@@ -9,7 +9,8 @@ const Kind = t.union([stringLiteral(ERC721_INTERFACE_ID), stringLiteral(ERC20_IN
 const Party = t.struct({
   wallet: Address,
   token: Address,
-  param: AtomicAmount,
+  amount: AtomicAmount,
+  id: AtomicAmount,
   kind: Kind,
 })
 
@@ -45,7 +46,8 @@ const FlatOrder = t.Object
 const QuoteParty = t.struct({
   wallet: t.maybe(Address),
   token: Address,
-  param: AtomicAmount,
+  amount: AtomicAmount,
+  id: t.maybe(AtomicAmount),
   kind: Kind,
 })
 

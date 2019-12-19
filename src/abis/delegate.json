@@ -20,6 +20,11 @@
         "internalType": "address",
         "name": "delegateTradeWallet",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "delegateProtocol",
+        "type": "bytes2"
       }
     ],
     "payable": false,
@@ -201,6 +206,21 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "protocol",
+    "outputs": [
+      {
+        "internalType": "bytes2",
+        "name": "",
+        "type": "bytes2"
       }
     ],
     "payable": false,
@@ -453,7 +473,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -480,7 +505,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -507,7 +537,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -584,7 +619,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "senderParam",
+        "name": "senderAmount",
         "type": "uint256"
       },
       {
@@ -602,7 +637,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "signerParam",
+        "name": "signerAmount",
         "type": "uint256"
       }
     ],
@@ -615,7 +650,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "signerParam",
+        "name": "signerAmount",
         "type": "uint256"
       },
       {
@@ -633,7 +668,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "senderParam",
+        "name": "senderAmount",
         "type": "uint256"
       }
     ],
@@ -659,12 +694,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "senderParam",
+        "name": "senderAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "signerParam",
+        "name": "signerAmount",
         "type": "uint256"
       }
     ],

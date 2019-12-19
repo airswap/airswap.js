@@ -16,8 +16,8 @@ export const getIndexerIsOwner = createSelector(getCallData, values => {
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
-export const getIndexerLocatorWhitelist = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'locatorWhitelist', namespace: 'indexer' })
+export const getIndexerLocatorWhitelists = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'locatorWhitelists', namespace: 'indexer' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })

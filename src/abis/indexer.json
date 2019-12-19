@@ -41,6 +41,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "indexAddress",
         "type": "address"
@@ -104,6 +110,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "stakeAmount",
         "type": "uint256"
@@ -135,6 +147,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "stakeAmount",
         "type": "uint256"
@@ -155,6 +173,11 @@
         "internalType": "address",
         "name": "senderToken",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
       }
     ],
     "name": "indexes",
@@ -186,8 +209,14 @@
   },
   {
     "constant": true,
-    "inputs": [],
-    "name": "locatorWhitelist",
+    "inputs": [
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      }
+    ],
+    "name": "locatorWhitelists",
     "outputs": [
       {
         "internalType": "address",
@@ -278,6 +307,11 @@
     "constant": false,
     "inputs": [
       {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      },
+      {
         "internalType": "address",
         "name": "newLocatorWhitelist",
         "type": "address"
@@ -301,6 +335,11 @@
         "internalType": "address",
         "name": "senderToken",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
       }
     ],
     "name": "createIndex",
@@ -359,6 +398,11 @@
         "type": "address"
       },
       {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
+      },
+      {
         "internalType": "uint256",
         "name": "stakingAmount",
         "type": "uint256"
@@ -387,6 +431,11 @@
         "internalType": "address",
         "name": "senderToken",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
       }
     ],
     "name": "unsetIntent",
@@ -407,6 +456,11 @@
         "internalType": "address",
         "name": "senderToken",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
       },
       {
         "internalType": "address",
@@ -458,6 +512,11 @@
         "internalType": "address",
         "name": "senderToken",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "protocol",
+        "type": "bytes2"
       }
     ],
     "name": "getStakedAmount",

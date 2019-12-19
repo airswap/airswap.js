@@ -13,13 +13,13 @@ const { routeDelegateCall } = require('../delegate')
 
 const quoteQueryDefaults = {
   affiliateToken: '0x0000000000000000000000000000000000000000',
-  affiliateParam: '0',
+  affiliateAmount: '0',
 }
 
 const orderQueryDefaults = {
   senderWallet: '0x0000000000000000000000000000000000000000',
   affiliateToken: '0x0000000000000000000000000000000000000000',
-  affiliateParam: '0',
+  affiliateAmount: '0',
 }
 
 function typeSafeOrder(params, locatorType) {
@@ -357,15 +357,15 @@ class Router {
   }
 
   getSignerSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, senderParam, affiliateToken, affiliateParam, locator, locatorType } = params
+    const { signerToken, senderToken, senderAmount, affiliateToken, affiliateAmount, locator, locatorType } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
       senderToken,
-      senderParam,
+      senderAmount,
       senderWallet: this.address.toLowerCase(),
       affiliateToken,
-      affiliateParam,
+      affiliateAmount,
     })
 
     const payload = Router.makeRPC('getSignerSideOrder', query)
@@ -377,15 +377,15 @@ class Router {
   }
 
   getSenderSideOrder(signerAddress, params) {
-    const { signerToken, senderToken, signerParam, affiliateToken, affiliateParam, locator, locatorType } = params
+    const { signerToken, senderToken, signerAmount, affiliateToken, affiliateAmount, locator, locatorType } = params
 
     const query = Object.assign({}, orderQueryDefaults, {
       signerToken,
       senderToken,
-      signerParam,
+      signerAmount,
       senderWallet: this.address.toLowerCase(),
       affiliateToken,
-      affiliateParam,
+      affiliateAmount,
     })
 
     const payload = Router.makeRPC('getSenderSideOrder', query)
@@ -407,7 +407,7 @@ class Router {
     if (swapVersion === 2) {
       if (takerAmount) {
         return this.getSignerSideOrder(makerAddress, {
-          senderParam: takerAmount,
+          senderAmount: takerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
@@ -415,7 +415,7 @@ class Router {
         })
       } else if (makerAmount) {
         return this.getSenderSideOrder(makerAddress, {
-          signerParam: makerAmount,
+          signerAmount: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
@@ -465,12 +465,12 @@ class Router {
   }
 
   getSignerSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, senderParam, locator, locatorType } = params
+    const { signerToken, senderToken, senderAmount, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
       senderToken,
-      senderParam,
+      senderAmount,
     })
 
     const payload = Router.makeRPC('getSignerSideQuote', query)
@@ -487,12 +487,12 @@ class Router {
   }
 
   getSenderSideQuote(makerAddress, params) {
-    const { signerToken, senderToken, signerParam, locator, locatorType } = params
+    const { signerToken, senderToken, signerAmount, locator, locatorType } = params
 
     const query = Object.assign({}, quoteQueryDefaults, {
       signerToken,
       senderToken,
-      signerParam,
+      signerAmount,
     })
 
     const payload = Router.makeRPC('getSenderSideQuote', query)
@@ -550,7 +550,7 @@ class Router {
     if (swapVersion === 2) {
       if (takerAmount) {
         return this.getSignerSideQuote(makerAddress, {
-          senderParam: takerAmount,
+          senderAmount: takerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
           locator,
@@ -558,7 +558,7 @@ class Router {
         })
       } else if (makerAmount) {
         return this.getSenderSideQuote(makerAddress, {
-          signerParam: makerAmount,
+          signerAmount: makerAmount,
           signerToken: makerToken,
           senderToken: takerToken,
           locator,

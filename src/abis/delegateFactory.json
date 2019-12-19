@@ -10,6 +10,11 @@
         "internalType": "contract IIndexer",
         "name": "factoryIndexerContract",
         "type": "address"
+      },
+      {
+        "internalType": "bytes2",
+        "name": "factoryProtocol",
+        "type": "bytes2"
       }
     ],
     "payable": false,
@@ -62,6 +67,21 @@
         "internalType": "contract IIndexer",
         "name": "",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "protocol",
+    "outputs": [
+      {
+        "internalType": "bytes2",
+        "name": "",
+        "type": "bytes2"
       }
     ],
     "payable": false,
