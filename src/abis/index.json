@@ -208,6 +208,31 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "identifier",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "score",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "locator",
+        "type": "bytes32"
+      }
+    ],
+    "name": "updateLocator",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       {

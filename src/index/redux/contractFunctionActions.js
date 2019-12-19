@@ -85,6 +85,19 @@ export const submitIndexUnsetLocator = ({ contractAddress, identifier }) => disp
     }),
   )
 
+export const submitIndexUpdateLocator = ({ contractAddress, identifier, score, locator }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      contractAddress,
+      identifier,
+      score,
+      locator,
+      type: 'SUBMIT_INDEX_UPDATE_LOCATOR',
+      resolve,
+      reject,
+    }),
+  )
+
 export const fetchIndexGetScore = ({ contractAddress, identifier }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({

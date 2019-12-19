@@ -46,6 +46,11 @@ function submitIndexUnsetLocator(contractAddress, identifier, signer) {
   return contract.unsetLocator(identifier)
 }
 
+function submitIndexUpdateLocator(contractAddress, identifier, score, locator, signer) {
+  const contract = getIndexContract(signer, contractAddress)
+  return contract.updateLocator(identifier, score, locator)
+}
+
 function getIndexGetScore(contractAddress, identifier) {
   const contract = getIndexContract(constants.httpProvider, contractAddress)
   return contract.getScore(identifier)
@@ -70,6 +75,7 @@ module.exports = {
   submitIndexTransferOwnership,
   submitIndexSetLocator,
   submitIndexUnsetLocator,
+  submitIndexUpdateLocator,
   getIndexGetScore,
   getIndexGetLocator,
   getIndexGetLocators,
