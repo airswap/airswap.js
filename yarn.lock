@@ -57,7 +57,7 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/order-utils@^0.3.15-beta.2":
+"@airswap/order-utils@0.3.15-beta.2":
   version "0.3.15-beta.2"
   resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.15-beta.2.tgz#7de5fba180fc2ea6305b789759dfd33295e9747c"
   integrity sha512-Q6aHp+6WopNqvg9QR1WaIa1mRzDQdal423RIFRQm0SaXfrN4FJVW7gxD77L6CV2SWB/DHlErKvRebtvJcfSdzw==
