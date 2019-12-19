@@ -8,6 +8,15 @@ export const fetchDelegateFactoryIndexerContract = () => dispatch =>
     }),
   )
 
+export const fetchDelegateFactoryProtocol = () => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      type: 'FETCH_DELEGATE_FACTORY_PROTOCOL',
+      resolve,
+      reject,
+    }),
+  )
+
 export const fetchDelegateFactorySwapContract = () => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({

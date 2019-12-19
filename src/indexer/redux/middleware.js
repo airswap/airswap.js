@@ -1,6 +1,5 @@
 import { IS_INSTANT, INDEXER_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 import { trackIndexerCreateIndex } from './eventTrackingActions'
-import { fetchIndexerIndexes } from './contractFunctionActions'
 
 export default function indexerMiddleware(store) {
   return next => action => {
@@ -10,12 +9,6 @@ export default function indexerMiddleware(store) {
           store.dispatch(
             trackIndexerCreateIndex({
               fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
-              callback: events => {
-                events.map(event => {
-                  const { senderToken, signerToken } = event.values
-                  store.dispatch(fetchIndexerIndexes({ senderToken, signerToken }))
-                })
-              },
             }),
           )
         }

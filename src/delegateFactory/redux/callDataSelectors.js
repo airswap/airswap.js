@@ -10,6 +10,12 @@ export const getDelegateFactoryIndexerContract = createSelector(getCallData, val
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
+export const getDelegateFactoryProtocol = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'protocol', namespace: 'delegateFactory' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
 export const getDelegateFactorySwapContract = createSelector(getCallData, values => {
   const filteredValues = _.filter(values, { name: 'swapContract', namespace: 'delegateFactory' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()

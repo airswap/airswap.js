@@ -6,9 +6,9 @@ const constants = require('../constants')
 function getIndexerContract(provider) {
   return new ethers.Contract(constants.INDEXER_CONTRACT_ADDRESS, abi, provider)
 }
-function getIndexerIndexes(signerToken, senderToken) {
+function getIndexerIndexes(signerToken, senderToken, protocol) {
   const contract = getIndexerContract(constants.httpProvider)
-  return contract.indexes(signerToken, senderToken)
+  return contract.indexes(signerToken, senderToken, protocol)
 }
 
 function getIndexerIsOwner() {
@@ -16,9 +16,9 @@ function getIndexerIsOwner() {
   return contract.isOwner()
 }
 
-function getIndexerLocatorWhitelist() {
+function getIndexerLocatorWhitelists(protocol) {
   const contract = getIndexerContract(constants.httpProvider)
-  return contract.locatorWhitelist()
+  return contract.locatorWhitelists(protocol)
 }
 
 function getIndexerOwner() {
@@ -46,14 +46,14 @@ function submitIndexerTransferOwnership(newOwner, signer) {
   return contract.transferOwnership(newOwner)
 }
 
-function submitIndexerSetLocatorWhitelist(newLocatorWhitelist, signer) {
+function submitIndexerSetLocatorWhitelist(protocol, newLocatorWhitelist, signer) {
   const contract = getIndexerContract(signer)
-  return contract.setLocatorWhitelist(newLocatorWhitelist)
+  return contract.setLocatorWhitelist(protocol, newLocatorWhitelist)
 }
 
-function submitIndexerCreateIndex(signerToken, senderToken, signer) {
+function submitIndexerCreateIndex(signerToken, senderToken, protocol, signer) {
   const contract = getIndexerContract(signer)
-  return contract.createIndex(signerToken, senderToken)
+  return contract.createIndex(signerToken, senderToken, protocol)
 }
 
 function submitIndexerAddTokenToBlacklist(token, signer) {
@@ -66,30 +66,30 @@ function submitIndexerRemoveTokenFromBlacklist(token, signer) {
   return contract.removeTokenFromBlacklist(token)
 }
 
-function submitIndexerSetIntent(signerToken, senderToken, stakingAmount, locator, signer) {
+function submitIndexerSetIntent(signerToken, senderToken, protocol, stakingAmount, locator, signer) {
   const contract = getIndexerContract(signer)
-  return contract.setIntent(signerToken, senderToken, stakingAmount, locator)
+  return contract.setIntent(signerToken, senderToken, protocol, stakingAmount, locator)
 }
 
-function submitIndexerUnsetIntent(signerToken, senderToken, signer) {
+function submitIndexerUnsetIntent(signerToken, senderToken, protocol, signer) {
   const contract = getIndexerContract(signer)
-  return contract.unsetIntent(signerToken, senderToken)
+  return contract.unsetIntent(signerToken, senderToken, protocol)
 }
 
-function getIndexerGetLocators(signerToken, senderToken, cursor, limit) {
+function getIndexerGetLocators(signerToken, senderToken, protocol, cursor, limit) {
   const contract = getIndexerContract(constants.httpProvider)
-  return contract.getLocators(signerToken, senderToken, cursor, limit)
+  return contract.getLocators(signerToken, senderToken, protocol, cursor, limit)
 }
 
-function getIndexerGetStakedAmount(user, signerToken, senderToken) {
+function getIndexerGetStakedAmount(user, signerToken, senderToken, protocol) {
   const contract = getIndexerContract(constants.httpProvider)
-  return contract.getStakedAmount(user, signerToken, senderToken)
+  return contract.getStakedAmount(user, signerToken, senderToken, protocol)
 }
 
 module.exports = {
   getIndexerIndexes,
   getIndexerIsOwner,
-  getIndexerLocatorWhitelist,
+  getIndexerLocatorWhitelists,
   getIndexerOwner,
   submitIndexerRenounceOwnership,
   getIndexerStakingToken,

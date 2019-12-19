@@ -48,14 +48,17 @@ function parseSwapParameters(parameters) {
     makerKind,
     makerWallet,
     makerToken,
-    makerParam,
+    makerAmount,
+    makerId,
     takerKind,
     takerWallet,
     takerToken,
-    takerParam,
+    takerAmount,
+    takerId,
     affiliateWallet,
     affiliateToken,
-    affiliateParam,
+    affiliateAmount,
+    affiliateId,
     affiliateKind,
     signatory,
     validator,
@@ -70,15 +73,18 @@ function parseSwapParameters(parameters) {
     expiry,
     makerWallet,
     makerToken,
-    makerParam,
+    makerAmount,
+    makerId,
     makerKind,
     takerWallet,
     takerToken,
-    takerParam,
+    takerAmount,
+    takerId,
     takerKind,
     affiliateWallet,
     affiliateToken,
-    affiliateParam,
+    affiliateAmount,
+    affiliateId,
     affiliateKind,
     signatory,
     validator,
@@ -156,12 +162,12 @@ function getTransactionDescription(
 
     const takerSide =
       takerToken.kind === 'ERC721'
-        ? `${takerToken.symbol} #${order.takerParam} `
+        ? `${takerToken.symbol} #${order.takerAmount} `
         : `${order.takerAmountFormatted} ${takerToken.symbol}`
 
     const makerSide =
       takerToken.kind === 'ERC721'
-        ? `${makerToken.symbol} #${order.makerParam} `
+        ? `${makerToken.symbol} #${order.makerAmount} `
         : `${order.makerAmountFormatted} ${makerToken.symbol}`
 
     return `Fill order for ${takerSide} for ${makerSide}`

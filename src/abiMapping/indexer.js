@@ -12,8 +12,19 @@ const overwrites = [
       {
         name: 'senderToken',
       },
+      {
+        name: 'protocol',
+      },
     ],
     name: 'indexes',
+  },
+  {
+    inputs: [
+      {
+        name: 'protocol',
+      },
+    ],
+    name: 'locatorWhitelists',
   },
   {
     inputs: [

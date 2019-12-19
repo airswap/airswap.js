@@ -161,8 +161,8 @@ const makeGetReadableSwap = createSelector(
     order.swapVersion === 2
       ? {
           ...getReadableSwapOrder(order),
-          takerAmount: order.takerParam,
-          makerAmount: order.makerParam,
+          takerAmount: order.takerAmount,
+          makerAmount: order.makerAmount,
         }
       : getReadableOrder(order),
 )

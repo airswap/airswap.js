@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const fs = require('fs')
-const { abi } = require('@airswap/index/build/contracts/Index')
+const { abi } = require('@airswap/indexer/build/contracts/Index')
 
 const overwrites = [
   {

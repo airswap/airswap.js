@@ -10,7 +10,7 @@ export default function indexerMiddleware(store) {
     switch (action.type) {
       case 'FETCH_INDEXER_INDEXES':
         contractFunctions
-          .getIndexerIndexes(action.signerToken, action.senderToken)
+          .getIndexerIndexes(action.signerToken, action.senderToken, action.protocol)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
@@ -18,7 +18,11 @@ export default function indexerMiddleware(store) {
               namespace: 'indexer',
               name: 'indexes',
               timestamp: Date.now(),
-              parameters: { signerToken: action.signerToken, senderToken: action.senderToken },
+              parameters: {
+                signerToken: action.signerToken,
+                senderToken: action.senderToken,
+                protocol: action.protocol,
+              },
             })
             action.resolve(response)
           })
@@ -39,16 +43,17 @@ export default function indexerMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'FETCH_INDEXER_LOCATOR_WHITELIST':
+      case 'FETCH_INDEXER_LOCATOR_WHITELISTS':
         contractFunctions
-          .getIndexerLocatorWhitelist()
+          .getIndexerLocatorWhitelists(action.protocol)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
               response: resolveBigNumbers(response),
               namespace: 'indexer',
-              name: 'locatorWhitelist',
+              name: 'locatorWhitelists',
               timestamp: Date.now(),
+              parameters: { protocol: action.protocol },
             })
             action.resolve(response)
           })
@@ -132,6 +137,7 @@ export default function indexerMiddleware(store) {
       case 'SUBMIT_INDEXER_SET_LOCATOR_WHITELIST':
         store.dispatch(getSigner()).then(signer => {
           const contractFunctionPromise = contractFunctions.submitIndexerSetLocatorWhitelist(
+            action.protocol,
             action.newLocatorWhitelist,
             signer,
           )
@@ -142,7 +148,7 @@ export default function indexerMiddleware(store) {
             id,
             namespace: 'indexer',
             name: 'setLocatorWhitelist',
-            parameters: { newLocatorWhitelist: action.newLocatorWhitelist },
+            parameters: { protocol: action.protocol, newLocatorWhitelist: action.newLocatorWhitelist },
           })
           action.resolve(id)
         })
@@ -152,6 +158,7 @@ export default function indexerMiddleware(store) {
           const contractFunctionPromise = contractFunctions.submitIndexerCreateIndex(
             action.signerToken,
             action.senderToken,
+            action.protocol,
             signer,
           )
           const id = Date.now().toString()
@@ -161,7 +168,7 @@ export default function indexerMiddleware(store) {
             id,
             namespace: 'indexer',
             name: 'createIndex',
-            parameters: { signerToken: action.signerToken, senderToken: action.senderToken },
+            parameters: { signerToken: action.signerToken, senderToken: action.senderToken, protocol: action.protocol },
           })
           action.resolve(id)
         })
@@ -201,6 +208,7 @@ export default function indexerMiddleware(store) {
           const contractFunctionPromise = contractFunctions.submitIndexerSetIntent(
             action.signerToken,
             action.senderToken,
+            action.protocol,
             action.stakingAmount,
             action.locator,
             signer,
@@ -215,6 +223,7 @@ export default function indexerMiddleware(store) {
             parameters: {
               signerToken: action.signerToken,
               senderToken: action.senderToken,
+              protocol: action.protocol,
               stakingAmount: action.stakingAmount,
               locator: action.locator,
             },
@@ -227,6 +236,7 @@ export default function indexerMiddleware(store) {
           const contractFunctionPromise = contractFunctions.submitIndexerUnsetIntent(
             action.signerToken,
             action.senderToken,
+            action.protocol,
             signer,
           )
           const id = Date.now().toString()
@@ -236,14 +246,14 @@ export default function indexerMiddleware(store) {
             id,
             namespace: 'indexer',
             name: 'unsetIntent',
-            parameters: { signerToken: action.signerToken, senderToken: action.senderToken },
+            parameters: { signerToken: action.signerToken, senderToken: action.senderToken, protocol: action.protocol },
           })
           action.resolve(id)
         })
         break
       case 'FETCH_INDEXER_GET_LOCATORS':
         contractFunctions
-          .getIndexerGetLocators(action.signerToken, action.senderToken, action.cursor, action.limit)
+          .getIndexerGetLocators(action.signerToken, action.senderToken, action.protocol, action.cursor, action.limit)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
@@ -254,6 +264,7 @@ export default function indexerMiddleware(store) {
               parameters: {
                 signerToken: action.signerToken,
                 senderToken: action.senderToken,
+                protocol: action.protocol,
                 cursor: action.cursor,
                 limit: action.limit,
               },
@@ -264,7 +275,7 @@ export default function indexerMiddleware(store) {
         break
       case 'FETCH_INDEXER_GET_STAKED_AMOUNT':
         contractFunctions
-          .getIndexerGetStakedAmount(action.user, action.signerToken, action.senderToken)
+          .getIndexerGetStakedAmount(action.user, action.signerToken, action.senderToken, action.protocol)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
@@ -272,7 +283,12 @@ export default function indexerMiddleware(store) {
               namespace: 'indexer',
               name: 'getStakedAmount',
               timestamp: Date.now(),
-              parameters: { user: action.user, signerToken: action.signerToken, senderToken: action.senderToken },
+              parameters: {
+                user: action.user,
+                signerToken: action.signerToken,
+                senderToken: action.senderToken,
+                protocol: action.protocol,
+              },
             })
             action.resolve(response)
           })

@@ -36,7 +36,7 @@ async function queryHttpIntents(query) {
       return { error: e, intent, type: 'getMaxQuote' }
     }
 
-    const requestAmount = maxQuote.senderParam
+    const requestAmount = maxQuote.senderAmount
 
     let quote
     try {
@@ -45,7 +45,7 @@ async function queryHttpIntents(query) {
           await router.getSignerSideQuote(intent.makerAddress, {
             senderToken,
             signerToken,
-            senderParam: requestAmount,
+            senderAmount: requestAmount,
             swapVersion,
             locator,
             locatorType,
@@ -63,7 +63,7 @@ async function queryHttpIntents(query) {
           await router.getSignerSideOrder(intent.makerAddress, {
             senderToken,
             signerToken,
-            senderParam: requestAmount,
+            senderAmount: requestAmount,
             swapVersion,
             locator,
             locatorType,

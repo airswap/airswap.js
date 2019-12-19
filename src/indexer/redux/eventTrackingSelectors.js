@@ -30,7 +30,7 @@ export const getIndexerAddTokenToBlacklistHistoricalFetchStatus = createSelector
 
 export const getIndexerCreateIndexEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0x20cbc92354b230c7cc3e03e86e970490c1bfadae113827bca7a04496c4659681',
+    topic: '0x7a28ddb7cee538734c8afbb914e80f6fa30503635c435868db561163b5a7e84b',
     address: constants.INDEXER_CONTRACT_ADDRESS,
   }),
 )
@@ -90,7 +90,7 @@ export const getIndexerRemoveTokenFromBlacklistHistoricalFetchStatus = createSel
 
 export const getIndexerStakeEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0xc5017594d2723c038bb216e5bcef3ac65910ade839c0e63253bf5b59efbf0fd7',
+    topic: '0x5065254984dfd953a97f48da9330ed3a61d8bc8cd2df88176b58f99d3ce81c3e',
     address: constants.INDEXER_CONTRACT_ADDRESS,
   }),
 )
@@ -110,7 +110,7 @@ export const getIndexerStakeHistoricalFetchStatus = createSelector(
 
 export const getIndexerUnstakeEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0x2cbcd809a4c90d11f8d12c4b6d09986b255ae1e68f54f076c145fbb2185904e1',
+    topic: '0x71735c1604645e893048a8e669bd75b5c1829b76fe6bd5a6cc0f2ac86eca6ff6',
     address: constants.INDEXER_CONTRACT_ADDRESS,
   }),
 )

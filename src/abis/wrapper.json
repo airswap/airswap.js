@@ -85,7 +85,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -112,7 +117,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -139,7 +149,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -230,7 +245,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -257,7 +277,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],
@@ -284,7 +309,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "param",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "id",
                 "type": "uint256"
               }
             ],

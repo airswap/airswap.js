@@ -18,6 +18,8 @@ function format(resp) {
       ...resp,
       senderKind: ERC20_INTERFACE_ID,
       signerKind: ERC20_INTERFACE_ID,
+      senderId: '0',
+      signerId: '0',
     }),
   )
 }
@@ -57,60 +59,61 @@ function reverseParams({ method, params }) {
 async function routeDelegateCall(receiver, request, tradeWallet, signerWallet) {
   const {
     method,
-    params: { signerToken, senderToken, signerParam, senderParam },
+    params: { signerToken, senderToken, signerAmount, senderAmount },
   } = reverseParams(request)
 
   switch (method) {
     case 'getSignerSideQuote':
-      return getDelegateGetSignerSideQuote(receiver, senderParam, senderToken, signerToken).then(resp =>
+      return getDelegateGetSignerSideQuote(receiver, senderAmount, senderToken, signerToken).then(resp =>
         format({
           signerToken,
           senderToken,
-          signerParam: resolveBigNumbers(resp),
-          senderParam,
+          signerAmount: resolveBigNumbers(resp),
+          senderAmount,
         }),
       )
     case 'getSenderSideQuote':
-      return getDelegateGetSenderSideQuote(receiver, signerParam, signerToken, senderToken).then(resp =>
+      return getDelegateGetSenderSideQuote(receiver, signerAmount, signerToken, senderToken).then(resp =>
         format({
           signerToken,
           senderToken,
-          signerParam,
-          senderParam: resolveBigNumbers(resp),
+          signerAmount,
+          senderAmount: resolveBigNumbers(resp),
         }),
       )
     case 'getSignerSideOrder':
-      return getDelegateGetSignerSideQuote(receiver, senderParam, senderToken, signerToken).then(resp =>
+      return getDelegateGetSignerSideQuote(receiver, senderAmount, senderToken, signerToken).then(resp =>
         format({
           senderWallet: tradeWallet,
           signerWallet,
           signerToken,
           senderToken,
-          signerParam: resolveBigNumbers(resp),
-          senderParam,
+          signerAmount: resolveBigNumbers(resp),
+          senderAmount,
           nonce: `${Date.now()}`,
         }),
       )
     case 'getSenderSideOrder':
-      return getDelegateGetSenderSideQuote(receiver, signerParam, signerToken, senderToken).then(resp =>
+      return getDelegateGetSenderSideQuote(receiver, signerAmount, signerToken, senderToken).then(resp =>
         format({
           senderWallet: tradeWallet,
           signerWallet,
           signerToken,
           senderToken,
-          signerParam,
-          senderParam: resolveBigNumbers(resp),
+          signerAmount,
+          senderAmount: resolveBigNumbers(resp),
           nonce: `${Date.now()}`,
         }),
       )
     case 'getMaxQuote':
       return getDelegateGetMaxQuote(receiver, senderToken, signerToken).then(resp => {
         const formattedResp = resolveBigNumbers(resp)
+
         return format({
           signerToken,
           senderToken,
-          senderParam: formattedResp.senderParam,
-          signerParam: formattedResp.signerParam,
+          senderAmount: formattedResp.senderAmount,
+          signerAmount: formattedResp.signerAmount,
         })
       })
     default:

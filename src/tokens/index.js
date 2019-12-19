@@ -258,7 +258,7 @@ class TokenMetadata {
     const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
     const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
     const tokensByAddress = tokenByAddressParam || this.tokensByAddress
-    const { makerWallet, makerParam, makerToken, takerWallet, takerParam, takerToken, expiry, nonce } = order
+    const { makerWallet, makerAmount, makerToken, takerWallet, takerAmount, takerToken, expiry, nonce } = order
     let takerAmountFull
     let takerAmountFormatted
     let makerAmountFull
@@ -267,18 +267,18 @@ class TokenMetadata {
     const takerKind = _.get(tokensByAddress[takerToken], 'kind')
 
     if (takerKind === 'ERC721') {
-      takerAmountFull = takerParam
+      takerAmountFull = takerAmount
       takerAmountFormatted = takerAmountFull
     } else {
-      takerAmountFull = fullByToken({ address: takerToken }, takerParam)
+      takerAmountFull = fullByToken({ address: takerToken }, takerAmount)
       takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
     }
 
     if (makerKind === 'ERC721') {
-      makerAmountFull = makerParam
+      makerAmountFull = makerAmount
       makerAmountFormatted = makerAmountFull
     } else {
-      makerAmountFull = fullByToken({ address: makerToken }, makerParam)
+      makerAmountFull = fullByToken({ address: makerToken }, makerAmount)
       makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
     }
 
@@ -359,10 +359,8 @@ class TokenMetadata {
       takerAddress: takerWallet,
       takerWallet,
       takerToken,
-      makerAmount: makerParam,
-      makerParam,
-      takerAmount: takerParam,
-      takerParam,
+      makerAmount,
+      takerAmount,
       expiration: expiry,
       expiry,
       nonce,

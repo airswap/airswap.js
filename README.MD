@@ -47,8 +47,8 @@ The new Swap contract lives on Rinkeby at `0x4E25e972AF14942d119275453CD2DB93B32
 
 ```JavaScript
 import { swapSimple } from 'airswap.js/src/swap'
-const result = swapSimple({ id, makerWallet, makerParam, makerToken,
-  takerWallet, takerParam, takerToken,
+const result = swapSimple({ id, makerWallet, makerAmount, makerToken,
+  takerWallet, takerAmount, takerToken,
   expiry, v, r, s })
 ```
 
