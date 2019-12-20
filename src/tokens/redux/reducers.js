@@ -56,7 +56,8 @@ export default combineReducers({
 })
 
 // Tokens
-const getTokens = state => state.tokens.data
+const getNFTItems = state => state.tokens.nftItems
+const getTokens = createSelector(state => state.tokens.data, getNFTItems, (tokens, nfts) => ({ ...tokens, ...nfts }))
 const getAirSwapApprovedTokens = createSelector(getTokens, tokens => _.filter(tokens, { airswapUI: 'yes' }))
 const areTokensReady = state => state.tokens.ready
 const getTokenAddresses = createSelector(getTokens, t => _.map(t, 'address'))
@@ -73,7 +74,6 @@ const getTokenAddressesBySymbol = createSelector(getTokensBySymbol, tokensBySymb
   _.mapValues(tokensBySymbol, t => t.address),
 )
 
-const getNFTItems = state => state.tokens.nftItems
 const makeGetNFTItemByAddressAndId = createSelector(getNFTItems, items => (tokenAddress, tokenId) =>
   _.find(items, t => t.address === tokenAddress && t.id === tokenId),
 )

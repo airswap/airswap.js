@@ -46,12 +46,12 @@ function getSwapOrderId(orderParams) {
   }
   let order = orderParams
 
-  if (order.makerToken || order.signerToken || order.makerWallet) {
+  if (order.makerToken || order.signerToken || order.makerWallet || order.signerWallet) {
     // order is flat
     order = nest(order)
   }
   // now order is nested
-  if (order.sender) {
+  if (order.sender || order.signer) {
     // order is 2.2
     order = mapNested22OrderTo20Order(order)
   }
@@ -75,8 +75,8 @@ function mapNested22OrderTo20Order(order, filter = false) {
     ...(filter ? {} : rest),
     nonce,
     expiry,
-    maker: mapParty(signer || maker, filter),
-    taker: mapParty(sender || taker, filter),
+    maker: mapParty(signer || maker || {}, filter),
+    taker: mapParty(sender || taker || {}, filter),
     affiliate,
     signature,
   }
@@ -88,8 +88,8 @@ function mapNested20OrderTo22Order(order, filter = false) {
     ...(filter ? {} : rest),
     nonce,
     expiry,
-    signer: mapParty(maker || signer, filter),
-    sender: mapParty(taker || sender, filter),
+    signer: mapParty(maker || signer || {}, filter),
+    sender: mapParty(taker || sender || {}, filter),
     affiliate,
     signature,
   }
