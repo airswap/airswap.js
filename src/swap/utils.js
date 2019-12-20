@@ -51,7 +51,7 @@ function getSwapOrderId(orderParams) {
     order = nest(order)
   }
   // now order is nested
-  if (order.sender || order.signer) {
+  if (order.signer && order.signer.wallet) {
     // order is 2.2
     order = mapNested22OrderTo20Order(order)
   }
@@ -106,14 +106,17 @@ function mapFlat20OrderTo22Order(order) {
     makerWallet,
     makerToken,
     makerAmount,
+    makerId,
     makerKind,
     senderWallet,
     senderToken,
     senderAmount,
+    senderId,
     senderKind,
     takerWallet,
     takerToken,
     takerAmount,
+    takerId,
     takerKind,
     affiliateWallet,
     affiliateToken,
@@ -162,10 +165,12 @@ function mapFlat22OrderTo20Order(order) {
     makerWallet,
     makerToken,
     makerAmount,
+    makerId,
     makerKind,
     senderWallet,
     senderToken,
     senderAmount,
+    senderId,
     senderKind,
     takerWallet,
     takerToken,
