@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
 import bn from 'bignumber.js'
-// import { getDelegateRules } from './callDataSelectors'
 import { getDisplayPriceFromContractPrice } from '../utils'
 import { getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
 import { getConnectedSwapApprovals } from '../../deltaBalances/redux/reducers'
@@ -12,6 +11,7 @@ import { getDelegateProvideOrderEvents, getDelegateSetRuleEvents } from './event
 import { getDelegateRules } from './callDataSelectors'
 import { getConnectedERC20Approvals } from '../../erc20/redux/selectors'
 import { AST_CONTRACT_ADDRESS } from '../../constants'
+import { getLocatorIntents } from '../../indexer/redux/selectors'
 
 const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =>
   _.sortBy(
@@ -52,6 +52,7 @@ const getDelegateProvidedOrders = createSelector(getDelegateProvideOrderEvents, 
 const getFormattedDelegateRules = createSelector(
   getDelegateRules,
   getDelegateRulesEvents,
+  getLocatorIntents,
   getDelegateProvidedOrders,
   getTokensSymbolsByAddress,
   getConnectedSwapApprovals,
@@ -60,6 +61,7 @@ const getFormattedDelegateRules = createSelector(
   (
     allRules,
     rulesEvents,
+    locatorIntents,
     providedOrders,
     tokensSymbolsByAddress,
     connectedSwapApprovals,
@@ -71,11 +73,22 @@ const getFormattedDelegateRules = createSelector(
     }
     const rules = allRules.filter(rule => !(rule.response.priceCoef === '0' && rule.response.priceExp === '0')) // this is the only deterministic way to tell if a rule has been unset
     return _.compact(
-      rules.map(({ parameters: { contractAddress: delegateAddress, senderToken, signerToken } }) => {
+      rules.map(val => {
+        const {
+          parameters: { contractAddress: delegateAddress, senderToken, signerToken },
+        } = val
         const rule = _.find(rulesEvents, { senderToken, signerToken })
         if (!rule) {
           return null
         }
+        const intent = locatorIntents.find(
+          i => delegateAddress === i.identifier && signerToken === i.signerToken && senderToken === i.senderToken,
+        )
+        if (!intent) {
+          return null
+        }
+        const { score } = intent
+
         const { blockNumber, maxSenderAmount, priceCoef, priceExp } = rule
         const providedOrdersForRule = _.filter(
           providedOrders || [],
@@ -108,6 +121,7 @@ const getFormattedDelegateRules = createSelector(
 
         return {
           delegateAddress,
+          score,
           senderAmountDisplayValue,
           signerAmountDisplayValue,
           priceDisplayValue,
