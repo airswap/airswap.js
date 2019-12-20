@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
-import { getIndexerGetLocators } from './callDataSelectors'
 import {
   getIndexSetLocatorEvents,
   getIndexSetLocatorHistoricalFetchStatus,
@@ -9,23 +8,7 @@ import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils
 import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus } from './eventTrackingSelectors'
 import { getDelegates } from '../../delegateFactory/redux/selectors'
 import { getDelegateFactoryCreateDelegateHistoricalFetchStatus } from '../../delegateFactory/redux/eventTrackingSelectors'
-
-// TODO: this selector is a work in progress, currently being replaced by the selector below which is event driven instead of callData driven
-const getLocators = createSelector(getIndexerGetLocators, responses =>
-  responses.map(r => {
-    const {
-      parameters: { senderToken, signerToken },
-      response, //eslint-disable-line
-    } = r
-    const [, ...rest] = r.split(',').reverse()
-    const length = rest.length / 2
-    rest.slice(0, length).map(locator => ({
-      senderToken,
-      signerToken,
-      ...locator,
-    }))
-  }),
-)
+import { INDEX_TYPES_LOOKUP } from '../constants'
 
 const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
   _.uniqBy(
@@ -39,6 +22,18 @@ const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
       v => JSON.stringify(v, ['senderToken', 'signerToken', 'indexAddress', 'protocol']),
     ),
   ),
+)
+
+const makeGetIndexerIndexExists = createSelector(getIndexes, indexerIndexes => (signerToken, senderToken, protocol) =>
+  !!indexerIndexes.find(
+    index => index.signerToken === signerToken && index.senderToken === senderToken && index.protocol === protocol,
+  ),
+)
+
+const makeGetDelegateIndexExists = createSelector(
+  makeGetIndexerIndexExists,
+  getIndexerExists => (signerToken, senderToken) =>
+    getIndexerExists(signerToken, senderToken, INDEX_TYPES_LOOKUP.contract),
 )
 
 const getIndexAddresses = createSelector(getIndexes, indexes => indexes.map(({ indexAddress }) => indexAddress))
@@ -82,6 +77,7 @@ const getLocatorIntents = createSelector(
       return {
         senderToken,
         signerToken,
+        protocol,
         indexAddress,
         identifier,
         tradeWallet: delegateTradeWallet,
@@ -132,12 +128,13 @@ const getIndexerIntentsLoaded = createSelector(
 )
 
 export {
-  getLocators,
   getLocatorIntents,
   getLocatorIntentsFormatted,
   getContractLocatorIntentsFormatted,
   getConnectedOnChainMakerAddresses,
   getIndexes,
+  makeGetIndexerIndexExists,
+  makeGetDelegateIndexExists,
   getIndexAddresses,
   getIndexerIntentsLoaded,
 }

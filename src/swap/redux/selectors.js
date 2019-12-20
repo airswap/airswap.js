@@ -56,7 +56,7 @@ const getFetchedTrackedEvents = state => state.events.trackedEvents.fetched
 
 export const getSwapSwapEventsAllContracts = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0xdb667502ab054fbfc1011315893dab3481c36c50f60b5ad16f1c14e6035e7a9e',
+    topic: '0xd5fe17cd50e0d3d39b905ea598bbabccf2f8cda62a3b2fc64e09de00247a4724',
   }).map(event => ({
     ...event,
     values: mapFlat22OrderTo20Order(event.values),
