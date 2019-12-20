@@ -77,6 +77,7 @@ const getLocatorIntents = createSelector(
       return {
         senderToken,
         signerToken,
+        protocol,
         indexAddress,
         identifier,
         tradeWallet: delegateTradeWallet,
