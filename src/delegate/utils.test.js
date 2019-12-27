@@ -21,11 +21,32 @@ beforeAll(() => tokenMetadata.ready)
  * - priceCoef in contract price can't be too large or the price will go to zero (need to find out the real max number)
  */
 
-const initialDisplayPrice = {
-  senderToken: '0x27054b13b1b798b345b591a4d22e6562d47ea75a',
+const initialSenderDisplayPriceSell = {
+  senderToken: '0x27054b13b1b798b345b591a4d22e6562d47ea75a', // AST
+  signerToken: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+  senderAmountDisplayValue: '1',
+  priceDisplayValue: '0.0001',
+}
+
+const initialSenderDisplayPriceBuy = {
+  signerToken: '0x27054b13b1b798b345b591a4d22e6562d47ea75a', // AST
+  senderToken: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+  senderAmountDisplayValue: '1',
+  priceDisplayValue: '0.0001',
+}
+
+const initialSignerDisplayPriceSell = {
+  senderToken: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  signerToken: '0x123ab195dd38b1b40510d467a6a359b201af056f',
+  signerAmountDisplayValue: '1',
+  priceDisplayValue: '0.0001',
+}
+
+const initialSignerDisplayPriceBuy = {
   signerToken: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-  senderAmountDisplayValue: '25',
-  priceDisplayValue: '0.5',
+  senderToken: '0x123ab195dd38b1b40510d467a6a359b201af056f',
+  signerAmountDisplayValue: '1',
+  priceDisplayValue: '0.0001',
 }
 
 const initialDisplayPriceSignerValue = {
@@ -64,72 +85,122 @@ const initialContractPrice = {
   priceExp: '0',
 }
 
-test('getDisplayPriceFromDisplayAmounts reverts getDisplayAmountsFromDisplayPrice', () => {
-  const displayPrice = getDisplayPriceFromDisplayAmounts(getDisplayAmountsFromDisplayPrice(initialDisplayPrice))
-  expect(displayPrice.senderAmountDisplayValue).toEqual(initialDisplayPrice.senderAmountDisplayValue)
-  expect(displayPrice.priceDisplayValue).toEqual(initialDisplayPrice.priceDisplayValue)
-})
+describe('every function has a reversal function', () => {
+  test('getDisplayPriceFromDisplayAmounts reverts getDisplayAmountsFromDisplayPrice (signerAmountDisplayValue & Sell)', () => {
+    const displayAmounts = getDisplayAmountsFromDisplayPrice(initialSignerDisplayPriceSell)
+    const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
+    expect(displayPrice.signerAmountDisplayValue).toEqual(initialSignerDisplayPriceSell.signerAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSignerDisplayPriceSell.priceDisplayValue)
+  })
 
-test('getDisplayAmountsFromDisplayPrice reverts getDisplayPriceFromDisplayAmounts', () => {
-  const displayAmounts = getDisplayAmountsFromDisplayPrice(getDisplayPriceFromDisplayAmounts(initialDisplayAmounts))
-  expect(displayAmounts.senderAmountDisplayValue).toEqual(initialDisplayAmounts.senderAmountDisplayValue)
-  expect(displayAmounts.signerAmountDisplayValue).toEqual(initialDisplayAmounts.signerAmountDisplayValue)
-})
+  test('getDisplayPriceFromDisplayAmounts reverts getDisplayAmountsFromDisplayPrice (signerAmountDisplayValue & Buy)', () => {
+    const displayAmounts = getDisplayAmountsFromDisplayPrice(initialSignerDisplayPriceBuy)
+    const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
+    expect(displayPrice.signerAmountDisplayValue).toEqual(initialSignerDisplayPriceBuy.signerAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSignerDisplayPriceBuy.priceDisplayValue)
+  })
 
-test('getAtomicAmountsFromDisplayAmounts reverts getDisplayAmountsFromAtomicAmounts', () => {
-  const atomicAmounts = getAtomicAmountsFromDisplayAmounts(getDisplayAmountsFromAtomicAmounts(initialAtomicAmounts))
-  expect(atomicAmounts.senderAmountAtomic).toEqual(initialAtomicAmounts.senderAmountAtomic)
-  expect(atomicAmounts.signerAmountAtomic).toEqual(initialAtomicAmounts.signerAmountAtomic)
-})
+  test('getDisplayPriceFromDisplayAmounts reverts getDisplayAmountsFromDisplayPrice (with senderAmountDisplayValue & Sell)', () => {
+    const displayAmounts = getDisplayAmountsFromDisplayPrice(initialSenderDisplayPriceSell)
+    const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
+    expect(displayPrice.senderAmountDisplayValue).toEqual(initialSenderDisplayPriceSell.senderAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSenderDisplayPriceSell.priceDisplayValue)
+  })
 
-test('getDisplayAmountsFromAtomicAmounts reverts getAtomicAmountsFromDisplayAmounts', () => {
-  const displayAmounts = getDisplayAmountsFromAtomicAmounts(getAtomicAmountsFromDisplayAmounts(initialDisplayAmounts))
-  expect(displayAmounts.senderAmountDisplayValue).toEqual(initialDisplayAmounts.senderAmountDisplayValue)
-  expect(displayAmounts.signerAmountDisplayValue).toEqual(initialDisplayAmounts.signerAmountDisplayValue)
-})
+  test('getDisplayPriceFromDisplayAmounts reverts getDisplayAmountsFromDisplayPrice (with senderAmountDisplayValue & Buy)', () => {
+    const displayAmounts = getDisplayAmountsFromDisplayPrice(initialSenderDisplayPriceBuy)
+    const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
+    expect(displayPrice.senderAmountDisplayValue).toEqual(initialSenderDisplayPriceBuy.senderAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSenderDisplayPriceBuy.priceDisplayValue)
+  })
 
-test('getAtomicPriceFromAtomicAmounts reverts getAtomicAmountsFromAtomicPrice', () => {
-  const atomicPrice = getAtomicPriceFromAtomicAmounts(getAtomicAmountsFromAtomicPrice(initialAtomicPrice))
-  expect(atomicPrice.senderAmountAtomic).toEqual(initialAtomicPrice.senderAmountAtomic)
-  expect(atomicPrice.atomicPrice).toEqual(initialAtomicPrice.atomicPrice)
-})
+  test('getDisplayAmountsFromDisplayPrice reverts getDisplayPriceFromDisplayAmounts', () => {
+    const displayAmounts = getDisplayAmountsFromDisplayPrice(getDisplayPriceFromDisplayAmounts(initialDisplayAmounts))
+    expect(displayAmounts.senderAmountDisplayValue).toEqual(initialDisplayAmounts.senderAmountDisplayValue)
+    expect(displayAmounts.signerAmountDisplayValue).toEqual(initialDisplayAmounts.signerAmountDisplayValue)
+  })
 
-test('getAtomicAmountsFromAtomicPrice reverts getAtomicPriceFromAtomicAmounts', () => {
-  const atomicAmounts = getAtomicAmountsFromAtomicPrice(getAtomicPriceFromAtomicAmounts(initialAtomicAmounts))
-  expect(atomicAmounts.senderAmountDisplayValue).toEqual(initialAtomicAmounts.senderAmountDisplayValue)
-  expect(atomicAmounts.signerAmountDisplayValue).toEqual(initialAtomicAmounts.signerAmountDisplayValue)
-})
+  test('getAtomicAmountsFromDisplayAmounts reverts getDisplayAmountsFromAtomicAmounts', () => {
+    const atomicAmounts = getAtomicAmountsFromDisplayAmounts(getDisplayAmountsFromAtomicAmounts(initialAtomicAmounts))
+    expect(atomicAmounts.senderAmountAtomic).toEqual(initialAtomicAmounts.senderAmountAtomic)
+    expect(atomicAmounts.signerAmountAtomic).toEqual(initialAtomicAmounts.signerAmountAtomic)
+  })
 
-test('getContractPriceFromAtomicPrice reverts getAtomicPriceFromContractPrice', () => {
-  const contractPrice = getContractPriceFromAtomicPrice(getAtomicPriceFromContractPrice(initialContractPrice))
-  expect(contractPrice.maxSenderAmount).toEqual(initialContractPrice.maxSenderAmount)
-  expect(contractPrice.priceCoef).toEqual(initialContractPrice.priceCoef)
-  expect(contractPrice.priceExp).toEqual(initialContractPrice.priceExp)
-})
+  test('getDisplayAmountsFromAtomicAmounts reverts getAtomicAmountsFromDisplayAmounts', () => {
+    const displayAmounts = getDisplayAmountsFromAtomicAmounts(getAtomicAmountsFromDisplayAmounts(initialDisplayAmounts))
+    expect(displayAmounts.senderAmountDisplayValue).toEqual(initialDisplayAmounts.senderAmountDisplayValue)
+    expect(displayAmounts.signerAmountDisplayValue).toEqual(initialDisplayAmounts.signerAmountDisplayValue)
+  })
 
-test('getAtomicPriceFromContractPrice reverts getContractPriceFromAtomicPrice', () => {
-  const atomicPrice = getAtomicPriceFromContractPrice(getContractPriceFromAtomicPrice(initialAtomicPrice))
-  expect(atomicPrice.senderAmountAtomic).toEqual(initialAtomicPrice.senderAmountAtomic)
-  expect(atomicPrice.atomicPrice).toEqual(initialAtomicPrice.atomicPrice)
-})
+  test('getAtomicPriceFromAtomicAmounts reverts getAtomicAmountsFromAtomicPrice', () => {
+    const atomicPrice = getAtomicPriceFromAtomicAmounts(getAtomicAmountsFromAtomicPrice(initialAtomicPrice))
+    expect(atomicPrice.senderAmountAtomic).toEqual(initialAtomicPrice.senderAmountAtomic)
+    expect(atomicPrice.atomicPrice).toEqual(initialAtomicPrice.atomicPrice)
+  })
 
-test('getContractPriceFromDisplayPrice reverts getDisplayPriceFromContractPrice', () => {
-  const contractPrice = getContractPriceFromDisplayPrice(getDisplayPriceFromContractPrice(initialContractPrice))
-  expect(contractPrice.maxSenderAmount).toEqual(initialContractPrice.maxSenderAmount)
-  expect(contractPrice.priceCoef).toEqual(initialContractPrice.priceCoef)
-  expect(contractPrice.priceExp).toEqual(initialContractPrice.priceExp)
-})
+  test('getAtomicAmountsFromAtomicPrice reverts getAtomicPriceFromAtomicAmounts', () => {
+    const atomicAmounts = getAtomicAmountsFromAtomicPrice(getAtomicPriceFromAtomicAmounts(initialAtomicAmounts))
+    expect(atomicAmounts.senderAmountDisplayValue).toEqual(initialAtomicAmounts.senderAmountDisplayValue)
+    expect(atomicAmounts.signerAmountDisplayValue).toEqual(initialAtomicAmounts.signerAmountDisplayValue)
+  })
 
-test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified sender amount', () => {
-  const displayPrice = getDisplayPriceFromContractPrice(getContractPriceFromDisplayPrice(initialDisplayPrice))
-  expect(displayPrice.senderAmountDisplayValue).toEqual(initialDisplayPrice.senderAmountDisplayValue)
-  expect(displayPrice.priceDisplayValue).toEqual(initialDisplayPrice.priceDisplayValue)
-})
+  test('getContractPriceFromAtomicPrice reverts getAtomicPriceFromContractPrice', () => {
+    const contractPrice = getContractPriceFromAtomicPrice(getAtomicPriceFromContractPrice(initialContractPrice))
+    expect(contractPrice.maxSenderAmount).toEqual(initialContractPrice.maxSenderAmount)
+    expect(contractPrice.priceCoef).toEqual(initialContractPrice.priceCoef)
+    expect(contractPrice.priceExp).toEqual(initialContractPrice.priceExp)
+  })
 
-test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified signer amount', () => {
-  const displayPrice = getDisplayPriceFromContractPrice(
-    getContractPriceFromDisplayPrice(initialDisplayPriceSignerValue),
-  )
-  expect(displayPrice.signerAmountDisplayValue).toEqual(initialDisplayPriceSignerValue.signerAmountDisplayValue)
-  expect(displayPrice.priceDisplayValue).toEqual(initialDisplayPriceSignerValue.priceDisplayValue)
+  test('getAtomicPriceFromContractPrice reverts getContractPriceFromAtomicPrice', () => {
+    const atomicPrice = getAtomicPriceFromContractPrice(getContractPriceFromAtomicPrice(initialAtomicPrice))
+    expect(atomicPrice.senderAmountAtomic).toEqual(initialAtomicPrice.senderAmountAtomic)
+    expect(atomicPrice.atomicPrice).toEqual(initialAtomicPrice.atomicPrice)
+  })
+
+  test('getContractPriceFromDisplayPrice reverts getDisplayPriceFromContractPrice', () => {
+    const contractPrice = getContractPriceFromDisplayPrice(getDisplayPriceFromContractPrice(initialContractPrice))
+    expect(contractPrice.maxSenderAmount).toEqual(initialContractPrice.maxSenderAmount)
+    expect(contractPrice.priceCoef).toEqual(initialContractPrice.priceCoef)
+    expect(contractPrice.priceExp).toEqual(initialContractPrice.priceExp)
+  })
+
+  test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified sender amount (Sell)', () => {
+    const displayPrice = getDisplayPriceFromContractPrice(
+      getContractPriceFromDisplayPrice(initialSenderDisplayPriceSell),
+    )
+    expect(displayPrice.senderAmountDisplayValue).toEqual(initialSenderDisplayPriceSell.senderAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSenderDisplayPriceSell.priceDisplayValue)
+  })
+
+  test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified sender amount (Buy)', () => {
+    const displayPrice = getDisplayPriceFromContractPrice(
+      getContractPriceFromDisplayPrice(initialSenderDisplayPriceBuy),
+    )
+    expect(displayPrice.senderAmountDisplayValue).toEqual(initialSenderDisplayPriceBuy.senderAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSenderDisplayPriceBuy.priceDisplayValue)
+  })
+
+  test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified signer amount', () => {
+    const displayPrice = getDisplayPriceFromContractPrice(
+      getContractPriceFromDisplayPrice(initialDisplayPriceSignerValue),
+    )
+    expect(displayPrice.signerAmountDisplayValue).toEqual(initialDisplayPriceSignerValue.signerAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialDisplayPriceSignerValue.priceDisplayValue)
+  })
+
+  test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified signer amount (Sell)', () => {
+    const displayPrice = getDisplayPriceFromContractPrice(
+      getContractPriceFromDisplayPrice(initialSignerDisplayPriceSell),
+    )
+    expect(displayPrice.signerAmountDisplayValue).toEqual(initialSignerDisplayPriceSell.signerAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSignerDisplayPriceSell.priceDisplayValue)
+  })
+
+  test('getDisplayPriceFromContractPrice reverts getContractPriceFromDisplayPrice with specified signer amount (Buy)', () => {
+    const displayPrice = getDisplayPriceFromContractPrice(
+      getContractPriceFromDisplayPrice(initialSignerDisplayPriceBuy),
+    )
+    expect(displayPrice.signerAmountDisplayValue).toEqual(initialSignerDisplayPriceBuy.signerAmountDisplayValue)
+    expect(displayPrice.priceDisplayValue).toEqual(initialSignerDisplayPriceBuy.priceDisplayValue)
+  })
 })
