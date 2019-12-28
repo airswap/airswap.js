@@ -67,7 +67,7 @@ function getAtomicAmountsFromDisplayAmounts({
 }
 
 function getAtomicPriceFromAtomicAmounts({ senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }) {
-  const priceAtomic = bn(senderAmountAtomic).div(signerAmountAtomic)
+  const priceAtomic = bn(signerAmountAtomic).div(senderAmountAtomic)
   return { senderToken, signerToken, senderAmountAtomic, atomicPrice: priceAtomic.toString() }
 }
 
@@ -137,7 +137,7 @@ function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAm
 
 function getAtomicAmountsFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
   const signerAmountAtomic = bn(senderAmountAtomic)
-    .div(atomicPrice)
+    .mul(atomicPrice)
     .toFixed(0)
     .toString()
   return { senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }
