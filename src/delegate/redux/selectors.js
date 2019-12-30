@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { createSelector } from 'reselect'
 import bn from 'bignumber.js'
 import { getDisplayPriceFromContractPrice } from '../utils'
-import { getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
+import { getTokenAddressesBySymbol, getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
 import { getConnectedSwapApprovals } from '../../deltaBalances/redux/reducers'
 import { getSwapSenderAuthorizations } from '../../swap/redux/callDataSelectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
@@ -115,6 +115,16 @@ const getFormattedDelegateRules = createSelector(
           priceDisplayValue,
         } = getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp })
 
+        const getDisplayPriceByBaseToken = baseToken =>
+          getDisplayPriceFromContractPrice({
+            senderToken,
+            signerToken,
+            maxSenderAmount,
+            priceCoef,
+            priceExp,
+            baseToken,
+          })
+
         const fillRatio = bn(providedOrdersSenderSum)
           .div(maxSenderAmount)
           .toNumber()
@@ -137,10 +147,30 @@ const getFormattedDelegateRules = createSelector(
             tokenSwapApproval: _.get(connectedSwapApprovals, senderToken),
             delegateSenderApproval,
           },
+          getDisplayPriceByBaseToken,
         }
       }),
     )
   },
+)
+
+const makeGetFormattedDelegateRulesByBaseToken = createSelector(
+  getFormattedDelegateRules,
+  formattedRules => baseToken =>
+    formattedRules.map(rule => ({
+      ...rule,
+      ...rule.getDisplayPriceByBaseToken(baseToken),
+    })),
+)
+
+const makeGetFormattedDelegateRulesByBaseTokenSymbol = createSelector(
+  getFormattedDelegateRules,
+  getTokenAddressesBySymbol,
+  (formattedRules, tokenAddressesBySymbol) => baseTokenSymbol =>
+    formattedRules.map(rule => ({
+      ...rule,
+      ...rule.getDisplayPriceByBaseToken(tokenAddressesBySymbol[baseTokenSymbol]),
+    })),
 )
 
 export const getConnectedDelegateASTApproval = createSelector(
@@ -149,4 +179,10 @@ export const getConnectedDelegateASTApproval = createSelector(
   (approvals, delegateAddress) => _.get(approvals, `${delegateAddress}.${AST_CONTRACT_ADDRESS}`),
 )
 
-export { getFormattedDelegateRules, getConnectedDelegateSenderAuthorization, getDelegateProvidedOrders }
+export {
+  getFormattedDelegateRules,
+  getConnectedDelegateSenderAuthorization,
+  getDelegateProvidedOrders,
+  makeGetFormattedDelegateRulesByBaseToken,
+  makeGetFormattedDelegateRulesByBaseTokenSymbol,
+}
