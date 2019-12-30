@@ -21,12 +21,16 @@ const precision = str => (str.toString ? str.toString() : str)
  */
 
 function getDisplayAmountsFromDisplayPrice(params) {
-  const { senderToken, signerToken, priceDisplayValue } = params
+  const { senderToken, signerToken, priceDisplayValue, baseToken } = params
   if (params.senderAmountDisplayValue) {
     const { senderAmountDisplayValue } = params
     let signerAmountDisplayValue
 
-    if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
+    if (baseToken === senderToken) {
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
+    } else if (baseToken === signerToken) {
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
       signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
       signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
@@ -39,7 +43,11 @@ function getDisplayAmountsFromDisplayPrice(params) {
     const { signerAmountDisplayValue } = params
     let senderAmountDisplayValue
 
-    if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
+    if (baseToken === senderToken) {
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
+    } else if (baseToken === signerToken) {
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
+    } else if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
       senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
       senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
@@ -105,6 +113,7 @@ function getContractPriceFromDisplayPrice({
   senderAmountDisplayValue,
   signerAmountDisplayValue,
   priceDisplayValue,
+  baseToken,
 }) {
   const displayAmounts = getDisplayAmountsFromDisplayPrice({
     senderToken,
@@ -112,6 +121,7 @@ function getContractPriceFromDisplayPrice({
     senderAmountDisplayValue,
     signerAmountDisplayValue,
     priceDisplayValue,
+    baseToken,
   })
 
   const atomicAmounts = getAtomicAmountsFromDisplayAmounts(displayAmounts)
@@ -154,10 +164,15 @@ function getDisplayPriceFromDisplayAmounts({
   signerToken,
   senderAmountDisplayValue,
   signerAmountDisplayValue,
+  baseToken,
 }) {
   let priceDisplayValue
 
-  if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
+  if (senderToken === baseToken) {
+    priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
+  } else if (signerToken === baseToken) {
+    priceDisplayValue = precision(bn(signerAmountDisplayValue).div(senderAmountDisplayValue), 24)
+  } else if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
     priceDisplayValue = precision(bn(senderAmountDisplayValue).div(signerAmountDisplayValue), 24)
   } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
     priceDisplayValue = precision(bn(signerAmountDisplayValue).div(senderAmountDisplayValue), 24)
@@ -174,7 +189,14 @@ function getDisplayPriceFromDisplayAmounts({
   }
 }
 
-function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderAmount, priceCoef, priceExp }) {
+function getDisplayPriceFromContractPrice({
+  senderToken,
+  signerToken,
+  maxSenderAmount,
+  priceCoef,
+  priceExp,
+  baseToken,
+}) {
   const atomicPrice = getAtomicPriceFromContractPrice({
     senderToken,
     signerToken,
@@ -187,7 +209,7 @@ function getDisplayPriceFromContractPrice({ senderToken, signerToken, maxSenderA
 
   const displayAmounts = getDisplayAmountsFromAtomicAmounts(atomicAmounts)
 
-  const displayPrice = getDisplayPriceFromDisplayAmounts(displayAmounts)
+  const displayPrice = getDisplayPriceFromDisplayAmounts({ ...displayAmounts, baseToken })
 
   return displayPrice
 }
