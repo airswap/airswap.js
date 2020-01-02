@@ -47,6 +47,9 @@ function parseLocatorAndLocatorType(bytes32Locator, identifier, protocol) {
     locator = identifier.toLowerCase()
   } else if (locatorType === 'https') {
     locator = ethers.utils.parseBytes32String(bytes32Locator)
+    if (!_.startsWith(locator, 'https://')) {
+      locator = `https://${locator}`
+    }
   } else if (!locatorType) {
     return {}
   }
