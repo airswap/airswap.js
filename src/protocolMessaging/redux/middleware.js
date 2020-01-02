@@ -16,7 +16,7 @@ import { Order, Quote } from '../../swap/tcomb'
 import { submitSwap } from '../../swap/redux/contractFunctionActions'
 import { getEthWrapperApproval, signSwap } from '../../swap/redux/actions'
 import { getWrapperWethTokenApproval } from '../../erc20/redux/actions'
-import { submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
+import { submitWrapperProvideDelegateOrder, submitWrapperSwap } from '../../wrapper/redux/contractFunctionActions'
 import { addTrackedAddress } from '../../deltaBalances/redux/actions'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { waitForState } from '../../utils/redux/waitForState'
@@ -466,19 +466,24 @@ async function fillFrameBestOrder(store) {
     ['takerAmountFormatted', 'makerAmountFormatted'],
   )
 
+  const baseToken = _.get(protocolMessagingSelectors.getCurrentFrameQueryContext(state), 'baseToken')
+  const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
+  const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.amount : '0'
+
   if (bestOrder.locatorType === 'contract') {
     const reversedOrder = reverseObjectMethods(bestOrder)
 
     const signedOrder = await store.dispatch(signSwap(nest(reversedOrder)))
-    store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
-  } else if (bestOrder.swapVersion === 2) {
-    const baseToken = _.get(protocolMessagingSelectors.getCurrentFrameQueryContext(state), 'baseToken')
-
-    const bestSwap = mapNested20OrderTo22Order(nest(bestOrder), true)
 
     if (baseToken === 'ETH') {
-      const ethAmount = bestSwap.sender.token === WETH_CONTRACT_ADDRESS ? bestSwap.sender.amount : '0'
-
+      store.dispatch(
+        submitWrapperProvideDelegateOrder({ order: signedOrder, delegate: bestOrder.locatorValue, ethAmount }),
+      )
+    } else {
+      store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
+    }
+  } else if (bestOrder.swapVersion === 2) {
+    if (baseToken === 'ETH') {
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {
       store.dispatch(submitSwap({ order: bestSwap }))
