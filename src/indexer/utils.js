@@ -57,11 +57,40 @@ function parseLocatorAndLocatorType(bytes32Locator, identifier, protocol) {
   return { locator, locatorType }
 }
 
-function getUniqueLocatorsFromBlockEvents(parsedEvents) {
-  return _.reduce(
-    _.compact(parsedEvents),
+function getUniqueLocatorsFromBlockEvents(locatorEvents, unsetLocatorEvents) {
+  const locators = locatorEvents.map(({ values, address, blockNumber, logIndex }) => {
+    const indexAddress = address.toLowerCase()
+    return {
+      ...values,
+      indexAddress,
+      blockNumber,
+      logIndex,
+    }
+  })
+
+  const unsetLocators = unsetLocatorEvents.map(({ values, address, blockNumber, logIndex }) => {
+    const indexAddress = address.toLowerCase()
+    return {
+      ...values,
+      indexAddress,
+      blockNumber,
+      logIndex,
+    }
+  })
+
+  const sortedUnsetLocators = _.sortBy(unsetLocators, 'blockNumber').reverse()
+
+  const uniqueLocators = _.reduce(
+    _.compact(locators),
     (agg, val) => {
       const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
+      const existingUnsetLocator = _.find(sortedUnsetLocators, {
+        indexAddress: val.indexAddress,
+        identifier: val.identifier,
+      })
+      if (existingUnsetLocator && existingUnsetLocator.blockNumber > val.blockNumber) {
+        return agg
+      }
       if (!existingLocator) {
         return [...agg, val]
       } else if (existingLocator.blockNumber < val.blockNumber) {
@@ -72,6 +101,7 @@ function getUniqueLocatorsFromBlockEvents(parsedEvents) {
     },
     [],
   )
+  return _.sortBy(uniqueLocators, 'score').reverse()
 }
 
 module.exports = { mapOnChainIntentToOffChain, parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents }
