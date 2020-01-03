@@ -2,9 +2,11 @@ import _ from 'lodash'
 import { createSelector } from 'reselect'
 import {
   getIndexSetLocatorEvents,
+  getIndexUnsetLocatorEvents,
   getIndexSetLocatorHistoricalFetchStatus,
+  getIndexUnsetLocatorHistoricalFetchStatus,
 } from '../../index/redux/eventTrackingSelectors'
-import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType } from '../utils'
+import { mapOnChainIntentToOffChain, parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents } from '../utils'
 import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus } from './eventTrackingSelectors'
 import { getDelegates } from '../../delegateFactory/redux/selectors'
 import { getDelegateFactoryCreateDelegateHistoricalFetchStatus } from '../../delegateFactory/redux/eventTrackingSelectors'
@@ -38,72 +40,59 @@ const makeGetDelegateIndexExists = createSelector(
 
 const getIndexAddresses = createSelector(getIndexes, indexes => indexes.map(({ indexAddress }) => indexAddress))
 
-const getLocatorIntents = createSelector(
+const getUniqueLocators = createSelector(
   getIndexSetLocatorEvents,
+  getIndexUnsetLocatorEvents,
+  (setLocatorEvents, unsetLocatorEvents) => getUniqueLocatorsFromBlockEvents(setLocatorEvents, unsetLocatorEvents),
+)
+
+const getLocatorIntents = createSelector(
+  getUniqueLocators,
   getIndexes,
   getDelegates,
-  (setLocatorEvents, indexes, delegates) => {
-    const parsedEvents = setLocatorEvents.map(event => {
-      const {
-        values: { identifier, locator: unformattedLocator, score },
-        address: indexAddress,
-        blockNumber,
-      } = event
+  (uniqueLocators, indexes, delegates) =>
+    _.compact(
+      uniqueLocators.map(locatorObject => {
+        const { indexAddress, identifier, score, blockNumber } = locatorObject
 
-      const { senderToken, signerToken, protocol } = _.find(indexes, { indexAddress }) || {}
+        const { senderToken, signerToken, protocol } = _.find(indexes, { indexAddress }) || {}
 
-      if (!(senderToken && signerToken)) {
-        // index doesn't exist for this locator
-        return null
-      }
-
-      const { locator, locatorType } = parseLocatorAndLocatorType(unformattedLocator, identifier, protocol)
-
-      if (!(locator && locatorType)) {
-        // protocol isn't recognized in ./constants.js
-        return null
-      }
-
-      let delegateTradeWallet
-
-      if (locatorType === 'contract') {
-        const delegate = _.find(delegates, { delegateContract: locator })
-        if (!delegate) {
+        if (!(senderToken && signerToken)) {
+          // index doesn't exist for this locator
           return null
         }
-        delegateTradeWallet = delegate.delegateTradeWallet
-      }
 
-      return {
-        senderToken,
-        signerToken,
-        protocol,
-        indexAddress,
-        identifier,
-        tradeWallet: delegateTradeWallet,
-        locator,
-        locatorType,
-        score,
-        blockNumber,
-      }
-    })
-    const uniqueLocators = _.reduce(
-      _.compact(parsedEvents),
-      (agg, val) => {
-        const existingLocator = _.find(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
-        if (!existingLocator) {
-          return [...agg, val]
-        } else if (existingLocator.blockNumber < val.blockNumber) {
-          const existingLocatorIndex = _.findIndex(agg, { indexAddress: val.indexAddress, identifier: val.identifier })
-          return [...agg.slice(0, existingLocatorIndex), val, ...agg.slice(existingLocatorIndex + 1)]
+        const { locator, locatorType } = parseLocatorAndLocatorType(locatorObject.locator, identifier, protocol)
+
+        if (!(locator && locatorType)) {
+          // protocol isn't recognized in ./constants.js
+          return null
         }
-        return agg
-      },
-      [],
-    )
 
-    return _.sortBy(uniqueLocators, 'score').reverse()
-  },
+        let delegateTradeWallet
+
+        if (locatorType === 'contract') {
+          const delegate = _.find(delegates, { delegateContract: locator })
+          if (!delegate) {
+            return null
+          }
+          delegateTradeWallet = delegate.delegateTradeWallet
+        }
+
+        return {
+          senderToken,
+          signerToken,
+          protocol,
+          indexAddress,
+          identifier,
+          tradeWallet: delegateTradeWallet,
+          locator,
+          locatorType,
+          score,
+          blockNumber,
+        }
+      }),
+    ),
 )
 
 const getLocatorIntentsFormatted = createSelector(getLocatorIntents, intents => intents.map(mapOnChainIntentToOffChain))
@@ -124,7 +113,9 @@ const getIndexerIntentsLoaded = createSelector(
   getIndexerCreateIndexHistoricalFetchStatus,
   getIndexSetLocatorHistoricalFetchStatus,
   getDelegateFactoryCreateDelegateHistoricalFetchStatus,
-  (createIndex, setLocator, createDelegate) => createIndex.fetched && setLocator.fetched && createDelegate.fetched,
+  getIndexUnsetLocatorHistoricalFetchStatus,
+  (createIndex, setLocator, createDelegate, unsetLocator) =>
+    createIndex.fetched && setLocator.fetched && createDelegate.fetched && unsetLocator.fetched,
 )
 
 export {

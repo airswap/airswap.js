@@ -5,7 +5,7 @@ const { parseLocatorAndLocatorType, getUniqueLocatorsFromBlockEvents, mapOnChain
 const { INDEXER_CONTRACT_DEPLOY_BLOCK } = require('../constants')
 
 class Indexer {
-  constructor({ onIndexAdded, onLocatorAdded } = {}) {
+  constructor({ onIndexAdded, onLocatorAdded, onLocatorUnset } = {}) {
     this.indexEvents = []
     this.indexes = []
     this.locatorEvents = []
@@ -15,10 +15,11 @@ class Indexer {
 
     this.onIndexAdded = onIndexAdded || _.identity
     this.onLocatorAdded = onLocatorAdded || _.identity
+    this.onLocatorUnset = onLocatorUnset || _.identity
     const initialIndexLoad = new Promise(resolve =>
       trackIndexerCreateIndex({
         callback: async events => {
-          this.indexEvents.push(events)
+          this.indexEvents = [...this.indexEvents, ...events]
           this.addIndexesFromEvents(events)
         },
         onFetchedHistoricalEvents: events => resolve(events),
@@ -28,7 +29,7 @@ class Indexer {
     const initialLocatorLoad = new Promise(resolve =>
       trackIndexSetLocator({
         callback: async events => {
-          this.locatorEvents.push(events)
+          this.locatorEvents = [...this.locatorEvents, ...events]
           this.addLocatorFromEvents(events)
         },
         fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
@@ -39,8 +40,8 @@ class Indexer {
     const initialUnsetLocatorLoad = new Promise(resolve =>
       trackIndexUnsetLocator({
         callback: async events => {
-          this.unsetLocatorEvents.push(events)
-          // this.addUnsetLocatorFromEvents(events)
+          this.unsetLocatorEvents = [...this.unsetLocatorEvents, ...events]
+          this.addUnsetLocatorFromEvents(events)
         },
         fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
         onFetchedHistoricalEvents: events => resolve(events),
@@ -58,29 +59,41 @@ class Indexer {
     this.indexes = [...this.indexes, ...indexes]
   }
   async addLocatorFromEvents(events) {
-    const locators = events.map(({ values, address, blockNumber }) => {
+    const locators = events.map(({ values, address, blockNumber, logIndex }) => {
       const indexAddress = address.toLowerCase()
       return {
         ...values,
         indexAddress,
         blockNumber,
+        logIndex,
       }
     })
     locators.forEach(locator => {
       this.onLocatorAdded(locator)
     })
 
-    const combinedLocators = [...this.locators, ...locators]
-    const uniqueLocators = getUniqueLocatorsFromBlockEvents(combinedLocators)
-
-    this.locators = _.sortBy(uniqueLocators, 'score').reverse()
+    this.locators = [...this.locators, ...locators]
   }
-  // eslint-disable-next-line
-  // async addUnsetLocatorFromEvents(events) {
-  //   // TODO: use unset locator events to remove active locators from the locator list
-  // }
+  async addUnsetLocatorFromEvents(events) {
+    const unsetLocators = events.map(({ values, address, blockNumber, logIndex }) => {
+      const indexAddress = address.toLowerCase()
+      return {
+        ...values,
+        indexAddress,
+        blockNumber,
+        logIndex,
+      }
+    })
+    unsetLocators.forEach(locator => {
+      this.onLocatorUnset(locator)
+    })
+
+    this.unsetLocators = [...this.unsetLocators, ...unsetLocators]
+  }
   getIntents() {
-    return this.locators
+    const locators = getUniqueLocatorsFromBlockEvents(this.locatorEvents, this.unsetLocatorEvents)
+
+    return locators
       .map(locator => {
         const { signerToken, senderToken, protocol } =
           this.indexes.find(({ indexAddress }) => indexAddress === locator.indexAddress) || {}
