@@ -96,6 +96,7 @@ class TokenMetadata {
       symbol: token.asset_contract.symbol,
       address: token.asset_contract.address,
       id: token.token_id,
+      kind: 'ERC721',
       img_url: token.image_url,
     }))
     this.nftItems.push(nftItem)
