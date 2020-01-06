@@ -4,7 +4,6 @@ import bn from 'bignumber.js'
 import { getDisplayPriceFromContractPrice } from '../utils'
 import { getTokenAddressesBySymbol, getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
 import { getConnectedSwapApprovals } from '../../deltaBalances/redux/reducers'
-import { getSwapSenderAuthorizations } from '../../swap/redux/callDataSelectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { getConnectedDelegateContractAddress } from '../../delegateFactory/redux/selectors'
 import { getDelegateProvideOrderEvents, getDelegateSetRuleEvents } from './eventTrackingSelectors'
@@ -12,6 +11,7 @@ import { getDelegateRules } from './callDataSelectors'
 import { getConnectedERC20Approvals } from '../../erc20/redux/selectors'
 import { AST_CONTRACT_ADDRESS } from '../../constants'
 import { getLocatorIntents } from '../../indexer/redux/selectors'
+import { getSwapAuthorizeSenderEvents } from '../../swap/redux/eventTrackingSelectors'
 
 const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =>
   _.sortBy(
@@ -24,14 +24,16 @@ const getDelegateRulesEvents = createSelector(getDelegateSetRuleEvents, events =
 )
 
 const getConnectedDelegateSenderAuthorization = createSelector(
-  getSwapSenderAuthorizations,
+  getSwapAuthorizeSenderEvents,
   getConnectedWalletAddress,
   getConnectedDelegateContractAddress,
-  (authorizations, walletAddress, delegateContract) =>
-    !!authorizations.find(
-      ({ parameters: { authorizerAddress, authorizedSender } }) =>
-        walletAddress === authorizerAddress && delegateContract === authorizedSender,
-    ),
+  (authorizeEvents, walletAddress, delegateContract) => {
+    const authorizations = authorizeEvents.map(({ values }) => values)
+    return !!authorizations.find(
+      ({ authorizerAddress, authorizedSender }) =>
+        walletAddress === authorizerAddress.toLowerCase() && delegateContract === authorizedSender.toLowerCase(),
+    )
+  },
 )
 
 const getDelegateProvidedOrders = createSelector(getDelegateProvideOrderEvents, events =>
