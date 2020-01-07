@@ -88,7 +88,7 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
-    "@airswap/order-utils": "^0.3.17",
+    "@airswap/order-utils": "^0.3.18",
     "@alch/alchemy-web3": "^0.1.4",
     "@ledgerhq/hw-app-eth": "^4.73.4",
     "@ledgerhq/hw-transport-u2f": "^4.73.4",
