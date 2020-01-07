@@ -45,7 +45,6 @@ const SWAP_LEGACY_CONTRACT_MAPPING = {
 }
 
 const NETWORK = (N => {
-  console.log(N)
   switch (N) {
     case 'development':
       return RINKEBY_ID
