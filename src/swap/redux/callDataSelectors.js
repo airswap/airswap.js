@@ -4,6 +4,12 @@ import { createSelector } from 'reselect'
 
 const getCallData = state => state.callData
 
+export const getSwapRegistry = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'registry', namespace: 'swap' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
 export const getSwapSenderAuthorizations = createSelector(getCallData, values => {
   const filteredValues = _.filter(values, { name: 'senderAuthorizations', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()

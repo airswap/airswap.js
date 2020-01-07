@@ -1,4 +1,13 @@
 // This file is generated code, edits will be overwritten
+export const fetchSwapRegistry = () => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      type: 'FETCH_SWAP_REGISTRY',
+      resolve,
+      reject,
+    }),
+  )
+
 export const fetchSwapSenderAuthorizations = ({ authorizerAddress, authorizedSender }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({

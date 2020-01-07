@@ -3,8 +3,18 @@ export const getAllBalancesForConnectedAddress = address => ({
   address,
 })
 
+export const getTokenBalancesForConnectedAddress = tokens => ({
+  type: 'GET_TOKEN_BALANCES_FOR_CONNECTED_ADDRESS',
+  tokens,
+})
+
 export const getAllAllowancesForConnectedAddress = address => ({
   type: 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS',
+  address,
+})
+
+export const getTokenAllowancesForConnectedAddress = address => ({
+  type: 'GET_TOKEN_ALLOWANCES_FOR_CONNECTED_ADDRESS',
   address,
 })
 

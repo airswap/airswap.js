@@ -8,6 +8,21 @@ import { getSigner } from '../../wallet/redux/actions'
 export default function swapMiddleware(store) {
   return next => action => {
     switch (action.type) {
+      case 'FETCH_SWAP_REGISTRY':
+        contractFunctions
+          .getSwapRegistry()
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'swap',
+              name: 'registry',
+              timestamp: Date.now(),
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
       case 'FETCH_SWAP_SENDER_AUTHORIZATIONS':
         contractFunctions
           .getSwapSenderAuthorizations(action.authorizerAddress, action.authorizedSender)
