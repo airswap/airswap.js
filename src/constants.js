@@ -16,13 +16,14 @@ const contractConstants = require('./contractConstants.json')
 
 const JEST_IS_TESTING = process.env.JEST_WORKER_ID !== undefined
 
-const ENV =
-  process.env.REACT_APP_ENVIRONMENT ||
-  process.env.REACT_APP_SERVER_ENV ||
-  process.env.ENV ||
-  process.env.STAGE ||
-  process.env.STORYBOOK_AIRSWAP_ENV ||
-  'production'
+const ENV = process.env.MOCHA_IS_TESTING
+  ? 'development'
+  : process.env.REACT_APP_ENVIRONMENT ||
+    process.env.REACT_APP_SERVER_ENV ||
+    process.env.ENV ||
+    process.env.STAGE ||
+    process.env.STORYBOOK_AIRSWAP_ENV ||
+    'production'
 
 const MAIN_ID = 1
 const RINKEBY_ID = 4
@@ -45,6 +46,7 @@ const SWAP_LEGACY_CONTRACT_MAPPING = {
 }
 
 const NETWORK = (N => {
+  console.log(N)
   switch (N) {
     case 'development':
       return RINKEBY_ID
@@ -216,8 +218,8 @@ const NODESMITH_GETH_NODE = (N => {
 
 const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
-const localProvider = new RetryProvider('http://localhost:8545', NETWORK)
-const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+const httpProviderUrl = process.env.MOCHA_IS_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
+const httpProvider = new RetryProvider(httpProviderUrl, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 // alchemy provider has built in retry
@@ -402,7 +404,6 @@ module.exports = {
   FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
-  localProvider,
   httpProvider,
   infuraProvider,
   nodesmithProvider,
