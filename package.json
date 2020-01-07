@@ -111,6 +111,7 @@
     "jayson": "^3.1.2",
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
+    "mocha": "^7.0.0",
     "openpgp": "^4.0.2",
     "querystring": "^0.2.0",
     "react-redux": "^5.1.1",

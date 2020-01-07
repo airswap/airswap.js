@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `${__dirname}/../.env` })
 const ethers = require('ethers')
 const _ = require('lodash')
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
@@ -44,6 +45,7 @@ const SWAP_LEGACY_CONTRACT_MAPPING = {
 }
 
 const NETWORK = (N => {
+  console.log(N)
   switch (N) {
     case 'development':
       return RINKEBY_ID
@@ -215,6 +217,7 @@ const NODESMITH_GETH_NODE = (N => {
 
 const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
+const localProvider = new RetryProvider('http://localhost:8545', NETWORK)
 const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
@@ -400,6 +403,7 @@ module.exports = {
   FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
+  localProvider,
   httpProvider,
   infuraProvider,
   nodesmithProvider,
