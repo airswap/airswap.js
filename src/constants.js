@@ -16,14 +16,18 @@ const contractConstants = require('./contractConstants.json')
 
 const JEST_IS_TESTING = process.env.JEST_WORKER_ID !== undefined
 
-const ENV = process.env.MOCHA_IS_TESTING
-  ? 'development'
-  : process.env.REACT_APP_ENVIRONMENT ||
+let ENV
+if (process.env.MOCHA_IS_TESTING) {
+  ENV = 'development'
+} else {
+  ENV =
+    process.env.REACT_APP_ENVIRONMENT ||
     process.env.REACT_APP_SERVER_ENV ||
     process.env.ENV ||
     process.env.STAGE ||
     process.env.STORYBOOK_AIRSWAP_ENV ||
     'production'
+}
 
 const MAIN_ID = 1
 const RINKEBY_ID = 4
@@ -46,7 +50,6 @@ const SWAP_LEGACY_CONTRACT_MAPPING = {
 }
 
 const NETWORK = (N => {
-  console.log(N)
   switch (N) {
     case 'development':
       return RINKEBY_ID
