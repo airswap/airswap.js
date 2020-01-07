@@ -5,12 +5,11 @@ const constants = require('../constants')
 describe('Indexer Tests', async () => {
   it('Test getIndexerIndexes()', async () => {
     const response = await contractFunctions.getIndexerIndexes(
-      constants.DAI_CONTRACT_ADDRESS,
-      constants.WETH_CONTRACT_ADDRESS,
+      '0xc778417e063141139fce010982780140aa0cd5ab',
+      '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea',
       constants.PROTOCOL_1,
     )
-    // assert equal(response, '')
-    console.log(response)
+    assert.equal(response, '0x5d3cCA880fc44A83dF0f3B1c0B0eF5470bF09EFf')
   })
 
   it('Test getIndexerIsOwner()', async () => {
