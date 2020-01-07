@@ -6,10 +6,7 @@ import {
 } from '../../utils/redux/templates/ethersTransactions'
 
 import * as ERC20 from '../index'
-import {
-  getAllAllowancesForConnectedAddress,
-  getAllBalancesForConnectedAddress,
-} from '../../deltaBalances/redux/actions'
+import { getAllAllowancesForConnectedAddress } from '../../deltaBalances/redux/actions'
 import { trackERC20Approval } from './eventTrackingActions'
 import { SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 
@@ -50,14 +47,8 @@ export default function walletMiddleware(store) {
       case 'WRAP_WETH':
         makeMiddlewareEthersTransactionsFn(wrapWeth, 'wrapWeth', store, action, uuid())
         break
-      case makeEthersTxnsActionTypes('wrapWeth').mined:
-        store.dispatch(getAllBalancesForConnectedAddress())
-        break
       case 'UNWRAP_WETH':
         makeMiddlewareEthersTransactionsFn(unwrapWeth, 'unwrapWeth', store, action, uuid())
-        break
-      case makeEthersTxnsActionTypes('unwrapWeth').mined:
-        store.dispatch(getAllBalancesForConnectedAddress())
         break
       default:
     }

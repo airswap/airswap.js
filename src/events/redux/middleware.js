@@ -12,8 +12,6 @@ import { gotBlocks } from '../../blockTracker/redux/actions'
 import eventTracker from '../websocketEventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
 import { trackSwapLegacyFilled } from '../../swapLegacy/redux/eventTrackingActions'
-import { trackWethDeposit, trackWethWithdrawal } from '../../weth/redux/eventTrackingActions'
-import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import DebouncedQueue from '../../utils/debouncedQueue'
 import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
 
@@ -29,23 +27,6 @@ function processEventLogs(logs, store, callback) {
       callback(newEvents)
     }
   }
-}
-
-const initTrackWeth = store => {
-  const callback = logs => processEventLogs(logs, store)
-  const connectedWalletAddress = getConnectedWalletAddress(store.getState())
-  eventTracker.trackEvent(
-    trackWethDeposit({
-      callback,
-      owner: connectedWalletAddress,
-    }),
-  )
-  eventTracker.trackEvent(
-    trackWethWithdrawal({
-      callback,
-      owner: connectedWalletAddress,
-    }),
-  )
 }
 
 const initPollExchangeFills = _.once(store => {
@@ -145,9 +126,6 @@ export default function eventsMiddleware(store) {
           },
         })
 
-        break
-      case 'ROUTER_CONNECTED':
-        initTrackWeth(store)
         break
       default:
     }
