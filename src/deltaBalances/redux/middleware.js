@@ -186,9 +186,16 @@ export default function balancesMiddleware(store) {
       case 'GET_ALL_BALANCES_FOR_CONNECTED_ADDRESS':
         loadBalancesForTokenAddressMap(connectedTokenAddressMap, store)
         break
+      case 'GET_TOKEN_BALANCES_FOR_CONNECTED_ADDRESS':
+        loadBalancesForTokenAddressMap({ [address]: action.tokens }, store)
+        break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
         loadSwapAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
         loadSwapLegacyAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
+        break
+      case 'GET_TOKEN_ALLOWANCES_FOR_CONNECTED_ADDRESS':
+        loadSwapAllowancesForTokenAddressMap({ [address]: action.tokens }, store)
+        loadSwapLegacyAllowancesForTokenAddressMap({ [address]: action.tokens }, store)
         break
       case makeEventActionTypes('erc20Transfers').got:
         const erc20Logs = _.get(action, 'response', [])

@@ -6,6 +6,11 @@ const constants = require('../constants')
 function getSwapContract(provider) {
   return new ethers.Contract(constants.SWAP_CONTRACT_ADDRESS, abi, provider)
 }
+function getSwapRegistry() {
+  const contract = getSwapContract(constants.httpProvider)
+  return contract.registry()
+}
+
 function getSwapSenderAuthorizations(authorizerAddress, authorizedSender) {
   const contract = getSwapContract(constants.httpProvider)
   return contract.senderAuthorizations(authorizerAddress, authorizedSender)
@@ -62,6 +67,7 @@ function submitSwapRevokeSigner(authorizedSigner, signer) {
 }
 
 module.exports = {
+  getSwapRegistry,
   getSwapSenderAuthorizations,
   getSwapSignerAuthorizations,
   getSwapSignerMinimumNonce,
