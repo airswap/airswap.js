@@ -1,8 +1,7 @@
-import * as contractFunctions from './contractFunctions'
+const contractFunctions = require('./contractFunctions')
 
 describe('Indexer Tests', async () => {
   it('Test getIndexerIsOwner()', async () => {
-    console.log('hello')
     const response = await contractFunctions.getIndexerIsOwner()
     console.log(response)
   })
