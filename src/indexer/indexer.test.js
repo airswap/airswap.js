@@ -1,6 +1,8 @@
+require('dotenv').config()
 const assert = require('assert')
 const contractFunctions = require('./contractFunctions')
 const constants = require('../constants')
+const getSigner = require('../wallet/getSigner')
 
 describe('Indexer Tests', async () => {
   it('Test getIndexerIndexes()', async () => {
@@ -20,5 +22,14 @@ describe('Indexer Tests', async () => {
   it('Test getIndexerOnwer()', async () => {
     const response = await contractFunctions.getIndexerOwner()
     assert.equal(response, '0x7F18BB4Dd92CF2404C54CBa1A9BE4A1153bdb078')
+  })
+
+  it('Test submitIndexerTransferOwnership()', async () => {
+    const signer = getSigner({ privateKey: process.env.PRIVATE_KEY })
+    const response = await contractFunctions.submitIndexerTransferOwnership(
+      '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE',
+      signer,
+    )
+    assert.equal(response, true)
   })
 })
