@@ -25,7 +25,13 @@ describe('Indexer Tests', async () => {
   })
 
   it('Test submitIndexerTransferOwnership()', async () => {
-    const signer = getSigner({ privateKey: process.env.PRIVATE_KEY })
+    const walletActions = {
+      startWalletAction: () => ({
+        gasLimit: 300000,
+        gasPrice: 1,
+      }),
+    }
+    const signer = getSigner({ privateKey: process.env.PRIVATE_KEY }, walletActions)
     const response = await contractFunctions.submitIndexerTransferOwnership(
       '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE',
       signer,
