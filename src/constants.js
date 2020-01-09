@@ -16,18 +16,13 @@ const contractConstants = require('./contractConstants.json')
 
 const JEST_IS_TESTING = process.env.JEST_WORKER_ID !== undefined
 
-let ENV
-if (process.env.MOCHA_IS_TESTING) {
-  ENV = 'development'
-} else {
-  ENV =
-    process.env.REACT_APP_ENVIRONMENT ||
-    process.env.REACT_APP_SERVER_ENV ||
-    process.env.ENV ||
-    process.env.STAGE ||
-    process.env.STORYBOOK_AIRSWAP_ENV ||
-    'production'
-}
+const ENV =
+  process.env.REACT_APP_ENVIRONMENT ||
+  process.env.REACT_APP_SERVER_ENV ||
+  process.env.ENV ||
+  process.env.STAGE ||
+  process.env.STORYBOOK_AIRSWAP_ENV ||
+  'production'
 
 const MAIN_ID = 1
 const RINKEBY_ID = 4
@@ -355,6 +350,7 @@ const IS_EXPLORER = process.env.REACT_APP_EXPLORER
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
 const INDEX_HEAD = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
+const PROTOCOL_0 = '0x0000'
 const PROTOCOL_1 = '0x0001'
 const PROTOCOL_2 = '0x0002'
 
@@ -423,6 +419,7 @@ module.exports = {
   INDEXER_CONTRACT_DEPLOY_BLOCK,
   INDEX_HEAD,
   DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
+  PROTOCOL_0,
   PROTOCOL_1,
   PROTOCOL_2,
 }

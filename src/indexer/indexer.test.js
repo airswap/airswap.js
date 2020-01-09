@@ -7,11 +7,11 @@ const getSigner = require('../wallet/getSigner')
 describe('Indexer Tests', async () => {
   it('Test getIndexerIndexes()', async () => {
     const response = await contractFunctions.getIndexerIndexes(
-      '0xc778417e063141139fce010982780140aa0cd5ab',
-      '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea',
-      constants.PROTOCOL_1,
+      '0x6b175474e89094c44da98b954eedeac495271d0f',
+      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+      constants.PROTOCOL_0,
     )
-    assert.equal(response, '0x5d3cCA880fc44A83dF0f3B1c0B0eF5470bF09EFf')
+    assert.equal(response, '0xc712741B7f7C055A07fa4e93dC62F82994eC0D1c')
   })
 
   it('Test getIndexerIsOwner()', async () => {
@@ -19,9 +19,9 @@ describe('Indexer Tests', async () => {
     assert.equal(response, true)
   })
 
-  it('Test getIndexerOnwer()', async () => {
+  it('Test getIndexerOwner()', async () => {
     const response = await contractFunctions.getIndexerOwner()
-    assert.equal(response, '0x7F18BB4Dd92CF2404C54CBa1A9BE4A1153bdb078')
+    assert.equal(response, '0x7eeAb4F134fcFA6FCAF3987D391f1d626f75F6E1')
   })
 
   it('Test submitIndexerTransferOwnership()', async () => {
@@ -32,10 +32,8 @@ describe('Indexer Tests', async () => {
       }),
     }
     const signer = getSigner({ privateKey: process.env.PRIVATE_KEY }, walletActions)
-    const response = await contractFunctions.submitIndexerTransferOwnership(
-      '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE',
-      signer,
-    )
-    assert.equal(response, true)
+    await contractFunctions.submitIndexerTransferOwnership('0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE', signer)
+    const response = await contractFunctions.getIndexerOwner()
+    assert.equal(response, '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE')
   })
 })
