@@ -1,0 +1,120 @@
+[
+  {
+    "type": "metamask",
+    "label": "MetaMask",
+    "button_label": "MetaMask",
+    "logo": "metamask-icon.png",
+    "button": "metamask-button-icon.png",
+    "web3": true,
+    "mobile": false,
+    "desktop": true,
+    "supportsSignTypedData": true
+  },
+  {
+    "type": "ledger",
+    "label": "Ledger",
+    "button_label": "Ledger",
+    "logo": "ledger-nano-s.png",
+    "button": "ledger-button-icon.png",
+    "web3": false,
+    "mobile": false,
+    "desktop": true
+  },
+  {
+    "type": "trezor",
+    "label": "Trezor",
+    "button_label": "Trezor",
+    "logo": "trezor-icon.jpg",
+    "web3": false,
+    "mobile": false,
+    "desktop": true
+  },
+  {
+    "type": "trust",
+    "label": "Trust",
+    "button_label": "Connect using Trust",
+    "logo": "trust-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false,
+    "supportsSignTypedData": false
+  },
+  {
+    "type": "coinbase",
+    "label": "Coinbase Wallet",
+    "button_label": "Connect using Coinbase Wallet",
+    "logo": "trust-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false,
+    "supportsSignTypedData": false
+  },
+  {
+    "type": "cipher",
+    "label": "Cipher",
+    "button_label": "Connect using Cipher",
+    "logo": "trust-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false
+  },
+  {
+    "type": "imtoken",
+    "label": "IMToken",
+    "button_label": "Connect using imToken",
+    "logo": "imtoken-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false
+  },
+  {
+    "type": "status",
+    "label": "Status",
+    "button_label": "Connect using Status",
+    "logo": "status-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false
+  },
+  {
+    "type": "opera",
+    "label": "Opera",
+    "button_label": "Connect using Opera",
+    "logo": "opera-icon.png",
+    "web3": true,
+    "mobile": true,
+    "desktop": false
+  },
+  {
+    "type": "equal",
+    "label": "EQUAL",
+    "button_label": "Connect using EQUAL",
+    "logo": "",
+    "button": "",
+    "web3": true,
+    "mobile": true,
+    "desktop": false
+  },
+  {
+    "type": "fortmatic",
+    "label": "Fortmatic",
+    "button_label": "Connect using Fortmatic",
+    "logo": "",
+    "button": "",
+    "web3": false,
+    "mobile": true,
+    "desktop": true,
+    "supportsSignTypedData": true
+  },
+  {
+    "type": "portis",
+    "label": "Portis",
+    "button_label": "Connect using Portis",
+    "logo": "",
+    "button": "",
+    "web3": false,
+    "mobile": true,
+    "desktop": true,
+    "supportsSignTypedData": false
+  }
+]
