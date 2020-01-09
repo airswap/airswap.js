@@ -284,12 +284,8 @@ const makeGetBestOrder = createSelector(
     const ethGasPrice = Number(gwei) / 10 ** 9
     const ethGasLimit = Number(getExchangeFillGasLimitByToken({ symbol: bestOrder.tokenSymbol }))
     const ethGasCost = ethGasLimit * ethGasPrice
-    const { side } = currentFrameQueryContext
-    let ethTotal = bestOrder.ethAmount
-    if (side !== 'sell') {
-      ethTotal += ethGasCost
-    }
 
+    const ethTotal = bestOrder.ethAmount
     let missingApprovals
 
     if (bestOrder.swapVersion === 2) {
