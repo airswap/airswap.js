@@ -17,6 +17,7 @@ async function cancelSwap(store, action) {
 
 async function signSwap(store, action) {
   const signer = await store.dispatch(getSigner())
+
   if (signer.supportsSignTypedData) {
     Swap.signSwapTypedData(action, signer)
       .then(order => {

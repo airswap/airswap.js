@@ -1,0 +1,434 @@
+{
+  "contract_name": "SwapLegacy",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "makerAddress",
+          "type": "address"
+        },
+        {
+          "name": "makerAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "makerToken",
+          "type": "address"
+        },
+        {
+          "name": "takerAddress",
+          "type": "address"
+        },
+        {
+          "name": "takerAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "takerToken",
+          "type": "address"
+        },
+        {
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "name": "nonce",
+          "type": "uint256"
+        },
+        {
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "name": "s",
+          "type": "bytes32"
+        }
+      ],
+      "name": "fill",
+      "outputs": [],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "fills",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "makerAddress",
+          "type": "address"
+        },
+        {
+          "name": "makerAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "makerToken",
+          "type": "address"
+        },
+        {
+          "name": "takerAddress",
+          "type": "address"
+        },
+        {
+          "name": "takerAmount",
+          "type": "uint256"
+        },
+        {
+          "name": "takerToken",
+          "type": "address"
+        },
+        {
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "name": "nonce",
+          "type": "uint256"
+        },
+        {
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "name": "s",
+          "type": "bytes32"
+        }
+      ],
+      "name": "cancel",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "makerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "makerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "makerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "takerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "Filled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "makerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "makerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "makerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "takerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "Canceled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "code",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "makerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "makerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "makerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "takerAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "name": "takerToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "Failed",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary":
+    "0x6060604052341561000f57600080fd5b5b610bc98061001f6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631d4d691d811461005357806320158c441461009857806366a26419146100c2575b600080fd5b610096600160a060020a03600435811690602435906044358116906064358116906084359060a4351660c43560e43560ff61010435166101243561014435610112565b005b34156100a357600080fd5b6100ae600435610747565b604051901515815260200160405180910390f35b34156100cd57600080fd5b610096600160a060020a03600435811690602435906044358116906064358116906084359060a4351660c43560e43560ff6101043516610124356101443561075c565b005b600088600160a060020a03168c600160a060020a031614156101e357600160a060020a0333163480156108fc0290604051600060405180830381858888f19350505050151561016057600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260018f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a4610737565b428610156102a057600160a060020a0333163480156108fc0290604051600060405180830381858888f19350505050151561021d57600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260028f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a4610737565b6102b38c8c8c8c8c8c8c8c8c8c8c6108c9565b60008181526020819052604090205490915060ff161561038257600160a060020a0333163480156108fc0290604051600060405180830381858888f1935050505015156102ff57600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260038f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a4610737565b600160a060020a0387161515610530578734141561047a576000818152602081905260409020805460ff191660011790556103bf8c8a8d8d610a85565b15156103c757fe5b600160a060020a038c163480156108fc0290604051600060405180830381858888f1935050505015156103f957600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a03167fe59c5e56d85b2124f5e7f82cb5fcc6d28a4a241a9bdd732704ac9d3b6bfc98ab8e8d8d8c8c604051948552600160a060020a0390931660208501526040808501929092526060840152608083019190915260a0909101905180910390a461052b565b600160a060020a0333163480156108fc0290604051600060405180830381858888f1935050505015156104ac57600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260048f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a45b610737565b34156105eb57600160a060020a0333163480156108fc0290604051600060405180830381858888f19350505050151561056857600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260058f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a4610737565b33600160a060020a031689600160a060020a031614156106b8576000818152602081905260409020805460ff1916600117905561062c8c8c8c8c8c8c610b3c565b151561063757600080fd5b86600160a060020a03168a600160a060020a03168d600160a060020a03167fe59c5e56d85b2124f5e7f82cb5fcc6d28a4a241a9bdd732704ac9d3b6bfc98ab8e8d8d8c8c604051948552600160a060020a0390931660208501526040808501929092526060840152608083019190915260a0909101905180910390a4610737565b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260068f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a45b5b5b505050505050505050505050565b60006020819052908152604090205460ff1681565b60006107718c8c8c8c8c8c8c8c8c8c8c6108c9565b90508b600160a060020a031633600160a060020a031614156107375760008181526020819052604090205460ff16151561083a5760008181526020819052604090819020805460ff19166001179055600160a060020a03808916918c8216918f16907f8ce0bae8f3488649f2f29762dfc77af336a695060bc787b9c813c6fdd79fdf25908f908e908e908d908d9051948552600160a060020a0390931660208501526040808501929092526060840152608083019190915260a0909101905180910390a4610737565b86600160a060020a03168a600160a060020a03168d600160a060020a0316600080516020610b7e83398151915260078f8e8e8d8d6040518087815260200186815260200185600160a060020a0316600160a060020a03168152602001848152602001838152602001828152602001965050505050505060405180910390a45b5b5b505050505050505050505050565b6000806108d4610b6b565b60008e8e8e8e8e8e8e8e6040516c01000000000000000000000000600160a060020a03998a168102825260148201989098529588168702603487015293871686026048860152605c850192909252909416909202607c820152609081019290925260b082015260d001604051809103902092506040805190810160405280601c81526020017f19457468657265756d205369676e6564204d6573736167653a0a333200000000815250915081836040518083805190602001908083835b602083106109b157805182525b601f199092019160209182019101610991565b6001836020036101000a03801982511681845116179092525050509190910192835250506020019050604051809103902090508e600160a060020a03166001828989896040516000815260200160405260006040516020015260405193845260ff90921660208085019190915260408085019290925260608401929092526080909201915160208103908084039060008661646e5a03f11515610a5357600080fd5b505060206040510351600160a060020a031614610a6f57600080fd5b8293505b5050509b9a5050505050505050505050565b600081600160a060020a03166323b872dd8686866000604051602001526040517c010000000000000000000000000000000000000000000000000000000063ffffffff8616028152600160a060020a0393841660048201529190921660248201526044810191909152606401602060405180830381600087803b1515610b0a57600080fd5b6102c65a03f11515610b1b57600080fd5b505050604051805190501515610b3057600080fd5b5060015b949350505050565b6000610b4a87858888610a85565b8015610b5d5750610b5d84888585610a85565b5b90505b9695505050505050565b6020604051908101604052600081529056008e49dd3f283d9a844668a6f422edaa50c4c22987511ec284cebec288ca54f37aa165627a7a72305820a038a6423cc4eadcb52ed4a317a50bdc83b24be02b5af7feb539905cd320b1a40029",
+  "networks": {
+    "1507556119257": {
+      "events": {
+        "0xe59c5e56d85b2124f5e7f82cb5fcc6d28a4a241a9bdd732704ac9d3b6bfc98ab": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "makerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "makerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "takerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "expiration",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "nonce",
+              "type": "uint256"
+            }
+          ],
+          "name": "Filled",
+          "type": "event"
+        },
+        "0x8ce0bae8f3488649f2f29762dfc77af336a695060bc787b9c813c6fdd79fdf25": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "makerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "makerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "takerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "expiration",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "nonce",
+              "type": "uint256"
+            }
+          ],
+          "name": "Canceled",
+          "type": "event"
+        },
+        "0x8e49dd3f283d9a844668a6f422edaa50c4c22987511ec284cebec288ca54f37a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "code",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "makerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "makerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "makerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "takerAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "takerToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "expiration",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "nonce",
+              "type": "uint256"
+            }
+          ],
+          "name": "Failed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x87ea39b3b1eda1b0612eadf163beb09a98930ede",
+      "updated_at": 1507556124614
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1507556124614
+}

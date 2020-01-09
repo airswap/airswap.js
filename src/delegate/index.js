@@ -5,6 +5,9 @@ const {
   getDelegateGetSenderSideQuote,
   getDelegateGetSignerSideQuote,
 } = require('./contractFunctions')
+const bn = require('bignumber.js')
+
+const { getERC20BalanceOf } = require('../erc20/contractFunctions')
 
 const { nest } = require('../swap/utils')
 
@@ -106,14 +109,33 @@ async function routeDelegateCall(receiver, request, tradeWallet, signerWallet) {
         }),
       )
     case 'getMaxQuote':
+      const tradeWalletBalance = (await getERC20BalanceOf(senderToken, tradeWallet)).toString()
+
       return getDelegateGetMaxQuote(receiver, senderToken, signerToken).then(resp => {
         const formattedResp = resolveBigNumbers(resp)
+        // trade wallet has sufficient balance
+        if (bn(tradeWalletBalance).gte(formattedResp.senderAmount)) {
+          return format({
+            signerToken,
+            senderToken,
+            senderAmount: formattedResp.senderAmount,
+            signerAmount: formattedResp.signerAmount,
+          })
+        }
+        // trade wallet doesn't have sufficient balance
+        const alternativeMaxSenderAmount = tradeWalletBalance
+        // calculate the price of the maxQuote using the original amount, and multiply it by the alternativeMaxSenderAmount to get the alternativeMaxSignerAmount
+        const alternativeMaxSignerAmount = bn(formattedResp.signerAmount)
+          .div(formattedResp.senderAmount)
+          .mul(alternativeMaxSenderAmount)
+          .floor()
+          .toString()
 
         return format({
           signerToken,
           senderToken,
-          senderAmount: formattedResp.senderAmount,
-          signerAmount: formattedResp.signerAmount,
+          senderAmount: alternativeMaxSenderAmount,
+          signerAmount: alternativeMaxSignerAmount,
         })
       })
     default:
