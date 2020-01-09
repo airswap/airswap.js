@@ -1,0 +1,18 @@
+{
+  "indexer": {
+    "1": "0xba9ab9710bd461f30c247f4ca2cb7f453c22570e",
+    "4": "0x10f6702447414ce1250af5f7000d7c9a0f04e824"
+  },
+  "swap": {
+    "1": "0x3e0c31c3d4067ed5d7d294f08b79b6003b7bf9c8",
+    "4": "0xa03855b0695013cf331fbd91dd7cbc4c2211793f"
+  },
+  "wrapper": {
+    "1": "0xc4c01afb1211e007cfa48f56552fb8a8b0bdc51c",
+    "4": "0x33356fccf3bdeb37f3cd3dc5382ae5bf4aada26c"
+  },
+  "delegateFactory": {
+    "1": "0xca109988465266970be8fd0048a7e235b9e62bc3",
+    "4": "0xd393fb3f3062e208049fc75b26bfa5ab0890cbb3"
+  }
+}

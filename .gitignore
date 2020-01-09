@@ -1,7 +1,6 @@
 node_modules/
 coverage/
 docs/
-lib/
 
 yarn-error.log
 .DS_Store
