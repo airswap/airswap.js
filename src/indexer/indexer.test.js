@@ -4,6 +4,14 @@ const contractFunctions = require('./contractFunctions')
 const constants = require('../constants')
 const getSigner = require('../wallet/getSigner')
 
+const walletActions = {
+  startWalletAction: () => ({
+    gasLimit: 300000,
+    gasPrice: 1,
+  }),
+}
+const signer = getSigner({ privateKey: process.env.PRIVATE_KEY }, walletActions)
+
 describe('Indexer Tests', async () => {
   it('Test getIndexerIndexes()', async () => {
     const response = await contractFunctions.getIndexerIndexes(
@@ -19,19 +27,40 @@ describe('Indexer Tests', async () => {
     assert.equal(response, true)
   })
 
+  it('Test getIndexerLocatorWhitelists()', async () => {
+    let response
+    response = await contractFunctions.getIndexerLocatorWhitelists(constants.PROTOCOL_0)
+    assert.equal(response, '0x0000000000000000000000000000000000000000')
+    response = await contractFunctions.getIndexerLocatorWhitelists(constants.PROTOCOL_1)
+    assert.equal(response, '0x0000000000000000000000000000000000000000')
+    response = await contractFunctions.getIndexerLocatorWhitelists(constants.PROTOCOL_2)
+    assert.equal(response, '0x0000000000000000000000000000000000000000')
+  })
+
   it('Test getIndexerOwner()', async () => {
     const response = await contractFunctions.getIndexerOwner()
     assert.equal(response, '0x7eeAb4F134fcFA6FCAF3987D391f1d626f75F6E1')
   })
 
-  it('Test submitIndexerTransferOwnership()', async () => {
-    const walletActions = {
-      startWalletAction: () => ({
-        gasLimit: 300000,
-        gasPrice: 1,
-      }),
-    }
-    const signer = getSigner({ privateKey: process.env.PRIVATE_KEY }, walletActions)
+  it.skip('Test submitIndexerRenounceOwnership()', async () => {
+    await contractFunctions.submitIndexerRenounceOwnership(signer)
+    const response = await contractFunctions.getIndexerOwner()
+    assert.equal(response, '0x0000000000000000000000000000000000000000')
+  })
+
+  it('Test getIndexerStakingToken()', async () => {
+    const response = await contractFunctions.getIndexerStakingToken()
+    assert.equal(response, '0x27054b13b1B798B345b591a4d22e6562d47eA75a')
+  })
+
+  it('Test getIndexerTokenBlacklist()', async () => {
+    const response_dai = await contractFunctions.getIndexerTokenBlacklist('0x6b175474e89094c44da98b954eedeac495271d0f')
+    assert.equal(response_dai, false)
+    const response_weth = await contractFunctions.getIndexerTokenBlacklist('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2')
+    assert.equal(response_weth, false)
+  })
+
+  it.skip('Test submitIndexerTransferOwnership()', async () => {
     await contractFunctions.submitIndexerTransferOwnership('0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE', signer)
     const response = await contractFunctions.getIndexerOwner()
     assert.equal(response, '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE')
