@@ -6,8 +6,7 @@ const getSigner = require('../wallet/getSigner')
 
 const walletActions = {
   startWalletAction: () => ({
-    gasLimit: 300000,
-    gasPrice: 1,
+    gasPrice: 10000000000,
   }),
 }
 const signer = getSigner({ privateKey: process.env.PRIVATE_KEY }, walletActions)
@@ -64,5 +63,22 @@ describe('Indexer Tests', async () => {
     await contractFunctions.submitIndexerTransferOwnership('0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE', signer)
     const response = await contractFunctions.getIndexerOwner()
     assert.equal(response, '0x02C2F3a87D503f0f6ad7D99E89fE09B8d6e533bE')
+  })
+
+  it.skip('Test submitIndexerSetLocatorWhitelist()', async () => {})
+
+  it('Test submitIndexerCreateIndex()', async () => {
+    await contractFunctions.submitIndexerCreateIndex(
+      '0x64c86899bc02dd9af823b131e5acd4369f72bd39',
+      '0x5c508f6bdcde0c809a28fa58e61e280500da4677',
+      constants.PROTOCOL_0,
+      signer,
+    )
+    const response = await contractFunctions.getIndexerIndexes(
+      '0x64c86899bc02dd9af823b131e5acd4369f72bd39',
+      '0x5c508f6bdcde0c809a28fa58e61e280500da4677',
+      constants.PROTOCOL_0,
+    )
+    assert.notEqual(response, '0x0000000000000000000000000000000000000000')
   })
 })
