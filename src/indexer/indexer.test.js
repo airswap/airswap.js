@@ -79,6 +79,7 @@ describe('Indexer Tests', async () => {
       '0x5c508f6bdcde0c809a28fa58e61e280500da4677',
       constants.PROTOCOL_0,
     )
-    assert.notEqual(response, '0x0000000000000000000000000000000000000000')
+    // should always hash to the following
+    assert.notEqual(response, '0x06d2FEBDeCa66845687c093964f96845A2B53f8D')
   })
 })
