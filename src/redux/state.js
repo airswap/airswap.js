@@ -15,7 +15,6 @@ import * as swapLegacy from '../swapLegacy/redux'
 import * as gas from '../gas/redux'
 import * as fiat from '../fiat/redux'
 import * as hdw from '../HDW/redux'
-import * as ledger from '../ledger/redux'
 import * as blockTracker from '../blockTracker/redux'
 import * as transactionTracker from '../transactionTracker/redux'
 import * as wrapper from '../wrapper/redux'
@@ -46,7 +45,6 @@ const state = {
   gas,
   fiat,
   hdw,
-  ledger,
   blockTracker,
   transactionTracker,
   wrapper,
