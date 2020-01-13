@@ -1,6 +1,7 @@
-export const crawlToken = address => ({
+export const crawlToken = (address, forceUIApproval = false) => ({
   type: 'CRAWL_TOKEN',
   address,
+  forceUIApproval,
 })
 
 export const crawlNFTItem = (address, id) => ({

@@ -27,7 +27,7 @@ export default function balancesMiddleware(store) {
   return next => action => {
     switch (action.type) {
       case 'CRAWL_TOKEN':
-        tokenMetadata.crawlToken(action.address).then(token => store.dispatch(addToken(token)))
+        tokenMetadata.crawlToken(action.address, action.forceUIApproval).then(token => store.dispatch(addToken(token)))
         break
       case 'CRAWL_NFT_ITEM':
         tokenMetadata.crawlNFTItem(action.address, action.id).then(token => store.dispatch(addNFTItem(token)))
