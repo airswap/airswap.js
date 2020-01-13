@@ -18,8 +18,6 @@ import {
   NODESMITH_GETH_NODE,
 } from '../../constants'
 import { web3WalletTypes } from '../static/constants'
-import { getLedgerProvider } from '../../ledger/redux/actions'
-import { initializeHDW } from '../../HDW/redux/actions'
 import { connectWallet } from './actions'
 import { getAbis } from '../../abis/redux/reducers'
 
@@ -36,26 +34,6 @@ export const errorConnectingWallet = error => ({
 
 let signer
 let walletActions
-
-async function connectLedger(store) {
-  store
-    .dispatch(initializeHDW('ledger'))
-    .then(async ({ path }) => {
-      let ledgerProvider
-      try {
-        ledgerProvider = await store.dispatch(getLedgerProvider(path))
-      } catch (e) {
-        return Promise.reject(e)
-      }
-
-      ledgerProvider.isMetaMask = true //eslint-disable-line
-      ledgerProvider.isLedger = true //eslint-disable-line
-      signer = getSigner({ web3Provider: ledgerProvider }, walletActions)
-      const addressPromise = signer.getAddress()
-      addressPromise.then(address => store.dispatch(connectedWallet('ledger', address.toLowerCase())))
-    })
-    .catch(e => store.dispatch(errorConnectingWallet(formatErrorMessage(e))))
-}
 
 const startWalletAction = async (store, actionType, argParams) => {
   const state = store.getState()
@@ -130,6 +108,15 @@ const finishWalletAction = (store, actionType, params) =>
     params,
   })
 
+let web3PollingInterval
+function pollWeb3Address(address) {
+  web3PollingInterval = window.setInterval(async () => {
+    if (window.web3.eth && window.web3.eth.defaultAccount && window.web3.eth.defaultAccount !== address) {
+      window.location.reload()
+    }
+  }, 3000) // If someone changes their account in metaMask, clear the app
+}
+
 // catch all connection function that will try to connect to any web3 wallet
 // usually used for mobile wallets
 function connectWeb3(store, walletType = 'web3') {
@@ -145,7 +132,10 @@ function connectWeb3(store, walletType = 'web3') {
       .then(() => {
         signer = getSigner({ web3Provider: window.ethereum }, walletActions, walletType)
         const addressPromise = signer.getAddress()
-        addressPromise.then(address => store.dispatch(connectedWallet(walletType, address.toLowerCase())))
+        addressPromise.then(address => {
+          pollWeb3Address(address.toLowerCase())
+          store.dispatch(connectedWallet(walletType, address.toLowerCase()))
+        })
       })
       .catch(e => {
         store.dispatch(errorConnectingWallet(formatErrorMessage(e)))
@@ -330,6 +320,9 @@ export default function walletMiddleware(store) {
         next(action)
         break
       case 'CLEAR_WALLET':
+        if (web3PollingInterval) {
+          window.clearInterval(web3PollingInterval)
+        }
         signer = undefined
         next(action)
         break
@@ -363,9 +356,6 @@ export default function walletMiddleware(store) {
             break
           case 'web3':
             connectWeb3(store)
-            break
-          case 'ledger':
-            connectLedger(store)
             break
           case 'trezor':
             // TODO: implement trezor conect
