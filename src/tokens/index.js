@@ -8,8 +8,10 @@ const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 const OPENSEA_API_URL = NETWORK === 4 ? 'https://rinkeby-api.opensea.io/api/v1' : 'https://api.opensea.io/api/v1'
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
 const MAX_DISPLAY_DECIMALS = 8
-const makeCrawlTokenUrl = address =>
-  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}`
+const makeCrawlTokenUrl = (address, forceAirswapUIApproved) =>
+  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}${
+    forceAirswapUIApproved ? '&forceAirswapUIApproved=true' : ''
+  }`
 const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
 
 BigNumber.config({ ERRORS: false })
@@ -33,7 +35,7 @@ function fetchTokens() {
 
 function crawlToken(tokenAddress) {
   return new Promise((resolve, reject) => {
-    fetch(makeCrawlTokenUrl(tokenAddress), {
+    fetch(makeCrawlTokenUrl(tokenAddress, true), {
       method: 'get',
       mode: 'cors',
     })
@@ -104,6 +106,7 @@ class TokenMetadata {
   }
   formatSignificantDigitsByToken(tokenQuery, value) {
     const token = _.find(this.tokens, tokenQuery)
+
     if (!token) {
       throw new Error('token not in metadata, crawl before for next retry')
     }
@@ -115,6 +118,7 @@ class TokenMetadata {
     if (!token) {
       throw new Error('token not in metadata, crawl before for next retry')
     }
+
     const { decimals } = token
     const power = 10 ** Number(decimals)
     return new BigNumber(value).times(power).toFixed(0)
