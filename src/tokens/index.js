@@ -33,9 +33,9 @@ function fetchTokens() {
   })
 }
 
-function crawlToken(tokenAddress) {
+function crawlToken(tokenAddress, forceUIApproval) {
   return new Promise((resolve, reject) => {
-    fetch(makeCrawlTokenUrl(tokenAddress, true), {
+    fetch(makeCrawlTokenUrl(tokenAddress, forceUIApproval), {
       method: 'get',
       mode: 'cors',
     })
@@ -86,8 +86,8 @@ class TokenMetadata {
     this.tokenAddressesBySymbol = _.mapValues(this.tokensBySymbol, t => t.address)
     return tokens
   }
-  crawlToken(address) {
-    return crawlToken(address).then(token => {
+  crawlToken(address, forceUIApproval = false) {
+    return crawlToken(address, forceUIApproval).then(token => {
       this.tokens.push(token)
       return token
     })
