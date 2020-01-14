@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.117",
+  "version": "0.1.118",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam .walker@fluidity.io>",
@@ -56,7 +56,8 @@
     "prettify": "prettier --write src/**/*.js",
     "upgrade-contracts": "yarn add @airswap/indexer@latest @airswap/swap@latest @airswap/wrapper@latest @airswap/delegate@latest --dev && yarn add @airswap/order-utils@latest",
     "upgrade-contracts-beta": "yarn add @airswap/indexer@beta @airswap/swap@beta @airswap/wrapper@beta @airswap/delegate@beta --dev && yarn add @airswap/order-utils@beta",
-    "generate": "cd src && node abiGen.js && yarn lint --fix"
+    "generate": "cd src && node abiGen.js && yarn lint --fix",
+    "ganache_fork": "ganache-cli -f $(node get_alchemy.js) -m \"$(node get_mnemonic.js)\""
   },
   "pre-commit": [
     "lint-staged"
@@ -86,10 +87,12 @@
     "@alch/alchemy-web3": "^0.1.4",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",
+    "dotenv": "^8.2.0",
     "ethereumjs-wallet": "^0.6.3",
     "ethers": "^4.0.31",
     "eventsource": "^1.0.7",
     "fortmatic": "^0.7.4",
+    "ganache-cli": "^6.8.1",
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "^2.0.0",
     "ipfs-mini": "^1.1.5",
@@ -99,6 +102,7 @@
     "jayson": "^3.1.2",
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
+    "mocha": "^7.0.0",
     "openpgp": "^4.0.2",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.7",

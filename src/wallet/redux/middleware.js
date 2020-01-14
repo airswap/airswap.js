@@ -8,7 +8,7 @@ import { selectors as tokenSelectors } from '../../tokens/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
-import { formatErrorMessage } from '../../utils/transformations'
+import { formatErrorMessage, getParsedInputFromTransaction } from '../../utils/transformations'
 import {
   PORTIS_ID,
   AIRSWAP_LOGO_URL,
@@ -42,19 +42,9 @@ const startWalletAction = async (store, actionType, argParams) => {
   let params
   if (actionType === 'sendTransaction') {
     const to = await args.to
-    const contractInterface = new ethers.utils.Interface(abis[to.toLowerCase()])
     const { data } = args
-    const parsed = contractInterface.parseTransaction({ data })
-    const parametersValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
-    const parameters = _.zipObject(
-      _.find(contractInterface.abi, { name: parsed.name }).inputs.map(({ name }) => name),
-      parametersValues,
-    )
-    params = {
-      name: parsed.name,
-      parameters,
-      to: to.toLowerCase(),
-    }
+
+    params = getParsedInputFromTransaction({ to, data, value: '0' }, abis)
 
     store.dispatch({
       type: 'START_WALLET_ACTION',
@@ -63,17 +53,23 @@ const startWalletAction = async (store, actionType, argParams) => {
     })
 
     let gasLimit = 300000 // a value left over frome trade-flow for all non-fills, has worked without issue
-    if (parsed.name === 'fill' || parsed.name === 'swap') {
-      const tokens = tokenSelectors.getTokens(state)
-      const order = tokenSelectors.makeGetReadableOrder(state)(parameters)
 
-      const { tokenAddress } = order
-      gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 400000)
-    } else if (parsed.name === 'setRuleAndIntent') {
+    if (params.name === 'fill' || params.name === 'swap') {
+      const tokens = tokenSelectors.getTokens(state)
+      const order = tokenSelectors.makeGetReadableOrder(state)(params.parameters)
+
+      const { makerToken, takerToken } = order
+      gasLimit = Math.max(
+        ...[
+          _.get(_.find(tokens, { address: makerToken }), 'gasLimit', 400000),
+          _.get(_.find(tokens, { address: takerToken }), 'gasLimit', 400000),
+        ].map(Number),
+      )
+    } else if (params.name === 'setRuleAndIntent') {
       gasLimit = 500000
-    } else if (parsed.name === 'createDelegate') {
+    } else if (params.name === 'createDelegate') {
       gasLimit = 3000000
-    } else if (parsed.name === 'createIndex') {
+    } else if (params.name === 'createIndex') {
       gasLimit = 1500000
     }
 

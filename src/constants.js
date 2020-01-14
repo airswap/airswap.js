@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `${__dirname}/../.env` })
 const ethers = require('ethers')
 const _ = require('lodash')
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
@@ -215,7 +216,8 @@ const NODESMITH_GETH_NODE = (N => {
 
 const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
-const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+const httpProviderUrl = process.env.MOCHA_IS_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
+const httpProvider = new RetryProvider(httpProviderUrl, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 // alchemy provider has built in retry
@@ -348,6 +350,9 @@ const IS_EXPLORER = process.env.REACT_APP_EXPLORER
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
 const INDEX_HEAD = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
+const PROTOCOL_0 = '0x0000'
+const PROTOCOL_1 = '0x0001'
+const PROTOCOL_2 = '0x0002'
 
 module.exports = {
   ENV,
@@ -414,4 +419,7 @@ module.exports = {
   INDEXER_CONTRACT_DEPLOY_BLOCK,
   INDEX_HEAD,
   DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
+  PROTOCOL_0,
+  PROTOCOL_1,
+  PROTOCOL_2,
 }
