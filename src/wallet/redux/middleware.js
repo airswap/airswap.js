@@ -67,8 +67,11 @@ const startWalletAction = async (store, actionType, argParams) => {
       const tokens = tokenSelectors.getTokens(state)
       const order = tokenSelectors.makeGetReadableOrder(state)(parameters)
 
-      const { tokenAddress } = order
-      gasLimit = _.get(_.find(tokens, { address: tokenAddress }), 'gasLimit', 400000)
+      const { signerToken, senderToken } = order
+      gasLimit = Math.max([
+        _.get(_.find(tokens, { address: signerToken }), 'gasLimit', 400000),
+        _.get(_.find(tokens, { address: senderToken }), 'gasLimit', 400000),
+      ])
     } else if (parsed.name === 'setRuleAndIntent') {
       gasLimit = 500000
     } else if (parsed.name === 'createDelegate') {
