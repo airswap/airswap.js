@@ -194,6 +194,18 @@ const makeGetExchangeFillGasLimitByToken = createSelector(getTokens, tokens => t
   return _.get(token, 'gasLimit', GAS_LIMITS.exchangeFill)
 })
 
+const makeGetMaxExchangeFillGasLimit = createSelector(getTokens, tokens => tokenQueryList => {
+  let maxGasLimit = 0
+  tokenQueryList.forEach(tokenQuery => {
+    const token = _.find(tokens, tokenQuery)
+    const gasLimit = _.get(token, 'gasLimit', GAS_LIMITS.exchangeFill)
+    if (gasLimit > maxGasLimit) {
+      maxGasLimit = gasLimit
+    }
+  })
+  return maxGasLimit
+})
+
 export {
   getTokens,
   getNFTItems,
@@ -247,6 +259,7 @@ export const selectors = {
   getAirSwapApprovedTokensByAddress,
   makeParseByToken,
   makeGetExchangeFillGasLimitByToken,
+  makeGetMaxExchangeFillGasLimit,
   makeGetReadableSwapOrder,
 }
 

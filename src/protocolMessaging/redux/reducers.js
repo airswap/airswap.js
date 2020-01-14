@@ -249,7 +249,7 @@ const makeGetBestOrder = createSelector(
   getIsCurrentFrameFinishedQuerying,
   getCurrentFrameQueryContext,
   gasSelectors.getCurrentGasPriceSettings,
-  tokenSelectors.makeGetExchangeFillGasLimitByToken,
+  tokenSelectors.makeGetMaxExchangeFillGasLimit,
   fiatSelectors.makeGetEthInFiat,
   deltaBalancesSelectors.getConnectedSwapApprovals,
   deltaBalancesSelectors.getConnectedApprovals,
@@ -264,7 +264,7 @@ const makeGetBestOrder = createSelector(
     isCurrentFrameFinishedQuerying,
     currentFrameQueryContext,
     { gwei },
-    getExchangeFillGasLimitByToken,
+    getMaxExchangeFillGasLimit,
     getEthInFiat,
     connectedSwapApprovals,
     connectedApprovals,
@@ -282,7 +282,9 @@ const makeGetBestOrder = createSelector(
       _.first(orders).makerSymbol === _.first(orders).tokenSymbol ? sortedOrders : [...sortedOrders].reverse(),
     )
     const ethGasPrice = Number(gwei) / 10 ** 9
-    const ethGasLimit = Number(getExchangeFillGasLimitByToken({ symbol: bestOrder.tokenSymbol }))
+    const ethGasLimit = Number(
+      getMaxExchangeFillGasLimit([{ symbol: bestOrder.makerToken }, { symbol: bestOrder.takerToken }]),
+    )
     const ethGasCost = ethGasLimit * ethGasPrice
 
     const ethTotal = bestOrder.ethAmount
