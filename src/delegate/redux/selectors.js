@@ -106,9 +106,23 @@ const getFormattedDelegateRules = createSelector(
           '0',
         )
 
+        const providedOrdersSignerSum = _.reduce(
+          providedOrdersForRule,
+          (sum, order) =>
+            bn(sum)
+              .add(order.signerAmount)
+              .toString(),
+          '0',
+        )
+
         const providedOrdersSenderSumDisplayValue = `${displayByToken(
           { address: senderToken },
           providedOrdersSenderSum,
+        )}`
+
+        const providedOrdersSignerSumDisplayValue = `${displayByToken(
+          { address: signerToken },
+          providedOrdersSignerSum,
         )}`
 
         const {
@@ -140,6 +154,7 @@ const getFormattedDelegateRules = createSelector(
           senderToken,
           signerToken,
           providedOrdersSenderSumDisplayValue,
+          providedOrdersSignerSumDisplayValue,
           fillRatio,
           senderSymbol: tokensSymbolsByAddress[senderToken],
           signerSymbol: tokensSymbolsByAddress[signerToken],

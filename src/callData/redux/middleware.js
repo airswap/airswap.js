@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { fetchSwapSenderAuthorizations } from '../../swap/redux/contractFunctionActions'
 import { fetchERC20Allowance } from '../../erc20/redux/contractFunctionActions'
 import { fetchERC721GetApprovedOverride } from '../../erc721/redux/actions'
+import { getTokenAllowancesForConnectedAddress } from '../../deltaBalances/redux/actions'
 
 export default function callData(store) {
   return next => action => {
@@ -38,6 +39,8 @@ export default function callData(store) {
                 spender: parsedEventValues.spender.toLowerCase(),
               }),
             )
+            // put approvals in deltaBalances as well
+            store.dispatch(getTokenAllowancesForConnectedAddress([event.address.toLowerCase()]))
           }
         }
         break
