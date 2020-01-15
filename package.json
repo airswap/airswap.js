@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.119",
+  "version": "0.1.120",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam .walker@fluidity.io>",
@@ -38,7 +38,9 @@
     "lint-staged": "^7.2.0",
     "npm-watch": "^0.6.0",
     "prettier": "1.13.5",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "ganache-cli": "^6.8.1",
+    "mocha": "^7.0.0"
   },
   "watch": {
     "jsdoc": "src/**/*.js"
@@ -92,7 +94,6 @@
     "ethers": "^4.0.31",
     "eventsource": "^1.0.7",
     "fortmatic": "^0.7.4",
-    "ganache-cli": "^6.8.1",
     "hdkey": "^1.1.1",
     "human-standard-token-abi": "^2.0.0",
     "ipfs-mini": "^1.1.5",
@@ -102,7 +103,6 @@
     "jayson": "^3.1.2",
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
-    "mocha": "^7.0.0",
     "openpgp": "^4.0.2",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.7",
