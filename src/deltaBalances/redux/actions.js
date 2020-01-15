@@ -13,9 +13,9 @@ export const getAllAllowancesForConnectedAddress = address => ({
   address,
 })
 
-export const getTokenAllowancesForConnectedAddress = address => ({
+export const getTokenAllowancesForConnectedAddress = tokens => ({
   type: 'GET_TOKEN_ALLOWANCES_FOR_CONNECTED_ADDRESS',
-  address,
+  tokens,
 })
 
 export const addTrackedAddress = ({ address, tokenAddress }) => ({
