@@ -11,6 +11,9 @@ import { getIndexerCreateIndexEvents, getIndexerCreateIndexHistoricalFetchStatus
 import { getDelegates } from '../../delegateFactory/redux/selectors'
 import { getDelegateFactoryCreateDelegateHistoricalFetchStatus } from '../../delegateFactory/redux/eventTrackingSelectors'
 import { INDEX_TYPES_LOOKUP } from '../constants'
+import { AST_CONTRACT_ADDRESS } from '../../constants'
+
+import { makeDisplayByToken } from '../../tokens/redux/reducers'
 
 const getIndexes = createSelector(getIndexerCreateIndexEvents, events =>
   _.uniqBy(
@@ -50,7 +53,8 @@ const getLocatorIntents = createSelector(
   getUniqueLocators,
   getIndexes,
   getDelegates,
-  (uniqueLocators, indexes, delegates) =>
+  makeDisplayByToken,
+  (uniqueLocators, indexes, delegates, displayByToken) =>
     _.compact(
       uniqueLocators.map(locatorObject => {
         const { indexAddress, identifier, score, blockNumber } = locatorObject
@@ -79,6 +83,8 @@ const getLocatorIntents = createSelector(
           delegateTradeWallet = delegate.delegateTradeWallet
         }
 
+        const scoreFormatted = displayByToken({ address: AST_CONTRACT_ADDRESS }, score)
+
         return {
           senderToken,
           signerToken,
@@ -89,6 +95,7 @@ const getLocatorIntents = createSelector(
           locator,
           locatorType,
           score,
+          scoreFormatted,
           blockNumber,
         }
       }),
