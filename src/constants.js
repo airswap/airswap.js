@@ -206,23 +206,12 @@ const INFURA_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const NODESMITH_GETH_NODE = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'https://ethereum.api.nodesmith.io/v1/rinkeby/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
-    case MAIN_ID:
-      return 'https://ethereum.api.nodesmith.io/v1/mainnet/jsonrpc?apiKey=9e06e7c1681b470ab1021f64938bf831'
-    default:
-  }
-})(NETWORK)
-
 const alchemyWeb3 = NO_ALCHEMY_WEBSOCKETS ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
 const httpProviderUrl =
   process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
 const httpProvider = new RetryProvider(httpProviderUrl, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
-const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 // alchemy provider has built in retry
 // https://github.com/alchemyplatform/alchemy-web3
 const alchemyWebsocketProvider = NO_ALCHEMY_WEBSOCKETS
@@ -335,10 +324,6 @@ const AIRSWAP_HEADLESS_API_SSE = `${AIRSWAP_HEADLESS_API}stream/`
 
 const PORTIS_ID = '691c65e3-ef26-4e6a-9a91-cdc772ed2298'
 
-const NODESMITH_KEY = process.env.REACT_APP_NODESMITH_KEY || process.env.NODESMITH_KEY
-const NODESMITH_URL = `wss://ethereum.api.nodesmith.io/v1/${NETWORK_NAME ||
-  'mainnet'}/jsonrpc/ws?apiKey=${NODESMITH_KEY}`
-
 const FORTMATIC_ID = (N => {
   switch (N) {
     case RINKEBY_ID:
@@ -405,15 +390,11 @@ module.exports = {
   AIRSWAP_HEADLESS_API_SSE,
   PORTIS_ID,
   MAKER_STATS_URL,
-  NODESMITH_KEY,
-  NODESMITH_URL,
   FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
   httpProvider,
   infuraProvider,
-  nodesmithProvider,
-  NODESMITH_GETH_NODE,
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
   ALCHEMY_WEBSOCKET_URL,

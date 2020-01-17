@@ -1,5 +1,5 @@
 const ethers = require('ethers')
-const { NETWORK_NAME, httpProvider, infuraProvider, nodesmithProvider } = require('../constants')
+const { NETWORK_NAME, httpProvider, infuraProvider } = require('../constants')
 const { poll } = require('ethers/utils/web')
 // const { checkProperties, defineReadOnly, resolveProperties, shallowCopy } = require('ethers/utils/properties')
 
@@ -32,11 +32,6 @@ class UncheckedJsonRpcSigner extends ethers.Signer {
           tx = await this.signer.provider.getTransaction(hash)
           if (tx) {
             console.log('window.web3 injected provider found transaction')
-            return tx
-          }
-          tx = await nodesmithProvider.getTransaction(hash)
-          if (tx) {
-            console.log('nodesmith found transaction')
             return tx
           }
           tx = await infuraProvider.getTransaction(hash)
