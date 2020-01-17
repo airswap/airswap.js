@@ -216,7 +216,8 @@ const NODESMITH_GETH_NODE = (N => {
 
 const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
-const httpProviderUrl = process.env.MOCHA_IS_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
+const httpProviderUrl =
+  process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
 const httpProvider = new RetryProvider(httpProviderUrl, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
