@@ -1,62 +1,9 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const uuid = require('uuid4')
-const WebSocket = require('isomorphic-ws')
-const { formatErrorMessage } = require('../utils/transformations')
-const { NODESMITH_URL, NODESMITH_KEY, alchemyWeb3 } = require('../constants')
-
-const nodesmithSupported = !!NODESMITH_KEY
-const callbacks = {}
-let nodesmithProvider
-let nodesmithOpenPromise
-
-async function initializeNodesmith() {
-  nodesmithProvider = new WebSocket(NODESMITH_URL)
-  nodesmithOpenPromise = new Promise(resolve => {
-    nodesmithProvider.onopen = () => {
-      resolve()
-    }
-  })
-  nodesmithProvider.onmessage = msg => {
-    const message = JSON.parse(msg.data)
-    const { resolve, reject } = callbacks[message.id]
-    if (message.error) {
-      reject(formatErrorMessage(message.error))
-    } else {
-      resolve(message.result)
-    }
-  }
-  nodesmithProvider.onclose = evt => {
-    console.error('nodesmith websocket closed', evt)
-  }
-
-  nodesmithProvider.onerror = evt => {
-    console.error('nodesmith websocket closed', evt)
-  }
-}
-
-if (nodesmithSupported) {
-  initializeNodesmith()
-}
+const { alchemyWeb3, httpProvider, NO_ALCHEMY_WEBSOCKETS } = require('../constants')
 
 async function send({ method, params }) {
-  if (nodesmithSupported) {
-    await nodesmithOpenPromise
-    return new Promise((resolve, reject) => {
-      const id = uuid()
-      callbacks[id] = { resolve, reject }
-      nodesmithProvider.send(
-        JSON.stringify({
-          jsonrpc: '2.0',
-          method,
-          params,
-          id,
-        }),
-      )
-    })
-  }
-
-  return alchemyWeb3.currentProvider.send(method, params)
+  return NO_ALCHEMY_WEBSOCKETS ? httpProvider.send(method, params) : alchemyWeb3.currentProvider.send(method, params)
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {

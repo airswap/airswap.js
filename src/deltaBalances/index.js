@@ -10,28 +10,7 @@ const {
   ETH_ADDRESS,
 } = require('../constants')
 
-const { call } = require('../utils/gethRead')
-
-const defaultProvider = traceMethodCalls(httpProvider)
-
-// Putting this in place until ethers.js implements a proper websocket provider (https://github.com/ethers-io/ethers.js/issues/141)
-// this allows mass balance reads to be done over websocket. Keep in mind the eth_call payload can't be too big or it will crash the websocket
-function traceMethodCalls(obj, blockTag = 'latest') {
-  const handler = {
-    get(target, propKey) {
-      if (propKey === 'call') {
-        return async function({ to, data }) {
-          const toResolved = await to
-          const res = await call({ to: toResolved, data }, blockTag)
-
-          return res
-        }
-      }
-      return target[propKey]
-    },
-  }
-  return new Proxy(obj, handler)
-}
+const defaultProvider = httpProvider
 
 const deltaBalancesContract = new ethers.Contract(
   DELTA_BALANCES_CONTRACT_ADDRESS,
@@ -87,5 +66,4 @@ module.exports = {
   getManyAllowancesManyAddresses,
   getAirSwapTokenBalancesForManyAddresses,
   getAirSwapTokenAllowancesForManyAddresses,
-  traceMethodCalls,
 }

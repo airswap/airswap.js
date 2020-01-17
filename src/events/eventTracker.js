@@ -11,7 +11,7 @@ class EventTracker {
   async trackEvent(event) {
     await blockTracker.readyPromise
     const latestBlockNumber = blockTracker.getLatestBlockNumber()
-    this.backFillEvent(event, latestBlockNumber)
+    this.subscribeToEvent(event, latestBlockNumber)
     this.trackedEvents.push(event)
   }
   processBlock({ number }) {
@@ -20,21 +20,64 @@ class EventTracker {
     }
     this.trackedEvents.map(event => this.processEvent(event, number))
   }
-  backFillEvent(event, blockNumber) {
+
+  // eslint-disable-next-line
+  fetchHistoricalLogs(
+    event,
+    contractAddress,
+    abi,
+    topics,
+    fromBlock,
+    toBlock,
+    callback,
+    onFetchingHistoricalEvents = _.identity,
+    onFetchedHistoricalEvents = _.identity,
+    parser,
+  ) {
+    onFetchingHistoricalEvents()
+    fetchLogs(contractAddress, abi, topics, fromBlock, toBlock, parser).then(events => {
+      onFetchedHistoricalEvents(events)
+      callback(events)
+    })
+  }
+
+  subscribeToEvent(event, blockNumber) {
     //eslint-disable-line
-    const { contract, abi, callback, parser, backFillBlockCount, fromBlock } = event
+    const {
+      contract,
+      abi,
+      callback,
+      parser,
+      backFillBlockCount,
+      fromBlock,
+      onFetchingHistoricalEvents,
+      onFetchedHistoricalEvents,
+    } = event
+
     let fromBlockNumberOverride
+
     if (!_.isUndefined(fromBlock)) {
       fromBlockNumberOverride = Number(fromBlock)
     } else if (!_.isUndefined(backFillBlockCount)) {
       fromBlockNumberOverride = blockNumber - Number(backFillBlockCount)
-    } else {
-      fromBlockNumberOverride = blockNumber
     }
+
     const topics = this.getEventTopics(event)
-    fetchLogs(contract, abi, topics, fromBlockNumberOverride, blockNumber).then(logs => {
-      callback(parser ? parser(logs) : logs)
-    })
+
+    if (fromBlockNumberOverride) {
+      this.fetchHistoricalLogs(
+        event,
+        contract,
+        abi,
+        topics,
+        fromBlockNumberOverride,
+        blockNumber,
+        callback,
+        onFetchingHistoricalEvents,
+        onFetchedHistoricalEvents,
+        parser,
+      )
+    }
   }
   processEvent(event, blockNumber) {
     //eslint-disable-line

@@ -15,6 +15,8 @@ const RetryProvider = require('./utils/retryProvider')
 const contractConstants = require('./contractConstants.json')
 
 const JEST_IS_TESTING = process.env.JEST_WORKER_ID !== undefined
+const IS_TESTING = JEST_IS_TESTING || process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING
+const NO_ALCHEMY_WEBSOCKETS = process.env.HTTPS_GETH_ONLY || process.env.REACT_APP_HTTPS_GETH_ONLY || IS_TESTING
 
 const ENV =
   process.env.REACT_APP_ENVIRONMENT ||
@@ -214,7 +216,7 @@ const NODESMITH_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const alchemyWeb3 = JEST_IS_TESTING ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+const alchemyWeb3 = NO_ALCHEMY_WEBSOCKETS ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
 const httpProviderUrl =
   process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
@@ -223,7 +225,9 @@ const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 const nodesmithProvider = new RetryProvider(NODESMITH_GETH_NODE, NETWORK)
 // alchemy provider has built in retry
 // https://github.com/alchemyplatform/alchemy-web3
-const alchemyWebsocketProvider = JEST_IS_TESTING ? null : new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
+const alchemyWebsocketProvider = NO_ALCHEMY_WEBSOCKETS
+  ? null
+  : new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -423,4 +427,5 @@ module.exports = {
   PROTOCOL_0,
   PROTOCOL_1,
   PROTOCOL_2,
+  NO_ALCHEMY_WEBSOCKETS,
 }

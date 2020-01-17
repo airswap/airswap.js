@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { ERC20abi, IS_INSTANT, IS_EXPLORER, SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
+import { ERC20abi, IS_INSTANT, IS_EXPLORER, SWAP_CONTRACT_DEPLOY_BLOCK, NO_ALCHEMY_WEBSOCKETS } from '../../constants'
 import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
@@ -9,11 +9,14 @@ import { getEventId } from '../utils'
 import * as gethRead from '../../utils/gethRead'
 import { buildGlobalERC20TransfersTopics, fetchLogs } from '../index'
 import { gotBlocks } from '../../blockTracker/redux/actions'
-import eventTracker from '../websocketEventTracker'
+import websocketEventTracker from '../websocketEventTracker'
+import httpsEventTracker from '../eventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
 import { trackSwapLegacyFilled } from '../../swapLegacy/redux/eventTrackingActions'
 import DebouncedQueue from '../../utils/debouncedQueue'
 import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
+
+const eventTracker = NO_ALCHEMY_WEBSOCKETS ? httpsEventTracker : websocketEventTracker
 
 let queue
 
