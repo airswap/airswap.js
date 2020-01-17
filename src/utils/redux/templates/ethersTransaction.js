@@ -1,12 +1,9 @@
 // ETHERS TRANSACTION REDUX TEMPLATE
-import { ethers } from 'ethers'
 import { formatErrorMessage, stringBNValues, getParsedInputFromTransaction } from '../../transformations'
 
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
-import { AIRSWAP_GETH_NODE_ADDRESS } from '../../../constants'
+import { httpProvider } from '../../../constants'
 import { getAbis } from '../../../abis/redux/reducers'
-
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
 
 const ETHERS_TXN_ACTIONS = [
   { action: 'submitting' },
@@ -34,7 +31,7 @@ export const makeMiddlewareEthersTransactionFn = async (transactionFn, transacti
   store.dispatch(submitted({ ...formattedTxn, ...parsedInput, timestamp: Date.now() }))
   let minedTxn
   try {
-    minedTxn = await provider.waitForTransaction(txn.hash).then(() => provider.getTransactionReceipt(txn.hash))
+    minedTxn = await httpProvider.waitForTransaction(txn.hash).then(() => httpProvider.getTransactionReceipt(txn.hash))
   } catch (err) {
     store.dispatch(errorMining(formatErrorMessage(err)))
     return
