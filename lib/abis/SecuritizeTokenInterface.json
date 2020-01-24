@@ -1,0 +1,33 @@
+[
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "preTransferCheck",
+    "outputs": [
+      {
+        "name": "code",
+        "type": "uint256"
+      },
+      {
+        "name": "reason",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
