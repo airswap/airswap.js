@@ -2,29 +2,13 @@
 # yarn lockfile v1
 
 
-"@airswap/delegate@1.5.6":
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-1.5.6.tgz#cc54e04f6a47e9c1b2c4b0c0099d62cd1b9b975c"
-  integrity sha512-X7SqyQ22Pc2yL18bSRIPWcx2zCzm9NPMPL0Rxjy4M6aT7AfXSJvicsKli/lBMQ99RknlmAPb4lsvfEoQ9wa/pw==
-  dependencies:
-    "@airswap/indexer" "3.6.7"
-    "@airswap/swap" "4.3.5"
-    openzeppelin-solidity "2.4"
-
-"@airswap/delegate@^1.5.7":
-  version "1.5.7"
-  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-1.5.7.tgz#9155202a89153e697e427da8ea4e1d59a0f78ec8"
-  integrity sha512-K9N+WWY4ijbPz3Ut1gfH6uR8ZwYDxathstlOi78woerNhNI6V/CyT9N6Wi+PSynL5ISEeJgoC1YooFxPPRz3bQ==
+"@airswap/delegate@1.5.8", "@airswap/delegate@^1.5.8":
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-1.5.8.tgz#e64add0399190d7cc5007f4f78f7a2856ea20a27"
+  integrity sha512-bGsFp9TshABygXw/h9FijuiUXC2eThu3Pxw45jjLvxS0DeVMcs1VJKd3wzvhuXtlvr5gIXGqjd+sGWfxdpCs1g==
   dependencies:
     "@airswap/indexer" "3.6.8"
-    "@airswap/swap" "4.3.6"
-    openzeppelin-solidity "2.4"
-
-"@airswap/indexer@3.6.7":
-  version "3.6.7"
-  resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-3.6.7.tgz#26621ec9e7889941b3d7ea4cad0507e29056b98f"
-  integrity sha512-BzSA5pbnoJFNMprXInim0QvcuAfI5mZD4LD1i12qQAYpjfTfzxlWiBY8V3hOil2GIiFzwliyrg7BIKez9XMl1w==
-  dependencies:
+    "@airswap/swap" "4.3.7"
     openzeppelin-solidity "2.4"
 
 "@airswap/indexer@3.6.8", "@airswap/indexer@^3.6.8":
@@ -34,10 +18,10 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/order-utils@^0.3.18":
-  version "0.3.18"
-  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.18.tgz#b5d05cb8c888a11fef384082324620c326b02b65"
-  integrity sha512-gB3VQp2jf9f/hdKz/IM4bL4eyLSzEwlc2el6jOgMUHY8gntzzjhdIZn4qbgHUu92f5CwdIg+AvJ1dhlhm2ddFQ==
+"@airswap/order-utils@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@airswap/order-utils/-/order-utils-0.3.19.tgz#2bc3de47f51495208c76c0585ab5f24a3ce6a3ba"
+  integrity sha512-LTmjd/S3Ej9XnpHNtxE7he2Sd12qCds0tfOoRmSakZ0pO6PjeNoK2YQeFtxj3DmgI6XHMoYOy64sh/aP/t0GNA==
   dependencies:
     eth-sig-util "^2.2.0"
     ethereumjs-abi "^0.6.7"
@@ -45,41 +29,26 @@
     web3 "^1.0.0-beta.55"
     web3-eth "1.2.2"
 
-"@airswap/swap@4.3.5":
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-4.3.5.tgz#d73d02b3efc9169920d3976be293916fba22db09"
-  integrity sha512-2B6s0tYucg7d+rhhtqKNijivrQ1ltkMGm922A9SS2oquh36eFFELsYNbGgEZLXK7sCE2odNa0RzlkRBMLnP2Bg==
-  dependencies:
-    "@airswap/types" "2.4.4"
-    openzeppelin-solidity "2.4"
-
-"@airswap/swap@4.3.6", "@airswap/swap@^4.3.6":
-  version "4.3.6"
-  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-4.3.6.tgz#e913e6dd8a21ca1aceaba0d39bf092bb98e4177c"
-  integrity sha512-vo6CoEJY4ax9JA7KWVpm6ihZuvj4qWGvPpkwNjaMu66/lgp6YZ4DEJMYfmLMe8OjWXeC1F3+btnjkIwtb2CESA==
+"@airswap/swap@4.3.7", "@airswap/swap@^4.3.7":
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/@airswap/swap/-/swap-4.3.7.tgz#55e1335935c08a2cbf60d1291ef0969d101ce254"
+  integrity sha512-ZNS/KKdS5i4W2HngkosWUbMp7aNTdC5kIX1bp3bLxR3MjXL75asOKfFDmeXOWfU6TDS72VugFACybVezsZBv1Q==
   dependencies:
     "@airswap/transfers" "0.0.2"
     "@airswap/types" "2.4.5"
     openzeppelin-solidity "2.4"
 
-"@airswap/tokens@0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@airswap/tokens/-/tokens-0.1.3.tgz#353cde28553671923dbea083d02a3e6db1b13912"
-  integrity sha512-Ij0WVTRVkjWEZBxCx0Z7dAhH8L4rLIXPscZT60hPNSIVJm2SCF88EuzHW9OdMVLQds0XuuL8LEwBawHmJCHa5w==
+"@airswap/tokens@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@airswap/tokens/-/tokens-0.1.4.tgz#86f2ce399fa9ad2f108c8e21e4272d6a8b81fc05"
+  integrity sha512-ynOrf0StyNGVGQbfw2QoMD5MFmLbynRP2QF0GadOCY54fnIL/iFs3iaZ2jYIu35Pt9LX9FGg5m4ll9K5Uin0rg==
   dependencies:
-    openzeppelin-solidity "2.3"
+    openzeppelin-solidity "2.4"
 
 "@airswap/transfers@0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@airswap/transfers/-/transfers-0.0.2.tgz#40bd2768c3bfb8bf623b0559e7696e542d100ec1"
   integrity sha512-gnYfxadjG+3Re1WtN1oOF4Vd3LeHfvHaisymRh2XEW7tRWXjSJJ4oeLfa7vGcTH/Uiw3Y1zjJQI2MJ7lj78Yfg==
-  dependencies:
-    openzeppelin-solidity "2.4"
-
-"@airswap/types@2.4.4":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@airswap/types/-/types-2.4.4.tgz#31d6b70886b5affe6b4be1d6be57a8859beeb0f3"
-  integrity sha512-IDefnjoW8/vpoZmNAflt7oC2/Nthn2nF4dSoSx3pWks+BmizpmQja6VAkMy1vASml6oUMxag5IIIwC0D4/953A==
   dependencies:
     openzeppelin-solidity "2.4"
 
@@ -90,14 +59,14 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/wrapper@^2.5.7":
-  version "2.5.7"
-  resolved "https://registry.yarnpkg.com/@airswap/wrapper/-/wrapper-2.5.7.tgz#bffef535438a0db9a8ea9dc89809f817f913669f"
-  integrity sha512-mx2QgZNpLVPMdgrBSNGN2hm9HoySm2KbamdtimrfI2pRitgtldhYsJapdWsWK0SKo7mP6H9GsuEZkkIkHVtAdQ==
+"@airswap/wrapper@^2.5.8":
+  version "2.5.8"
+  resolved "https://registry.yarnpkg.com/@airswap/wrapper/-/wrapper-2.5.8.tgz#b44116b807dc04c70a1917c6aa6a213864d89763"
+  integrity sha512-cb9XeKv7a+1mT9vOZz42kbUVoucQohotSx5skEAt7ffYg1F5Vh6EdMNJUSHRrkWWHrQKLZL/qGjOthSInJ5c7g==
   dependencies:
-    "@airswap/delegate" "1.5.6"
-    "@airswap/swap" "4.3.5"
-    "@airswap/tokens" "0.1.3"
+    "@airswap/delegate" "1.5.8"
+    "@airswap/swap" "4.3.7"
+    "@airswap/tokens" "0.1.4"
 
 "@alch/alchemy-web3@^0.1.4":
   version "0.1.4"
@@ -7233,11 +7202,6 @@ openpgp@^4.0.2:
     pako "^1.0.6"
     seek-bzip "github:openpgpjs/seek-bzip#3aca608ffedc055a1da1d898ecb244804ef32209"
     web-stream-tools "github:openpgpjs/web-stream-tools#84a497715c9df271a673f8616318264ab42ab3cc"
-
-openzeppelin-solidity@2.3:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/openzeppelin-solidity/-/openzeppelin-solidity-2.3.0.tgz#1ab7b4cc3782a5472ed61eb740c56a8bfdd74119"
-  integrity sha512-QYeiPLvB1oSbDt6lDQvvpx7k8ODczvE474hb2kLXZBPKMsxKT1WxTCHBYrCU7kS7hfAku4DcJ0jqOyL+jvjwQw==
 
 openzeppelin-solidity@2.4:
   version "2.4.0"
