@@ -1,6 +1,7 @@
 const t = require('tcomb-validation')
 const { constants } = require('@airswap/order-utils')
 const { Address, AtomicAmount, stringLiteral, throwTypeError } = require('../tcombTypes')
+const { SWAP_CONTRACT_ADDRESS } = require('../constants')
 
 const { ERC721_INTERFACE_ID, ERC20_INTERFACE_ID } = constants
 
@@ -21,7 +22,7 @@ const SignatureVersion = t.union([
 
 const Signature = t.struct({
   signatory: Address,
-  validator: Address,
+  validator: stringLiteral(SWAP_CONTRACT_ADDRESS),
   r: t.String,
   s: t.String,
   v: t.String,
