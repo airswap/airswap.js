@@ -39,6 +39,11 @@ function writeFile(location, contents) {
   fs.writeFileSync(location, `${filePrefix}${contents}`)
 }
 
+function getIsOnlyCalls(abi) {
+  const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
+  return _.filter(contractFunctions, { type: 'call' }).length === contractFunctions.length
+}
+
 module.exports = {
   getContractFunctionName,
   getContractFunctionActionType,
@@ -47,4 +52,5 @@ module.exports = {
   getInterfaceCallFunctions,
   getInterfaceTransactionFunctions,
   writeFile,
+  getIsOnlyCalls,
 }
