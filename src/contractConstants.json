@@ -1,18 +1,18 @@
 {
   "indexer": {
-    "1": "0xba9ab9710bd461f30c247f4ca2cb7f453c22570e",
+    "1": "0x08fadac1e47e92c8c01d590147208bda84594db3",
     "4": "0x10f6702447414ce1250af5f7000d7c9a0f04e824"
   },
   "swap": {
-    "1": "0x3e0c31c3d4067ed5d7d294f08b79b6003b7bf9c8",
-    "4": "0xa03855b0695013cf331fbd91dd7cbc4c2211793f"
+    "1": "0x4572f2554421bd64bef1c22c8a81840e8d496bea",
+    "4": "0x2e7373d70732e0f37f4166d8fd9dbc89dd5bc476"
   },
   "wrapper": {
-    "1": "0xc4c01afb1211e007cfa48f56552fb8a8b0bdc51c",
-    "4": "0x33356fccf3bdeb37f3cd3dc5382ae5bf4aada26c"
+    "1": "0x28de5c5f56b6216441ee114e832808d5b9d4a775",
+    "4": "0x8c80e2c9c5244c2283da85396dde6b7af4ebaa31"
   },
   "delegateFactory": {
-    "1": "0xca109988465266970be8fd0048a7e235b9e62bc3",
-    "4": "0xd393fb3f3062e208049fc75b26bfa5ab0890cbb3"
+    "1": "0x072073f78a2d58610ee3d5e170ca7ac9cb58a345",
+    "4": "0xe01ce51c3cb0b68b5fa07ccbd9544aeecd006e6e"
   }
 }
