@@ -1,7 +1,11 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
 import bn from 'bignumber.js'
-import { getDisplayPriceFromContractPrice } from '../utils'
+import {
+  getDisplayPriceFromContractPrice,
+  getAtomicPriceFromContractPrice,
+  getAtomicAmountsFromAtomicPrice,
+} from '../utils'
 import { getTokenAddressesBySymbol, getTokensSymbolsByAddress, makeDisplayByToken } from '../../tokens/redux/reducers'
 import { getConnectedSwapApprovals } from '../../deltaBalances/redux/reducers'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
@@ -38,16 +42,27 @@ const getConnectedDelegateSenderAuthorization = createSelector(
 
 const getDelegateProvidedOrders = createSelector(getDelegateProvideOrderEvents, events =>
   events.map(
-    ({ values: { owner, tradeWallet, senderToken, signerToken, senderAmount, priceCoef, priceExp }, blockNumber }) => ({
-      owner,
-      tradeWallet,
-      senderToken,
-      signerToken,
-      senderAmount,
-      priceCoef,
-      priceExp,
-      blockNumber,
-    }),
+    ({ values: { owner, tradeWallet, senderToken, signerToken, senderAmount, priceCoef, priceExp }, blockNumber }) => {
+      const atomicPrice = getAtomicPriceFromContractPrice({
+        senderToken,
+        signerToken,
+        maxSenderAmount: senderAmount,
+        priceCoef,
+        priceExp,
+      })
+      const { signerAmountAtomic: signerAmount } = getAtomicAmountsFromAtomicPrice(atomicPrice)
+      return {
+        owner,
+        tradeWallet,
+        senderToken,
+        signerToken,
+        senderAmount,
+        signerAmount,
+        priceCoef,
+        priceExp,
+        blockNumber,
+      }
+    },
   ),
 )
 
@@ -97,6 +112,7 @@ const getFormattedDelegateRules = createSelector(
           order =>
             order.blockNumber >= blockNumber && order.senderToken === senderToken && order.signerToken === signerToken,
         )
+
         const providedOrdersSenderSum = _.reduce(
           providedOrdersForRule,
           (sum, order) =>
