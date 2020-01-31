@@ -11,17 +11,10 @@
     "@airswap/swap" "5.4.7-beta.0"
     openzeppelin-solidity "2.4"
 
-"@airswap/indexer@3.6.8":
+"@airswap/indexer@3.6.8", "@airswap/indexer@^3.6.8":
   version "3.6.8"
   resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-3.6.8.tgz#45b58acec00a79028d2803c8bc8719798bdc4186"
   integrity sha512-r5fqkE1/hBZGMUXJrincNcM/75avi3gJ8FfnZgp8OCszfLCDSvFwPBjri6rLikotnaT6BHqVZ+nk6w8V+6/BuA==
-  dependencies:
-    openzeppelin-solidity "2.4"
-
-"@airswap/indexer@^2.6.7-beta.2":
-  version "2.6.7-beta.2"
-  resolved "https://registry.yarnpkg.com/@airswap/indexer/-/indexer-2.6.7-beta.2.tgz#6405230d6f068b751cb3b729ea9d0933b115445b"
-  integrity sha512-ZERmFwnBP8aqjfpi0Ysw9xFsesfOIPphAigYvfOsUrI39uJXed/91i+LiPbphyRNYYn+k8lHTojTqGH5+svrmw==
   dependencies:
     openzeppelin-solidity "2.4"
 

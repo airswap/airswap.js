@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@airswap/delegate": "^2.6.8-beta.0",
-    "@airswap/indexer": "^2.6.7-beta.2",
+    "@airswap/indexer": "^3.6.8",
     "@airswap/swap": "^5.4.7-beta.0",
     "@airswap/wrapper": "^3.6.8-beta.0",
     "@babel/cli": "^7.1.0",
