@@ -176,7 +176,7 @@ const ALCHEMY_RINKEBY_ID =
 const ALCHEMY_MAINNET_ID =
   process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
 
-const AIRSWAP_GETH_NODE_ADDRESS = (N => {
+let AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
       return `https://eth-rinkeby.alchemyapi.io/jsonrpc/${ALCHEMY_RINKEBY_ID}`
@@ -185,6 +185,10 @@ const AIRSWAP_GETH_NODE_ADDRESS = (N => {
     default:
   }
 })(NETWORK)
+
+if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
+  AIRSWAP_GETH_NODE_ADDRESS = 'http://localhost:8545'
+}
 
 const ALCHEMY_WEBSOCKET_URL = (N => {
   switch (N) {
@@ -208,10 +212,9 @@ const INFURA_GETH_NODE = (N => {
 
 const alchemyWeb3 = NO_ALCHEMY_WEBSOCKETS ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
 
-const httpProviderUrl =
-  process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING ? 'http://localhost:8545' : AIRSWAP_GETH_NODE_ADDRESS
-const httpProvider = new RetryProvider(httpProviderUrl, NETWORK)
+const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
+
 // alchemy provider has built in retry
 // https://github.com/alchemyplatform/alchemy-web3
 const alchemyWebsocketProvider = NO_ALCHEMY_WEBSOCKETS

@@ -12,6 +12,7 @@ const {
   getInterfaceEvents,
   getInterfaceCallFunctions,
   getInterfaceTransactionFunctions,
+  getIsOnlyCalls,
 } = require('./abiGen/utils')
 
 // eslint-disable-next-line
@@ -78,13 +79,15 @@ ${selectorTextArray.join('\n')}
 `
 }
 
-function generateReduxIndex() {
+function generateReduxIndex(abiLocation) {
+  const events = getInterfaceEvents(require(`./${abiLocation}`))
+
   return `import middleware from './middleware'
 import reducers from './reducers'
-import * as eventTrackingSelectors from './eventTrackingSelectors'
+${events.length ? "import * as eventTrackingSelectors from './eventTrackingSelectors'" : ''}
 
 const selectors = {
-  ...eventTrackingSelectors,
+${events.length ? '...eventTrackingSelectors,' : ''}
 }
 
 export { middleware, reducers, selectors }
@@ -144,7 +147,8 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
 function generateContractFunctionMiddleware(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`./${abiLocation}`)
   const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
-  const onlyCalls = _.filter(contractFunctions, { type: 'call' }) === contractFunctions.length
+  const onlyCalls = getIsOnlyCalls(abi)
+
   const actionsTextArray = contractFunctions.map(({ inputs, outputs, payable, type, name }) => {
     let filteredInputs = _.map(inputs, 'name')
     if (payable) filteredInputs = ['ethAmount', ...filteredInputs]
@@ -333,6 +337,11 @@ const modules = [
     namespace: 'delegateFactory',
     contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
   },
+  {
+    abiLocation: 'abis/SecuritizeTokenInterface.json',
+    namespace: 'securitize',
+    contractKey: '',
+  },
 ]
 
 modules.map(createSubmodules)
@@ -341,6 +350,8 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
   fs.mkdir(`./${namespace.toLowerCase()}/redux/`, { recursive: true }, err => {
     if (err) throw err
 
+    const abi = require(`./${abiLocation}`)
+    const isOnlyCalls = getIsOnlyCalls(abi)
     const events = getInterfaceEvents(require(`./${abiLocation}`))
 
     writeFile(
@@ -378,13 +389,16 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
       `./${namespace.toLowerCase()}/redux/callDataSelectors.js`,
       generateCallDataSelectors(abiLocation, contractKey, namespace),
     )
-    writeFile(
-      `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
-      generateContractTransactionSelectors(abiLocation, contractKey, namespace),
-    )
+
+    if (!isOnlyCalls) {
+      writeFile(
+        `./${namespace.toLowerCase()}/redux/contractTransactionSelectors.js`,
+        generateContractTransactionSelectors(abiLocation, contractKey, namespace),
+      )
+    }
 
     try {
-      fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(), { flag: 'wx' })
+      fs.writeFileSync(`./${namespace}/redux/index.js`, generateReduxIndex(abiLocation), { flag: 'wx' })
     } catch (e) {
       // console.log('redux/index.js already exists')
     }

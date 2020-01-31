@@ -27,7 +27,9 @@ function fetchCurrentBlockNumber() {
     method: 'eth_blockNumber',
     params: [],
   }
-  return send(method).then(hexToInt)
+  return send(method)
+    .then(res => hexToInt(res))
+    .catch(res => res)
 }
 
 function fetchPendingBlock(includeFullTransactions = true) {
@@ -90,3 +92,5 @@ module.exports = {
   fetchCurrentBlockNumber,
   alchemyWeb3,
 }
+
+fetchCurrentBlockNumber()
