@@ -172,11 +172,17 @@ function getTransactionDescription(
 
     return `Fill order for ${takerSide} for ${makerSide}`
   } else if (name === 'authorizeSender') {
-    return `Authorize sender`
+    return 'Authorize Sender'
   } else if (name === 'authorizedSigner') {
-    return `Authorize signer`
+    return 'Authorize Signer'
+  } else if (name === 'unsetRuleAndIntent') {
+    return 'Delete Rule'
+  } else if (name === 'setRuleAndIntent') {
+    return 'Create Rule'
+  } else if (name === 'createDelegate') {
+    return 'Create Delegate'
   }
-  return name
+  return _.startCase(name)
 }
 
 function parseTransactionFailureEventCode(code) {
