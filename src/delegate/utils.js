@@ -2,7 +2,7 @@ const bn = require('bignumber.js')
 const tokenMetadata = require('../tokens')
 const _ = require('lodash')
 
-bn.set({ DECIMAL_PLACES: 100, ROUNDING_MODE: 4 })
+bn.set({ DECIMAL_PLACES: 50, ROUNDING_MODE: 4 })
 
 // TODO: work through & apply this optimizing function after fast-check has been integrated in the tests (https://github.com/dubzzz/fast-check)
 // const PRECISION = 128
