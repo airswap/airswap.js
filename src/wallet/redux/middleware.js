@@ -62,7 +62,7 @@ const startWalletAction = async (store, actionType, argParams) => {
     } else if (params.name === 'setRuleAndIntent') {
       gasLimit = 500000
     } else if (params.name === 'createDelegate') {
-      gasLimit = 3000000
+      gasLimit = 2200000
     } else if (params.name === 'createIndex') {
       gasLimit = 1500000
     }
