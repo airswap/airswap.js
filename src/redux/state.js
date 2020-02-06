@@ -25,6 +25,7 @@ import * as index from '../index/redux'
 import * as delegateFactory from '../delegateFactory/redux'
 import * as delegate from '../delegate/redux'
 import * as weth from '../weth/redux'
+import * as securitize from '../securitize/redux'
 
 import { connectActionContainer } from '../utils/redux'
 
@@ -55,6 +56,7 @@ const state = {
   delegateFactory,
   delegate,
   weth,
+  securitize,
 }
 
 const middleware = _.flatten(_.map(_.values(state), 'middleware'))
