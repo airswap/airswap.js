@@ -9,7 +9,7 @@ import { selectors as tokenSelectors } from '../tokens/redux/reducers'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux/reducers'
 import { selectors as apiSelectors } from '../api/redux/reducers'
 import { selectors as transactionSelectors } from '../transactionTracker/redux/reducers'
-import { BASE_ASSET_TOKENS_SYMBOLS, ETH_BASE_ADDRESSES } from '../constants'
+import { BASE_ASSET_TOKENS_SYMBOLS, ETH_BASE_ADDRESSES, WETH_CONTRACT_ADDRESS, ETH_ADDRESS } from '../constants'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
@@ -119,11 +119,10 @@ const getTransactionHistory = createSelector(
   },
 )
 
-const getOnAndOffChainIntents = createSelector(
-  getLocatorIntentsFormatted,
-  apiSelectors.getIndexerIntents,
-  (intents, apiIntents) => [...intents, ...apiIntents],
-)
+// since this selector is imported in multiple places, renaming from
+// getLocatorIntentsFormatted to getOnAndOffChainIntents is supported to not break imports
+// until we can refactor all downstream dependencies
+const getOnAndOffChainIntents = getLocatorIntentsFormatted
 
 /*
  filters down all indexer intents to only those that have a makerAddress that is router-connected or on-chain
@@ -175,20 +174,25 @@ const getAvailableMarketsByBaseTokenAddress = createSelector(
     if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
     BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
       if (!token) return
-      markets[token.address] = 0
+      markets[token.address] = new Set()
     })
     intents.forEach(intent => {
       if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
-        markets[intent.takerToken]++
-        return
+        markets[intent.takerToken].add(intent.makerToken)
+        if (intent.takerToken === WETH_CONTRACT_ADDRESS) {
+          markets[ETH_ADDRESS].add(intent.makerToken)
+        }
       }
 
       if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
-        markets[intent.makerToken]++
+        markets[intent.makerToken].add(intent.takerToken)
+        if (intent.makerToken === WETH_CONTRACT_ADDRESS) {
+          markets[ETH_ADDRESS].add(intent.takerToken)
+        }
       }
     })
 
-    return markets
+    return _.mapValues(markets, market => market.size)
   },
 )
 
