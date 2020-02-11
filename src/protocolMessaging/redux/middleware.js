@@ -461,8 +461,8 @@ async function fillFrameBestOrder(store) {
   const bestOrder = _.omit(
     protocolMessagingSelectors.getCurrentFrameSelectedOrder(state) ||
       protocolMessagingSelectors.getCurrentFrameBestOrder(state) ||
-      protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state) ||
-      protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state),
+      protocolMessagingSelectors.getCurrentFrameBestLowBalanceOrder(state) ||
+      protocolMessagingSelectors.getCurrentFrameBestAlternativeOrder(state),
     ['takerAmountFormatted', 'makerAmountFormatted'],
   )
 

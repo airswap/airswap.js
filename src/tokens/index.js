@@ -258,7 +258,13 @@ class TokenMetadata {
       baseTokenSymbol,
     }
   }
-  getReadableSwapOrder(orderParams, tokenByAddressParam, formatFullValueByTokenParam, parseValueByTokenParam) {
+  getReadableSwapOrder(
+    orderParams,
+    tokenByAddressParam,
+    formatFullValueByTokenParam,
+    parseValueByTokenParam,
+    baseAsset,
+  ) {
     const order = orderParams.maker ? flatten(orderParams) : orderParams
     const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
     const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
@@ -306,7 +312,25 @@ class TokenMetadata {
 
     let price
 
-    if (takerSymbol === 'ETH' || takerSymbol === 'WETH') {
+    if (baseAsset === takerToken) {
+      baseTokenAmount = takerAmountFormatted
+      baseTokenAmountFull = takerAmountFull
+      baseTokenSymbol = takerSymbol
+      tokenAmount = makerAmountFormatted
+      tokenAmountFull = makerAmountFull
+      tokenSymbol = makerSymbol
+      tokenAddress = makerToken
+      tokenKind = makerKind
+    } else if (baseAsset === makerToken) {
+      baseTokenAmount = makerAmountFormatted
+      baseTokenAmountFull = makerAmountFull
+      baseTokenSymbol = makerSymbol
+      tokenAmount = takerAmountFormatted
+      tokenAmountFull = takerAmountFull
+      tokenSymbol = takerSymbol
+      tokenAddress = takerToken
+      tokenKind = takerKind
+    } else if (takerSymbol === 'ETH' || takerSymbol === 'WETH') {
       ethAmount = takerAmountFormatted
       ethAmountFull = takerAmountFull
       tokenAmount = makerAmountFormatted
@@ -344,7 +368,11 @@ class TokenMetadata {
 
     // set price in base token terms if there is a base token
     // otherwise, set price in eth terms
-    if (takerSymbol === 'ETH' || takerSymbol === 'WETH' || makerSymbol === 'ETH' || makerSymbol === 'WETH') {
+    if (baseAsset === takerToken) {
+      price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else if (baseAsset === makerToken) {
+      price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
+    } else if (takerSymbol === 'ETH' || takerSymbol === 'WETH' || makerSymbol === 'ETH' || makerSymbol === 'WETH') {
       price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
     } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
       price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
