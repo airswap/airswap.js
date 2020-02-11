@@ -476,7 +476,7 @@ async function fillFrameBestOrder(store) {
 
     const signedOrder = await store.dispatch(signSwap(nest(reversedOrder)))
 
-    if (baseToken === 'ETH') {
+    if (baseToken === ETH_ADDRESS) {
       store.dispatch(
         submitWrapperProvideDelegateOrder({ order: signedOrder, delegate: bestOrder.locatorValue, ethAmount }),
       )
@@ -484,7 +484,7 @@ async function fillFrameBestOrder(store) {
       store.dispatch(submitDelegateProvideOrder({ contractAddress: bestOrder.locatorValue, order: signedOrder }))
     }
   } else if (bestOrder.swapVersion === 2) {
-    if (baseToken === 'ETH') {
+    if (baseToken === ETH_ADDRESS) {
       store.dispatch(submitWrapperSwap({ order: bestSwap, ethAmount }))
     } else {
       store.dispatch(submitSwap({ order: bestSwap }))
