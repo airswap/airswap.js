@@ -40,7 +40,7 @@ async function initialzeRouter(store) {
   }
 
   router = new Router(config)
-  return router.connect(false)
+  return true
 }
 
 let router
@@ -128,6 +128,7 @@ async function getOrderTakerTokenWithQuotes(intent, store, action) {
   const { makerToken, takerToken, locator, locatorType } = intent
   const makerAddress = intent.connectionAddress || intent.makerAddress
   const swapVersion = intent.swapVersion || 1
+
   const quotePromise = router.getQuote(makerAddress, {
     takerAmount,
     makerToken,

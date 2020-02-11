@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
+import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -18,12 +18,7 @@ export const gotSwapTokenApprovals = approvals => ({
   approvals,
 })
 
-export const gotTokenApprovals = approvals => ({
-  type: 'GOT_TOKEN_ALLOWANCES',
-  approvals,
-})
-
-const websocketChunkSize = 20
+const websocketChunkSize = 2000
 
 let balancesQueue
 
@@ -45,19 +40,6 @@ function loadSwapAllowancesForTokenAddressMap(tokenAddressMap) {
     _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_CONTRACT_ADDRESS).then(results => {
         swapAllowancesQueue.push(results)
-      })
-    })
-  })
-}
-
-let swapLegacyAllowancesQueue
-
-function loadSwapLegacyAllowancesForTokenAddressMap(tokenAddressMap) {
-  _.mapValues(tokenAddressMap, (tokens, address) => {
-    _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
-      // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
-      getManyAllowancesManyAddresses(tokenSubset, [address], SWAP_LEGACY_CONTRACT_ADDRESS).then(results => {
-        swapLegacyAllowancesQueue.push(results)
       })
     })
   })
@@ -142,7 +124,6 @@ function initializeTrackedAddresses(store) {
 
   loadBalancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
   loadSwapAllowancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
-  loadSwapLegacyAllowancesForTokenAddressMap(uninitializedTrackedTokensByAddress, store)
 }
 
 function addConnectedAddressToTrackedAddresses(store) {
@@ -173,11 +154,6 @@ export default function balancesMiddleware(store) {
     store.dispatch(gotSwapTokenApprovals(mergedResults))
   }, 500)
 
-  swapLegacyAllowancesQueue = new DebouncedQueue(results => {
-    const mergedResults = _.merge({}, ...results)
-    store.dispatch(gotTokenApprovals(mergedResults))
-  }, 500)
-
   return next => action => {
     const state = store.getState()
     const address = getConnectedWalletAddress(state)
@@ -191,11 +167,9 @@ export default function balancesMiddleware(store) {
         break
       case 'GET_ALL_ALLOWANCES_FOR_CONNECTED_ADDRESS':
         loadSwapAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
-        loadSwapLegacyAllowancesForTokenAddressMap(connectedTokenAddressMap, store)
         break
       case 'GET_TOKEN_ALLOWANCES_FOR_CONNECTED_ADDRESS':
         loadSwapAllowancesForTokenAddressMap({ [address]: action.tokens }, store)
-        loadSwapLegacyAllowancesForTokenAddressMap({ [address]: action.tokens }, store)
         break
       case makeEventActionTypes('erc20Transfers').got:
         const erc20Logs = _.get(action, 'response', [])
