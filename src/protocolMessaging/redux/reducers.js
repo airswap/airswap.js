@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
-import { makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
+import { getTokenAddressesBySymbol, makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 import { selectors as swapLegacySelectors } from '../../swapLegacy/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
@@ -157,10 +157,12 @@ const getCurrentFrameQueryContext = createSelector(getCurrentFrame, frame => ({
 const makeGetReadableSwap = createSelector(
   makeGetReadableOrder,
   makeGetReadableSwapOrder,
-  (getReadableOrder, getReadableSwapOrder) => order =>
+  getTokenAddressesBySymbol,
+  getCurrentFrameQueryContext,
+  (getReadableOrder, getReadableSwapOrder, tokenAddressesBySymbol, { baseToken }) => order =>
     order.swapVersion === 2
       ? {
-          ...getReadableSwapOrder(order),
+          ...getReadableSwapOrder(order, tokenAddressesBySymbol[baseToken]),
           takerAmount: order.takerAmount,
           makerAmount: order.makerAmount,
         }
@@ -562,8 +564,8 @@ const getCurrentFrameBestOrderExecution = createSelector(
     const order =
       currentFrameSelectedOrder ||
       currentFrameBestOrder ||
-      currentFrameBestAlternativeOrder ||
-      currentFrameBestLowBalanceOrder // TODO: This will need to be re-done by an order filling mechanic driven by order IDs
+      currentFrameBestLowBalanceOrder ||
+      currentFrameBestAlternativeOrder // TODO: This will need to be re-done by an order filling mechanic driven by order IDs
     if (!order) return {}
     let vals
     if (order.swapVersion === 2) {
@@ -671,8 +673,8 @@ const getCurrentFrameStateSummaryProperties = createSelector(
         return (
           currentFrameSelectedOrder ||
           currentFrameBestOrder ||
-          currentFrameBestAlternativeOrder ||
           currentFrameBestLowBalanceOrder ||
+          currentFrameBestAlternativeOrder ||
           currentFrameBestQuote ||
           currentFrameBestAlternativeQuote ||
           undefined

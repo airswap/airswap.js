@@ -171,8 +171,10 @@ const makeGetReadableSwapOrder = createSelector(
   getTokensByAddress,
   makeFullByToken,
   makeParseByToken,
-  (tokenByAddress, fullByToken, parseByToken) => order =>
-    tokenMetadata.ready ? tokenMetadata.getReadableSwapOrder(order, tokenByAddress, fullByToken, parseByToken) : [],
+  (tokenByAddress, fullByToken, parseByToken) => (order, baseAsset) =>
+    tokenMetadata.ready
+      ? tokenMetadata.getReadableSwapOrder(order, tokenByAddress, fullByToken, parseByToken, baseAsset)
+      : [],
 )
 
 const makeClampValue = createSelector(makeParseBySymbol, parseBySymbol => (symbol, amount) => {
