@@ -2,6 +2,7 @@ import { getSigner } from '../../wallet/redux/actions'
 import { makeMiddlewareEthersTransactionsFn } from '../../utils/redux/templates/ethersTransactions'
 import * as Swap from '../index'
 import { getSwapOrderId } from '../../swap/utils'
+import { getFormattedSwapFills24Hour } from './selectors'
 
 async function fillSwap(store, action) {
   const signer = await store.dispatch(getSigner())
@@ -51,6 +52,7 @@ export default function walletMiddleware(store) {
         break
       default:
     }
+    console.log(getFormattedSwapFills24Hour(store.getState()))
     return next(action)
   }
 }
