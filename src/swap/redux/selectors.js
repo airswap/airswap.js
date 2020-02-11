@@ -19,6 +19,13 @@ export const getFormattedSwapFills = createSelector(
     })),
 )
 
+export const getFormattedSwapFills24Hour = createSelector(getFormattedSwapFills, swapFills => {
+  const ts = Math.round(new Date().getTime() / 1000)
+  const timeStamp24Hour = ts - 24 * 3600
+  const [events24Hour] = _.partition(swapFills, t => t.timestamp > timeStamp24Hour)
+  return _.filter(events24Hour, ({ tokenSymbol }) => !!tokenSymbol) // this filter removes non-weth/eth trades
+})
+
 export const getFormattedSwapCancels = createSelector(
   getSwapCancelEvents,
   blockTrackerSelectors.getBlocks,

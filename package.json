@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.138",
+  "version": "0.1.139",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam .walker@fluidity.io>",
@@ -99,7 +99,6 @@
     "ipfs-mini": "^1.1.5",
     "ismobilejs": "^0.5.1",
     "isomorphic-fetch": "^2.2.1",
-    "isomorphic-ws": "^4.0.1",
     "jayson": "^3.1.2",
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
