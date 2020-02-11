@@ -10,7 +10,7 @@ import filter from 'redux-storage-decorator-filter'
 import { middleware, rootReducerObj } from './state'
 import { waitForStateMiddleware } from '../utils/redux/waitForState'
 
-const storageKey = '@airswap.js'
+const storageKey = '@airswap'
 const qs = queryString.parse(window.location.search)
 if (qs.hardReset) localStorage.removeItem(storageKey)
 
@@ -30,7 +30,7 @@ export default function configureStore(
   persistedState = [],
 ) {
   let engine = createEngine(storageKey)
-  engine = filter(engine, [['keySpace', 'signedSeed'], 'blockTracker', ['wallet', 'expressLogin'], ...persistedState])
+  engine = filter(engine, [['wallet', 'expressLogin'], ...persistedState])
   const persistMiddleware = storage.createMiddleware(engine, actionsBlacklist)
   const rootReducer = combineReducers(_.pickBy({ ...projectRootReducerObj, ...rootReducerObj }, _.identity))
   const reducer = storage.reducer(rootReducer)

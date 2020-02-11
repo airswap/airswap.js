@@ -1,18 +1,14 @@
 import _ from 'lodash'
 import { ERC20abi, IS_INSTANT, IS_EXPLORER, SWAP_CONTRACT_DEPLOY_BLOCK, NO_ALCHEMY_WEBSOCKETS } from '../../constants'
-import { makeEventActionTypes, makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
-import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
+import { makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux'
 import { selectors as eventSelectors } from './reducers'
 import { getEventId } from '../utils'
 
-import * as gethRead from '../../utils/gethRead'
 import { buildGlobalERC20TransfersTopics, fetchLogs } from '../index'
-import { gotBlocks } from '../../blockTracker/redux/actions'
 import websocketEventTracker from '../websocketEventTracker'
 import httpsEventTracker from '../eventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
-import { trackSwapLegacyFilled } from '../../swapLegacy/redux/eventTrackingActions'
 import DebouncedQueue from '../../utils/debouncedQueue'
 import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
 
@@ -36,13 +32,6 @@ const initPollExchangeFills = _.once(store => {
   const callback = logs => processEventLogs(logs, store)
   // TODO: this if/else is temporary, these need to be dispatched from instant/airswap-trader repos respectively
   if (IS_INSTANT || IS_EXPLORER) {
-    eventTracker.trackEvent(
-      trackSwapLegacyFilled({
-        callback,
-        backFillBlockCount: 7000,
-      }),
-    )
-
     eventTracker.trackEvent(
       trackSwapSwap({
         callback,
@@ -84,22 +73,6 @@ const pollERC20Transfers = (store, block) => {
   })
 }
 
-function fetchMissingBlocksForFetchedEvents(store, action) {
-  const fetchedBlockNumbers = blockTrackerSelectors.getBlockNumbers(store.getState())
-  const eventBlockNumbers = _.get(action, 'response', [])
-    .filter(event => event.name === 'Filled')
-    .map(({ blockNumber }) => blockNumber)
-  const blockPromises = _.without(eventBlockNumbers, ...fetchedBlockNumbers).map(async blockNumber =>
-    gethRead.fetchBlock(blockNumber),
-  )
-
-  Promise.all(blockPromises).then(blocks => {
-    if (blocks.length) {
-      store.dispatch(gotBlocks(blocks))
-    }
-  })
-}
-
 export default function eventsMiddleware(store) {
   queue = new DebouncedQueue(newEvents => {
     const newEventsAction = makeEventFetchingActionsCreators('trackedEvents').got(newEvents)
@@ -109,9 +82,6 @@ export default function eventsMiddleware(store) {
   initPollExchangeFills(store)
   return next => action => {
     switch (action.type) {
-      case makeEventActionTypes('trackedEvents').got:
-        fetchMissingBlocksForFetchedEvents(store, action)
-        break
       case 'GOT_LATEST_BLOCK':
         // check for erc20 transfers on each new block
         pollERC20Transfers(store, action.block)
