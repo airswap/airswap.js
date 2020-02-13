@@ -143,9 +143,9 @@ const ETH_BASE_ADDRESSES = [ETH_ADDRESS, WETH_CONTRACT_ADDRESS]
 const DAI_CONTRACT_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return '0xce787654722aed819d7a8073576d2b2b359641b5'
+      return '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea'
     case MAIN_ID:
-      return '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+      return '0x6b175474e89094c44da98b954eedeac495271d0f'
     default:
   }
 })(NETWORK)
