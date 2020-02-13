@@ -9,7 +9,7 @@ import { selectors as tokenSelectors } from '../tokens/redux/reducers'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux/reducers'
 import { selectors as apiSelectors } from '../api/redux/reducers'
 import { selectors as transactionSelectors } from '../transactionTracker/redux/reducers'
-import { BASE_ASSET_TOKENS_SYMBOLS, ETH_BASE_ADDRESSES, WETH_CONTRACT_ADDRESS, ETH_ADDRESS } from '../constants'
+import { BASE_ASSET_TOKEN_ADDRESSES, ETH_BASE_ADDRESSES, WETH_CONTRACT_ADDRESS, ETH_ADDRESS } from '../constants'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
@@ -165,36 +165,30 @@ const getConnectedIndexerTokenAddresses = createSelector(getConnectedIndexerInte
  - the maker responsible for the intent is connected to the network
 */
 
-const getAvailableMarketsByBaseTokenAddress = createSelector(
-  getConnectedIndexerIntents,
-  tokenSelectors.getTokensBySymbol,
-  (intents, tokensBySymbol) => {
-    const markets = {}
+const getAvailableMarketsByBaseTokenAddress = createSelector(getConnectedIndexerIntents, intents => {
+  const markets = {}
 
-    if (!tokensBySymbol || !Object.keys(tokensBySymbol).length) return
-    BASE_ASSET_TOKENS_SYMBOLS.map(symbol => tokensBySymbol[symbol]).forEach(token => {
-      if (!token) return
-      markets[token.address] = new Set()
-    })
-    intents.forEach(intent => {
-      if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
-        markets[intent.takerToken].add(intent.makerToken)
-        if (intent.takerToken === WETH_CONTRACT_ADDRESS) {
-          markets[ETH_ADDRESS].add(intent.makerToken)
-        }
+  BASE_ASSET_TOKEN_ADDRESSES.map(address => {
+    markets[address] = new Set()
+  })
+  intents.forEach(intent => {
+    if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
+      markets[intent.takerToken].add(intent.makerToken)
+      if (intent.takerToken === WETH_CONTRACT_ADDRESS) {
+        markets[ETH_ADDRESS].add(intent.makerToken)
       }
+    }
 
-      if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
-        markets[intent.makerToken].add(intent.takerToken)
-        if (intent.makerToken === WETH_CONTRACT_ADDRESS) {
-          markets[ETH_ADDRESS].add(intent.takerToken)
-        }
+    if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
+      markets[intent.makerToken].add(intent.takerToken)
+      if (intent.makerToken === WETH_CONTRACT_ADDRESS) {
+        markets[ETH_ADDRESS].add(intent.takerToken)
       }
-    })
+    }
+  })
 
-    return _.mapValues(markets, market => market.size)
-  },
-)
+  return _.mapValues(markets, market => market.size)
+})
 
 /*
 "AVAILABLE" TOKENS MEET THE FOLLOWING REQUIREMENTS

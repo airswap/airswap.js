@@ -1,7 +1,7 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
-const { NETWORK, BASE_ASSET_TOKENS_SYMBOLS } = require('../constants')
+const { NETWORK, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
@@ -207,7 +207,7 @@ class TokenMetadata {
       tokenAmountFull = takerAmountFull
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(takerToken)) {
       baseTokenAmount = takerAmountFormatted
       baseTokenAmountFull = takerAmountFull
       baseTokenSymbol = takerSymbol
@@ -215,7 +215,7 @@ class TokenMetadata {
       tokenAmountFull = makerAmountFull
       tokenSymbol = makerSymbol
       tokenAddress = makerToken
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(makerToken)) {
       baseTokenAmount = makerAmountFormatted
       baseTokenAmountFull = makerAmountFull
       baseTokenSymbol = makerSymbol
@@ -229,9 +229,9 @@ class TokenMetadata {
     // otherwise set price in base token terms
     if (takerSymbol === 'ETH' || takerSymbol === 'WETH' || makerSymbol === 'ETH' || makerSymbol === 'WETH') {
       price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(takerToken)) {
       price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(makerToken)) {
       price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
     }
 
@@ -346,7 +346,7 @@ class TokenMetadata {
       tokenSymbol = takerSymbol
       tokenAddress = takerToken
       tokenKind = takerKind
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(takerToken)) {
       baseTokenAmount = takerAmountFormatted
       baseTokenAmountFull = takerAmountFull
       baseTokenSymbol = takerSymbol
@@ -355,7 +355,7 @@ class TokenMetadata {
       tokenSymbol = makerSymbol
       tokenAddress = makerToken
       tokenKind = makerKind
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(makerToken)) {
       baseTokenAmount = makerAmountFormatted
       baseTokenAmountFull = makerAmountFull
       baseTokenSymbol = makerSymbol
@@ -374,9 +374,9 @@ class TokenMetadata {
       price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
     } else if (takerSymbol === 'ETH' || takerSymbol === 'WETH' || makerSymbol === 'ETH' || makerSymbol === 'WETH') {
       price = parseByToken({ symbol: 'ETH' }, new BigNumber(ethAmountFull).div(tokenAmountFull).toString())
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(takerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(takerToken)) {
       price = parseByToken({ symbol: takerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
-    } else if (BASE_ASSET_TOKENS_SYMBOLS.includes(makerSymbol)) {
+    } else if (BASE_ASSET_TOKEN_ADDRESSES.includes(makerToken)) {
       price = parseByToken({ symbol: makerSymbol }, new BigNumber(baseTokenAmountFull).div(tokenAmountFull).toString())
     }
 

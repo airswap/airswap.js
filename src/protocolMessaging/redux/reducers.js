@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
-import { getTokenAddressesBySymbol, makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
+import { makeGetReadableOrder, makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
 import { selectors as swapLegacySelectors } from '../../swapLegacy/redux'
 import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as tokenSelectors } from '../../tokens/redux'
@@ -18,7 +18,7 @@ import { submitEthWrapperAuthorize } from '../../swap/redux/actions'
 import { getConnectedWrapperDelegateApproval } from '../../swap/redux/selectors'
 import { getConnectedWrapperWethApproval } from '../../erc20/redux/selectors'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
-import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS } from '../../constants'
+import { WETH_CONTRACT_ADDRESS, WRAPPER_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
 import { getERC20ApproveTransactions } from '../../erc20/redux/contractTransactionSelectors'
 import { getSwapAuthorizeSenderTransactions } from '../../swap/redux/contractTransactionSelectors'
 import { reverseObjectMethods } from '../../delegate/index'
@@ -157,12 +157,11 @@ const getCurrentFrameQueryContext = createSelector(getCurrentFrame, frame => ({
 const makeGetReadableSwap = createSelector(
   makeGetReadableOrder,
   makeGetReadableSwapOrder,
-  getTokenAddressesBySymbol,
   getCurrentFrameQueryContext,
-  (getReadableOrder, getReadableSwapOrder, tokenAddressesBySymbol, { baseToken }) => order =>
+  (getReadableOrder, getReadableSwapOrder, { baseToken }) => order =>
     order.swapVersion === 2
       ? {
-          ...getReadableSwapOrder(order, tokenAddressesBySymbol[baseToken]),
+          ...getReadableSwapOrder(order, baseToken),
           takerAmount: order.takerAmount,
           makerAmount: order.makerAmount,
         }
@@ -314,7 +313,7 @@ const makeGetBestOrder = createSelector(
       const takerTokenSwapApproval = _.get(connectedSwapApprovals, bestOrder.takerToken, false)
 
       const wrapperApprovals =
-        baseToken === 'ETH'
+        baseToken === ETH_ADDRESS
           ? [
               {
                 id: 'wrapperDelegateApproval',

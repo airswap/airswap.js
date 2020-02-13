@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { combineReducers } from 'redux'
 import BigNumber from 'bignumber.js'
 import { createSelector } from 'reselect'
-import { BASE_ASSET_TOKENS_SYMBOLS, MAX_DISPLAY_DECIMALS, GAS_LIMITS } from '../../constants'
+import { BASE_ASSET_TOKEN_ADDRESSES, MAX_DISPLAY_DECIMALS, GAS_LIMITS } from '../../constants'
 import { parseAmount } from '../../utils/transformations'
 import { connectSelectorContainer } from '../../utils/redux'
 import tokenMetadata from '../index'
@@ -183,10 +183,10 @@ const makeClampValue = createSelector(makeParseBySymbol, parseBySymbol => (symbo
   return Math.min(maxValue, parsedAmount)
 })
 
-const getBaseTokens = createSelector(getTokensBySymbol, tokenSymbols => {
+const getBaseTokens = createSelector(getTokensByAddress, tokensByAddress => {
   const ret = {}
-  BASE_ASSET_TOKENS_SYMBOLS.forEach(baseAssetSymbol => {
-    ret[baseAssetSymbol] = tokenSymbols[baseAssetSymbol]
+  BASE_ASSET_TOKEN_ADDRESSES.forEach(address => {
+    ret[address] = tokensByAddress[address]
   })
   return ret
 })
