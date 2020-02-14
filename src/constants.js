@@ -258,7 +258,12 @@ const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 const BASE_ASSET_TOKEN_ADDRESSES = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return [ETH_ADDRESS, WETH_CONTRACT_ADDRESS, DAI_CONTRACT_ADDRESS]
+      return [
+        ETH_ADDRESS,
+        WETH_CONTRACT_ADDRESS,
+        DAI_CONTRACT_ADDRESS,
+        '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
+      ]
     case MAIN_ID:
       return [
         ETH_ADDRESS,
