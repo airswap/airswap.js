@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const blockTracker = require('../blockTracker')
 const { alchemyWeb3 } = require('../constants')
 const { parseEventLog, fetchLogs } = require('./utils')
+const { fetchLatestBlock } = require('../utils/gethRead')
 
 const { Interface } = ethers.utils
 
@@ -40,8 +40,7 @@ class EventTracker {
     this.trackedEvents = []
   }
   async trackEvent(event) {
-    await blockTracker.readyPromise
-    const latestBlockNumber = blockTracker.getLatestBlockNumber()
+    const latestBlockNumber = (await fetchLatestBlock()).number - 1
     this.subscribeToEvent(event, latestBlockNumber)
     this.trackedEvents.push(event)
   }

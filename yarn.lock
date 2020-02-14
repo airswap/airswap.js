@@ -68,17 +68,20 @@
     "@airswap/swap" "5.4.7-beta.0"
     "@airswap/tokens" "0.1.4"
 
-"@alch/alchemy-web3@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@alch/alchemy-web3/-/alchemy-web3-0.1.4.tgz#6e9f288c2da7016ec2e45e47990c9e65cf2d77a3"
-  integrity sha512-Mhc8hXMxKajqKe9YzMmUEoqdsJha7CvJMT6XmpTv/YkVeD9YMc8smjNrHpGyr8IcAFfqWnanJmXI8CK6KrWMtA==
+"@alch/alchemy-web3@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@alch/alchemy-web3/-/alchemy-web3-0.1.11.tgz#f04b790d67ff55f9bc05758756226da559bb6621"
+  integrity sha512-yvgtY6FXTIksnfBPAC9Lk/OE4sVwFTCOKy4v5LEVSFRx58Wr9+ekj0n9hWEqcLI/MWoeffdjK1n0FNuJcpO/OQ==
   dependencies:
     "@types/web3" "^1.0.18"
     assert-never "^1.2.0"
     eventemitter3 "^3.1.2"
     fetch-ponyfill "^6.0.2"
-    sturdy-websocket "^0.1.11"
+    sturdy-websocket "^0.2.1"
     web3 "1.0.0-beta.55"
+    web3-core "1.0.0-beta.55"
+    web3-core-subscriptions "1.0.0-beta.55"
+    web3-eth "1.0.0-beta.55"
     web3-providers "1.0.0-beta.55"
     websocket "^1.0.28"
 
@@ -6381,11 +6384,6 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
 
-lodash.defaults@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
-  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
-
 lodash.get@^4.1.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
@@ -8930,12 +8928,10 @@ strip-url-auth@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/strip-url-auth/-/strip-url-auth-1.0.1.tgz#22b0fa3a41385b33be3f331551bbb837fa0cd7ae"
 
-sturdy-websocket@^0.1.11:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/sturdy-websocket/-/sturdy-websocket-0.1.12.tgz#84bb779f948b585a695f76961dc7d1c4a5e87629"
-  integrity sha512-PA7h8LdjaMoIlC5HAwLVzae4raGWgyroscV4oUpEiTtEFINcNa47/CKYT3e98o+FfsJgrclI2pYpaJrz0aaoew==
-  dependencies:
-    lodash.defaults "^4.2.0"
+sturdy-websocket@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/sturdy-websocket/-/sturdy-websocket-0.2.1.tgz#20a58fd53372ef96eaa08f3c61c91a10b07c7c05"
+  integrity sha512-NnzSOEKyv4I83qbuKw9ROtJrrT6Z/Xt7I0HiP/e6H6GnpeTDvzwGIGeJ8slai+VwODSHQDooW2CAilJwT9SpRg==
 
 supports-color@6.0.0:
   version "6.0.0"

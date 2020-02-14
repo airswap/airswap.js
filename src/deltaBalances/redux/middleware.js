@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS } from '../../constants'
+import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, alchemyWeb3 } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -81,16 +81,6 @@ function reduceSwapFillsLogsToTokenAddressMap(logs) {
   return parsedLogs
 }
 
-function reduceBlockTransactionsToTokenAddressMap(block) {
-  const blockAddresses = _.reduce(
-    block.transactions,
-    (addressesAccumulator, { to, from }) =>
-      _.uniq(_.compact([(to || '').toLowerCase(), (from || '').toLowerCase(), ...addressesAccumulator])),
-    [],
-  )
-  return _.zipObject(blockAddresses, blockAddresses.map(() => [ETH_ADDRESS]))
-}
-
 function filterTokenAddressMapByTrackedAddresses(tokenAddressMap, store) {
   const trackedTokensByAddress = deltaBalancesSelectors.getTrackedTokensByAddress(store.getState())
   const mappedValues = _.mapValues(tokenAddressMap, (tokenAddresses, walletAddress) => {
@@ -143,6 +133,32 @@ function addConnectedAddressToTrackedAddresses(store) {
   }
 }
 
+const ethBalances = {}
+
+function initializeETHTracking(store, addresses) {
+  addresses.forEach(async address => {
+    ethBalances[address.toLowerCase()] = await alchemyWeb3.eth.getBalance(address)
+  })
+  alchemyWeb3.eth
+    .subscribe('newBlockHeaders', error => {
+      if (error) {
+        throw new Error(error)
+      }
+    })
+    .on('data', () => {
+      // don't check eth balance unless the window is active
+      if (document.hidden) {
+        return
+      }
+      addresses.forEach(async address => {
+        const ethBalance = await alchemyWeb3.eth.getBalance(address)
+        if (ethBalance !== ethBalances[address.toLowerCase()]) {
+          loadBalancesForTokenAddressMap({ [address.toLowerCase()]: [ETH_ADDRESS] }, store)
+        }
+      })
+    })
+}
+
 export default function balancesMiddleware(store) {
   balancesQueue = new DebouncedQueue(results => {
     const mergedResults = _.merge({}, ...results)
@@ -188,11 +204,6 @@ export default function balancesMiddleware(store) {
         )
         loadBalancesForTokenAddressMap(swapTokenAddressMap, store)
         break
-      case 'GOT_LATEST_BLOCK':
-        const bts = reduceBlockTransactionsToTokenAddressMap(action.block)
-        const blockTokenAddressMap = filterTokenAddressMapByTrackedAddresses(bts, store)
-        loadBalancesForTokenAddressMap(blockTokenAddressMap, store)
-        break
       default:
     }
     next(action)
@@ -205,6 +216,7 @@ export default function balancesMiddleware(store) {
         initializeTrackedAddresses(store)
         break
       case 'CONNECTED_WALLET':
+        initializeETHTracking(store, [getConnectedWalletAddress(store.getState())])
         addConnectedAddressToTrackedAddresses(store)
         break
       case 'TOKENS_LOADED': // since we track all approved tokens for the connected address, we need to check on both CONNECTED_WALLET and TOKENS_LOADED actions
