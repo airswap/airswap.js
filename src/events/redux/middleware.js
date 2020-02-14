@@ -5,6 +5,7 @@ import { selectors as eventSelectors } from './reducers'
 import { getEventId } from '../utils'
 
 import websocketEventTracker from '../websocketEventTracker'
+// TODO: make httpEventTracker selectable via a config in the future, but don't auto-start blockTracker on import
 // import httpsEventTracker from '../eventTracker'
 import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
 import DebouncedQueue from '../../utils/debouncedQueue'
