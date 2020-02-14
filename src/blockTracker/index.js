@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { fetchBlock, fetchCurrentBlockNumber } = require('../utils/gethRead')
 
 class AlchemyWebsocketBlockTracker {
-  constructor(blockMemoryLimit = Number.POSITIVE_INFINITY) {
+  constructor(blockMemoryLimit = 100) {
     this.blockMemoryLimit = blockMemoryLimit
     this.blocks = {}
     this.blockHeaders = {}

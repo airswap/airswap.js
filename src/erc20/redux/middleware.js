@@ -8,7 +8,9 @@ import {
 
 import * as ERC20 from '../index'
 import { getAllAllowancesForConnectedAddress } from '../../deltaBalances/redux/actions'
-import { trackERC20Approval, trackERC20Transfer } from './eventTrackingActions'
+import { trackERC20Approval } from './eventTrackingActions'
+import { trackERC20Transfer } from '../eventListeners'
+
 import { SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
 import { makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 
@@ -60,10 +62,10 @@ export default function walletMiddleware(store) {
         )
         break
       case 'ADD_TRACKED_ADDRESSES':
-        initializeTrackedAddresses(store, [{ address: action.address, tokenAddress: action.tokenAddress }])
+        initializeTrackedAddresses(store, action.trackedAddresses)
         break
       case 'ADD_TRACKED_ADDRESS':
-        initializeTrackedAddresses(store, action.trackedAddresses)
+        initializeTrackedAddresses(store, [{ address: action.address, tokenAddress: action.tokenAddress }])
         break
       case 'APPROVE_TOKEN':
         makeMiddlewareEthersTransactionsFn(approveToken, 'approveToken', store, action, action.tokenAddress)

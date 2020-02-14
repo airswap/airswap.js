@@ -15,7 +15,7 @@ import { getTransactionDescription, getTransactionTextStatus } from '../utils/tr
 import { Quote } from '../swap/tcomb'
 import { LegacyQuote } from '../swapLegacy/tcomb'
 import { getAbis } from '../abis/redux/reducers'
-import { getConnectedOnChainMakerAddresses, getLocatorIntentsFormatted } from '../indexer/redux/selectors'
+import { getLocatorIntentsFormatted } from '../indexer/redux/selectors'
 
 /**
  * @typedef {Object} TransactionHistoryItem
@@ -127,13 +127,7 @@ const getOnAndOffChainIntents = getLocatorIntentsFormatted
 /*
  filters down all indexer intents to only those that have a makerAddress that is router-connected or on-chain
  */
-const getConnectedIndexerIntents = createSelector(
-  getOnAndOffChainIntents,
-  apiSelectors.getFetchedConnectedUsers,
-  getConnectedOnChainMakerAddresses,
-  (intents, connectedMakers, onChainMakers) =>
-    _.filter(intents, ({ makerAddress }) => _.includes([...onChainMakers, ...connectedMakers], makerAddress)),
-)
+const getConnectedIndexerIntents = getOnAndOffChainIntents
 
 /*
  filters down all indexer intents to only those that have a makerAddress that is router-connected

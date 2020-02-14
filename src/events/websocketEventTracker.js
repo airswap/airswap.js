@@ -40,7 +40,7 @@ class EventTracker {
     this.trackedEvents = []
   }
   async trackEvent(event) {
-    const latestBlockNumber = (await fetchLatestBlock()).number
+    const latestBlockNumber = (await fetchLatestBlock()).number - 1
     this.subscribeToEvent(event, latestBlockNumber)
     this.trackedEvents.push(event)
   }

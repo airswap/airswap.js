@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { IS_INSTANT, IS_EXPLORER, SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
+import { IS_INSTANT, IS_EXPLORER } from '../../constants'
 import { makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 import { selectors as eventSelectors } from './reducers'
 import { getEventId } from '../utils'
@@ -7,7 +7,7 @@ import { getEventId } from '../utils'
 import websocketEventTracker from '../websocketEventTracker'
 // TODO: make httpEventTracker selectable via a config in the future, but don't auto-start blockTracker on import
 // import httpsEventTracker from '../eventTracker'
-import { trackSwapSwap, trackSwapCancel } from '../../swap/redux/eventTrackingActions'
+import { trackSwapSwap } from '../../swap/redux/eventTrackingActions'
 import DebouncedQueue from '../../utils/debouncedQueue'
 import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
 
@@ -34,19 +34,7 @@ const initPollExchangeFills = _.once(store => {
     eventTracker.trackEvent(
       trackSwapSwap({
         callback,
-      }),
-    )
-  } else {
-    eventTracker.trackEvent(
-      trackSwapSwap({
-        callback,
-        fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
-      }),
-    )
-    eventTracker.trackEvent(
-      trackSwapCancel({
-        callback,
-        fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
+        ...(IS_EXPLORER ? { backFillBlockCount: 7000 } : {}),
       }),
     )
   }
