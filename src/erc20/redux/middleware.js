@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import uuid from 'uuid4'
 import { getSigner } from '../../wallet/redux/actions'
 import {
@@ -7,8 +8,9 @@ import {
 
 import * as ERC20 from '../index'
 import { getAllAllowancesForConnectedAddress } from '../../deltaBalances/redux/actions'
-import { trackERC20Approval } from './eventTrackingActions'
+import { trackERC20Approval, trackERC20Transfer } from './eventTrackingActions'
 import { SWAP_CONTRACT_DEPLOY_BLOCK } from '../../constants'
+import { makeEventFetchingActionsCreators } from '../../utils/redux/templates/event'
 
 async function approveToken(store, action) {
   const signer = await store.dispatch(getSigner())
@@ -26,6 +28,25 @@ async function unwrapWeth(store, action) {
   return ERC20.unwrapWeth(action.amount, signer)
 }
 
+const trackedAddresses = new Set()
+
+async function initializeTrackedAddresses(store, trackedTokens) {
+  const addresses = _.uniq(trackedTokens.map(({ address }) => address))
+  addresses.forEach(address => {
+    if (!trackedAddresses.has(address)) {
+      trackERC20Transfer({
+        from: address,
+        callback: logs => store.dispatch(makeEventFetchingActionsCreators('erc20Transfers').got(logs)),
+      })
+      trackERC20Transfer({
+        to: address,
+        callback: logs => store.dispatch(makeEventFetchingActionsCreators('erc20Transfers').got(logs)),
+      })
+      trackedAddresses.add(address)
+    }
+  })
+}
+
 export default function walletMiddleware(store) {
   return next => action => {
     next(action)
@@ -37,6 +58,12 @@ export default function walletMiddleware(store) {
             fromBlock: SWAP_CONTRACT_DEPLOY_BLOCK,
           }),
         )
+        break
+      case 'ADD_TRACKED_ADDRESSES':
+        initializeTrackedAddresses(store, [{ address: action.address, tokenAddress: action.tokenAddress }])
+        break
+      case 'ADD_TRACKED_ADDRESS':
+        initializeTrackedAddresses(store, action.trackedAddresses)
         break
       case 'APPROVE_TOKEN':
         makeMiddlewareEthersTransactionsFn(approveToken, 'approveToken', store, action, action.tokenAddress)
