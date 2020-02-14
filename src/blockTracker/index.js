@@ -3,7 +3,8 @@ const _ = require('lodash')
 const { fetchBlock, fetchCurrentBlockNumber } = require('../utils/gethRead')
 
 class AlchemyWebsocketBlockTracker {
-  constructor() {
+  constructor(blockMemoryLimit = Number.POSITIVE_INFINITY) {
+    this.blockMemoryLimit = blockMemoryLimit
     this.blocks = {}
     this.blockHeaders = {}
     this.blockProcessors = []
@@ -16,9 +17,16 @@ class AlchemyWebsocketBlockTracker {
         const block = await fetchBlock(blockHeader.number)
         this.blocks[block.number] = block
         this.blockProcessors.map(processNewBlock => processNewBlock(block))
+        this.manageBlockMemory()
         resolve(true)
       }),
     )
+  }
+  manageBlockMemory() {
+    const oldestBlockNumber = this.getOldestBlockNumber()
+    if (Object.keys(this.blocks).length > this.blockMemoryLimit) {
+      delete this.blocks[oldestBlockNumber]
+    }
   }
   async onBlock(processNewBlock) {
     await this.readyPromise
