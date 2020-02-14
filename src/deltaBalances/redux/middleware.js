@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, alchemyWeb3, httpProvider } from '../../constants'
+import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, alchemyWeb3 } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -141,17 +141,14 @@ function initializeETHTracking(store) {
       }
     })
     .on('data', transaction => {
-      const { from, to, hash, blockNumber } = transaction
+      const { from, to, blockNumber } = transaction
       const walletAddresses = deltaBalancesSelectors.getTrackedWalletAddresses(store.getState())
       const intersection = _.intersection([from, to], walletAddresses)
       // this callback fires once when the transaction is pending, and again when the transaction is mined
       // we check for a blockNumber on the transaction to only fetch new balances after it is mined
       if (intersection.length && blockNumber) {
-        console.log('transaction', transaction)
-        httpProvider.waitForTransaction(hash).then(() => {
-          const tokenAddressMap = _.zipObject(intersection, intersection.map(() => [ETH_ADDRESS]))
-          loadBalancesForTokenAddressMap(tokenAddressMap, store)
-        })
+        const tokenAddressMap = _.zipObject(intersection, intersection.map(() => [ETH_ADDRESS]))
+        loadBalancesForTokenAddressMap(tokenAddressMap, store)
       }
     })
 }
