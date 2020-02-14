@@ -133,23 +133,29 @@ function addConnectedAddressToTrackedAddresses(store) {
   }
 }
 
-function initializeETHTracking(store) {
+const ethBalances = {}
+
+function initializeETHTracking(store, addresses) {
+  addresses.forEach(async address => {
+    ethBalances[address.toLowerCase()] = await alchemyWeb3.eth.getBalance(address)
+  })
   alchemyWeb3.eth
-    .subscribe('alchemy_fullPendingTransactions', error => {
+    .subscribe('newBlockHeaders', error => {
       if (error) {
         throw new Error(error)
       }
     })
-    .on('data', transaction => {
-      const { from, to, blockNumber } = transaction
-      const walletAddresses = deltaBalancesSelectors.getTrackedWalletAddresses(store.getState())
-      const intersection = _.intersection([from, to], walletAddresses)
-      // this callback fires once when the transaction is pending, and again when the transaction is mined
-      // we check for a blockNumber on the transaction to only fetch new balances after it is mined
-      if (intersection.length && blockNumber) {
-        const tokenAddressMap = _.zipObject(intersection, intersection.map(() => [ETH_ADDRESS]))
-        loadBalancesForTokenAddressMap(tokenAddressMap, store)
+    .on('data', () => {
+      // don't check eth balance unless the window is active
+      if (document.hidden) {
+        return
       }
+      addresses.forEach(async address => {
+        const ethBalance = await alchemyWeb3.eth.getBalance(address)
+        if (ethBalance !== ethBalances[address.toLowerCase()]) {
+          loadBalancesForTokenAddressMap({ [address.toLowerCase()]: [ETH_ADDRESS] }, store)
+        }
+      })
     })
 }
 
@@ -210,7 +216,7 @@ export default function balancesMiddleware(store) {
         initializeTrackedAddresses(store)
         break
       case 'CONNECTED_WALLET':
-        initializeETHTracking(store)
+        initializeETHTracking(store, [getConnectedWalletAddress(store.getState())])
         addConnectedAddressToTrackedAddresses(store)
         break
       case 'TOKENS_LOADED': // since we track all approved tokens for the connected address, we need to check on both CONNECTED_WALLET and TOKENS_LOADED actions
