@@ -258,14 +258,19 @@ const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 const BASE_ASSET_TOKEN_ADDRESSES = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return [ETH_ADDRESS, WETH_CONTRACT_ADDRESS, DAI_CONTRACT_ADDRESS]
+      return [
+        ETH_ADDRESS,
+        WETH_CONTRACT_ADDRESS,
+        DAI_CONTRACT_ADDRESS,
+        '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
+      ]
     case MAIN_ID:
       return [
         ETH_ADDRESS,
         WETH_CONTRACT_ADDRESS,
         DAI_CONTRACT_ADDRESS,
         '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359', // 'SAI'
-        '0xb9e31a22e3a1c743c6720f3b723923e91f3c0f8b', // 'USDC'
+        '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // 'USDC'
         '0x0000000000085d4780b73119b644ae5ecd22b376', // 'TUSD'
         '0x00000100f2a2bd000715001920eb70d229700085', // 'TCAD'
         '0x00000000441378008ea67f4284a57932b1c000a5', // 'TGBP'
