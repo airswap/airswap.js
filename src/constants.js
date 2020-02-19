@@ -171,10 +171,8 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const ALCHEMY_RINKEBY_ID =
-  process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID || 'SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
-const ALCHEMY_MAINNET_ID =
-  process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
+const ALCHEMY_RINKEBY_ID = process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID
+const ALCHEMY_MAINNET_ID = process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID
 
 let AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
@@ -185,6 +183,14 @@ let AIRSWAP_GETH_NODE_ADDRESS = (N => {
     default:
   }
 })(NETWORK)
+
+if (process.env.JSON_RPC_URL) {
+  AIRSWAP_GETH_NODE_ADDRESS = process.env.JSON_RPC_URL
+}
+
+if (process.env.REACT_APP_JSON_RPC_URL) {
+  AIRSWAP_GETH_NODE_ADDRESS = process.env.REACT_APP_JSON_RPC_URL
+}
 
 if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
   AIRSWAP_GETH_NODE_ADDRESS = 'http://localhost:8545'
