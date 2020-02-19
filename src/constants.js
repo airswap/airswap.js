@@ -186,6 +186,14 @@ let AIRSWAP_GETH_NODE_ADDRESS = (N => {
   }
 })(NETWORK)
 
+if (process.env.JSON_RPC_URL) {
+  AIRSWAP_GETH_NODE_ADDRESS = process.env.JSON_RPC_URL
+}
+
+if (process.env.REACT_APP_JSON_RPC_URL) {
+  AIRSWAP_GETH_NODE_ADDRESS = process.env.REACT_APP_JSON_RPC_URL
+}
+
 if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
   AIRSWAP_GETH_NODE_ADDRESS = 'http://localhost:8545'
 }
