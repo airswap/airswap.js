@@ -312,23 +312,23 @@ const makeGetBestOrder = createSelector(
 
       const takerTokenSwapApproval = _.get(connectedSwapApprovals, bestOrder.takerToken, false)
 
-      const wrapperApprovals =
-        baseToken === ETH_ADDRESS
-          ? [
-              {
-                id: 'wrapperDelegateApproval',
-                payload: submitEthWrapperAuthorize(),
-                approved: connectedWrapperDelegateApproval,
-                isMining: miningWrapperDelegateApproval,
-              },
-              {
-                id: 'wrapperWethApproval',
-                payload: approveWrapperWethToken(),
-                approved: connectedWrapperWethApproval,
-                isMining: miningWrapperWethApproval,
-              },
-            ]
-          : []
+      const wrapperApprovals = []
+      if (baseToken === ETH_ADDRESS) {
+        wrapperApprovals.push({
+          id: 'wrapperDelegateApproval',
+          payload: submitEthWrapperAuthorize(),
+          approved: connectedWrapperDelegateApproval,
+          isMining: miningWrapperDelegateApproval,
+        })
+        if (bestOrder.takerToken !== WETH_CONTRACT_ADDRESS) {
+          wrapperApprovals.push({
+            id: 'wrapperWethApproval',
+            payload: approveWrapperWethToken(),
+            approved: connectedWrapperWethApproval,
+            isMining: miningWrapperWethApproval,
+          })
+        }
+      }
 
       missingApprovals = [
         {
