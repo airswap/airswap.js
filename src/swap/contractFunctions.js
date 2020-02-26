@@ -31,37 +31,38 @@ function getSwapSignerNonceStatus(signer, nonce) {
   return contract.signerNonceStatus(signer, nonce)
 }
 
-function submitSwap(order, signer, options) {
+function submitSwap(order, signer, options = {}) {
   const contract = getSwapContract(signer)
+
   return contract.swap(order, { ...options })
 }
 
-function submitSwapCancel(nonces, signer, options) {
+function submitSwapCancel(nonces, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.cancel(nonces, { ...options })
 }
 
-function submitSwapCancelUpTo(minimumNonce, signer, options) {
+function submitSwapCancelUpTo(minimumNonce, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.cancelUpTo(minimumNonce, { ...options })
 }
 
-function submitSwapAuthorizeSender(authorizedSender, signer, options) {
+function submitSwapAuthorizeSender(authorizedSender, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.authorizeSender(authorizedSender, { ...options })
 }
 
-function submitSwapAuthorizeSigner(authorizedSigner, signer, options) {
+function submitSwapAuthorizeSigner(authorizedSigner, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.authorizeSigner(authorizedSigner, { ...options })
 }
 
-function submitSwapRevokeSender(authorizedSender, signer, options) {
+function submitSwapRevokeSender(authorizedSender, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.revokeSender(authorizedSender, { ...options })
 }
 
-function submitSwapRevokeSigner(authorizedSigner, signer, options) {
+function submitSwapRevokeSigner(authorizedSigner, signer, options = {}) {
   const contract = getSwapContract(signer)
   return contract.revokeSigner(authorizedSigner, { ...options })
 }

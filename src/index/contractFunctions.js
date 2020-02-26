@@ -26,27 +26,27 @@ function getIndexOwner(contractAddress) {
   return contract.owner()
 }
 
-function submitIndexRenounceOwnership(contractAddress, signer, options) {
+function submitIndexRenounceOwnership(contractAddress, signer, options = {}) {
   const contract = getIndexContract(signer, contractAddress)
   return contract.renounceOwnership({ ...options })
 }
 
-function submitIndexTransferOwnership(contractAddress, newOwner, signer, options) {
+function submitIndexTransferOwnership(contractAddress, newOwner, signer, options = {}) {
   const contract = getIndexContract(signer, contractAddress)
   return contract.transferOwnership(newOwner, { ...options })
 }
 
-function submitIndexSetLocator(contractAddress, identifier, score, locator, signer, options) {
+function submitIndexSetLocator(contractAddress, identifier, score, locator, signer, options = {}) {
   const contract = getIndexContract(signer, contractAddress)
   return contract.setLocator(identifier, score, locator, { ...options })
 }
 
-function submitIndexUnsetLocator(contractAddress, identifier, signer, options) {
+function submitIndexUnsetLocator(contractAddress, identifier, signer, options = {}) {
   const contract = getIndexContract(signer, contractAddress)
   return contract.unsetLocator(identifier, { ...options })
 }
 
-function submitIndexUpdateLocator(contractAddress, identifier, score, locator, signer, options) {
+function submitIndexUpdateLocator(contractAddress, identifier, score, locator, signer, options = {}) {
   const contract = getIndexContract(signer, contractAddress)
   return contract.updateLocator(identifier, score, locator, { ...options })
 }

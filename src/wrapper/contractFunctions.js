@@ -16,12 +16,12 @@ function getWrapperWethContract() {
   return contract.wethContract()
 }
 
-function submitWrapperSwap(ethAmount, order, signer, options) {
+function submitWrapperSwap(ethAmount, order, signer, options = {}) {
   const contract = getWrapperContract(signer)
   return contract.swap(order, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
-function submitWrapperProvideDelegateOrder(ethAmount, order, delegate, signer, options) {
+function submitWrapperProvideDelegateOrder(ethAmount, order, delegate, signer, options = {}) {
   const contract = getWrapperContract(signer)
   return contract.provideDelegateOrder(order, delegate, {
     ...options,

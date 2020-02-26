@@ -13,7 +13,7 @@ function buildContractFunctionParams(inputs, type, payable, contractKey) {
 
   if (type === 'transaction') {
     parameters.push('signer')
-    parameters.push('options')
+    parameters.push('options = {}')
   }
   if (payable) {
     parameters = ['ethAmount', ...parameters]
