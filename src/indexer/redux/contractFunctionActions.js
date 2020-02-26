@@ -39,9 +39,10 @@ export const fetchIndexerOwner = () => dispatch =>
     }),
   )
 
-export const submitIndexerRenounceOwnership = () => dispatch =>
+export const submitIndexerRenounceOwnership = ({ options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
+      options,
       type: 'SUBMIT_INDEXER_RENOUNCE_OWNERSHIP',
       resolve,
       reject,
@@ -67,60 +68,72 @@ export const fetchIndexerTokenBlacklist = ({ token }) => dispatch =>
     }),
   )
 
-export const submitIndexerTransferOwnership = ({ newOwner }) => dispatch =>
+export const submitIndexerTransferOwnership = ({ newOwner, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       newOwner,
+      options,
       type: 'SUBMIT_INDEXER_TRANSFER_OWNERSHIP',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerSetLocatorWhitelist = ({ protocol, newLocatorWhitelist }) => dispatch =>
+export const submitIndexerSetLocatorWhitelist = ({ protocol, newLocatorWhitelist, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       protocol,
       newLocatorWhitelist,
+      options,
       type: 'SUBMIT_INDEXER_SET_LOCATOR_WHITELIST',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerCreateIndex = ({ signerToken, senderToken, protocol }) => dispatch =>
+export const submitIndexerCreateIndex = ({ signerToken, senderToken, protocol, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       signerToken,
       senderToken,
       protocol,
+      options,
       type: 'SUBMIT_INDEXER_CREATE_INDEX',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerAddTokenToBlacklist = ({ token }) => dispatch =>
+export const submitIndexerAddTokenToBlacklist = ({ token, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       token,
+      options,
       type: 'SUBMIT_INDEXER_ADD_TOKEN_TO_BLACKLIST',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerRemoveTokenFromBlacklist = ({ token }) => dispatch =>
+export const submitIndexerRemoveTokenFromBlacklist = ({ token, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       token,
+      options,
       type: 'SUBMIT_INDEXER_REMOVE_TOKEN_FROM_BLACKLIST',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerSetIntent = ({ signerToken, senderToken, protocol, stakingAmount, locator }) => dispatch =>
+export const submitIndexerSetIntent = ({
+  signerToken,
+  senderToken,
+  protocol,
+  stakingAmount,
+  locator,
+  options,
+}) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       signerToken,
@@ -128,18 +141,20 @@ export const submitIndexerSetIntent = ({ signerToken, senderToken, protocol, sta
       protocol,
       stakingAmount,
       locator,
+      options,
       type: 'SUBMIT_INDEXER_SET_INTENT',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexerUnsetIntent = ({ signerToken, senderToken, protocol }) => dispatch =>
+export const submitIndexerUnsetIntent = ({ signerToken, senderToken, protocol, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       signerToken,
       senderToken,
       protocol,
+      options,
       type: 'SUBMIT_INDEXER_UNSET_INTENT',
       resolve,
       reject,

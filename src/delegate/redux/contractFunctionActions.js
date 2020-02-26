@@ -39,10 +39,11 @@ export const fetchDelegateProtocol = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitDelegateRenounceOwnership = ({ contractAddress }) => dispatch =>
+export const submitDelegateRenounceOwnership = ({ contractAddress, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
+      options,
       type: 'SUBMIT_DELEGATE_RENOUNCE_OWNERSHIP',
       resolve,
       reject,
@@ -81,11 +82,12 @@ export const fetchDelegateTradeWallet = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitDelegateTransferOwnership = ({ contractAddress, newOwner }) => dispatch =>
+export const submitDelegateTransferOwnership = ({ contractAddress, newOwner, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       newOwner,
+      options,
       type: 'SUBMIT_DELEGATE_TRANSFER_OWNERSHIP',
       resolve,
       reject,
@@ -99,6 +101,7 @@ export const submitDelegateSetRule = ({
   maxSenderAmount,
   priceCoef,
   priceExp,
+  options,
 }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
@@ -108,18 +111,20 @@ export const submitDelegateSetRule = ({
       maxSenderAmount,
       priceCoef,
       priceExp,
+      options,
       type: 'SUBMIT_DELEGATE_SET_RULE',
       resolve,
       reject,
     }),
   )
 
-export const submitDelegateUnsetRule = ({ contractAddress, senderToken, signerToken }) => dispatch =>
+export const submitDelegateUnsetRule = ({ contractAddress, senderToken, signerToken, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       senderToken,
       signerToken,
+      options,
       type: 'SUBMIT_DELEGATE_UNSET_RULE',
       resolve,
       reject,
@@ -132,6 +137,7 @@ export const submitDelegateSetRuleAndIntent = ({
   signerToken,
   rule,
   newStakeAmount,
+  options,
 }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
@@ -140,40 +146,44 @@ export const submitDelegateSetRuleAndIntent = ({
       signerToken,
       rule,
       newStakeAmount,
+      options,
       type: 'SUBMIT_DELEGATE_SET_RULE_AND_INTENT',
       resolve,
       reject,
     }),
   )
 
-export const submitDelegateUnsetRuleAndIntent = ({ contractAddress, senderToken, signerToken }) => dispatch =>
+export const submitDelegateUnsetRuleAndIntent = ({ contractAddress, senderToken, signerToken, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       senderToken,
       signerToken,
+      options,
       type: 'SUBMIT_DELEGATE_UNSET_RULE_AND_INTENT',
       resolve,
       reject,
     }),
   )
 
-export const submitDelegateProvideOrder = ({ contractAddress, order }) => dispatch =>
+export const submitDelegateProvideOrder = ({ contractAddress, order, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       order,
+      options,
       type: 'SUBMIT_DELEGATE_PROVIDE_ORDER',
       resolve,
       reject,
     }),
   )
 
-export const submitDelegateSetTradeWallet = ({ contractAddress, newTradeWallet }) => dispatch =>
+export const submitDelegateSetTradeWallet = ({ contractAddress, newTradeWallet, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       newTradeWallet,
+      options,
       type: 'SUBMIT_DELEGATE_SET_TRADE_WALLET',
       resolve,
       reject,

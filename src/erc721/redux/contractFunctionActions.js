@@ -32,25 +32,27 @@ export const fetchERC721OwnerOf = ({ contractAddress, tokenId }) => dispatch =>
     }),
   )
 
-export const submitERC721TransferFrom = ({ contractAddress, from, to, tokenId }) => dispatch =>
+export const submitERC721TransferFrom = ({ contractAddress, from, to, tokenId, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       from,
       to,
       tokenId,
+      options,
       type: 'SUBMIT_ERC_721_TRANSFER_FROM',
       resolve,
       reject,
     }),
   )
 
-export const submitERC721Approve = ({ contractAddress, to, tokenId }) => dispatch =>
+export const submitERC721Approve = ({ contractAddress, to, tokenId, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       to,
       tokenId,
+      options,
       type: 'SUBMIT_ERC_721_APPROVE',
       resolve,
       reject,
@@ -68,12 +70,13 @@ export const fetchERC721GetApproved = ({ contractAddress, tokenId }) => dispatch
     }),
   )
 
-export const submitERC721SetApprovalForAll = ({ contractAddress, operator, _approved }) => dispatch =>
+export const submitERC721SetApprovalForAll = ({ contractAddress, operator, _approved, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       operator,
       _approved,
+      options,
       type: 'SUBMIT_ERC_721_SET_APPROVAL_FOR_ALL',
       resolve,
       reject,
@@ -103,13 +106,14 @@ export const fetchERC721KittyIndexToApproved = ({ contractAddress, tokenId }) =>
     }),
   )
 
-export const submitERC721SafeTransferFrom = ({ contractAddress, from, to, tokenId }) => dispatch =>
+export const submitERC721SafeTransferFrom = ({ contractAddress, from, to, tokenId, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       from,
       to,
       tokenId,
+      options,
       type: 'SUBMIT_ERC_721_SAFE_TRANSFER_FROM',
       resolve,
       reject,

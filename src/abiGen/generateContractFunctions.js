@@ -10,8 +10,10 @@ function getInputNames(inputs) {
 function buildContractFunctionParams(inputs, type, payable, contractKey) {
   const inputNames = getInputNames(inputs)
   let parameters = inputNames
+
   if (type === 'transaction') {
     parameters.push('signer')
+    parameters.push('options')
   }
   if (payable) {
     parameters = ['ethAmount', ...parameters]
@@ -24,6 +26,14 @@ function buildContractFunctionParams(inputs, type, payable, contractKey) {
   return parameters
 }
 
+function generateEthersTransactionOptions(payable, type) {
+  if (type === 'transaction') {
+    const payableString = payable ? " value: ethers.utils.bigNumberify(ethAmount || '0')" : ''
+    return `{ ...options, ${payableString} }`
+  }
+  return ''
+}
+
 function generateContractFunctions(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`../${abiLocation}`)
   const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
@@ -34,12 +44,11 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
     const lastParamContractAddress = contractKey ? '' : ', contractAddress'
     const functionName = getContractFunctionName(type, name, eventNamespace)
     const inputNames = getInputNames(inputs)
-    const innerParamEthAmount = !payable
-      ? ''
-      : `${inputNames.length ? ', ' : ''}{ value: ethers.utils.bigNumberify(ethAmount || '0') }`
+
+    const options = `${inputNames.length ? ', ' : ''}${generateEthersTransactionOptions(payable, type)}`
     return `function ${functionName}(${functionArgs}) {
   const contract = get${_.upperFirst(eventNamespace)}Contract(${getContract}${lastParamContractAddress})
-  return contract.${name}(${inputNames.join(', ')}${innerParamEthAmount})
+  return contract.${name}(${inputNames.join(', ')}${options})
 }
 `
   })

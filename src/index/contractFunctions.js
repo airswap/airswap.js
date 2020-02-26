@@ -26,29 +26,29 @@ function getIndexOwner(contractAddress) {
   return contract.owner()
 }
 
-function submitIndexRenounceOwnership(contractAddress, signer) {
+function submitIndexRenounceOwnership(contractAddress, signer, options) {
   const contract = getIndexContract(signer, contractAddress)
-  return contract.renounceOwnership()
+  return contract.renounceOwnership({ ...options })
 }
 
-function submitIndexTransferOwnership(contractAddress, newOwner, signer) {
+function submitIndexTransferOwnership(contractAddress, newOwner, signer, options) {
   const contract = getIndexContract(signer, contractAddress)
-  return contract.transferOwnership(newOwner)
+  return contract.transferOwnership(newOwner, { ...options })
 }
 
-function submitIndexSetLocator(contractAddress, identifier, score, locator, signer) {
+function submitIndexSetLocator(contractAddress, identifier, score, locator, signer, options) {
   const contract = getIndexContract(signer, contractAddress)
-  return contract.setLocator(identifier, score, locator)
+  return contract.setLocator(identifier, score, locator, { ...options })
 }
 
-function submitIndexUnsetLocator(contractAddress, identifier, signer) {
+function submitIndexUnsetLocator(contractAddress, identifier, signer, options) {
   const contract = getIndexContract(signer, contractAddress)
-  return contract.unsetLocator(identifier)
+  return contract.unsetLocator(identifier, { ...options })
 }
 
-function submitIndexUpdateLocator(contractAddress, identifier, score, locator, signer) {
+function submitIndexUpdateLocator(contractAddress, identifier, score, locator, signer, options) {
   const contract = getIndexContract(signer, contractAddress)
-  return contract.updateLocator(identifier, score, locator)
+  return contract.updateLocator(identifier, score, locator, { ...options })
 }
 
 function getIndexGetScore(contractAddress, identifier) {

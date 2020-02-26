@@ -31,6 +31,7 @@ export default function ERC20Middleware(store) {
             action.spender,
             action.value,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -68,6 +69,7 @@ export default function ERC20Middleware(store) {
             action.to,
             action.value,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -157,6 +159,7 @@ export default function ERC20Middleware(store) {
             action.to,
             action.value,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -178,6 +181,7 @@ export default function ERC20Middleware(store) {
             action.value,
             action.extraData,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

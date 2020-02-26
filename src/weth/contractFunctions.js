@@ -11,9 +11,9 @@ function getWethName() {
   return contract.name()
 }
 
-function submitWethApprove(spender, amount, signer) {
+function submitWethApprove(spender, amount, signer, options) {
   const contract = getWethContract(signer)
-  return contract.approve(spender, amount)
+  return contract.approve(spender, amount, { ...options })
 }
 
 function getWethTotalSupply() {
@@ -21,14 +21,14 @@ function getWethTotalSupply() {
   return contract.totalSupply()
 }
 
-function submitWethTransferFrom(from, to, amount, signer) {
+function submitWethTransferFrom(from, to, amount, signer, options) {
   const contract = getWethContract(signer)
-  return contract.transferFrom(from, to, amount)
+  return contract.transferFrom(from, to, amount, { ...options })
 }
 
-function submitWethWithdraw(amount, signer) {
+function submitWethWithdraw(amount, signer, options) {
   const contract = getWethContract(signer)
-  return contract.withdraw(amount)
+  return contract.withdraw(amount, { ...options })
 }
 
 function getWethDecimals() {
@@ -46,14 +46,14 @@ function getWethSymbol() {
   return contract.symbol()
 }
 
-function submitWethTransfer(to, amount, signer) {
+function submitWethTransfer(to, amount, signer, options) {
   const contract = getWethContract(signer)
-  return contract.transfer(to, amount)
+  return contract.transfer(to, amount, { ...options })
 }
 
-function submitWethDeposit(ethAmount, signer) {
+function submitWethDeposit(ethAmount, signer, options) {
   const contract = getWethContract(signer)
-  return contract.deposit({ value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.deposit({ ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
 function getWethAllowance(owner, spender) {
