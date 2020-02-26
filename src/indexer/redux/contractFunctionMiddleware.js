@@ -76,7 +76,7 @@ export default function indexerMiddleware(store) {
         break
       case 'SUBMIT_INDEXER_RENOUNCE_OWNERSHIP':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerRenounceOwnership(signer)
+          const contractFunctionPromise = contractFunctions.submitIndexerRenounceOwnership(signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -121,7 +121,11 @@ export default function indexerMiddleware(store) {
         break
       case 'SUBMIT_INDEXER_TRANSFER_OWNERSHIP':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerTransferOwnership(action.newOwner, signer)
+          const contractFunctionPromise = contractFunctions.submitIndexerTransferOwnership(
+            action.newOwner,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -140,6 +144,7 @@ export default function indexerMiddleware(store) {
             action.protocol,
             action.newLocatorWhitelist,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -160,6 +165,7 @@ export default function indexerMiddleware(store) {
             action.senderToken,
             action.protocol,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -175,7 +181,11 @@ export default function indexerMiddleware(store) {
         break
       case 'SUBMIT_INDEXER_ADD_TOKEN_TO_BLACKLIST':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerAddTokenToBlacklist(action.token, signer)
+          const contractFunctionPromise = contractFunctions.submitIndexerAddTokenToBlacklist(
+            action.token,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -190,7 +200,11 @@ export default function indexerMiddleware(store) {
         break
       case 'SUBMIT_INDEXER_REMOVE_TOKEN_FROM_BLACKLIST':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexerRemoveTokenFromBlacklist(action.token, signer)
+          const contractFunctionPromise = contractFunctions.submitIndexerRemoveTokenFromBlacklist(
+            action.token,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -212,6 +226,7 @@ export default function indexerMiddleware(store) {
             action.stakingAmount,
             action.locator,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -238,6 +253,7 @@ export default function indexerMiddleware(store) {
             action.senderToken,
             action.protocol,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

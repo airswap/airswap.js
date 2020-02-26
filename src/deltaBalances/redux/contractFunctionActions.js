@@ -21,9 +21,10 @@ export const fetchDeltaBalancesTokenBalance = ({ user, token }) => dispatch =>
     }),
   )
 
-export const submitDeltaBalancesDestruct = () => dispatch =>
+export const submitDeltaBalancesDestruct = ({ options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
+      options,
       type: 'SUBMIT_DELTA_BALANCES_DESTRUCT',
       resolve,
       reject,
@@ -42,9 +43,10 @@ export const fetchDeltaBalancesWalletAllowances = ({ user, spender, tokens }) =>
     }),
   )
 
-export const submitDeltaBalancesWithdraw = () => dispatch =>
+export const submitDeltaBalancesWithdraw = ({ options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
+      options,
       type: 'SUBMIT_DELTA_BALANCES_WITHDRAW',
       resolve,
       reject,
@@ -74,11 +76,12 @@ export const fetchDeltaBalancesTokenAllowance = ({ user, spender, token }) => di
     }),
   )
 
-export const submitDeltaBalancesWithdrawToken = ({ token, amount }) => dispatch =>
+export const submitDeltaBalancesWithdrawToken = ({ token, amount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       token,
       amount,
+      options,
       type: 'SUBMIT_DELTA_BALANCES_WITHDRAW_TOKEN',
       resolve,
       reject,
@@ -117,10 +120,11 @@ export const fetchDeltaBalancesAdmin = () => dispatch =>
     }),
   )
 
-export const submitDeltaBalancesConstructor = ({ _deployer }) => dispatch =>
+export const submitDeltaBalancesConstructor = ({ _deployer, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       _deployer,
+      options,
       type: 'SUBMIT_DELTA_BALANCES_CONSTRUCTOR',
       resolve,
       reject,

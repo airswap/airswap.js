@@ -26,9 +26,9 @@ function getIndexerOwner() {
   return contract.owner()
 }
 
-function submitIndexerRenounceOwnership(signer) {
+function submitIndexerRenounceOwnership(signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.renounceOwnership()
+  return contract.renounceOwnership({ ...options })
 }
 
 function getIndexerStakingToken() {
@@ -41,39 +41,39 @@ function getIndexerTokenBlacklist(token) {
   return contract.tokenBlacklist(token)
 }
 
-function submitIndexerTransferOwnership(newOwner, signer) {
+function submitIndexerTransferOwnership(newOwner, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.transferOwnership(newOwner)
+  return contract.transferOwnership(newOwner, { ...options })
 }
 
-function submitIndexerSetLocatorWhitelist(protocol, newLocatorWhitelist, signer) {
+function submitIndexerSetLocatorWhitelist(protocol, newLocatorWhitelist, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.setLocatorWhitelist(protocol, newLocatorWhitelist)
+  return contract.setLocatorWhitelist(protocol, newLocatorWhitelist, { ...options })
 }
 
-function submitIndexerCreateIndex(signerToken, senderToken, protocol, signer) {
+function submitIndexerCreateIndex(signerToken, senderToken, protocol, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.createIndex(signerToken, senderToken, protocol)
+  return contract.createIndex(signerToken, senderToken, protocol, { ...options })
 }
 
-function submitIndexerAddTokenToBlacklist(token, signer) {
+function submitIndexerAddTokenToBlacklist(token, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.addTokenToBlacklist(token)
+  return contract.addTokenToBlacklist(token, { ...options })
 }
 
-function submitIndexerRemoveTokenFromBlacklist(token, signer) {
+function submitIndexerRemoveTokenFromBlacklist(token, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.removeTokenFromBlacklist(token)
+  return contract.removeTokenFromBlacklist(token, { ...options })
 }
 
-function submitIndexerSetIntent(signerToken, senderToken, protocol, stakingAmount, locator, signer) {
+function submitIndexerSetIntent(signerToken, senderToken, protocol, stakingAmount, locator, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.setIntent(signerToken, senderToken, protocol, stakingAmount, locator)
+  return contract.setIntent(signerToken, senderToken, protocol, stakingAmount, locator, { ...options })
 }
 
-function submitIndexerUnsetIntent(signerToken, senderToken, protocol, signer) {
+function submitIndexerUnsetIntent(signerToken, senderToken, protocol, signer, options) {
   const contract = getIndexerContract(signer)
-  return contract.unsetIntent(signerToken, senderToken, protocol)
+  return contract.unsetIntent(signerToken, senderToken, protocol, { ...options })
 }
 
 function getIndexerGetLocators(signerToken, senderToken, protocol, cursor, limit) {

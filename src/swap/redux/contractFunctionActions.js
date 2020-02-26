@@ -51,70 +51,77 @@ export const fetchSwapSignerNonceStatus = ({ signer, nonce }) => dispatch =>
     }),
   )
 
-export const submitSwap = ({ order }) => dispatch =>
+export const submitSwap = ({ order, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       order,
+      options,
       type: 'SUBMIT_SWAP',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapCancel = ({ nonces }) => dispatch =>
+export const submitSwapCancel = ({ nonces, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       nonces,
+      options,
       type: 'SUBMIT_SWAP_CANCEL',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapCancelUpTo = ({ minimumNonce }) => dispatch =>
+export const submitSwapCancelUpTo = ({ minimumNonce, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       minimumNonce,
+      options,
       type: 'SUBMIT_SWAP_CANCEL_UP_TO',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapAuthorizeSender = ({ authorizedSender }) => dispatch =>
+export const submitSwapAuthorizeSender = ({ authorizedSender, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       authorizedSender,
+      options,
       type: 'SUBMIT_SWAP_AUTHORIZE_SENDER',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapAuthorizeSigner = ({ authorizedSigner }) => dispatch =>
+export const submitSwapAuthorizeSigner = ({ authorizedSigner, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       authorizedSigner,
+      options,
       type: 'SUBMIT_SWAP_AUTHORIZE_SIGNER',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapRevokeSender = ({ authorizedSender }) => dispatch =>
+export const submitSwapRevokeSender = ({ authorizedSender, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       authorizedSender,
+      options,
       type: 'SUBMIT_SWAP_REVOKE_SENDER',
       resolve,
       reject,
     }),
   )
 
-export const submitSwapRevokeSigner = ({ authorizedSigner }) => dispatch =>
+export const submitSwapRevokeSigner = ({ authorizedSigner, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       authorizedSigner,
+      options,
       type: 'SUBMIT_SWAP_REVOKE_SIGNER',
       resolve,
       reject,

@@ -25,7 +25,12 @@ export default function wethMiddleware(store) {
         break
       case 'SUBMIT_WETH_APPROVE':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWethApprove(action.spender, action.amount, signer)
+          const contractFunctionPromise = contractFunctions.submitWethApprove(
+            action.spender,
+            action.amount,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -60,6 +65,7 @@ export default function wethMiddleware(store) {
             action.to,
             action.amount,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -75,7 +81,7 @@ export default function wethMiddleware(store) {
         break
       case 'SUBMIT_WETH_WITHDRAW':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWethWithdraw(action.amount, signer)
+          const contractFunctionPromise = contractFunctions.submitWethWithdraw(action.amount, signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -136,7 +142,12 @@ export default function wethMiddleware(store) {
         break
       case 'SUBMIT_WETH_TRANSFER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWethTransfer(action.to, action.amount, signer)
+          const contractFunctionPromise = contractFunctions.submitWethTransfer(
+            action.to,
+            action.amount,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -151,7 +162,7 @@ export default function wethMiddleware(store) {
         break
       case 'SUBMIT_WETH_DEPOSIT':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWethDeposit(action.ethAmount, signer)
+          const contractFunctionPromise = contractFunctions.submitWethDeposit(action.ethAmount, signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',

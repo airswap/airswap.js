@@ -42,7 +42,7 @@ export default function deltaBalancesMiddleware(store) {
         break
       case 'SUBMIT_DELTA_BALANCES_DESTRUCT':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitDeltaBalancesDestruct(signer)
+          const contractFunctionPromise = contractFunctions.submitDeltaBalancesDestruct(signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -72,7 +72,7 @@ export default function deltaBalancesMiddleware(store) {
         break
       case 'SUBMIT_DELTA_BALANCES_WITHDRAW':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitDeltaBalancesWithdraw(signer)
+          const contractFunctionPromise = contractFunctions.submitDeltaBalancesWithdraw(signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -122,6 +122,7 @@ export default function deltaBalancesMiddleware(store) {
             action.token,
             action.amount,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -184,7 +185,11 @@ export default function deltaBalancesMiddleware(store) {
         break
       case 'SUBMIT_DELTA_BALANCES_CONSTRUCTOR':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitDeltaBalancesConstructor(action._deployer, signer)
+          const contractFunctionPromise = contractFunctions.submitDeltaBalancesConstructor(
+            action._deployer,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',

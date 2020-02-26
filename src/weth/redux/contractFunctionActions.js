@@ -8,11 +8,12 @@ export const fetchWethName = () => dispatch =>
     }),
   )
 
-export const submitWethApprove = ({ spender, amount }) => dispatch =>
+export const submitWethApprove = ({ spender, amount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       spender,
       amount,
+      options,
       type: 'SUBMIT_WETH_APPROVE',
       resolve,
       reject,
@@ -28,22 +29,24 @@ export const fetchWethTotalSupply = () => dispatch =>
     }),
   )
 
-export const submitWethTransferFrom = ({ from, to, amount }) => dispatch =>
+export const submitWethTransferFrom = ({ from, to, amount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       from,
       to,
       amount,
+      options,
       type: 'SUBMIT_WETH_TRANSFER_FROM',
       resolve,
       reject,
     }),
   )
 
-export const submitWethWithdraw = ({ amount }) => dispatch =>
+export const submitWethWithdraw = ({ amount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       amount,
+      options,
       type: 'SUBMIT_WETH_WITHDRAW',
       resolve,
       reject,
@@ -78,21 +81,23 @@ export const fetchWethSymbol = () => dispatch =>
     }),
   )
 
-export const submitWethTransfer = ({ to, amount }) => dispatch =>
+export const submitWethTransfer = ({ to, amount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       to,
       amount,
+      options,
       type: 'SUBMIT_WETH_TRANSFER',
       resolve,
       reject,
     }),
   )
 
-export const submitWethDeposit = ({ ethAmount }) => dispatch =>
+export const submitWethDeposit = ({ ethAmount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       ethAmount,
+      options,
       type: 'SUBMIT_WETH_DEPOSIT',
       resolve,
       reject,

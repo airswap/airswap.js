@@ -40,7 +40,12 @@ export default function wrapperMiddleware(store) {
         break
       case 'SUBMIT_WRAPPER_SWAP':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitWrapperSwap(action.ethAmount, action.order, signer)
+          const contractFunctionPromise = contractFunctions.submitWrapperSwap(
+            action.ethAmount,
+            action.order,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -60,6 +65,7 @@ export default function wrapperMiddleware(store) {
             action.order,
             action.delegate,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

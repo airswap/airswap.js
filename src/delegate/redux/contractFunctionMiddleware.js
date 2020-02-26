@@ -77,6 +77,7 @@ export default function delegateMiddleware(store) {
           const contractFunctionPromise = contractFunctions.submitDelegateRenounceOwnership(
             action.contractAddress,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -148,6 +149,7 @@ export default function delegateMiddleware(store) {
             action.contractAddress,
             action.newOwner,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -171,6 +173,7 @@ export default function delegateMiddleware(store) {
             action.priceCoef,
             action.priceExp,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -198,6 +201,7 @@ export default function delegateMiddleware(store) {
             action.senderToken,
             action.signerToken,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -224,6 +228,7 @@ export default function delegateMiddleware(store) {
             action.rule,
             action.newStakeAmount,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -250,6 +255,7 @@ export default function delegateMiddleware(store) {
             action.senderToken,
             action.signerToken,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -273,6 +279,7 @@ export default function delegateMiddleware(store) {
             action.contractAddress,
             action.order,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -292,6 +299,7 @@ export default function delegateMiddleware(store) {
             action.contractAddress,
             action.newTradeWallet,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

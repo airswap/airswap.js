@@ -19,8 +19,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
         return async function(...args) {
           const transactionArguments = startWalletAction ? (await startWalletAction(propKey, args)) || {} : {}
           const [tx, ...rest] = args
-
-          const result = target[propKey].apply(this, [{ ...tx, ...transactionArguments }, ...rest])
+          const result = target[propKey].apply(this, [{ ...transactionArguments, ...tx }, ...rest])
           result.finally(() => finishWalletAction && finishWalletAction(propKey, args))
           return result
         }

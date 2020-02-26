@@ -40,58 +40,63 @@ export const fetchIndexOwner = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitIndexRenounceOwnership = ({ contractAddress }) => dispatch =>
+export const submitIndexRenounceOwnership = ({ contractAddress, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
+      options,
       type: 'SUBMIT_INDEX_RENOUNCE_OWNERSHIP',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexTransferOwnership = ({ contractAddress, newOwner }) => dispatch =>
+export const submitIndexTransferOwnership = ({ contractAddress, newOwner, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       newOwner,
+      options,
       type: 'SUBMIT_INDEX_TRANSFER_OWNERSHIP',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexSetLocator = ({ contractAddress, identifier, score, locator }) => dispatch =>
+export const submitIndexSetLocator = ({ contractAddress, identifier, score, locator, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       identifier,
       score,
       locator,
+      options,
       type: 'SUBMIT_INDEX_SET_LOCATOR',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexUnsetLocator = ({ contractAddress, identifier }) => dispatch =>
+export const submitIndexUnsetLocator = ({ contractAddress, identifier, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       identifier,
+      options,
       type: 'SUBMIT_INDEX_UNSET_LOCATOR',
       resolve,
       reject,
     }),
   )
 
-export const submitIndexUpdateLocator = ({ contractAddress, identifier, score, locator }) => dispatch =>
+export const submitIndexUpdateLocator = ({ contractAddress, identifier, score, locator, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       identifier,
       score,
       locator,
+      options,
       type: 'SUBMIT_INDEX_UPDATE_LOCATOR',
       resolve,
       reject,

@@ -74,7 +74,11 @@ export default function indexMiddleware(store) {
         break
       case 'SUBMIT_INDEX_RENOUNCE_OWNERSHIP':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitIndexRenounceOwnership(action.contractAddress, signer)
+          const contractFunctionPromise = contractFunctions.submitIndexRenounceOwnership(
+            action.contractAddress,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -93,6 +97,7 @@ export default function indexMiddleware(store) {
             action.contractAddress,
             action.newOwner,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -114,6 +119,7 @@ export default function indexMiddleware(store) {
             action.score,
             action.locator,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -138,6 +144,7 @@ export default function indexMiddleware(store) {
             action.contractAddress,
             action.identifier,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -159,6 +166,7 @@ export default function indexMiddleware(store) {
             action.score,
             action.locator,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

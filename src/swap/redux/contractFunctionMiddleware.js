@@ -89,7 +89,7 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwap(action.order, signer)
+          const contractFunctionPromise = contractFunctions.submitSwap(action.order, signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -104,7 +104,7 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_CANCEL':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapCancel(action.nonces, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapCancel(action.nonces, signer, action.options)
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -119,7 +119,11 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_CANCEL_UP_TO':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapCancelUpTo(action.minimumNonce, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapCancelUpTo(
+            action.minimumNonce,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -134,7 +138,11 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_AUTHORIZE_SENDER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSender(action.authorizedSender, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSender(
+            action.authorizedSender,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -149,7 +157,11 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_AUTHORIZE_SIGNER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSigner(action.authorizedSigner, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapAuthorizeSigner(
+            action.authorizedSigner,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -164,7 +176,11 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_REVOKE_SENDER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapRevokeSender(action.authorizedSender, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapRevokeSender(
+            action.authorizedSender,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',
@@ -179,7 +195,11 @@ export default function swapMiddleware(store) {
         break
       case 'SUBMIT_SWAP_REVOKE_SIGNER':
         store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapRevokeSigner(action.authorizedSigner, signer)
+          const contractFunctionPromise = contractFunctions.submitSwapRevokeSigner(
+            action.authorizedSigner,
+            signer,
+            action.options,
+          )
           const id = Date.now().toString()
           store.dispatch({
             type: 'ADD_TRACKED_TRANSACTION',

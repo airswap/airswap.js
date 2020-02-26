@@ -131,8 +131,12 @@ function generateContractFunctionActions(abiLocation, contractKey, eventNamespac
     let filteredInputs = _.map(inputs, 'name')
     if (!contractKey) filteredInputs = ['contractAddress', ...filteredInputs]
     if (payable) filteredInputs.push('ethAmount')
+    if (type === 'transaction') {
+      filteredInputs.push('options')
+    }
     const inputsOuterParam = filteredInputs.length ? `{${filteredInputs.join(', ')}}` : ''
     const inputsInnerParam = filteredInputs.length ? `${filteredInputs.join(',\n')}, ` : ''
+
     const actionName = getContractFunctionActionName(type, name, eventNamespace)
     const actionType = getContractFunctionActionType(type, name, eventNamespace)
     return `export const ${actionName} = (${inputsOuterParam}) => dispatch => new Promise((resolve, reject) => dispatch({${inputsInnerParam}
@@ -182,7 +186,7 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
         : ''
 
       caseContent = `store.dispatch(getSigner()).then(signer => {
-       const contractFunctionPromise = contractFunctions.${actionName}(${functionArguments}signer)
+       const contractFunctionPromise = contractFunctions.${actionName}(${functionArguments}signer, action.options)
        const id = Date.now().toString()
        store.dispatch({
          type: 'ADD_TRACKED_TRANSACTION',

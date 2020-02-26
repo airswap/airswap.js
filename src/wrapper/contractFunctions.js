@@ -16,14 +16,17 @@ function getWrapperWethContract() {
   return contract.wethContract()
 }
 
-function submitWrapperSwap(ethAmount, order, signer) {
+function submitWrapperSwap(ethAmount, order, signer, options) {
   const contract = getWrapperContract(signer)
-  return contract.swap(order, { value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.swap(order, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
 }
 
-function submitWrapperProvideDelegateOrder(ethAmount, order, delegate, signer) {
+function submitWrapperProvideDelegateOrder(ethAmount, order, delegate, signer, options) {
   const contract = getWrapperContract(signer)
-  return contract.provideDelegateOrder(order, delegate, { value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.provideDelegateOrder(order, delegate, {
+    ...options,
+    value: ethers.utils.bigNumberify(ethAmount || '0'),
+  })
 }
 
 module.exports = {

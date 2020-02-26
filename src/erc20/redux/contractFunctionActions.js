@@ -9,12 +9,13 @@ export const fetchERC20Name = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitERC20Approve = ({ contractAddress, spender, value }) => dispatch =>
+export const submitERC20Approve = ({ contractAddress, spender, value, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       spender,
       value,
+      options,
       type: 'SUBMIT_ERC_20_APPROVE',
       resolve,
       reject,
@@ -31,13 +32,14 @@ export const fetchERC20TotalSupply = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitERC20TransferFrom = ({ contractAddress, from, to, value }) => dispatch =>
+export const submitERC20TransferFrom = ({ contractAddress, from, to, value, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       from,
       to,
       value,
+      options,
       type: 'SUBMIT_ERC_20_TRANSFER_FROM',
       resolve,
       reject,
@@ -85,25 +87,27 @@ export const fetchERC20Symbol = ({ contractAddress }) => dispatch =>
     }),
   )
 
-export const submitERC20Transfer = ({ contractAddress, to, value }) => dispatch =>
+export const submitERC20Transfer = ({ contractAddress, to, value, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       to,
       value,
+      options,
       type: 'SUBMIT_ERC_20_TRANSFER',
       resolve,
       reject,
     }),
   )
 
-export const submitERC20ApproveAndCall = ({ contractAddress, spender, value, extraData }) => dispatch =>
+export const submitERC20ApproveAndCall = ({ contractAddress, spender, value, extraData, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       contractAddress,
       spender,
       value,
       extraData,
+      options,
       type: 'SUBMIT_ERC_20_APPROVE_AND_CALL',
       resolve,
       reject,

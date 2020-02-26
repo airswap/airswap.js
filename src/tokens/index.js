@@ -108,7 +108,7 @@ class TokenMetadata {
     const token = _.find(this.tokens, tokenQuery)
 
     if (!token) {
-      throw new Error('token not in metadata, crawl before for next retry')
+      throw new Error(`token not in metadata, crawl before for next retry ${JSON.stringify(tokenQuery)}`)
     }
     const { decimals } = token
     return parseAmount(value, Math.min(Number(decimals), MAX_DISPLAY_DECIMALS))
@@ -116,7 +116,7 @@ class TokenMetadata {
   formatAtomicValueByToken(tokenQuery, value) {
     const token = _.find(this.tokens, tokenQuery)
     if (!token) {
-      throw new Error('token not in metadata, crawl before for next retry')
+      throw new Error(`token not in metadata, crawl before for next retry ${JSON.stringify(tokenQuery)}`)
     }
 
     const { decimals } = token
@@ -126,7 +126,7 @@ class TokenMetadata {
   formatFullValueByToken(tokenQuery, value) {
     const token = _.find(this.tokens, tokenQuery)
     if (!token) {
-      throw new Error('token not in metadata, crawl before for next retry')
+      throw new Error(`token not in metadata, crawl before for next retry ${JSON.stringify(tokenQuery)}`)
     }
     const { decimals } = token
     const power = 10 ** Number(decimals)
@@ -168,13 +168,19 @@ class TokenMetadata {
     const fullByToken = formatFullValueByTokenParam || this.formatFullValueByToken.bind(this)
     const parseByToken = parseValueByTokenParam || this.formatSignificantDigitsByToken.bind(this)
     const tokenSymbolsByAddress = tokenSymbolsByAddressParam || this.tokenSymbolsByAddress
-    const { makerAddress, makerAmount, makerToken, takerAddress, takerAmount, takerToken, expiration, nonce } = order
-
+    const { makerAddress, makerToken, takerAddress, takerToken, expiration, nonce } = order
+    let { takerAmount, makerAmount, takerAmountFormatted, makerAmountFormatted } = order
     const takerAmountFull = fullByToken({ address: takerToken }, takerAmount)
     const makerAmountFull = fullByToken({ address: makerToken }, makerAmount)
 
-    const takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
-    const makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
+    if (takerAmount && makerAmount) {
+      takerAmountFormatted = parseByToken({ address: takerToken }, takerAmountFull)
+      makerAmountFormatted = parseByToken({ address: makerToken }, makerAmountFull)
+    } else if (takerAmountFormatted && makerAmountFormatted) {
+      takerAmount = this.formatAtomicValueByToken({ address: takerToken }, takerAmountFormatted)
+      makerAmount = this.formatAtomicValueByToken({ address: makerToken }, makerAmountFormatted)
+    }
+
     const takerSymbol = tokenSymbolsByAddress[takerToken]
     const makerSymbol = tokenSymbolsByAddress[makerToken]
 

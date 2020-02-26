@@ -26,10 +26,11 @@ export const fetchDelegateFactorySwapContract = () => dispatch =>
     }),
   )
 
-export const submitDelegateFactoryCreateDelegate = ({ delegateTradeWallet }) => dispatch =>
+export const submitDelegateFactoryCreateDelegate = ({ delegateTradeWallet, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       delegateTradeWallet,
+      options,
       type: 'SUBMIT_DELEGATE_FACTORY_CREATE_DELEGATE',
       resolve,
       reject,

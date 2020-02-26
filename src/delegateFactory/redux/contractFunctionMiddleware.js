@@ -58,6 +58,7 @@ export default function delegateFactoryMiddleware(store) {
           const contractFunctionPromise = contractFunctions.submitDelegateFactoryCreateDelegate(
             action.delegateTradeWallet,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
