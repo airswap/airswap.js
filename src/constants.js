@@ -263,19 +263,15 @@ const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
 
 const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
-const BASE_ASSET_TOKEN_ADDRESSES = (N => {
+const STABLECOIN_TOKEN_ADDRESSES = (N => {
   switch (N) {
     case RINKEBY_ID:
       return [
-        ETH_ADDRESS,
-        WETH_CONTRACT_ADDRESS,
         DAI_CONTRACT_ADDRESS,
         '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b', // USDC
       ]
     case MAIN_ID:
       return [
-        ETH_ADDRESS,
-        WETH_CONTRACT_ADDRESS,
         DAI_CONTRACT_ADDRESS,
         '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359', // 'SAI'
         '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // 'USDC'
@@ -284,9 +280,22 @@ const BASE_ASSET_TOKEN_ADDRESSES = (N => {
         '0x00000000441378008ea67f4284a57932b1c000a5', // 'TGBP'
         '0x0000852600ceb001e08e00bc008be620d60031f2', // 'THKD'
         '0x00006100f7090010005f1bd7ae6122c3c2cf0090', // 'TAUD'
-        '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // 'WBTC'
         '0xdac17f958d2ee523a2206206994597c13d831ec7', // 'USDT'
       ]
+    default:
+  }
+})(NETWORK)
+
+const BASE_ASSET_TOKEN_ADDRESSES = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return [ETH_ADDRESS, WETH_CONTRACT_ADDRESS].concat(STABLECOIN_TOKEN_ADDRESSES)
+    case MAIN_ID:
+      return [
+        ETH_ADDRESS,
+        WETH_CONTRACT_ADDRESS,
+        '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // 'WBTC'
+      ].concat(STABLECOIN_TOKEN_ADDRESSES)
     default:
   }
 })(NETWORK)
@@ -396,6 +405,7 @@ module.exports = {
   TOKEN_APPROVAL_AMOUNT,
   TOKEN_APPROVAL_CHECK_AMOUNT,
   BASE_ASSET_TOKEN_ADDRESSES,
+  STABLECOIN_TOKEN_ADDRESSES,
   MAX_DISPLAY_DECIMALS,
   ERC20abi,
   REACT_APP_SERVER_URL,
