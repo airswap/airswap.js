@@ -11,7 +11,7 @@ function getERC20Name(contractAddress) {
   return contract.name()
 }
 
-function submitERC20Approve(contractAddress, spender, value, signer, options) {
+function submitERC20Approve(contractAddress, spender, value, signer, options = {}) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.approve(spender, value, { ...options })
 }
@@ -21,7 +21,7 @@ function getERC20TotalSupply(contractAddress) {
   return contract.totalSupply()
 }
 
-function submitERC20TransferFrom(contractAddress, from, to, value, signer, options) {
+function submitERC20TransferFrom(contractAddress, from, to, value, signer, options = {}) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.transferFrom(from, to, value, { ...options })
 }
@@ -46,12 +46,12 @@ function getERC20Symbol(contractAddress) {
   return contract.symbol()
 }
 
-function submitERC20Transfer(contractAddress, to, value, signer, options) {
+function submitERC20Transfer(contractAddress, to, value, signer, options = {}) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.transfer(to, value, { ...options })
 }
 
-function submitERC20ApproveAndCall(contractAddress, spender, value, extraData, signer, options) {
+function submitERC20ApproveAndCall(contractAddress, spender, value, extraData, signer, options = {}) {
   const contract = getERC20Contract(signer, contractAddress)
   return contract.approveAndCall(spender, value, extraData, { ...options })
 }

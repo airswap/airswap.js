@@ -21,7 +21,7 @@ function getDelegateFactorySwapContract() {
   return contract.swapContract()
 }
 
-function submitDelegateFactoryCreateDelegate(delegateTradeWallet, signer, options) {
+function submitDelegateFactoryCreateDelegate(delegateTradeWallet, signer, options = {}) {
   const contract = getDelegateFactoryContract(signer)
   return contract.createDelegate(delegateTradeWallet, { ...options })
 }

@@ -16,7 +16,7 @@ function getDeltaBalancesTokenBalance(user, token) {
   return contract.tokenBalance(user, token)
 }
 
-function submitDeltaBalancesDestruct(signer, options) {
+function submitDeltaBalancesDestruct(signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
   return contract.destruct({ ...options })
 }
@@ -26,7 +26,7 @@ function getDeltaBalancesWalletAllowances(user, spender, tokens) {
   return contract.walletAllowances(user, spender, tokens)
 }
 
-function submitDeltaBalancesWithdraw(signer, options) {
+function submitDeltaBalancesWithdraw(signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
   return contract.withdraw({ ...options })
 }
@@ -41,7 +41,7 @@ function getDeltaBalancesTokenAllowance(user, spender, token) {
   return contract.tokenAllowance(user, spender, token)
 }
 
-function submitDeltaBalancesWithdrawToken(token, amount, signer, options) {
+function submitDeltaBalancesWithdrawToken(token, amount, signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
   return contract.withdrawToken(token, amount, { ...options })
 }
@@ -61,7 +61,7 @@ function getDeltaBalancesAdmin() {
   return contract.admin()
 }
 
-function submitDeltaBalancesConstructor(_deployer, signer, options) {
+function submitDeltaBalancesConstructor(_deployer, signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
   return contract.constructor(_deployer, { ...options })
 }
