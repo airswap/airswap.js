@@ -9,7 +9,7 @@ import { selectors as tokenSelectors } from '../tokens/redux/reducers'
 import { selectors as deltaBalancesSelectors } from '../deltaBalances/redux/reducers'
 import { selectors as apiSelectors } from '../api/redux/reducers'
 import { selectors as transactionSelectors } from '../transactionTracker/redux/reducers'
-import { BASE_ASSET_TOKEN_ADDRESSES, ETH_BASE_ADDRESSES, WETH_CONTRACT_ADDRESS, ETH_ADDRESS } from '../constants'
+import { ETH_BASE_ADDRESSES, WETH_CONTRACT_ADDRESS, ETH_ADDRESS } from '../constants'
 
 import { getTransactionDescription, getTransactionTextStatus } from '../utils/transformations'
 import { Quote } from '../swap/tcomb'
@@ -162,22 +162,25 @@ const getConnectedIndexerTokenAddresses = createSelector(getConnectedIndexerInte
 const getAvailableMarketsByBaseTokenAddress = createSelector(getConnectedIndexerIntents, intents => {
   const markets = {}
 
-  BASE_ASSET_TOKEN_ADDRESSES.map(address => {
-    markets[address] = new Set()
-  })
   intents.forEach(intent => {
-    if (Object.prototype.hasOwnProperty.call(markets, intent.takerToken)) {
-      markets[intent.takerToken].add(intent.makerToken)
-      if (intent.takerToken === WETH_CONTRACT_ADDRESS) {
-        markets[ETH_ADDRESS].add(intent.makerToken)
-      }
+    if (!markets[intent.makerToken]) {
+      markets[intent.makerToken] = new Set()
+    }
+    if (!markets[intent.takerToken]) {
+      markets[intent.takerToken] = new Set()
+    }
+    if (!markets[ETH_ADDRESS]) {
+      markets[ETH_ADDRESS] = new Set()
     }
 
-    if (Object.prototype.hasOwnProperty.call(markets, intent.makerToken)) {
-      markets[intent.makerToken].add(intent.takerToken)
-      if (intent.makerToken === WETH_CONTRACT_ADDRESS) {
-        markets[ETH_ADDRESS].add(intent.takerToken)
-      }
+    markets[intent.makerToken].add(intent.takerToken)
+    markets[intent.takerToken].add(intent.makerToken)
+
+    if (intent.makerToken === WETH_CONTRACT_ADDRESS) {
+      markets[ETH_ADDRESS].add(intent.takerToken)
+    }
+    if (intent.takerToken === WETH_CONTRACT_ADDRESS) {
+      markets[ETH_ADDRESS].add(intent.makerToken)
     }
   })
 
