@@ -26,9 +26,9 @@ function getDelegateProtocol(contractAddress) {
   return contract.protocol()
 }
 
-function submitDelegateRenounceOwnership(contractAddress, signer) {
+function submitDelegateRenounceOwnership(contractAddress, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.renounceOwnership()
+  return contract.renounceOwnership({ ...options })
 }
 
 function getDelegateRules(contractAddress, senderToken, signerToken) {
@@ -46,9 +46,9 @@ function getDelegateTradeWallet(contractAddress) {
   return contract.tradeWallet()
 }
 
-function submitDelegateTransferOwnership(contractAddress, newOwner, signer) {
+function submitDelegateTransferOwnership(contractAddress, newOwner, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.transferOwnership(newOwner)
+  return contract.transferOwnership(newOwner, { ...options })
 }
 
 function submitDelegateSetRule(
@@ -59,34 +59,43 @@ function submitDelegateSetRule(
   priceCoef,
   priceExp,
   signer,
+  options = {},
 ) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.setRule(senderToken, signerToken, maxSenderAmount, priceCoef, priceExp)
+  return contract.setRule(senderToken, signerToken, maxSenderAmount, priceCoef, priceExp, { ...options })
 }
 
-function submitDelegateUnsetRule(contractAddress, senderToken, signerToken, signer) {
+function submitDelegateUnsetRule(contractAddress, senderToken, signerToken, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.unsetRule(senderToken, signerToken)
+  return contract.unsetRule(senderToken, signerToken, { ...options })
 }
 
-function submitDelegateSetRuleAndIntent(contractAddress, senderToken, signerToken, rule, newStakeAmount, signer) {
+function submitDelegateSetRuleAndIntent(
+  contractAddress,
+  senderToken,
+  signerToken,
+  rule,
+  newStakeAmount,
+  signer,
+  options = {},
+) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.setRuleAndIntent(senderToken, signerToken, rule, newStakeAmount)
+  return contract.setRuleAndIntent(senderToken, signerToken, rule, newStakeAmount, { ...options })
 }
 
-function submitDelegateUnsetRuleAndIntent(contractAddress, senderToken, signerToken, signer) {
+function submitDelegateUnsetRuleAndIntent(contractAddress, senderToken, signerToken, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.unsetRuleAndIntent(senderToken, signerToken)
+  return contract.unsetRuleAndIntent(senderToken, signerToken, { ...options })
 }
 
-function submitDelegateProvideOrder(contractAddress, order, signer) {
+function submitDelegateProvideOrder(contractAddress, order, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.provideOrder(order)
+  return contract.provideOrder(order, { ...options })
 }
 
-function submitDelegateSetTradeWallet(contractAddress, newTradeWallet, signer) {
+function submitDelegateSetTradeWallet(contractAddress, newTradeWallet, signer, options = {}) {
   const contract = getDelegateContract(signer, contractAddress)
-  return contract.setTradeWallet(newTradeWallet)
+  return contract.setTradeWallet(newTradeWallet, { ...options })
 }
 
 function getDelegateGetSignerSideQuote(contractAddress, senderAmount, senderToken, signerToken) {

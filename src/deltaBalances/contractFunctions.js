@@ -16,9 +16,9 @@ function getDeltaBalancesTokenBalance(user, token) {
   return contract.tokenBalance(user, token)
 }
 
-function submitDeltaBalancesDestruct(signer) {
+function submitDeltaBalancesDestruct(signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
-  return contract.destruct()
+  return contract.destruct({ ...options })
 }
 
 function getDeltaBalancesWalletAllowances(user, spender, tokens) {
@@ -26,9 +26,9 @@ function getDeltaBalancesWalletAllowances(user, spender, tokens) {
   return contract.walletAllowances(user, spender, tokens)
 }
 
-function submitDeltaBalancesWithdraw(signer) {
+function submitDeltaBalancesWithdraw(signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
-  return contract.withdraw()
+  return contract.withdraw({ ...options })
 }
 
 function getDeltaBalancesWalletBalances(user, tokens) {
@@ -41,9 +41,9 @@ function getDeltaBalancesTokenAllowance(user, spender, token) {
   return contract.tokenAllowance(user, spender, token)
 }
 
-function submitDeltaBalancesWithdrawToken(token, amount, signer) {
+function submitDeltaBalancesWithdrawToken(token, amount, signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
-  return contract.withdrawToken(token, amount)
+  return contract.withdrawToken(token, amount, { ...options })
 }
 
 function getDeltaBalancesAllWETHbalances(wethAddress, users) {
@@ -61,9 +61,9 @@ function getDeltaBalancesAdmin() {
   return contract.admin()
 }
 
-function submitDeltaBalancesConstructor(_deployer, signer) {
+function submitDeltaBalancesConstructor(_deployer, signer, options = {}) {
   const contract = getDeltaBalancesContract(signer)
-  return contract.constructor(_deployer)
+  return contract.constructor(_deployer, { ...options })
 }
 
 module.exports = {

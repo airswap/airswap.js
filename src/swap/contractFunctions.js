@@ -31,39 +31,40 @@ function getSwapSignerNonceStatus(signer, nonce) {
   return contract.signerNonceStatus(signer, nonce)
 }
 
-function submitSwap(order, signer) {
+function submitSwap(order, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.swap(order)
+
+  return contract.swap(order, { ...options })
 }
 
-function submitSwapCancel(nonces, signer) {
+function submitSwapCancel(nonces, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.cancel(nonces)
+  return contract.cancel(nonces, { ...options })
 }
 
-function submitSwapCancelUpTo(minimumNonce, signer) {
+function submitSwapCancelUpTo(minimumNonce, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.cancelUpTo(minimumNonce)
+  return contract.cancelUpTo(minimumNonce, { ...options })
 }
 
-function submitSwapAuthorizeSender(authorizedSender, signer) {
+function submitSwapAuthorizeSender(authorizedSender, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.authorizeSender(authorizedSender)
+  return contract.authorizeSender(authorizedSender, { ...options })
 }
 
-function submitSwapAuthorizeSigner(authorizedSigner, signer) {
+function submitSwapAuthorizeSigner(authorizedSigner, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.authorizeSigner(authorizedSigner)
+  return contract.authorizeSigner(authorizedSigner, { ...options })
 }
 
-function submitSwapRevokeSender(authorizedSender, signer) {
+function submitSwapRevokeSender(authorizedSender, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.revokeSender(authorizedSender)
+  return contract.revokeSender(authorizedSender, { ...options })
 }
 
-function submitSwapRevokeSigner(authorizedSigner, signer) {
+function submitSwapRevokeSigner(authorizedSigner, signer, options = {}) {
   const contract = getSwapContract(signer)
-  return contract.revokeSigner(authorizedSigner)
+  return contract.revokeSigner(authorizedSigner, { ...options })
 }
 
 module.exports = {

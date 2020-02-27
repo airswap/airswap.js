@@ -21,14 +21,14 @@ function getERC721OwnerOf(contractAddress, tokenId) {
   return contract.ownerOf(tokenId)
 }
 
-function submitERC721TransferFrom(contractAddress, from, to, tokenId, signer) {
+function submitERC721TransferFrom(contractAddress, from, to, tokenId, signer, options = {}) {
   const contract = getERC721Contract(signer, contractAddress)
-  return contract.transferFrom(from, to, tokenId)
+  return contract.transferFrom(from, to, tokenId, { ...options })
 }
 
-function submitERC721Approve(contractAddress, to, tokenId, signer) {
+function submitERC721Approve(contractAddress, to, tokenId, signer, options = {}) {
   const contract = getERC721Contract(signer, contractAddress)
-  return contract.approve(to, tokenId)
+  return contract.approve(to, tokenId, { ...options })
 }
 
 function getERC721GetApproved(contractAddress, tokenId) {
@@ -36,9 +36,9 @@ function getERC721GetApproved(contractAddress, tokenId) {
   return contract.getApproved(tokenId)
 }
 
-function submitERC721SetApprovalForAll(contractAddress, operator, _approved, signer) {
+function submitERC721SetApprovalForAll(contractAddress, operator, _approved, signer, options = {}) {
   const contract = getERC721Contract(signer, contractAddress)
-  return contract.setApprovalForAll(operator, _approved)
+  return contract.setApprovalForAll(operator, _approved, { ...options })
 }
 
 function getERC721IsApprovedForAll(contractAddress, owner, operator) {
@@ -51,9 +51,9 @@ function getERC721KittyIndexToApproved(contractAddress, tokenId) {
   return contract.kittyIndexToApproved(tokenId)
 }
 
-function submitERC721SafeTransferFrom(contractAddress, from, to, tokenId, signer) {
+function submitERC721SafeTransferFrom(contractAddress, from, to, tokenId, signer, options = {}) {
   const contract = getERC721Contract(signer, contractAddress)
-  return contract.safeTransferFrom(from, to, tokenId)
+  return contract.safeTransferFrom(from, to, tokenId, { ...options })
 }
 
 module.exports = {

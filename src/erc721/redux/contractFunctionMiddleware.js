@@ -64,6 +64,7 @@ export default function ERC721Middleware(store) {
             action.to,
             action.tokenId,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -89,6 +90,7 @@ export default function ERC721Middleware(store) {
             action.to,
             action.tokenId,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -125,6 +127,7 @@ export default function ERC721Middleware(store) {
             action.operator,
             action._approved,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({
@@ -182,6 +185,7 @@ export default function ERC721Middleware(store) {
             action.to,
             action.tokenId,
             signer,
+            action.options,
           )
           const id = Date.now().toString()
           store.dispatch({

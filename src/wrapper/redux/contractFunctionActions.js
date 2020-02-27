@@ -17,23 +17,25 @@ export const fetchWrapperWethContract = () => dispatch =>
     }),
   )
 
-export const submitWrapperSwap = ({ order, ethAmount }) => dispatch =>
+export const submitWrapperSwap = ({ order, ethAmount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       order,
       ethAmount,
+      options,
       type: 'SUBMIT_WRAPPER_SWAP',
       resolve,
       reject,
     }),
   )
 
-export const submitWrapperProvideDelegateOrder = ({ order, delegate, ethAmount }) => dispatch =>
+export const submitWrapperProvideDelegateOrder = ({ order, delegate, ethAmount, options }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       order,
       delegate,
       ethAmount,
+      options,
       type: 'SUBMIT_WRAPPER_PROVIDE_DELEGATE_ORDER',
       resolve,
       reject,
