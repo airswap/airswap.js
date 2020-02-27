@@ -118,7 +118,7 @@ function initializeTrackedAddresses(store) {
 
 function addConnectedAddressToTrackedAddresses(store) {
   const tokens = process.env.INSTANT
-    ? tokenSelectors.getAvailableTokens(store.getState())
+    ? tokenSelectors.getAirSwapApprovedAvailableTokens(store.getState())
     : tokenSelectors.getAirSwapApprovedTokens(store.getState())
   const approvedTokens = _.filter(tokens, t => t.kind !== 'ERC721')
   const connectedAddress = getConnectedWalletAddress(store.getState())
