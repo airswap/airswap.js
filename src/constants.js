@@ -286,7 +286,7 @@ const STABLECOIN_TOKEN_ADDRESSES = (N => {
   }
 })(NETWORK)
 
-const TRUSTED_PROJECT_TOKEN_ADDRESSES = N => {
+const TRUSTED_PROJECT_TOKEN_ADDRESSES = (N => {
   switch (N) {
     case RINKEBY_ID:
       return []
@@ -300,7 +300,7 @@ const TRUSTED_PROJECT_TOKEN_ADDRESSES = N => {
       ]
     default:
   }
-}
+})(NETWORK)
 
 const BASE_ASSET_TOKEN_ADDRESSES = (N => {
   switch (N) {
