@@ -194,8 +194,15 @@ const getAvailableMarketsByBaseTokenAddress = createSelector(getConnectedIndexer
  - CONNECTED (the makerAddress of that intent is currently connected to the router)
 */
 
-const getAvailableTokens = createSelector(
+const getAirSwapApprovedAvailableTokens = createSelector(
   tokenSelectors.getAirSwapApprovedTokens, // APPROVED
+  getConnectedIndexerTokenAddresses, // INDEXER & CONNECTED
+  (approvedTokens, indexerTokenAddresses) =>
+    _.filter(approvedTokens, token => _.includes(indexerTokenAddresses, token.address)),
+)
+
+const getAvailableTokens = createSelector(
+  tokenSelectors.getTokensByAddress,
   getConnectedIndexerTokenAddresses, // INDEXER & CONNECTED
   (approvedTokens, indexerTokenAddresses) =>
     _.filter(approvedTokens, token => _.includes(indexerTokenAddresses, token.address)),
@@ -227,7 +234,7 @@ AVAILABLE MARKETPLACE TOKENS MEET THE FOLLOWING REQUIREMENTS
 */
 
 const getAvailableMarketplaceTokens = createSelector(
-  tokenSelectors.getAirSwapApprovedTokens, // APPROVED
+  tokenSelectors.getTokensByAddress,
   getConnectedIndexerTokenAddresses, // INDEXER & CONNECTED
   (approvedTokens, indexerTokenAddresses) =>
     _.filter(
@@ -358,6 +365,7 @@ export {
   getConnectedIndexerIntents,
   getConnectedMakerAddressesWithIndexerIntents,
   getAvailableMarketsByBaseTokenAddress,
+  getAirSwapApprovedAvailableTokens,
   getAvailableTokens,
   getAvailableTokensByAddress,
   getAvailableMarketplaceTokensByAddress,
