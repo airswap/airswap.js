@@ -6,10 +6,10 @@
   "author": "Sam Walker <sam.walker@fluidity.io>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@airswap/delegate": "^2.6.8-beta.0",
-    "@airswap/indexer": "^3.6.8",
-    "@airswap/swap": "^5.4.7-beta.0",
-    "@airswap/wrapper": "^3.6.8-beta.0",
+    "@airswap/delegate": "^2.6.9",
+    "@airswap/indexer": "^3.6.9",
+    "@airswap/swap": "^5.4.8",
+    "@airswap/wrapper": "^3.6.9",
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -85,7 +85,7 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
-    "@airswap/order-utils": "^0.3.20-beta.0",
+    "@airswap/order-utils": "^0.3.20",
     "@alch/alchemy-web3": "^0.1.11",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",

@@ -33,7 +33,6 @@ function getSwapSignerNonceStatus(signer, nonce) {
 
 function submitSwap(order, signer, options = {}) {
   const contract = getSwapContract(signer)
-
   return contract.swap(order, { ...options })
 }
 

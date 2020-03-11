@@ -29,16 +29,19 @@ const ENV =
 const MAIN_ID = 1
 const RINKEBY_ID = 4
 const KOVAN_ID = 42
+const GOERLI_ID = 5
 
 const NETWORK_MAPPING = {
   [MAIN_ID]: 'Mainnet',
   [RINKEBY_ID]: 'Rinkeby',
   [KOVAN_ID]: 'Kovan',
+  [GOERLI_ID]: 'Goerli',
 }
 
 const NAME_MAPPING = {
   [RINKEBY_ID]: 'rinkeby',
   [KOVAN_ID]: 'kovan',
+  [GOERLI_ID]: 'goerli',
 }
 
 const SWAP_LEGACY_CONTRACT_MAPPING = {
