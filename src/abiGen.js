@@ -327,6 +327,11 @@ const modules = [
     contractKey: '',
   },
   {
+    abiLocation: 'abis/erc1155.json',
+    namespace: 'ERC1155',
+    contractKey: '',
+  },
+  {
     abiLocation: 'abis/delegate.json',
     namespace: 'delegate',
     contractKey: '',
