@@ -1,12 +1,39 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
-const { NETWORK, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
+const { NETWORK, RINKEBY_ID, MAIN_ID, GOERLI_ID, KOVAN_ID, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
-const OPENSEA_API_URL = NETWORK === 4 ? 'https://rinkeby-api.opensea.io/api/v1' : 'https://api.opensea.io/api/v1'
-const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${NETWORK === 4 ? 'rinkebyTokens' : 'tokens'}`
+
+const OPENSEA_API_URL = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'https://rinkeby-api.opensea.io/api/v1'
+    case MAIN_ID:
+      return 'https://api.opensea.io/api/v1'
+    case GOERLI_ID:
+      return 'https://goerli-api.opensea.io/api/v1'
+    case KOVAN_ID:
+      return 'https://kovan-api.opensea.io/api/v1'
+    default:
+  }
+})(NETWORK)
+
+const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${(N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'rinkebyTokens'
+    case MAIN_ID:
+      return 'tokens'
+    case GOERLI_ID:
+      return 'goerliTokens'
+    case KOVAN_ID:
+      return 'kovanTokens'
+    default:
+  }
+})(NETWORK)}`
+
 const MAX_DISPLAY_DECIMALS = 8
 const makeCrawlTokenUrl = (address, forceAirswapUIApproved) =>
   `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}${

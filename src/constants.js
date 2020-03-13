@@ -1,6 +1,7 @@
 require('dotenv').config({ path: `${__dirname}/../.env` })
 const ethers = require('ethers')
 const _ = require('lodash')
+const queryString = require('querystring')
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const ERC20abi = require('human-standard-token-abi')
 const astAbi = require('./abis/AirSwapToken_rinkeby.json')
@@ -49,7 +50,7 @@ const SWAP_LEGACY_CONTRACT_MAPPING = {
   [RINKEBY_ID]: '0x07fc7c43d8168a2730344e5cf958aaecc3b42b41',
 }
 
-const NETWORK = (N => {
+let NETWORK = (N => {
   switch (N) {
     case 'development':
       return RINKEBY_ID
@@ -64,6 +65,21 @@ const NETWORK = (N => {
   }
 })(ENV)
 
+if (typeof window !== 'undefined') {
+  const qs = queryString.parse(window.location.search)
+  if (qs.network) {
+    NETWORK = Number(qs.network)
+  }
+}
+
+if (process.env.TEST_NETWORK) {
+  NETWORK = Number(process.env.network)
+}
+
+if (process.env.REACT_APP_TEST_NETWORK) {
+  NETWORK = Number(process.env.REACT_APP_TEST_NETWORK)
+}
+
 const NETWORK_NAME = NAME_MAPPING[NETWORK]
 
 const SWAP_CONTRACT_ADDRESS = contractConstants.swap[String(NETWORK)]
@@ -74,6 +90,10 @@ const SWAP_CONTRACT_DEPLOY_BLOCK = (N => {
       return 5359808
     case MAIN_ID:
       return 8574958
+    case GOERLI_ID:
+      return 2322076
+    case KOVAN_ID:
+      return 17298087
     default:
   }
 })(NETWORK)
@@ -88,6 +108,10 @@ const AST_CONTRACT_ADDRESS = (N => {
       return '0xcc1cbd4f67cceb7c001bd4adf98451237a193ff8'
     case MAIN_ID:
       return '0x27054b13b1b798b345b591a4d22e6562d47ea75a'
+    case GOERLI_ID:
+      return '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
+    case KOVAN_ID:
+      return '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
     default:
   }
 })(NETWORK)
@@ -112,6 +136,10 @@ const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
       return 5626023
     case MAIN_ID:
       return 9005083
+    case GOERLI_ID:
+      return 2322078
+    case KOVAN_ID:
+      return 17298088
     default:
   }
 })(NETWORK)
@@ -124,6 +152,10 @@ const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
       return 5626024
     case MAIN_ID:
       return 9006065
+    case GOERLI_ID:
+      return 2322078
+    case KOVAN_ID:
+      return 17298088
     default:
   }
 })(NETWORK)
@@ -137,6 +169,10 @@ const WETH_CONTRACT_ADDRESS = (N => {
       return '0xc778417e063141139fce010982780140aa0cd5ab'
     case MAIN_ID:
       return '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+    case GOERLI_ID:
+      return '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6'
+    case KOVAN_ID:
+      return '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
     default:
   }
 })(NETWORK)
@@ -178,6 +214,10 @@ const ALCHEMY_RINKEBY_ID =
   process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID || 'SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
 const ALCHEMY_MAINNET_ID =
   process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
+const ALCHEMY_GOERLI_ID =
+  process.env.REACT_APP_ALCHEMY_GOERLI_ID || process.env.ALCHEMY_GOERLI_ID || 'rmfJlvf-61yCeOSNHlSM3YQXZYSEWlWr'
+const ALCHEMY_KOVAN_ID =
+  process.env.REACT_APP_ALCHEMY_KOVAN_ID || process.env.ALCHEMY_KOVAN_ID || '_BWedff2iwY-Nuae0vLT3OQVgnS5P1HJ'
 
 let AIRSWAP_GETH_NODE_ADDRESS = (N => {
   switch (N) {
@@ -185,6 +225,10 @@ let AIRSWAP_GETH_NODE_ADDRESS = (N => {
       return `https://eth-rinkeby.alchemyapi.io/jsonrpc/${ALCHEMY_RINKEBY_ID}`
     case MAIN_ID:
       return `https://eth-mainnet.alchemyapi.io/jsonrpc/${ALCHEMY_MAINNET_ID}`
+    case GOERLI_ID:
+      return `https://eth-goerli.alchemyapi.io/jsonrpc/${ALCHEMY_GOERLI_ID}`
+    case KOVAN_ID:
+      return `https://eth-kovan.alchemyapi.io/jsonrpc/${ALCHEMY_KOVAN_ID}`
     default:
   }
 })(NETWORK)
@@ -207,6 +251,10 @@ const ALCHEMY_WEBSOCKET_URL = (N => {
       return `wss://eth-rinkeby.ws.alchemyapi.io/ws/${ALCHEMY_RINKEBY_ID}`
     case MAIN_ID:
       return `wss://eth-mainnet.ws.alchemyapi.io/ws/${ALCHEMY_MAINNET_ID}`
+    case GOERLI_ID:
+      return `wss://eth-goerli.ws.alchemyapi.io/ws/${ALCHEMY_GOERLI_ID}`
+    case KOVAN_ID:
+      return `wss://eth-kovan.ws.alchemyapi.io/ws/${ALCHEMY_KOVAN_ID}`
     default:
   }
 })(NETWORK)
@@ -401,6 +449,7 @@ module.exports = {
   MAIN_ID,
   RINKEBY_ID,
   KOVAN_ID,
+  GOERLI_ID,
   NETWORK_MAPPING,
   AIRSWAP_LOGO_URL,
   TRADER_AFFILIATE_ADDRESS,
