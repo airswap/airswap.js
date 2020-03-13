@@ -7,6 +7,7 @@ import * as api from '../api/redux'
 import * as ens from '../ens/redux'
 import * as erc20 from '../erc20/redux'
 import * as erc721 from '../erc721/redux'
+import * as erc1155 from '../erc1155/redux'
 import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
 import * as protocolMessaging from '../protocolMessaging/redux'
@@ -57,6 +58,7 @@ const state = {
   delegate,
   weth,
   securitize,
+  erc1155,
 }
 
 const middleware = _.flatten(_.map(_.values(state), 'middleware'))
