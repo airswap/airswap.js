@@ -84,7 +84,9 @@ export default function ERC1155Middleware(store) {
             })
             action.resolve(response)
           })
-          .catch(action.reject)
+          .catch(err => {
+            action.reject(err)
+          })
         break
       case 'FETCH_ERC_1155_BALANCE_OF_BATCH':
         contractFunctions
