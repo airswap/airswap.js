@@ -212,6 +212,8 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
       return '0x5dfe850d4b029c25c7ef9531ec9986c97d90300f'
     case GOERLI_ID:
       return '0x755aa03f420a62560e90502d7da23a73c301dad4'
+    case KOVAN_ID:
+      return '0xe25b7504856bfb230b7c32bc87047479815cbc70'
     default:
   }
 })(NETWORK)

@@ -96,86 +96,12 @@ function parseAmount(amount, precision) {
   const num = new BigNumber(Math.max(0, Number(amount)))
   return Number(num.toFixed(precision, BigNumber.ROUND_FLOOR))
 }
-const goerliTokens = [
-  {
-    airswapUI: 'yes',
-    cmc_url: 'https://coinmarketcap.com/currencies/ethereum/',
-    banned: false,
-    security: false,
-    colors: ['#262929', '#3c3c3c', '#444444', '#585c5c', '#838383'],
-    symbol: 'ETH',
-    cmc_id: '1027',
-    cmc_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png',
-    decimals: '18',
-    address: '0x0000000000000000000000000000000000000000',
-    name: 'Ethereum',
-  },
-  {
-    airswapUI: 'yes',
-    cmc_url: 'https://coinmarketcap.com/currencies/weth/',
-    banned: false,
-    security: false,
-    colors: ['#272929', '#404444', '#4c4c4c', '#5c5c5c', '#838383'],
-    symbol: 'WETH',
-    cmc_id: '2396',
-    cmc_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/2396.png',
-    decimals: '18',
-    address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
-    name: 'WETH',
-    airswap_img_url: 'https://airswap-token-images.s3.amazonaws.com/WETH.png',
-  },
-  {
-    cmc_url: 'https://coinmarketcap.com/currencies/airswap/',
-    symbol: 'AST',
-    address: '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31',
-    airswap_img_url: 'https://airswap-token-images.s3.amazonaws.com/AST.png',
-    decimals: '4',
-    name: 'AirSwap',
-    airswapUI: 'yes',
-    banned: false,
-    security: false,
-    cmc_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/2058.png',
-    colors: ['#042165', '#1356e0', '#4c87fb', '#84acf4', '#fbfbfb'],
-    cmc_id: '2058',
-  },
-  {
-    symbol: 'dREC',
-    address: '0xe7c1832b58e11964b2c39ed64fa197ca4e518810',
-    airswap_img_url: 'https://strapi.allinfra.com/uploads/8d2263f7746a4f4b884189c4ada879a5.jpg',
-    decimals: '0',
-    name: 'dREC #1',
-    airswapUI: 'yes',
-    kind: 'ERC1155',
-    banned: false,
-    security: true,
-    cmc_img_url: 'https://strapi.allinfra.com/uploads/8d2263f7746a4f4b884189c4ada879a5.jpg',
-  },
-  {
-    airswapUI: 'yes',
-    address: '0x61b6cc839a4a79c1ae0305b90f7a32e665616681',
-    name: 'Dai',
-    symbol: 'DAI',
-    decimals: '18',
-    airswap_img_url: 'https://airswap-token-images.s3.amazonaws.com/DAI.png',
-    banned: false,
-    colors: ['#f4dcc0', '#fbb029', '#fbfbfa', '#fcc66d', '#fcd492'],
-    cmc_id: '2308',
-    cmc_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/2308.png',
-    cmc_url: 'https://coinmarketcap.com/currencies/dai/',
-  },
-]
 
 class TokenMetadata {
   constructor() {
     this.tokens = []
     this.nftItems = []
-    this.ready =
-      NETWORK === GOERLI_ID
-        ? (async () => {
-            this.setTokens(goerliTokens)
-            return goerliTokens
-          })()
-        : fetchTokens().then(tokens => this.setTokens(tokens))
+    this.ready = fetchTokens().then(tokens => this.setTokens(tokens))
   }
   setTokens(tokens) {
     this.tokens = tokens
