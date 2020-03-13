@@ -339,6 +339,10 @@ const STABLECOIN_TOKEN_ADDRESSES = (N => {
         '0x00006100f7090010005f1bd7ae6122c3c2cf0090', // 'TAUD'
         '0xdac17f958d2ee523a2206206994597c13d831ec7', // 'USDT'
       ]
+    case GOERLI_ID:
+      return [DAI_CONTRACT_ADDRESS]
+    case KOVAN_ID:
+      return [DAI_CONTRACT_ADDRESS]
     default:
   }
 })(NETWORK)
@@ -355,6 +359,10 @@ const TRUSTED_PROJECT_TOKEN_ADDRESSES = (N => {
         '0x0ba45a8b5d5575935b8158a88c631e9f9c95a2e5', // Tellor
         '0xd13c7342e1ef687c5ad21b27c2b65d772cab5c8c', // Ultra
       ]
+    case GOERLI_ID:
+      return []
+    case KOVAN_ID:
+      return []
     default:
   }
 })(NETWORK)
