@@ -185,6 +185,10 @@ const DAI_CONTRACT_ADDRESS = (N => {
       return '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea'
     case MAIN_ID:
       return '0x6b175474e89094c44da98b954eedeac495271d0f'
+    case GOERLI_ID:
+      return '0x61b6cc839a4a79c1ae0305b90f7a32e665616681'
+    case KOVAN_ID:
+      return '0xc4375b7de8af5a38a93548eb8453a498222c4ff2'
     default:
   }
 })(NETWORK)
@@ -206,6 +210,8 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
       return '0xa1e2c4132cbd33c3876e1254143a850466c97e32'
     case MAIN_ID:
       return '0x5dfe850d4b029c25c7ef9531ec9986c97d90300f'
+    case GOERLI_ID:
+      return '0x755aa03f420a62560e90502d7da23a73c301dad4'
     default:
   }
 })(NETWORK)
