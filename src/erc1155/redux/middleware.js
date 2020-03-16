@@ -9,6 +9,7 @@ export default function callData(store) {
         if (event.name === 'ApprovalForAll') {
           store.dispatch(
             fetchERC1155IsApprovedForAll({
+              contractAddress: event.address.toLowerCase(),
               // addresses need to be lowercased, since their responses are matched using the input parameters in lookups
               owner: event.values.owner.toLowerCase(),
               operator: event.values.operator.toLowerCase(),
