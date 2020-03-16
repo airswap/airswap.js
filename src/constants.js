@@ -65,19 +65,19 @@ let NETWORK = (N => {
   }
 })(ENV)
 
-if (typeof window !== 'undefined') {
-  const qs = queryString.parse(window.location.search)
-  if (qs.network) {
-    NETWORK = Number(qs.network)
-  }
-}
-
 if (process.env.TEST_NETWORK) {
   NETWORK = Number(process.env.network)
 }
 
 if (process.env.REACT_APP_TEST_NETWORK) {
   NETWORK = Number(process.env.REACT_APP_TEST_NETWORK)
+}
+
+if (typeof window !== 'undefined') {
+  const qs = queryString.parse(_.trimStart(window.location.search, '?'))
+  if (qs.network) {
+    NETWORK = Number(qs.network)
+  }
 }
 
 const NETWORK_NAME = NAME_MAPPING[NETWORK]
