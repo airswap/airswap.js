@@ -1,4 +1,5 @@
 const erc721 = require('./erc721')
+const erc1155 = require('./erc1155')
 const erc20 = require('./hst')
 const astAbi = require('./AirSwapToken_rinkeby.json')
 const wethAbi = require('./WETH_ABI.json')
@@ -39,4 +40,4 @@ const abis = {
   [CRYPTO_KITTIES_CONTRACT_ADDRESS]: ENV === 'production' ? cryptoKitties : erc721,
 }
 
-module.exports = { abis, erc20, erc721, cryptoKitties }
+module.exports = { abis, erc20, erc721, erc1155, cryptoKitties }

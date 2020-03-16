@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import _ from 'lodash'
-import { abis, erc20, erc721 } from '../index'
+import { abis, erc20, erc721, erc1155 } from '../index'
 import { getDelegateContractAddresses } from '../../delegateFactory/redux/selectors'
 import delegateABI from '../delegate.json'
 import indexABI from '../index.json'
@@ -10,6 +10,8 @@ import { getIndexAddresses } from '../../indexer/redux/selectors'
 function getAbiForToken(token) {
   if (token.kind === 'ERC721') {
     return 'erc721'
+  } else if (token.kind === 'ERC1155') {
+    return 'erc1155'
   }
   return 'erc20'
 }
@@ -17,6 +19,7 @@ function getAbiForToken(token) {
 const keyMapping = {
   erc721,
   erc20,
+  erc1155,
 }
 
 function abiReducer(state = abis, action) {
