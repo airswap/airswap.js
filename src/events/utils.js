@@ -18,7 +18,12 @@ function parseEventLog(log, abiInterface) {
   if (!parsedLog) {
     return null
   }
-  const parsedLogValues = _.mapValues(parsedLog.values, v => ((v.toString ? v.toString() : v) || '').toLowerCase()) // converts bignumbers to strings and lowercases everything (most importantly addresses)
+
+  const parsedLogValues = _.mapValues(parsedLog.values, v => {
+    let stringVal = (v.toString ? v.toString() : v) || ''
+    stringVal = _.startsWith(stringVal, '0x') ? stringVal.toLowerCase() : stringVal
+    return stringVal
+  }) // converts bignumbers to strings and lowercases everything (most importantly addresses)
   const argumentRange = _.range(Number(parsedLogValues.length)).map(p => p.toString())
   const formattedLogValues = _.pickBy(
     parsedLogValues,
