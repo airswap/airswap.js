@@ -351,6 +351,11 @@ const modules = [
     namespace: 'securitize',
     contractKey: '',
   },
+  {
+    abiLocation: 'abis/allinfraWhitelist.json',
+    namespace: 'allinfra',
+    contractKey: '',
+  },
 ]
 
 modules.map(createSubmodules)

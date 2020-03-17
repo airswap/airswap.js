@@ -379,6 +379,10 @@ const BASE_ASSET_TOKEN_ADDRESSES = (N => {
         WETH_CONTRACT_ADDRESS,
         '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // 'WBTC'
       ].concat(STABLECOIN_TOKEN_ADDRESSES)
+    case GOERLI_ID:
+      return []
+    case KOVAN_ID:
+      return []
     default:
   }
 })(NETWORK)
