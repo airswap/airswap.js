@@ -87,3 +87,13 @@ export const fetchERC1155IsApprovedForAll = ({ contractAddress, owner, operator 
       reject,
     }),
   )
+
+export const fetchERC1155GetComplianceService = ({ contractAddress }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      contractAddress,
+      type: 'FETCH_ERC_1155_GET_COMPLIANCE_SERVICE',
+      resolve,
+      reject,
+    }),
+  )

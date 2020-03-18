@@ -36,6 +36,11 @@ function getERC1155IsApprovedForAll(contractAddress, owner, operator) {
   return contract.isApprovedForAll(owner, operator)
 }
 
+function getERC1155GetComplianceService(contractAddress) {
+  const contract = getERC1155Contract(constants.httpProvider, contractAddress)
+  return contract.getComplianceService()
+}
+
 module.exports = {
   submitERC1155SafeTransferFrom,
   submitERC1155SafeBatchTransferFrom,
@@ -43,4 +48,5 @@ module.exports = {
   getERC1155BalanceOfBatch,
   submitERC1155SetApprovalForAll,
   getERC1155IsApprovedForAll,
+  getERC1155GetComplianceService,
 }

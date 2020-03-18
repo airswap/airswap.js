@@ -21,3 +21,9 @@ export const getERC1155IsApprovedForAll = createSelector(getCallData, values => 
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
+
+export const getERC1155GetComplianceService = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'getComplianceService', namespace: 'ERC1155' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})

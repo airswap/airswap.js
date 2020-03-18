@@ -84,9 +84,7 @@ export default function ERC1155Middleware(store) {
             })
             action.resolve(response)
           })
-          .catch(err => {
-            action.reject(err)
-          })
+          .catch(action.reject)
         break
       case 'FETCH_ERC_1155_BALANCE_OF_BATCH':
         contractFunctions
@@ -140,6 +138,22 @@ export default function ERC1155Middleware(store) {
               name: 'isApprovedForAll',
               timestamp: Date.now(),
               parameters: { contractAddress: action.contractAddress, owner: action.owner, operator: action.operator },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_ERC_1155_GET_COMPLIANCE_SERVICE':
+        contractFunctions
+          .getERC1155GetComplianceService(action.contractAddress)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'ERC1155',
+              name: 'getComplianceService',
+              timestamp: Date.now(),
+              parameters: { contractAddress: action.contractAddress },
             })
             action.resolve(response)
           })
