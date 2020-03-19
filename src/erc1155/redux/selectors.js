@@ -5,8 +5,8 @@ import { getAllinfraIsWhitelisted } from '../../allinfra/redux/callDataSelectors
 
 export const getComplianceServiceByAddress = createSelector(getERC1155GetComplianceService, responses => {
   const formattedResponses = responses.map(({ response, parameters: { contractAddress } }) => [
-    contractAddress,
-    response,
+    contractAddress.toLowerCase(),
+    response.toLowerCase(),
   ])
   return Object.fromEntries(formattedResponses)
 })
@@ -19,7 +19,7 @@ export const getAllinfraWhitelist = createSelector(
     return responses.map(({ response, parameters: { contractAddress, account } }) => ({
       whitelisted: response,
       walletAddress: account,
-      erc1155Address: erc1155lookup[contractAddress],
+      erc1155Address: erc1155lookup[contractAddress.toLowerCase()],
     }))
   },
 )
