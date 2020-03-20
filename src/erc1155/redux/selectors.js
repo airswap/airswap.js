@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { createSelector } from 'reselect'
 import { getERC1155GetComplianceService } from './callDataSelectors'
-import { getAllinfraIsWhitelisted } from '../../allinfra/redux/callDataSelectors'
+import { getComplianceServiceIsWhitelisted } from '../../complianceService/redux/callDataSelectors'
 
 export const getComplianceServiceByAddress = createSelector(getERC1155GetComplianceService, responses => {
   const formattedResponses = responses.map(({ response, parameters: { contractAddress } }) => [
@@ -11,9 +11,9 @@ export const getComplianceServiceByAddress = createSelector(getERC1155GetComplia
   return Object.fromEntries(formattedResponses)
 })
 
-export const getAllinfraWhitelist = createSelector(
+export const getComplianceServiceWhitelist = createSelector(
   getComplianceServiceByAddress,
-  getAllinfraIsWhitelisted,
+  getComplianceServiceIsWhitelisted,
   (complianceServiceByAddress, responses) => {
     const erc1155lookup = _.invert(complianceServiceByAddress)
     return responses.map(({ response, parameters: { contractAddress, account } }) => ({
