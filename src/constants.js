@@ -455,6 +455,7 @@ const FORTMATIC_ID = (N => {
 })(NETWORK)
 
 const IS_INSTANT = process.env.REACT_APP_INSTANT
+
 const IS_EXPLORER = process.env.REACT_APP_EXPLORER
 
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
