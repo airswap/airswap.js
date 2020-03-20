@@ -352,8 +352,8 @@ const modules = [
     contractKey: '',
   },
   {
-    abiLocation: 'abis/allinfraWhitelist.json',
-    namespace: 'allinfra',
+    abiLocation: 'abis/complianceServiceWhitelist.json',
+    namespace: 'complianceService',
     contractKey: '',
   },
 ]

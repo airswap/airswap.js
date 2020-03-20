@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { fetchERC1155GetComplianceService, fetchERC1155IsApprovedForAll } from './contractFunctionActions'
 import { getComplianceServiceByAddress } from './selectors'
 import { waitForState } from '../../utils/redux/waitForState'
-import { fetchAllinfraIsWhitelisted } from '../../allinfra/redux/contractFunctionActions'
+import { fetchComplianceServiceIsWhitelisted } from '../../complianceService/redux/contractFunctionActions'
 
 async function fetchOrGetComplianceServiceAddress(store, contractAddress) {
   let complianceServiceAddress = _.get(getComplianceServiceByAddress(store.getState()), contractAddress)
@@ -47,10 +47,10 @@ export default function callData(store) {
           )
         }
         break
-      case 'CHECK_ERC_1155_ALLINFRA_WHITELIST':
+      case 'CHECK_ERC_1155_COMPLIANCE_SERVICE_WHITELIST':
         fetchOrGetComplianceServiceAddress(store, action.erc1155Address).then(complianceServiceAddress => {
           store.dispatch(
-            fetchAllinfraIsWhitelisted({
+            fetchComplianceServiceIsWhitelisted({
               contractAddress: complianceServiceAddress.toLowerCase(),
               account: action.walletAddress.toLowerCase(),
             }),

@@ -3,17 +3,17 @@
 import * as contractFunctions from '../contractFunctions'
 import resolveBigNumbers from '../../utils/resolveBigNumbers'
 
-export default function allinfraMiddleware(store) {
+export default function complianceServiceMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'FETCH_ALLINFRA_IS_WHITELISTED':
+      case 'FETCH_COMPLIANCE_SERVICE_IS_WHITELISTED':
         contractFunctions
-          .getAllinfraIsWhitelisted(action.contractAddress, action.account)
+          .getComplianceServiceIsWhitelisted(action.contractAddress, action.account)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
               response: resolveBigNumbers(response),
-              namespace: 'allinfra',
+              namespace: 'complianceService',
               name: 'isWhitelisted',
               timestamp: Date.now(),
               parameters: { contractAddress: action.contractAddress, account: action.account },
