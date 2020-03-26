@@ -7,8 +7,14 @@ const walletTypes = require('./static/walletTypes.json')
 const UncheckedJsonRpcSigner = require('./uncheckedJsonRpcSigner')
 const { Gas } = require('../gas')
 
-function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, walletType) {
-  const supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletType }), 'supportsSignTypedData')
+function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, walletType, walletSubtype) {
+  let supportsSignTypedData
+  if (walletSubtype) {
+    supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletSubtype }), 'supportsSignTypedData')
+  } else {
+    supportsSignTypedData = !!_.get(_.find(walletTypes, { type: walletType }), 'supportsSignTypedData')
+  }
+
   const handler = {
     get(target, propKey) {
       if (propKey === 'walletType') {
@@ -103,7 +109,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
   return new Proxy(obj, handler)
 }
 
-function getSigner(params, walletActions = {}, walletType) {
+function getSigner(params, walletActions = {}, walletType, walletSubtype) {
   if (!walletActions.startWalletAction) {
     const gas = new Gas()
     walletActions.startWalletAction = () =>
@@ -136,7 +142,7 @@ function getSigner(params, walletActions = {}, walletType) {
 
     const tempProvider = new ethers.providers.Web3Provider(web3Provider)
     const signer = new UncheckedJsonRpcSigner(tempProvider.getSigner())
-    return traceMethodCalls(signer, walletActions, walletType)
+    return traceMethodCalls(signer, walletActions, walletType, walletSubtype)
   }
 }
 

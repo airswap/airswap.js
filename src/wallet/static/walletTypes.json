@@ -18,7 +18,8 @@
     "button": "ledger-button-icon.png",
     "web3": false,
     "mobile": false,
-    "desktop": true
+    "desktop": true,
+    "supportsSignTypedData": false
   },
   {
     "type": "trezor",
@@ -27,7 +28,8 @@
     "logo": "trezor-icon.jpg",
     "web3": false,
     "mobile": false,
-    "desktop": true
+    "desktop": true,
+    "supportsSignTypedData": false
   },
   {
     "type": "trust",

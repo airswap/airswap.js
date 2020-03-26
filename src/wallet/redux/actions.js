@@ -18,9 +18,9 @@ export const initMobileWallet = () => connectWallet('web3')
 
 export const initPrivateKeySigner = () => connectWallet('privateKey')
 
-export const initLedger = () => connectWallet('ledger')
+export const initLedger = () => connectWallet('metamask', 'ledger')
 
-export const initTrezor = () => connectWallet('trezor')
+export const initTrezor = () => connectWallet('metamask', 'trezor')
 
 export const initWalletLink = () => connectWallet('walletLink')
 
@@ -28,10 +28,10 @@ export const clearWallet = () => ({
   type: 'CLEAR_WALLET',
 })
 
-export const connectWallet = (walletType, requireAuth = false) => ({
+export const connectWallet = (walletType, walletSubtype = '') => ({
   type: 'CONNECT_WALLET',
   walletType,
-  requireAuth,
+  walletSubtype,
 })
 
 export const getSigner = makePromiseAction({
