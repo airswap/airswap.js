@@ -26,7 +26,7 @@ import * as index from '../index/redux'
 import * as delegateFactory from '../delegateFactory/redux'
 import * as delegate from '../delegate/redux'
 import * as weth from '../weth/redux'
-import * as securitize from '../securitize/redux'
+import * as securitize from '../dsProtocol/redux'
 import * as complianceService from '../complianceService/redux'
 
 import { connectActionContainer } from '../utils/redux'

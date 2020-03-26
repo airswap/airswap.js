@@ -15,6 +15,7 @@ import { web3WalletTypes } from '../static/constants'
 const defaultState = {
   connectingWallet: false,
   walletType: '',
+  walletSubtype: '',
   address: '',
   error: '',
   walletAction: {},
@@ -35,6 +36,7 @@ function walletConnection(state = defaultState, action) {
         ...state,
         connectingWallet: false,
         walletType: action.walletType,
+        walletSubtype: action.walletSubtype,
         address: action.address,
       }
     case 'CLEAR_WALLET':

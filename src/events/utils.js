@@ -2,6 +2,14 @@ const ethers = require('ethers')
 const _ = require('lodash')
 const { getLogs } = require('../utils/gethRead')
 
+function getProviderLogs(params, provider) {
+  const method = {
+    method: 'eth_getLogs',
+    params,
+  }
+  return provider.send(method)
+}
+
 function getEventId({ transactionHash, logIndex }) {
   return `${transactionHash}-${logIndex}`
 }
@@ -49,7 +57,7 @@ function parseEventLog(log, abiInterface) {
 
 const { hexlify, hexStripZeros } = ethers.utils
 
-async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock, parser) {
+async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock, parser, provider) {
   const query = {
     address: contractAddress || undefined,
     topics: _.isArray(topic) ? topic : [topic],
@@ -59,13 +67,13 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock, parser
   const logParams = [
     {
       ...query,
-      fromBlock: hexStripZeros(hexlify(fromBlock)),
-      toBlock: hexStripZeros(hexlify(toBlock)),
+      fromBlock: fromBlock ? hexStripZeros(hexlify(fromBlock)) : 'latest',
+      toBlock: toBlock ? hexStripZeros(hexlify(toBlock)) : 'latest',
     },
   ]
 
   try {
-    logs = await getLogs(logParams)
+    logs = await (provider ? getProviderLogs(logParams, provider) : getLogs(logParams))
   } catch (e) {
     console.log(`logs not ready for block ${toBlock}, retrying in 1s`, e, logParams)
     return new Promise((resolve, reject) => {
@@ -102,4 +110,20 @@ function parseEventLogs(logs, abi) {
   return _.compact(logs.map(log => parseEventLog(log, abiInterface)))
 }
 
-module.exports = { getEventId, parseEventLog, fetchLogs }
+function getEventTopics({ name, params: paramsInputs, abi }) {
+  const params = paramsInputs || {} // default to empty object if undefined
+  const abiInterface = new ethers.utils.Interface(abi)
+  const { events } = abiInterface
+  const abiEvent = events[name]
+  if (!abiEvent) {
+    throw new Error(
+      `${name} not an abi event, possible events are ${_.uniq(_.map(_.values(events), 'name')).join(', ')}`,
+    )
+  }
+  const paramsArray = abiEvent.inputs.map(
+    ({ name: inputName }) => (_.isUndefined(params[inputName]) ? null : params[inputName]),
+  )
+  return abiEvent.encodeTopics(paramsArray)
+}
+
+module.exports = { getEventId, parseEventLog, fetchLogs, getEventTopics }

@@ -5,6 +5,7 @@ const _ = require('lodash')
 require('./abiMapping')
 const generateContractFunctions = require('./abiGen/generateContractFunctions')
 const generateEventListeners = require('./abiGen/generateEventListeners')
+const generateEventLogs = require('./abiGen/generateEventLogs')
 
 const {
   writeFile,
@@ -347,8 +348,8 @@ const modules = [
     contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
   },
   {
-    abiLocation: 'abis/SecuritizeTokenInterface.json',
-    namespace: 'securitize',
+    abiLocation: 'abis/DSProtocolTokenInterface.json',
+    namespace: 'dsProtocol',
     contractKey: '',
   },
   {
@@ -378,6 +379,7 @@ function createSubmodules({ abiLocation, namespace, contractKey }) {
         `./${namespace.toLowerCase()}/eventListeners.js`,
         generateEventListeners(abiLocation, contractKey, namespace),
       )
+      writeFile(`./${namespace.toLowerCase()}/eventLogs.js`, generateEventLogs(abiLocation, contractKey, namespace))
     }
 
     if (events.length) {

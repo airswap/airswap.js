@@ -3,17 +3,17 @@
 import * as contractFunctions from '../contractFunctions'
 import resolveBigNumbers from '../../utils/resolveBigNumbers'
 
-export default function securitizeMiddleware(store) {
+export default function dsProtocolMiddleware(store) {
   return next => action => {
     switch (action.type) {
-      case 'FETCH_SECURITIZE_PRE_TRANSFER_CHECK':
+      case 'FETCH_DS_PROTOCOL_PRE_TRANSFER_CHECK':
         contractFunctions
-          .getSecuritizePreTransferCheck(action.contractAddress, action.from, action.to, action.value)
+          .getDsProtocolPreTransferCheck(action.contractAddress, action.from, action.to, action.value)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
               response: resolveBigNumbers(response),
-              namespace: 'securitize',
+              namespace: 'dsProtocol',
               name: 'preTransferCheck',
               timestamp: Date.now(),
               parameters: {

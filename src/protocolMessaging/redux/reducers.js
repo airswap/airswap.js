@@ -122,19 +122,9 @@ const connectingRouter = (state = false, action) => {
   }
 }
 
-const routerRequireAuth = (state = false, action) => {
-  switch (action.type) {
-    case 'CONNECT_WALLET':
-      return action.requireAuth
-    default:
-      return state
-  }
-}
-
 const protocolMessaging = combineReducers({
   checkoutStack,
   connectingRouter,
-  routerRequireAuth,
 })
 /**
  * A selector that returns true if the router is completing the initial authentication process.
@@ -144,7 +134,6 @@ const protocolMessaging = combineReducers({
  * @returns {boolean}
  */
 const getIsConnectingRouter = state => state.protocolMessaging.connectingRouter
-const getRouterRequireAuth = state => state.protocolMessaging.routerRequireAuth
 
 const getCheckoutStack = state => state.protocolMessaging.checkoutStack
 const getCurrentFrame = createSelector(getCheckoutStack, stack => _.last(stack) || {})
@@ -693,7 +682,6 @@ export const selectors = {
   getCheckoutStack,
   getIsAirswapBestPrice,
   getIsConnectingRouter,
-  getRouterRequireAuth,
   getCurrentFrame,
   getCurrentFrameIsDexIndexQuerying,
   getCurrentFrameStackId,

@@ -109,7 +109,7 @@ function pollWeb3Address(address) {
 
 // catch all connection function that will try to connect to any web3 wallet
 // usually used for mobile wallets
-function connectWeb3(store, walletType = 'web3') {
+function connectWeb3(store, walletType = 'web3', walletSubtype) {
   const availableWallets = walletSelectors.getAvailableWalletState(store.getState())
   if (!availableWallets[walletType] && walletType !== 'web3') {
     store.dispatch(errorConnectingWallet(`${walletType} not detected in browser.`))
@@ -120,11 +120,11 @@ function connectWeb3(store, walletType = 'web3') {
     window.ethereum
       .enable()
       .then(() => {
-        signer = getSigner({ web3Provider: window.ethereum }, walletActions, walletType)
+        signer = getSigner({ web3Provider: window.ethereum }, walletActions, walletType, walletSubtype)
         const addressPromise = signer.getAddress()
         addressPromise.then(address => {
           pollWeb3Address(address.toLowerCase())
-          store.dispatch(connectedWallet(walletType, address.toLowerCase()))
+          store.dispatch(connectedWallet(walletType, address.toLowerCase(), walletSubtype))
         })
       })
       .catch(e => {
@@ -330,7 +330,7 @@ export default function walletMiddleware(store) {
         next(action)
         switch (action.walletType) {
           case 'metamask':
-            connectWeb3(store, 'metamask')
+            connectWeb3(store, 'metamask', action.walletSubtype)
             break
           case 'privateKey':
             connectPrivateKey(store)

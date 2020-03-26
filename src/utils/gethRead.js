@@ -2,7 +2,10 @@ const _ = require('lodash')
 const ethers = require('ethers')
 const { alchemyWeb3, httpProvider, NO_ALCHEMY_WEBSOCKETS } = require('../constants')
 
-async function send({ method, params }) {
+async function send({ method, params }, provider) {
+  if (provider) {
+    return provider.send(method, params)
+  }
   return NO_ALCHEMY_WEBSOCKETS ? httpProvider.send(method, params) : alchemyWeb3.currentProvider.send(method, params)
 }
 

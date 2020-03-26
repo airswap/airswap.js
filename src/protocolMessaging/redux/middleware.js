@@ -7,7 +7,6 @@ import { selectors as deltaBalancesSelectors } from '../../deltaBalances/redux/r
 import { selectors as protocolMessagingSelectors } from './reducers'
 import { newCheckoutFrame } from './actions'
 import { fillOrder } from '../../swapLegacy/redux/actions'
-import { getKeySpace } from '../../keySpace/redux/actions'
 import { fetchSetDexIndexPrices } from '../../dexIndex/redux/actions'
 import { ETH_ADDRESS, IS_INSTANT, WETH_CONTRACT_ADDRESS } from '../../constants'
 import { LegacyQuote, LegacyOrder } from '../../swapLegacy/tcomb'
@@ -29,16 +28,7 @@ async function initialzeRouter(store) {
   store.dispatch({ type: 'CONNECTING_ROUTER' })
   const signer = await store.dispatch(getSigner())
   const address = await signer.getAddress()
-  let config
-  const requireAuthentication = protocolMessagingSelectors.getRouterRequireAuth(store.getState())
-  if (requireAuthentication) {
-    const keySpace = await store.dispatch(getKeySpace())
-    const messageSigner = message => keySpace.sign(message)
-    config = { address, keyspace: true, messageSigner, requireAuthentication }
-  } else {
-    config = { address, requireAuthentication }
-  }
-
+  const config = { address, requireAuthentication: false }
   router = new Router(config)
   return true
 }
@@ -564,7 +554,7 @@ export default function routerMiddleware(store) {
     const state = store.getState()
     switch (action.type) {
       case 'CONNECTED_WALLET':
-        if (!protocolMessagingSelectors.getRouterRequireAuth(state) && IS_INSTANT) {
+        if (IS_INSTANT) {
           const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
           routerPromise.catch(error => store.dispatch({ type: 'ROUTER_CONNECTED', error }))
         }
