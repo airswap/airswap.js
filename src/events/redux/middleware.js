@@ -34,7 +34,7 @@ const initPollExchangeFills = _.once(store => {
     eventTracker.trackEvent(
       trackSwapSwap({
         callback,
-        ...(IS_EXPLORER ? { fromBlock: 7000 * 30 } : {}),
+        ...(IS_EXPLORER ? { backFillBlockCount: 7000 * 30 } : {}),
       }),
     )
   }
