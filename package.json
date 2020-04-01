@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.163",
+  "version": "0.1.164",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -115,7 +115,8 @@
     "tcomb-validation": "^3.4.1",
     "uuid4": "^1.1.4",
     "validator": "^10.11.0",
-    "walletlink": "^1.0.0"
+    "walletlink": "^1.0.0",
+    "web3": "^1.2.6"
   },
   "engines": {
     "node": ">=10.0.0",

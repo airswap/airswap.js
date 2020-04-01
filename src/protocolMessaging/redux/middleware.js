@@ -559,12 +559,6 @@ export default function routerMiddleware(store) {
           routerPromise.catch(error => store.dispatch({ type: 'ROUTER_CONNECTED', error }))
         }
         break
-      case 'KEYSPACE_READY':
-        if (protocolMessagingSelectors.getRouterRequireAuth(state)) {
-          const routerPromise = initialzeRouter(store).then(() => store.dispatch({ type: 'ROUTER_CONNECTED' }))
-          routerPromise.catch(error => store.dispatch({ type: 'ERROR_CONNECTING_ROUTER', error }))
-        }
-        break
       case 'SET_CHECKOUT_FRAME_QUERY':
         action.stackId = protocolMessagingSelectors.getCurrentFrameStackId(state) //eslint-disable-line
 

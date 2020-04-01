@@ -1,6 +1,7 @@
 require('dotenv').config({ path: `${__dirname}/../.env` })
 const ethers = require('ethers')
 const _ = require('lodash')
+const Web3 = require('web3')
 const queryString = require('querystring')
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const ERC20abi = require('human-standard-token-abi')
@@ -218,54 +219,67 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const ALCHEMY_RINKEBY_ID =
-  process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID || 'SSm9sKBkb_vOyLjf5yXNGQ4QsBAeqm1S'
-const ALCHEMY_MAINNET_ID =
-  process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID || '1e8iSwEIqstMQtW1133tjieia8pkQ4a8'
+const ALCHEMY_RINKEBY_ID = process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID
+const ALCHEMY_MAINNET_ID = process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID
 const ALCHEMY_GOERLI_ID =
   process.env.REACT_APP_ALCHEMY_GOERLI_ID || process.env.ALCHEMY_GOERLI_ID || 'rmfJlvf-61yCeOSNHlSM3YQXZYSEWlWr'
 const ALCHEMY_KOVAN_ID =
   process.env.REACT_APP_ALCHEMY_KOVAN_ID || process.env.ALCHEMY_KOVAN_ID || '_BWedff2iwY-Nuae0vLT3OQVgnS5P1HJ'
 
-let AIRSWAP_GETH_NODE_ADDRESS = (N => {
+const ALCHEMY_ID = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return `https://eth-rinkeby.alchemyapi.io/jsonrpc/${ALCHEMY_RINKEBY_ID}`
+      return ALCHEMY_RINKEBY_ID
     case MAIN_ID:
-      return `https://eth-mainnet.alchemyapi.io/jsonrpc/${ALCHEMY_MAINNET_ID}`
+      return ALCHEMY_MAINNET_ID
     case GOERLI_ID:
-      return `https://eth-goerli.alchemyapi.io/jsonrpc/${ALCHEMY_GOERLI_ID}`
+      return ALCHEMY_GOERLI_ID
     case KOVAN_ID:
-      return `https://eth-kovan.alchemyapi.io/jsonrpc/${ALCHEMY_KOVAN_ID}`
+      return ALCHEMY_KOVAN_ID
     default:
   }
 })(NETWORK)
 
+const RADAR_DEPLOY_ID = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return '312ec0f223d1e1bdb9df13bfb391b15b797b0d0d6f0a6a31'
+    case MAIN_ID:
+      return 'e3e724cb6d98b54d8e1634875eb47eb8afa91b4127618c53'
+    case GOERLI_ID:
+      return ''
+    case KOVAN_ID:
+      return ''
+    default:
+  }
+})(NETWORK)
+
+const RADAR_DEPLOY_URL = RADAR_DEPLOY_ID
+  ? `https://shared-geth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.nodes.deploy.radar.tech/?apikey=${RADAR_DEPLOY_ID}`
+  : ''
+const RADAR_DEPLOY_WEBSOCKET = RADAR_DEPLOY_ID
+  ? `wss://shared-geth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.nodes.deploy.radar.tech/ws?apikey=${RADAR_DEPLOY_ID}`
+  : ''
+
+let JSON_RPC_URL = ALCHEMY_ID
+  ? `https://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.alchemyapi.io/jsonrpc/${ALCHEMY_ID}`
+  : RADAR_DEPLOY_URL
+
 if (process.env.JSON_RPC_URL) {
-  AIRSWAP_GETH_NODE_ADDRESS = process.env.JSON_RPC_URL
+  JSON_RPC_URL = process.env.JSON_RPC_URL
 }
 
 if (process.env.REACT_APP_JSON_RPC_URL) {
-  AIRSWAP_GETH_NODE_ADDRESS = process.env.REACT_APP_JSON_RPC_URL
+  JSON_RPC_URL = process.env.REACT_APP_JSON_RPC_URL
 }
 
 if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
-  AIRSWAP_GETH_NODE_ADDRESS = 'http://localhost:8545'
+  JSON_RPC_URL = 'http://localhost:8545'
 }
 
-const ALCHEMY_WEBSOCKET_URL = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return `wss://eth-rinkeby.ws.alchemyapi.io/ws/${ALCHEMY_RINKEBY_ID}`
-    case MAIN_ID:
-      return `wss://eth-mainnet.ws.alchemyapi.io/ws/${ALCHEMY_MAINNET_ID}`
-    case GOERLI_ID:
-      return `wss://eth-goerli.ws.alchemyapi.io/ws/${ALCHEMY_GOERLI_ID}`
-    case KOVAN_ID:
-      return `wss://eth-kovan.ws.alchemyapi.io/ws/${ALCHEMY_KOVAN_ID}`
-    default:
-  }
-})(NETWORK)
+const ALCHEMY_WEBSOCKET_URL = ALCHEMY_ID
+  ? `wss://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.ws.alchemyapi.io/ws/${ALCHEMY_ID}`
+  : ''
 
 const INFURA_GETH_NODE = (N => {
   switch (N) {
@@ -277,9 +291,9 @@ const INFURA_GETH_NODE = (N => {
   }
 })(NETWORK)
 
-const alchemyWeb3 = NO_ALCHEMY_WEBSOCKETS ? null : createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+const alchemyWeb3 = ALCHEMY_WEBSOCKET_URL ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL) : new Web3(RADAR_DEPLOY_WEBSOCKET)
 
-const httpProvider = new RetryProvider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+const httpProvider = new RetryProvider(JSON_RPC_URL, NETWORK)
 const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
 
 // alchemy provider has built in retry
@@ -488,7 +502,6 @@ module.exports = {
   WETH_CONTRACT_ADDRESS,
   DAI_CONTRACT_ADDRESS,
   DELTA_BALANCES_CONTRACT_ADDRESS,
-  AIRSWAP_GETH_NODE_ADDRESS,
   INFURA_GETH_NODE,
   abis,
   TOKEN_APPROVAL_AMOUNT,
@@ -533,4 +546,5 @@ module.exports = {
   PROTOCOL_1,
   PROTOCOL_2,
   NO_ALCHEMY_WEBSOCKETS,
+  ALCHEMY_ID,
 }

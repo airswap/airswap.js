@@ -15,9 +15,10 @@ import { web3WalletTypes } from '../static/constants'
 import { connectWallet } from './actions'
 import { getAbis } from '../../abis/redux/reducers'
 
-export const connectedWallet = (walletType, address) => ({
+export const connectedWallet = (walletType, address, walletSubtype) => ({
   type: 'CONNECTED_WALLET',
   walletType,
+  walletSubtype,
   address,
 })
 
