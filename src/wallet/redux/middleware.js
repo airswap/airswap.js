@@ -286,7 +286,7 @@ function attemptExpressLogin(store) {
               return 'address not found'
             }
             if (address.toLowerCase() === expressLoginCredentials.address) {
-              store.dispatch(connectWallet(expressLoginCredentials.walletType))
+              store.dispatch(connectWallet(expressLoginCredentials.walletType, expressLoginCredentials.walletSubtype))
             }
           })
       }
