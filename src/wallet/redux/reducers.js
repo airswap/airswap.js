@@ -78,6 +78,7 @@ function walletExpressLogin(state = {}, action) {
     case 'CONNECTED_WALLET':
       return {
         walletType: action.walletType,
+        walletSubtype: action.walletSubtype,
         address: action.address,
       }
     case 'CLEAR_WALLET':
