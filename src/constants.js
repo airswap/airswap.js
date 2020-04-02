@@ -374,6 +374,7 @@ const TRUSTED_PROJECT_TOKEN_ADDRESSES = (N => {
         '0xc011a72400e58ecd99ee497cf89e3775d4bd732f', // Synthetix
         '0x0ba45a8b5d5575935b8158a88c631e9f9c95a2e5', // Tellor
         '0xd13c7342e1ef687c5ad21b27c2b65d772cab5c8c', // Ultra
+        '0x408e41876cccdc0f92210600ef50372656052a38', // REP
       ]
     case GOERLI_ID:
       return []
