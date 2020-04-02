@@ -60,6 +60,8 @@ const startWalletAction = async (store, actionType, argParams) => {
           _.get(_.find(tokens, { address: takerToken }), 'gasLimit', 400000),
         ].map(Number),
       )
+    } else if (params.name === 'provideDelegateOrder' || params.name === 'provideOrder') {
+      gasLimit = 400000
     } else if (params.name === 'setRuleAndIntent') {
       gasLimit = 500000
     } else if (params.name === 'createDelegate') {
