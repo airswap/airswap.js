@@ -1,6 +1,7 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
+const TokenMetadata = require('@airswap/metadata').default
 const { NETWORK, RINKEBY_ID, MAIN_ID, GOERLI_ID, KOVAN_ID, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
 const { flatten } = require('../swap/utils')
 
@@ -97,11 +98,26 @@ function parseAmount(amount, precision) {
   return Number(num.toFixed(precision, BigNumber.ROUND_FLOOR))
 }
 
-class TokenMetadata {
+function mapToOldMetadataSchema(metadata) {
+  return {
+    ...metadata,
+    airswapUI: true,
+    banned: false,
+    colors: [],
+    airswap_img_url: metadata.image,
+  }
+}
+
+class OldTokenMetadata {
   constructor() {
+    const metadataPkg = new TokenMetadata()
+    metadataPkg.ready.then(tokens => {
+      this.setTokens(tokens.map(mapToOldMetadataSchema))
+    })
     this.tokens = []
     this.nftItems = []
-    this.ready = fetchTokens().then(tokens => this.setTokens(tokens))
+    this.metadataPkg = metadataPkg
+    this.ready = this.metadataPkg.ready
   }
   setTokens(tokens) {
     this.tokens = tokens
@@ -442,4 +458,4 @@ class TokenMetadata {
   }
 }
 
-module.exports = new TokenMetadata()
+module.exports = new OldTokenMetadata()
