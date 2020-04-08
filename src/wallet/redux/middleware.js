@@ -9,7 +9,7 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage, getParsedInputFromTransaction } from '../../utils/transformations'
-import { PORTIS_ID, AIRSWAP_LOGO_URL, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
+import { PORTIS_ID, AIRSWAP_LOGO_URL, JSON_RPC_URL, NETWORK, FORTMATIC_ID } from '../../constants'
 
 import { web3WalletTypes } from '../static/constants'
 import { connectWallet } from './actions'
@@ -153,7 +153,7 @@ function connectPrivateKey(store) {
 
 function connectPortis(store) {
   const portisConfig = {
-    nodeUrl: AIRSWAP_GETH_NODE_ADDRESS,
+    nodeUrl: JSON_RPC_URL,
     chainId: NETWORK,
     nodeProtocol: 'rpc',
   }
@@ -189,7 +189,7 @@ function connectWalletLink(store) {
     appLogoUrl: AIRSWAP_LOGO_URL,
   })
 
-  const provider = walletLink.makeWeb3Provider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+  const provider = walletLink.makeWeb3Provider(JSON_RPC_URL, NETWORK)
   provider.enable().then(() => {
     signer = getSigner({ web3Provider: provider }, walletActions)
     const addressPromise = signer.getAddress()

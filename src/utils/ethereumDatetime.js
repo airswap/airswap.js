@@ -1,7 +1,7 @@
 const ethers = require('ethers')
-const { AIRSWAP_GETH_NODE_ADDRESS } = require('../constants')
+const { JSON_RPC_URL } = require('../constants')
 
-const provider = new ethers.providers.JsonRpcProvider(AIRSWAP_GETH_NODE_ADDRESS)
+const provider = new ethers.providers.JsonRpcProvider(JSON_RPC_URL)
 
 const blocks = {}
 
