@@ -481,6 +481,7 @@ const PROTOCOL_1 = '0x0001'
 const PROTOCOL_2 = '0x0002'
 
 module.exports = {
+  JSON_RPC_URL,
   ENV,
   MAIN_ID,
   RINKEBY_ID,
