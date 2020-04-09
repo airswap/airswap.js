@@ -183,10 +183,10 @@ function connectFortmatic(store) {
   })
 }
 
-function connectWalletLink(store) {
+function connectWalletLink(store, walletAppLogo, walletAppName) {
   const walletLink = new WalletLink({
-    appName: process.env.REACT_APP_NAME || 'AirSwap',
-    appLogoUrl: AIRSWAP_LOGO_URL,
+    appName: walletAppName || process.env.REACT_APP_NAME || 'AirSwap',
+    appLogoUrl: walletAppLogo || AIRSWAP_LOGO_URL,
   })
 
   const provider = walletLink.makeWeb3Provider(JSON_RPC_URL, NETWORK)
@@ -275,7 +275,7 @@ function attemptExpressLogin(store) {
         case 'equal':
           const res = window.ethereum.send({ method: 'eth_accounts' })
           if ((_.first(res.result) || '').toLowerCase() === expressLoginCredentials.address) {
-            store.dispatch(connectWallet(expressLoginCredentials.walletType))
+            store.dispatch(connectWallet({ walletType: expressLoginCredentials.walletType }))
           }
           break
         default:
@@ -288,7 +288,12 @@ function attemptExpressLogin(store) {
               return 'address not found'
             }
             if (address.toLowerCase() === expressLoginCredentials.address) {
-              store.dispatch(connectWallet(expressLoginCredentials.walletType, expressLoginCredentials.walletSubtype))
+              store.dispatch(
+                connectWallet({
+                  walletType: expressLoginCredentials.walletType,
+                  walletSubType: expressLoginCredentials.walletSubtype,
+                }),
+              )
             }
           })
       }
@@ -355,7 +360,7 @@ export default function walletMiddleware(store) {
             // connectTrezor(store)
             break
           case 'walletLink':
-            connectWalletLink(store)
+            connectWalletLink(store, action.walletAppLogo, action.walletAppName)
             break
           default:
             throw new Error(`${action.walletType} walletType not expected in wallet middleware`)
