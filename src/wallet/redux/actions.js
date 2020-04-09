@@ -6,32 +6,35 @@ import { makePromiseAction } from '../../utils/redux'
  * @memberof wallet
  */
 
-export const initMetamask = () => connectWallet('metamask')
+export const initMetamask = () => connectWallet({ walletType: 'metamask' })
 
-export const initPortis = () => connectWallet('portis')
+export const initPortis = () => connectWallet({ walletType: 'portis' })
 
-export const initFortmatic = () => connectWallet('fortmatic')
+export const initFortmatic = () => connectWallet({ walletType: 'fortmatic' })
 
-export const initEqual = () => connectWallet('equal')
+export const initEqual = () => connectWallet({ walletType: 'equal' })
 
-export const initMobileWallet = () => connectWallet('web3')
+export const initMobileWallet = () => connectWallet({ walletType: 'web3' })
 
-export const initPrivateKeySigner = () => connectWallet('privateKey')
+export const initPrivateKeySigner = () => connectWallet({ walletType: 'privateKey' })
 
-export const initLedger = () => connectWallet('metamask', 'ledger')
+export const initLedger = () => connectWallet({ walletType: 'metamask', walletSubtype: 'ledger' })
 
-export const initTrezor = () => connectWallet('metamask', 'trezor')
+export const initTrezor = () => connectWallet({ walletType: 'metamask', walletSubType: 'trezor' })
 
-export const initWalletLink = () => connectWallet('walletLink')
+export const initWalletLink = ({ walletAppLogo, walletAppName }) =>
+  connectWallet({ walletType: 'walletLink', walletAppLogo, walletAppName })
 
 export const clearWallet = () => ({
   type: 'CLEAR_WALLET',
 })
 
-export const connectWallet = (walletType, walletSubtype = '') => ({
+export const connectWallet = ({ walletType, walletSubtype = '', walletAppLogo, walletAppName }) => ({
   type: 'CONNECT_WALLET',
   walletType,
   walletSubtype,
+  walletAppLogo,
+  walletAppName,
 })
 
 export const getSigner = makePromiseAction({
