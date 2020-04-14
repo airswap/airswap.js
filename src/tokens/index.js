@@ -2,10 +2,10 @@ const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
 const TokenMetadata = require('@airswap/metadata').default
+const { tokenKindNames } = require('@airswap/constants')
+
 const { NETWORK, RINKEBY_ID, MAIN_ID, GOERLI_ID, KOVAN_ID, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
 const { flatten } = require('../swap/utils')
-
-const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
 
 const OPENSEA_API_URL = (N => {
   switch (N) {
@@ -21,61 +21,11 @@ const OPENSEA_API_URL = (N => {
   }
 })(NETWORK)
 
-const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${(N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'rinkebyTokens'
-    case MAIN_ID:
-      return 'tokens'
-    case GOERLI_ID:
-      return 'goerliTokens'
-    case KOVAN_ID:
-      return 'kovanTokens'
-    default:
-  }
-})(NETWORK)}`
-
 const MAX_DISPLAY_DECIMALS = 8
-const makeCrawlTokenUrl = (address, forceAirswapUIApproved) =>
-  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}${
-    forceAirswapUIApproved ? '&forceAirswapUIApproved=true' : ''
-  }`
 const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
 
 BigNumber.config({ ERRORS: false })
 BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
-
-function fetchTokens() {
-  return new Promise((resolve, reject) => {
-    fetch(TOKEN_LIST_URL, {
-      method: 'get',
-      mode: 'cors',
-    })
-      .then(response => {
-        if (!response.ok) {
-          reject(response.statusText)
-        }
-        return response.json()
-      })
-      .then(resolve)
-  })
-}
-
-function crawlToken(tokenAddress, forceUIApproval) {
-  return new Promise((resolve, reject) => {
-    fetch(makeCrawlTokenUrl(tokenAddress, forceUIApproval), {
-      method: 'get',
-      mode: 'cors',
-    })
-      .then(response => {
-        if (!response.ok) {
-          reject(response.statusText)
-        }
-        return response.json()
-      })
-      .then(resolve)
-  })
-}
 
 function crawlNFTItem(tokenAddress, tokenId) {
   return new Promise((resolve, reject) => {
@@ -101,7 +51,7 @@ function parseAmount(amount, precision) {
 function mapToOldMetadataSchema(metadata) {
   return {
     ...metadata,
-    airswapUI: true,
+    airswapUI: 'yes',
     banned: false,
     colors: [],
     airswap_img_url: metadata.image,
@@ -110,17 +60,25 @@ function mapToOldMetadataSchema(metadata) {
 
 class OldTokenMetadata {
   constructor() {
-    const metadataPkg = new TokenMetadata()
-    metadataPkg.ready.then(tokens => {
+    const metadataPkg = new TokenMetadata(NETWORK)
+    this.ready = metadataPkg.ready.then(tokens => {
       this.setTokens(tokens.map(mapToOldMetadataSchema))
+      return this.tokens
     })
-    this.tokens = []
+    this.tokens = [
+      {
+        airswapUI: 'yes',
+        colors: [],
+        symbol: 'ETH',
+        decimals: '18',
+        address: '0x0000000000000000000000000000000000000000',
+      },
+    ]
     this.nftItems = []
     this.metadataPkg = metadataPkg
-    this.ready = this.metadataPkg.ready
   }
   setTokens(tokens) {
-    this.tokens = tokens
+    this.tokens = [...this.tokens, ...tokens]
     this.airswapUITokens = _.filter(tokens, { airswapUI: 'yes' })
     this.tokensByAddress = _.keyBy(tokens, 'address')
     this.tokenSymbolsByAddress = _.mapValues(this.tokensByAddress, t => t.symbol)
@@ -130,7 +88,12 @@ class OldTokenMetadata {
     return tokens
   }
   crawlToken(address, forceUIApproval = false) {
-    return crawlToken(address, forceUIApproval).then(token => {
+    return this.metadataPkg.fetchToken(address).then(tokenSrc => {
+      const token = {
+        ...tokenSrc,
+        kind: tokenKindNames[tokenSrc.kind],
+        airswapUI: forceUIApproval,
+      }
       this.tokens.push(token)
       return token
     })
