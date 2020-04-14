@@ -30,7 +30,7 @@ export default function configureStore(
   persistedState = [],
 ) {
   let engine = createEngine(storageKey)
-  engine = filter(engine, [['wallet', 'expressLogin'], ...persistedState])
+  engine = filter(engine, [['wallet', 'expressLogin'], ['tokens', 'data'], ...persistedState])
   const persistMiddleware = storage.createMiddleware(engine, actionsBlacklist)
   const rootReducer = combineReducers(_.pickBy({ ...projectRootReducerObj, ...rootReducerObj }, _.identity))
   const reducer = storage.reducer(rootReducer)
