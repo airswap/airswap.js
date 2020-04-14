@@ -2,12 +2,19 @@ import _ from 'lodash'
 import { combineReducers } from 'redux'
 import BigNumber from 'bignumber.js'
 import { createSelector } from 'reselect'
-import { BASE_ASSET_TOKEN_ADDRESSES, MAX_DISPLAY_DECIMALS, GAS_LIMITS } from '../../constants'
+import { BASE_ASSET_TOKEN_ADDRESSES, MAX_DISPLAY_DECIMALS, GAS_LIMITS, NETWORK, NETWORK_MAPPING } from '../../constants'
 import { parseAmount } from '../../utils/transformations'
 import { connectSelectorContainer } from '../../utils/redux'
 import tokenMetadata from '../index'
 
-const defaultState = []
+const defaultState = Object.keys(NETWORK_MAPPING).map(network => ({
+  airswapUI: 'yes',
+  colors: [],
+  symbol: 'ETH',
+  decimals: '18',
+  network: Number(network),
+  address: '0x0000000000000000000000000000000000000000',
+}))
 
 // REDUCER DEFINITION
 
@@ -15,13 +22,29 @@ const data = (state = defaultState, action) => {
   switch (action.type) {
     case 'ADD_TOKEN':
       if (action.tokens) {
-        const intersection = _.intersection(_.map(state, 'address'), _.map(action.tokens, 'address'))
+        const newTokens = action.tokens.map(token => ({
+          ...token,
+          network: NETWORK,
+        }))
+        const intersection = _.intersection(_.map(state, 'address'), _.map(newTokens, 'address'))
         const intersectionOverwrite = _.map(intersection, address =>
-          Object.assign({}, _.find(action.tokens, { address }), _.find(state, { address })),
+          Object.assign({}, _.find(newTokens, { address }), _.find(state, { address })),
         )
-        return _.uniqBy([...action.tokens, ...intersectionOverwrite, ...state], 'address')
+        return _.uniqBy(
+          [...newTokens, ...intersectionOverwrite, ...state],
+          ({ address, network }) => `${address}${network}`,
+        )
       } else if (action.token) {
-        return _.uniqBy([action.token, ...state], 'address')
+        return _.uniqBy(
+          [
+            {
+              ...action.token,
+              network: NETWORK,
+            },
+            ...state,
+          ],
+          ({ address, network }) => `${address}${network}`,
+        )
       }
       return state
 
@@ -30,10 +53,19 @@ const data = (state = defaultState, action) => {
   }
 }
 
-const nftItems = (state = defaultState, action) => {
+const nftItems = (state = [], action) => {
   switch (action.type) {
     case 'ADD_NFT_ITEM':
-      return _.uniqBy([action.token, ...state], token => [token.address, token.id].join(','))
+      return _.uniqBy(
+        [
+          {
+            ...action.token,
+            network: NETWORK,
+          },
+          ...state,
+        ],
+        token => [token.address, token.id].join(','),
+      )
 
     default:
       return state
@@ -56,8 +88,12 @@ export default combineReducers({
 })
 
 // Tokens
-const getNFTItems = state => state.tokens.nftItems
-const getTokens = createSelector(state => state.tokens.data, getNFTItems, (tokens, nfts) => ({ ...tokens, ...nfts }))
+const getNFTItems = state => _.filter(state.tokens.nftItems, { network: NETWORK })
+const getTokens = createSelector(
+  state => _.filter(state.tokens.data, { network: NETWORK }),
+  getNFTItems,
+  (tokens, nfts) => ({ ...tokens, ...nfts }),
+)
 const getAirSwapApprovedTokens = createSelector(getTokens, tokens => _.filter(tokens, { airswapUI: 'yes' }))
 const areTokensReady = state => state.tokens.ready
 const getTokenAddresses = createSelector(getTokens, t => _.map(t, 'address'))

@@ -7,7 +7,6 @@
     "eslint-config-airbnb-base",
     "eslint-config-airbnb-base/rules/strict",
     "eslint-config-airbnb/rules/react",
-    "plugin:flowtype/recommended",
     "plugin:prettier/recommended"
   ],
   "env": {
@@ -17,7 +16,6 @@
   },
   "plugins": [
     "jest",
-    "flowtype",
     "class-property"
   ],
   "rules": {

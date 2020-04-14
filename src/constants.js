@@ -243,9 +243,23 @@ const ALCHEMY_ID = (N => {
 const RADAR_DEPLOY_ID = (N => {
   switch (N) {
     case RINKEBY_ID:
-      return '312ec0f223d1e1bdb9df13bfb391b15b797b0d0d6f0a6a31'
+      return 'a488753ac102fd75b2124ed4ef7f80d91f34aa42ac6edd1a'
     case MAIN_ID:
-      return 'e3e724cb6d98b54d8e1634875eb47eb8afa91b4127618c53'
+      return '728fe3acec3dab0d119020f8afad5b4977283091eac1218a'
+    case GOERLI_ID:
+      return ''
+    case KOVAN_ID:
+      return ''
+    default:
+  }
+})(NETWORK)
+
+const RADAR_DEPLOY_NODE = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'gethrinkeby1586077392610'
+    case MAIN_ID:
+      return 'gethmainnet1586077331438'
     case GOERLI_ID:
       return ''
     case KOVAN_ID:
@@ -255,10 +269,10 @@ const RADAR_DEPLOY_ID = (N => {
 })(NETWORK)
 
 const RADAR_DEPLOY_URL = RADAR_DEPLOY_ID
-  ? `https://shared-geth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.nodes.deploy.radar.tech/?apikey=${RADAR_DEPLOY_ID}`
+  ? `https://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/?apikey=${RADAR_DEPLOY_ID}`
   : ''
 const RADAR_DEPLOY_WEBSOCKET = RADAR_DEPLOY_ID
-  ? `wss://shared-geth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.nodes.deploy.radar.tech/ws?apikey=${RADAR_DEPLOY_ID}`
+  ? `wss://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/ws?apikey=${RADAR_DEPLOY_ID}`
   : ''
 
 let JSON_RPC_URL = ALCHEMY_ID
