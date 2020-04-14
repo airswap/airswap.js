@@ -9,7 +9,7 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage, getParsedInputFromTransaction } from '../../utils/transformations'
-import { PORTIS_ID, AIRSWAP_LOGO_URL, AIRSWAP_GETH_NODE_ADDRESS, NETWORK, FORTMATIC_ID } from '../../constants'
+import { PORTIS_ID, AIRSWAP_LOGO_URL, JSON_RPC_URL, NETWORK, FORTMATIC_ID } from '../../constants'
 
 import { web3WalletTypes } from '../static/constants'
 import { connectWallet } from './actions'
@@ -153,7 +153,7 @@ function connectPrivateKey(store) {
 
 function connectPortis(store) {
   const portisConfig = {
-    nodeUrl: AIRSWAP_GETH_NODE_ADDRESS,
+    nodeUrl: JSON_RPC_URL,
     chainId: NETWORK,
     nodeProtocol: 'rpc',
   }
@@ -183,13 +183,13 @@ function connectFortmatic(store) {
   })
 }
 
-function connectWalletLink(store) {
+function connectWalletLink(store, walletAppLogo, walletAppName) {
   const walletLink = new WalletLink({
-    appName: process.env.REACT_APP_NAME || 'AirSwap',
-    appLogoUrl: AIRSWAP_LOGO_URL,
+    appName: walletAppName || process.env.REACT_APP_NAME || 'AirSwap',
+    appLogoUrl: walletAppLogo || AIRSWAP_LOGO_URL,
   })
 
-  const provider = walletLink.makeWeb3Provider(AIRSWAP_GETH_NODE_ADDRESS, NETWORK)
+  const provider = walletLink.makeWeb3Provider(JSON_RPC_URL, NETWORK)
   provider.enable().then(() => {
     signer = getSigner({ web3Provider: provider }, walletActions)
     const addressPromise = signer.getAddress()
@@ -275,7 +275,7 @@ function attemptExpressLogin(store) {
         case 'equal':
           const res = window.ethereum.send({ method: 'eth_accounts' })
           if ((_.first(res.result) || '').toLowerCase() === expressLoginCredentials.address) {
-            store.dispatch(connectWallet(expressLoginCredentials.walletType))
+            store.dispatch(connectWallet({ walletType: expressLoginCredentials.walletType }))
           }
           break
         default:
@@ -288,7 +288,12 @@ function attemptExpressLogin(store) {
               return 'address not found'
             }
             if (address.toLowerCase() === expressLoginCredentials.address) {
-              store.dispatch(connectWallet(expressLoginCredentials.walletType, expressLoginCredentials.walletSubtype))
+              store.dispatch(
+                connectWallet({
+                  walletType: expressLoginCredentials.walletType,
+                  walletSubType: expressLoginCredentials.walletSubtype,
+                }),
+              )
             }
           })
       }
@@ -355,7 +360,7 @@ export default function walletMiddleware(store) {
             // connectTrezor(store)
             break
           case 'walletLink':
-            connectWalletLink(store)
+            connectWalletLink(store, action.walletAppLogo, action.walletAppName)
             break
           default:
             throw new Error(`${action.walletType} walletType not expected in wallet middleware`)
