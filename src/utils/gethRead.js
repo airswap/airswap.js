@@ -10,19 +10,27 @@ async function send({ method, params }, provider) {
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {
-  const method = {
-    method: 'eth_getBlockByNumber',
-    params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
-  }
-  return send(method).then(parseBlock)
+  try {
+    const method = {
+      method: 'eth_getBlockByNumber',
+      params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
+    }
+    return send(method).then(parseBlock)
+  } catch (e) {
+    catchError(e)
+  } 
 }
 
 function fetchLatestBlock(includeFullTransactions = true) {
-  const method = {
-    method: 'eth_getBlockByNumber',
-    params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
-  }
-  return send(method).then(parseBlock)
+  try {
+    const method = {
+      method: 'eth_getBlockByNumber',
+      params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
+    }
+    return send(method).then(parseBlock)
+  } catch (e) {
+    catchError(e)
+  } 
 }
 
 function fetchCurrentBlockNumber() {
@@ -36,11 +44,15 @@ function fetchCurrentBlockNumber() {
 }
 
 function fetchPendingBlock(includeFullTransactions = true) {
-  const method = {
-    method: 'eth_getBlockByNumber',
-    params: ['pending', includeFullTransactions], // [hex block number, include full transactions boolean]
+  try {
+    const method = {
+      method: 'eth_getBlockByNumber',
+      params: ['pending', includeFullTransactions], // [hex block number, include full transactions boolean]
+    }
+    return send(method).then(parseBlock)
+  } catch (e) {
+    catchError(e)
   }
-  return send(method).then(parseBlock)
 }
 
 function parseBlock(block) {
@@ -84,6 +96,10 @@ async function call(txObj, blockTag = 'latest') {
     params: [txObj, blockTag],
   }
   return send(method)
+}
+
+function catchError(err) {
+  throw new Error(err)
 }
 
 module.exports = {
