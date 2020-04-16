@@ -11,7 +11,8 @@ import { middleware, rootReducerObj } from './state'
 import { waitForStateMiddleware } from '../utils/redux/waitForState'
 
 const storageKey = '@airswap'
-const qs = queryString.parse(window.location.search)
+const qs = queryString.parse(_.trimStart(window.location.search, '?'))
+
 if (qs.hardReset) localStorage.removeItem(storageKey)
 
 window._ = _

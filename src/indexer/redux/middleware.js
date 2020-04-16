@@ -12,6 +12,11 @@ function reduceIndexEventsToTokenList(events) {
   return Array.from(addressSet)
 }
 
+const gotIndexerTokens = indexerTokens => ({
+  type: 'GOT_INDEXER_TOKENS',
+  indexerTokens,
+})
+
 export default function indexerMiddleware(store) {
   return next => action => {
     switch (action.type) {
@@ -21,7 +26,9 @@ export default function indexerMiddleware(store) {
             trackIndexerCreateIndex({
               fromBlock: INDEXER_CONTRACT_DEPLOY_BLOCK,
               callback: events => {
-                crawlMissingTokens(reduceIndexEventsToTokenList(events), store)
+                const indexerTokens = reduceIndexEventsToTokenList(events)
+                store.dispatch(gotIndexerTokens(indexerTokens))
+                crawlMissingTokens(indexerTokens, store)
               },
             }),
           )
