@@ -58,6 +58,28 @@ function mapToOldMetadataSchema(metadata) {
   }
 }
 
+function getDefaultTokens() {
+  let tokens = [
+    {
+      airswapUI: 'yes',
+      colors: [],
+      symbol: 'ETH',
+      decimals: '18',
+      address: '0x0000000000000000000000000000000000000000',
+    },
+  ]
+  //
+  if (window.localStorage) {
+    try {
+      tokens = _.get(JSON.parse(window.localStorage['@airswap'] || '{}'), 'tokens.data', tokens)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  return tokens
+}
+
 class OldTokenMetadata {
   constructor() {
     const metadataPkg = new TokenMetadata(NETWORK)
@@ -65,20 +87,12 @@ class OldTokenMetadata {
       this.setTokens(tokens.map(mapToOldMetadataSchema))
       return this.tokens
     })
-    this.tokens = [
-      {
-        airswapUI: 'yes',
-        colors: [],
-        symbol: 'ETH',
-        decimals: '18',
-        address: '0x0000000000000000000000000000000000000000',
-      },
-    ]
+    this.tokens = getDefaultTokens()
     this.nftItems = []
     this.metadataPkg = metadataPkg
   }
   setTokens(tokens) {
-    this.tokens = [...this.tokens, ...tokens]
+    this.tokens = _.uniqBy([...this.tokens, ...tokens], 'address')
     this.airswapUITokens = _.filter(tokens, { airswapUI: 'yes' })
     this.tokensByAddress = _.keyBy(tokens, 'address')
     this.tokenSymbolsByAddress = _.mapValues(this.tokensByAddress, t => t.symbol)
