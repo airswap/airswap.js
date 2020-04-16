@@ -68,7 +68,7 @@ function getDefaultTokens() {
       address: '0x0000000000000000000000000000000000000000',
     },
   ]
-  //
+
   if (window.localStorage) {
     try {
       tokens = _.get(JSON.parse(window.localStorage['@airswap'] || '{}'), 'tokens.data', tokens)
