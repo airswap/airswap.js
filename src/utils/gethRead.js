@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const ethers = require('ethers')
+//  ethers = require('ethers')
 const { alchemyWeb3, httpProvider, NO_ALCHEMY_WEBSOCKETS } = require('../constants')
 
 async function send({ method, params }, provider) {
@@ -10,29 +10,30 @@ async function send({ method, params }, provider) {
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {
-  const method = {
-    method: 'eth_getBlockByNumber',
-    params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
-  }
-  return send(method).then(parseBlock)
+  // const method = {
+  //   method: 'eth_getBlockByNumber',
+  //   params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
+  // }
+  return alchemyWeb3.eth.getBlock(blockNumber, includeFullTransactions) // send(method).then(parseBlock)
 }
 
 function fetchLatestBlock(includeFullTransactions = true) {
-  const method = {
-    method: 'eth_getBlockByNumber',
-    params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
-  }
-  return send(method).then(parseBlock)
+  // const method = {
+  //   method: 'eth_getBlockByNumber',
+  //   params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
+  // }
+  return alchemyWeb3.eth.getBlock('latest', includeFullTransactions) // send(method).then(parseBlock)
 }
 
 function fetchCurrentBlockNumber() {
-  const method = {
-    method: 'eth_blockNumber',
-    params: [],
-  }
-  return send(method)
-    .then(res => hexToInt(res))
-    .catch(res => res)
+  // const method = {
+  //   method: 'eth_blockNumber',
+  //   params: [],
+  // }
+  return alchemyWeb3.eth.getBlockNumber()
+  // send(method)
+  //   .then(res => hexToInt(res))
+  //   .catch(res => res)
 }
 
 function fetchPendingBlock(includeFullTransactions = true) {
@@ -66,12 +67,12 @@ function parseTransaction(transaction) {
   }
 }
 
-function getLogs(params) {
-  const method = {
-    method: 'eth_getLogs',
-    params,
-  }
-  return send(method)
+function getLogs([params]) {
+  // const method = {
+  //   method: 'eth_getLogs',
+  //   params,
+  // }
+  return alchemyWeb3.eth.getPastLogs(params) // send(method)
 }
 
 function hexToInt(hexInt) {
