@@ -20,7 +20,7 @@ export const initPrivateKeySigner = () => connectWallet({ walletType: 'privateKe
 
 export const initLedger = () => connectWallet({ walletType: 'metamask', walletSubtype: 'ledger' })
 
-export const initTrezor = () => connectWallet({ walletType: 'metamask', walletSubType: 'trezor' })
+export const initTrezor = () => connectWallet({ walletType: 'metamask', walletSubtype: 'trezor' })
 
 export const initWalletLink = ({ walletAppLogo, walletAppName }) =>
   connectWallet({ walletType: 'walletLink', walletAppLogo, walletAppName })
