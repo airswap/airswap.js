@@ -275,7 +275,12 @@ function attemptExpressLogin(store) {
         case 'equal':
           const res = window.ethereum.send({ method: 'eth_accounts' })
           if ((_.first(res.result) || '').toLowerCase() === expressLoginCredentials.address) {
-            store.dispatch(connectWallet({ walletType: expressLoginCredentials.walletType }))
+            store.dispatch(
+              connectWallet({
+                walletType: expressLoginCredentials.walletType,
+                walletSubtype: expressLoginCredentials.walletSubtype,
+              }),
+            )
           }
           break
         default:
@@ -291,7 +296,7 @@ function attemptExpressLogin(store) {
               store.dispatch(
                 connectWallet({
                   walletType: expressLoginCredentials.walletType,
-                  walletSubType: expressLoginCredentials.walletSubtype,
+                  walletSubtype: expressLoginCredentials.walletSubtype,
                 }),
               )
             }
