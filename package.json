@@ -104,7 +104,7 @@
     "keccak": "^2.0.0",
     "lodash": "^4.17.11",
     "openpgp": "^4.0.2",
-    "redux": "^3.7.2",
+    "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.7",
     "redux-storage": "^4.1.2",
     "redux-storage-decorator-filter": "^1.1.8",
