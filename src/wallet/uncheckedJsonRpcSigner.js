@@ -1,5 +1,5 @@
 const ethers = require('ethers')
-const { NETWORK_NAME, httpProvider, infuraProvider } = require('../constants')
+const { NETWORK_NAME, ethersProvider } = require('../constants')
 const { poll } = require('ethers/utils/web')
 // const { checkProperties, defineReadOnly, resolveProperties, shallowCopy } = require('ethers/utils/properties')
 
@@ -18,7 +18,7 @@ class UncheckedJsonRpcSigner extends ethers.Signer {
   }
 
   sendTransaction(transaction) {
-    // return this.signer.sendUncheckedTransaction(transaction).then(hash => httpProvider.getTransaction(hash))
+    // return this.signer.sendUncheckedTransaction(transaction).then(hash => ethersProvider.getTransaction(hash))
 
     return this.signer.sendUncheckedTransaction(transaction).then(hash =>
       poll(
@@ -34,12 +34,7 @@ class UncheckedJsonRpcSigner extends ethers.Signer {
             console.log('window.web3 injected provider found transaction')
             return tx
           }
-          tx = await infuraProvider.getTransaction(hash)
-          if (tx) {
-            console.log('infura found transaction')
-            return tx
-          }
-          tx = await httpProvider.getTransaction(hash)
+          tx = await ethersProvider.getTransaction(hash)
           if (tx) {
             console.log('airswap found transaction')
             return tx

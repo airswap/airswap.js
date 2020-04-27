@@ -1,4 +1,4 @@
-const { NO_ALCHEMY_WEBSOCKETS, alchemyWeb3 } = require('../constants')
+const { NO_ALCHEMY_WEBSOCKETS, web3Provider } = require('../constants')
 const _ = require('lodash')
 const { fetchBlock, fetchCurrentBlockNumber } = require('../utils/gethRead')
 
@@ -12,7 +12,7 @@ class AlchemyWebsocketBlockTracker {
   }
   init() {
     return new Promise(resolve =>
-      alchemyWeb3.eth.subscribe('newBlockHeaders', {}, async (error, blockHeader) => {
+      web3Provider.eth.subscribe('newBlockHeaders', {}, async (error, blockHeader) => {
         this.blockHeaders[blockHeader.number] = blockHeader
         const block = await fetchBlock(blockHeader.number)
         this.blocks[block.number] = block

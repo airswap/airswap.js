@@ -7,22 +7,22 @@ function getDelegateContract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getDelegateIndexer(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.indexer()
 }
 
 function getDelegateIsOwner(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.isOwner()
 }
 
 function getDelegateOwner(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.owner()
 }
 
 function getDelegateProtocol(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.protocol()
 }
 
@@ -32,17 +32,17 @@ function submitDelegateRenounceOwnership(contractAddress, signer, options = {}) 
 }
 
 function getDelegateRules(contractAddress, senderToken, signerToken) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.rules(senderToken, signerToken)
 }
 
 function getDelegateSwapContract(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.swapContract()
 }
 
 function getDelegateTradeWallet(contractAddress) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.tradeWallet()
 }
 
@@ -99,17 +99,17 @@ function submitDelegateSetTradeWallet(contractAddress, newTradeWallet, signer, o
 }
 
 function getDelegateGetSignerSideQuote(contractAddress, senderAmount, senderToken, signerToken) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.getSignerSideQuote(senderAmount, senderToken, signerToken)
 }
 
 function getDelegateGetSenderSideQuote(contractAddress, signerAmount, signerToken, senderToken) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.getSenderSideQuote(signerAmount, signerToken, senderToken)
 }
 
 function getDelegateGetMaxQuote(contractAddress, senderToken, signerToken) {
-  const contract = getDelegateContract(constants.httpProvider, contractAddress)
+  const contract = getDelegateContract(constants.ethersProvider, contractAddress)
   return contract.getMaxQuote(senderToken, signerToken)
 }
 

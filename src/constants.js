@@ -1,5 +1,4 @@
 require('dotenv').config({ path: `${__dirname}/../.env` })
-const ethers = require('ethers')
 const _ = require('lodash')
 const Web3 = require('web3')
 const queryString = require('querystring')
@@ -271,13 +270,66 @@ const RADAR_DEPLOY_NODE = (N => {
 const RADAR_DEPLOY_URL = RADAR_DEPLOY_ID
   ? `https://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/?apikey=${RADAR_DEPLOY_ID}`
   : ''
+
 const RADAR_DEPLOY_WEBSOCKET = RADAR_DEPLOY_ID
   ? `wss://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/ws?apikey=${RADAR_DEPLOY_ID}`
   : ''
 
+const ALCHEMY_WEBSOCKET_URL = ALCHEMY_ID
+  ? `wss://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.ws.alchemyapi.io/v2/${ALCHEMY_ID}`
+  : ''
+
+const INFURA_ID = '9882544d7b8f441b8e5a6890b837f6e9'
+
+const INFURA_GETH_NODE = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return `https://rinkeby.infura.io/v3/${INFURA_ID}`
+    case MAIN_ID:
+      return `https://mainnet.infura.io/v3/${INFURA_ID}`
+    case GOERLI_ID:
+      return `https://goerli.infura.io/v3/${INFURA_ID}`
+    case KOVAN_ID:
+      return `https://kovan.infura.io/v3/${INFURA_ID}`
+    default:
+  }
+})(NETWORK)
+
+const INFURA_WEBSOCKET = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return `wss://rinkeby.infura.io/ws/v3/${INFURA_ID}`
+    case MAIN_ID:
+      return `wss://mainnet.infura.io/ws/v3/${INFURA_ID}`
+    case GOERLI_ID:
+      return `wss://goerli.infura.io/ws/v3/${INFURA_ID}`
+    case KOVAN_ID:
+      return `wss://kovan.infura.io/ws/v3/${INFURA_ID}`
+    default:
+  }
+})(NETWORK)
+
+const websocketOptions = {
+  // Enable auto reconnection
+  reconnect: {
+    auto: true,
+    delay: 5000, // ms
+    maxAttempts: 100,
+    onTimeout: false,
+  },
+}
+
+const web3Provider = ALCHEMY_ID
+  ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+  : new Web3(new Web3.providers.WebsocketProvider(INFURA_WEBSOCKET, websocketOptions))
+// this doesn't appear to work for some reason, will investigate another time
+// call to deltabalances contracts were never sent in the websocket when I tried to use the web3 websocket as the provider for ethers
+// no errors were thrown, the calls just never showed up in the network tab even though the functions were being called
+// const ethersProvider = new ethers.providers.Web3Provider(web3Provider.currentProvider)
+
 let JSON_RPC_URL = ALCHEMY_ID
-  ? `https://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.alchemyapi.io/jsonrpc/${ALCHEMY_ID}`
-  : RADAR_DEPLOY_URL
+  ? `https://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.alchemyapi.io/v2/${ALCHEMY_ID}`
+  : INFURA_GETH_NODE
 
 if (process.env.JSON_RPC_URL) {
   JSON_RPC_URL = process.env.JSON_RPC_URL
@@ -291,30 +343,7 @@ if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
   JSON_RPC_URL = 'http://localhost:8545'
 }
 
-const ALCHEMY_WEBSOCKET_URL = ALCHEMY_ID
-  ? `wss://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.ws.alchemyapi.io/ws/${ALCHEMY_ID}`
-  : ''
-
-const INFURA_GETH_NODE = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'https://rinkeby.infura.io/8LNJeV3XEJUtC5YzpkF6'
-    case MAIN_ID:
-      return 'https://mainnet.infura.io/8LNJeV3XEJUtC5YzpkF6'
-    default:
-  }
-})(NETWORK)
-
-const alchemyWeb3 = ALCHEMY_WEBSOCKET_URL ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL) : new Web3(RADAR_DEPLOY_WEBSOCKET)
-
-const httpProvider = new RetryProvider(JSON_RPC_URL, NETWORK)
-const infuraProvider = new RetryProvider(INFURA_GETH_NODE, NETWORK)
-
-// alchemy provider has built in retry
-// https://github.com/alchemyplatform/alchemy-web3
-const alchemyWebsocketProvider = NO_ALCHEMY_WEBSOCKETS
-  ? null
-  : new ethers.providers.Web3Provider(alchemyWeb3.currentProvider)
+const ethersProvider = new RetryProvider(JSON_RPC_URL, NETWORK)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -546,13 +575,11 @@ module.exports = {
   FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
-  httpProvider,
-  infuraProvider,
+  ethersProvider,
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
   ALCHEMY_WEBSOCKET_URL,
-  alchemyWeb3,
-  alchemyWebsocketProvider,
+  web3Provider,
   INDEXER_CONTRACT_ADDRESS,
   DELEGATE_FACTORY_CONTRACT_ADDRESS,
   INDEXER_CONTRACT_DEPLOY_BLOCK,
@@ -563,4 +590,6 @@ module.exports = {
   PROTOCOL_2,
   NO_ALCHEMY_WEBSOCKETS,
   ALCHEMY_ID,
+  RADAR_DEPLOY_URL,
+  RADAR_DEPLOY_WEBSOCKET,
 }

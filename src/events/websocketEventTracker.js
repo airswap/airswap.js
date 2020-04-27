@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const { alchemyWeb3 } = require('../constants')
+const { web3Provider } = require('../constants')
 const { parseEventLog, fetchLogs } = require('./utils')
 const { fetchLatestBlock } = require('../utils/gethRead')
 
@@ -20,7 +20,7 @@ async function subscribe(contractAddress, abi, topic, fromBlock, callback, parse
   )
 
   const abiInterface = new Interface(abi)
-  const subscription = alchemyWeb3.eth.subscribe('logs', logParams, (error, log) => {
+  const subscription = web3Provider.eth.subscribe('logs', logParams, (error, log) => {
     if (error) {
       console.log(error)
     }

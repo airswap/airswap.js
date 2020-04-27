@@ -2,7 +2,7 @@
 import { formatErrorMessage, stringBNValues, getParsedInputFromTransaction } from '../../transformations'
 
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
-import { httpProvider } from '../../../constants'
+import { ethersProvider } from '../../../constants'
 import { getAbis } from '../../../abis/redux/reducers'
 
 const ETHERS_TXN_ACTIONS = [
@@ -31,7 +31,9 @@ export const makeMiddlewareEthersTransactionFn = async (transactionFn, transacti
   store.dispatch(submitted({ ...formattedTxn, ...parsedInput, timestamp: Date.now() }))
   let minedTxn
   try {
-    minedTxn = await httpProvider.waitForTransaction(txn.hash).then(() => httpProvider.getTransactionReceipt(txn.hash))
+    minedTxn = await ethersProvider
+      .waitForTransaction(txn.hash)
+      .then(() => ethersProvider.getTransactionReceipt(txn.hash))
   } catch (err) {
     store.dispatch(errorMining(formatErrorMessage(err)))
     return

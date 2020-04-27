@@ -1,7 +1,7 @@
 // ETHERS TRANSACTION REDUX TEMPLATE
 import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } from '../../transformations'
 import { makeContainers, makeActionCreators, makeActionTypes, makeReducer, makeSelectors } from '../index'
-import { httpProvider } from '../../../constants'
+import { ethersProvider } from '../../../constants'
 import getRevertReason from '../../revertReason'
 import { getAbis } from '../../../abis/redux/reducers'
 
@@ -33,7 +33,9 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
   let minedTxn
 
   try {
-    minedTxn = await httpProvider.waitForTransaction(txn.hash).then(() => httpProvider.getTransactionReceipt(txn.hash))
+    minedTxn = await ethersProvider
+      .waitForTransaction(txn.hash)
+      .then(() => ethersProvider.getTransactionReceipt(txn.hash))
   } catch (err) {
     store.dispatch(errorMining(formatErrorMessage(err), uniqueId))
     return

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { getManyBalancesManyAddresses, getManyAllowancesManyAddresses } from '../index'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, alchemyWeb3 } from '../../constants'
+import { SWAP_CONTRACT_ADDRESS, ETH_ADDRESS, web3Provider } from '../../constants'
 import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
@@ -28,9 +28,13 @@ function loadBalancesForTokenAddressMap(tokenAddressMap) {
   _.mapValues(tokenAddressMap, (tokens, address) => {
     _.chunk(tokens, websocketChunkSize).map(tokenSubset => {
       // We have to make sure an individual eth_call doesn't get too big or it will crash websocket providers that have a max packet size
-      getManyBalancesManyAddresses(tokenSubset, [address]).then(results => {
-        balancesQueue.push(results)
-      })
+      getManyBalancesManyAddresses(tokenSubset, [address])
+        .then(results => {
+          balancesQueue.push(results)
+        })
+        .catch(e => {
+          console.error('error loading balances', tokenSubset, address, e)
+        })
     })
   })
 }
@@ -140,6 +144,7 @@ async function addConnectedAddressToTrackedAddresses(store) {
       address: connectedAddress,
       tokenAddress,
     }))
+
     store.dispatch(addTrackedAddresses(trackedAddresses))
   }
 }
@@ -148,9 +153,9 @@ const ethBalances = {}
 
 function initializeETHTracking(store, addresses) {
   addresses.forEach(async address => {
-    ethBalances[address.toLowerCase()] = await alchemyWeb3.eth.getBalance(address)
+    ethBalances[address.toLowerCase()] = await web3Provider.eth.getBalance(address)
   })
-  alchemyWeb3.eth
+  web3Provider.eth
     .subscribe('newBlockHeaders', error => {
       if (error) {
         throw new Error(error)
@@ -162,7 +167,7 @@ function initializeETHTracking(store, addresses) {
         return
       }
       addresses.forEach(async address => {
-        const ethBalance = await alchemyWeb3.eth.getBalance(address)
+        const ethBalance = await web3Provider.eth.getBalance(address)
         if (ethBalance !== ethBalances[address.toLowerCase()]) {
           loadBalancesForTokenAddressMap({ [address.toLowerCase()]: [ETH_ADDRESS] }, store)
         }

@@ -7,7 +7,7 @@ function getDsProtocolContract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getDsProtocolPreTransferCheck(contractAddress, from, to, value) {
-  const contract = getDsProtocolContract(constants.httpProvider, contractAddress)
+  const contract = getDsProtocolContract(constants.ethersProvider, contractAddress)
   return contract.preTransferCheck(from, to, value)
 }
 
