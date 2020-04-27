@@ -2,7 +2,6 @@ require('dotenv').config({ path: `${__dirname}/../.env` })
 const _ = require('lodash')
 const Web3 = require('web3')
 const queryString = require('querystring')
-const { createAlchemyWeb3 } = require('@alch/alchemy-web3')
 const ERC20abi = require('human-standard-token-abi')
 const astAbi = require('./abis/AirSwapToken_rinkeby.json')
 const wethAbi = require('./abis/WETH_ABI.json')
@@ -320,7 +319,7 @@ const websocketOptions = {
 }
 
 const web3Provider = ALCHEMY_ID
-  ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+  ? new Web3(new Web3.providers.WebsocketProvider(ALCHEMY_WEBSOCKET_URL, websocketOptions))
   : new Web3(new Web3.providers.WebsocketProvider(INFURA_WEBSOCKET, websocketOptions))
 // this doesn't appear to work for some reason, will investigate another time
 // call to deltabalances contracts were never sent in the websocket when I tried to use the web3 websocket as the provider for ethers
