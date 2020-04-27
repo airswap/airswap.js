@@ -1,5 +1,4 @@
 require('dotenv').config({ path: `${__dirname}/../.env` })
-const ethers = require('ethers')
 const _ = require('lodash')
 const Web3 = require('web3')
 const queryString = require('querystring')
@@ -310,7 +309,19 @@ const INFURA_WEBSOCKET = (N => {
   }
 })(NETWORK)
 
-const web3Provider = ALCHEMY_ID ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL) : new Web3(INFURA_WEBSOCKET)
+const websocketOptions = {
+  // Enable auto reconnection
+  reconnect: {
+    auto: true,
+    delay: 5000, // ms
+    maxAttempts: 100,
+    onTimeout: false,
+  },
+}
+
+const web3Provider = ALCHEMY_ID
+  ? createAlchemyWeb3(ALCHEMY_WEBSOCKET_URL)
+  : new Web3(new Web3.providers.WebsocketProvider(INFURA_WEBSOCKET, websocketOptions))
 // this doesn't appear to work for some reason, will investigate another time
 // call to deltabalances contracts were never sent in the websocket when I tried to use the web3 websocket as the provider for ethers
 // no errors were thrown, the calls just never showed up in the network tab even though the functions were being called
@@ -333,12 +344,6 @@ if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
 }
 
 const ethersProvider = new RetryProvider(JSON_RPC_URL, NETWORK)
-
-// alchemy provider has built in retry
-// https://github.com/alchemyplatform/alchemy-web3
-const alchemyWebsocketProvider = NO_ALCHEMY_WEBSOCKETS
-  ? null
-  : new ethers.providers.Web3Provider(web3Provider.currentProvider)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -575,7 +580,6 @@ module.exports = {
   INFINITE_EXPIRY,
   ALCHEMY_WEBSOCKET_URL,
   web3Provider,
-  alchemyWebsocketProvider,
   INDEXER_CONTRACT_ADDRESS,
   DELEGATE_FACTORY_CONTRACT_ADDRESS,
   INDEXER_CONTRACT_DEPLOY_BLOCK,
