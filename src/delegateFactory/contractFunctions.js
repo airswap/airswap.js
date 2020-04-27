@@ -7,17 +7,17 @@ function getDelegateFactoryContract(provider) {
   return new ethers.Contract(constants.DELEGATE_FACTORY_CONTRACT_ADDRESS, abi, provider)
 }
 function getDelegateFactoryIndexerContract() {
-  const contract = getDelegateFactoryContract(constants.httpProvider)
+  const contract = getDelegateFactoryContract(constants.ethersProvider)
   return contract.indexerContract()
 }
 
 function getDelegateFactoryProtocol() {
-  const contract = getDelegateFactoryContract(constants.httpProvider)
+  const contract = getDelegateFactoryContract(constants.ethersProvider)
   return contract.protocol()
 }
 
 function getDelegateFactorySwapContract() {
-  const contract = getDelegateFactoryContract(constants.httpProvider)
+  const contract = getDelegateFactoryContract(constants.ethersProvider)
   return contract.swapContract()
 }
 
@@ -27,7 +27,7 @@ function submitDelegateFactoryCreateDelegate(delegateTradeWallet, signer, option
 }
 
 function getDelegateFactoryHas(locator) {
-  const contract = getDelegateFactoryContract(constants.httpProvider)
+  const contract = getDelegateFactoryContract(constants.ethersProvider)
   return contract.has(locator)
 }
 

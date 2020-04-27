@@ -7,7 +7,7 @@ function getWethContract(provider) {
   return new ethers.Contract(constants.WETH_CONTRACT_ADDRESS, abi, provider)
 }
 function getWethName() {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.name()
 }
 
@@ -17,7 +17,7 @@ function submitWethApprove(spender, amount, signer, options = {}) {
 }
 
 function getWethTotalSupply() {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.totalSupply()
 }
 
@@ -32,17 +32,17 @@ function submitWethWithdraw(amount, signer, options = {}) {
 }
 
 function getWethDecimals() {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.decimals()
 }
 
 function getWethBalanceOf(owner) {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.balanceOf(owner)
 }
 
 function getWethSymbol() {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.symbol()
 }
 
@@ -57,7 +57,7 @@ function submitWethDeposit(ethAmount, signer, options = {}) {
 }
 
 function getWethAllowance(owner, spender) {
-  const contract = getWethContract(constants.httpProvider)
+  const contract = getWethContract(constants.ethersProvider)
   return contract.allowance(owner, spender)
 }
 

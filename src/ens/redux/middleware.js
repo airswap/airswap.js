@@ -1,5 +1,5 @@
 import { setENSReady, gotENSLookupError, gotENSLookupSuccess } from './actions'
-import { httpProvider, ENS_NULL_ADDRESS } from '../../constants'
+import { ethersProvider, ENS_NULL_ADDRESS } from '../../constants'
 
 // eslint-disable-next-line
 export default function ensMiddleware(store) {
@@ -8,7 +8,7 @@ export default function ensMiddleware(store) {
     switch (action.type) {
       case 'FIND_ADDRESS_BY_ENS_NAME':
         const { name } = action
-        httpProvider
+        ethersProvider
           .resolveName(name)
           .then(address => {
             if (!address || address === ENS_NULL_ADDRESS) {
@@ -25,7 +25,7 @@ export default function ensMiddleware(store) {
 
       case 'FIND_ENS_NAME_BY_ADDRESS':
         const { address } = action
-        httpProvider
+        ethersProvider
           .lookupAddress(address)
           .then(ensName => {
             if (!ensName) {

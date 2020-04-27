@@ -3,14 +3,14 @@ const _ = require('lodash')
 const tokenMetadata = require('../tokens')
 
 const {
-  httpProvider,
+  ethersProvider,
   DELTA_BALANCES_CONTRACT_ADDRESS,
   abis,
   TOKEN_APPROVAL_CHECK_AMOUNT,
   ETH_ADDRESS,
 } = require('../constants')
 
-const defaultProvider = httpProvider
+const defaultProvider = ethersProvider
 
 const deltaBalancesContract = new ethers.Contract(
   DELTA_BALANCES_CONTRACT_ADDRESS,

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const ethers = require('ethers')
-const { httpProvider, ERC20abi, abis, SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } = require('../constants')
+const { ethersProvider, ERC20abi, abis, SWAP_LEGACY_CONTRACT_ADDRESS, SWAP_CONTRACT_ADDRESS } = require('../constants')
 
 const { getLogs } = require('../utils/gethRead')
 
@@ -10,7 +10,7 @@ const { hexlify, hexStripZeros } = ethers.utils
 
 async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
   const toBlockOverride =
-    _.isUndefined(toBlock) || _.isNull(toBlock) ? await httpProvider.getBlockNumber() : Number(toBlock)
+    _.isUndefined(toBlock) || _.isNull(toBlock) ? await ethersProvider.getBlockNumber() : Number(toBlock)
   const fromBlockOverride =
     _.isUndefined(fromBlock) || _.isNull(fromBlock) ? Number(toBlockOverride) - 7000 : Number(fromBlock) // default is around 1 day of blocks
 

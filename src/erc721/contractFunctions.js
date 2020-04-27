@@ -7,17 +7,17 @@ function getERC721Contract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getERC721SupportsInterface(contractAddress, interfaceId) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.supportsInterface(interfaceId)
 }
 
 function getERC721BalanceOf(contractAddress, owner) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.balanceOf(owner)
 }
 
 function getERC721OwnerOf(contractAddress, tokenId) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.ownerOf(tokenId)
 }
 
@@ -32,7 +32,7 @@ function submitERC721Approve(contractAddress, to, tokenId, signer, options = {})
 }
 
 function getERC721GetApproved(contractAddress, tokenId) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.getApproved(tokenId)
 }
 
@@ -42,12 +42,12 @@ function submitERC721SetApprovalForAll(contractAddress, operator, _approved, sig
 }
 
 function getERC721IsApprovedForAll(contractAddress, owner, operator) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.isApprovedForAll(owner, operator)
 }
 
 function getERC721KittyIndexToApproved(contractAddress, tokenId) {
-  const contract = getERC721Contract(constants.httpProvider, contractAddress)
+  const contract = getERC721Contract(constants.ethersProvider, contractAddress)
   return contract.kittyIndexToApproved(tokenId)
 }
 

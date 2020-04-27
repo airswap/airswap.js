@@ -40,7 +40,7 @@ function generateContractFunctions(abiLocation, contractKey, eventNamespace = ''
   const functionArray = contractFunctions.map(({ inputs, payable, type, name }) => {
     const parameters = buildContractFunctionParams(inputs, type, payable, contractKey)
     const functionArgs = parameters.length ? `${parameters.join(', ')}` : ''
-    const getContract = type === 'transaction' ? 'signer' : 'constants.httpProvider'
+    const getContract = type === 'transaction' ? 'signer' : 'constants.ethersProvider'
     const lastParamContractAddress = contractKey ? '' : ', contractAddress'
     const functionName = getContractFunctionName(type, name, eventNamespace)
     const inputNames = getInputNames(inputs)

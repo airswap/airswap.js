@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { ethers } from 'ethers'
 import { formatErrorMessage, getParsedInputFromTransaction, stringBNValues } from '../../utils/transformations'
 import getRevertReason from '../../utils/revertReason'
-import { httpProvider } from '../../constants'
+import { ethersProvider } from '../../constants'
 import { getAbis } from '../../abis/redux/reducers'
 
 const submitting = ({ id, namespace, name, parameters }) => ({
@@ -98,7 +98,9 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
   let minedTxn
 
   try {
-    minedTxn = await httpProvider.waitForTransaction(txn.hash).then(() => httpProvider.getTransactionReceipt(txn.hash))
+    minedTxn = await ethersProvider
+      .waitForTransaction(txn.hash)
+      .then(() => ethersProvider.getTransactionReceipt(txn.hash))
   } catch (err) {
     store.dispatch(errorMining({ id, namespace, name, error: formatErrorMessage(err) }))
     return
