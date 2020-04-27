@@ -8,14 +8,12 @@ import * as ens from '../ens/redux'
 import * as erc20 from '../erc20/redux'
 import * as erc721 from '../erc721/redux'
 import * as erc1155 from '../erc1155/redux'
-import * as keySpace from '../keySpace/redux'
 import * as dexIndex from '../dexIndex/redux'
 import * as protocolMessaging from '../protocolMessaging/redux'
 import * as swap from '../swap/redux'
 import * as swapLegacy from '../swapLegacy/redux'
 import * as gas from '../gas/redux'
 import * as fiat from '../fiat/redux'
-import * as hdw from '../HDW/redux'
 import * as blockTracker from '../blockTracker/redux'
 import * as transactionTracker from '../transactionTracker/redux'
 import * as wrapper from '../wrapper/redux'
@@ -40,14 +38,12 @@ const state = {
   ens,
   erc20,
   erc721,
-  keySpace,
   dexIndex,
   protocolMessaging,
   swap,
   swapLegacy,
   gas,
   fiat,
-  hdw,
   blockTracker,
   transactionTracker,
   wrapper,
