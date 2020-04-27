@@ -279,7 +279,7 @@ const ALCHEMY_WEBSOCKET_URL = ALCHEMY_ID
   ? `wss://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.ws.alchemyapi.io/v2/${ALCHEMY_ID}`
   : ''
 
-const INFURA_ID = '1fa032434d904e018fbbc138d3f6cb3c'
+const INFURA_ID = '9882544d7b8f441b8e5a6890b837f6e9'
 
 const INFURA_GETH_NODE = (N => {
   switch (N) {
