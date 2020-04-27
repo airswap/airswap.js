@@ -17,12 +17,12 @@ function submitERC1155SafeBatchTransferFrom(contractAddress, from, to, ids, valu
 }
 
 function getERC1155BalanceOf(contractAddress, owner, id) {
-  const contract = getERC1155Contract(constants.httpProvider, contractAddress)
+  const contract = getERC1155Contract(constants.ethersProvider, contractAddress)
   return contract.balanceOf(owner, id)
 }
 
 function getERC1155BalanceOfBatch(contractAddress, owners, ids) {
-  const contract = getERC1155Contract(constants.httpProvider, contractAddress)
+  const contract = getERC1155Contract(constants.ethersProvider, contractAddress)
   return contract.balanceOfBatch(owners, ids)
 }
 
@@ -32,12 +32,12 @@ function submitERC1155SetApprovalForAll(contractAddress, operator, approved, sig
 }
 
 function getERC1155IsApprovedForAll(contractAddress, owner, operator) {
-  const contract = getERC1155Contract(constants.httpProvider, contractAddress)
+  const contract = getERC1155Contract(constants.ethersProvider, contractAddress)
   return contract.isApprovedForAll(owner, operator)
 }
 
 function getERC1155GetComplianceService(contractAddress) {
-  const contract = getERC1155Contract(constants.httpProvider, contractAddress)
+  const contract = getERC1155Contract(constants.ethersProvider, contractAddress)
   return contract.getComplianceService()
 }
 

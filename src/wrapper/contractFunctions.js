@@ -7,12 +7,12 @@ function getWrapperContract(provider) {
   return new ethers.Contract(constants.WRAPPER_CONTRACT_ADDRESS, abi, provider)
 }
 function getWrapperSwapContract() {
-  const contract = getWrapperContract(constants.httpProvider)
+  const contract = getWrapperContract(constants.ethersProvider)
   return contract.swapContract()
 }
 
 function getWrapperWethContract() {
-  const contract = getWrapperContract(constants.httpProvider)
+  const contract = getWrapperContract(constants.ethersProvider)
   return contract.wethContract()
 }
 

@@ -2,7 +2,7 @@ const _ = require('lodash')
 const uuid = require('uuid4')
 const ethers = require('ethers')
 const ethUtil = require('ethereumjs-util')
-const { httpProvider, NETWORK, NETWORK_MAPPING } = require('../constants')
+const { ethersProvider, NETWORK, NETWORK_MAPPING } = require('../constants')
 const walletTypes = require('./static/walletTypes.json')
 const UncheckedJsonRpcSigner = require('./uncheckedJsonRpcSigner')
 const { Gas } = require('../gas')
@@ -121,7 +121,7 @@ function getSigner(params, walletActions = {}, walletType, walletSubtype) {
   if (!(privateKey || web3Provider)) {
     throw new Error("must set 'privateKey' or 'web3Provider' in params")
   } else if (privateKey) {
-    return traceMethodCalls(new ethers.Wallet(privateKey, httpProvider), walletActions)
+    return traceMethodCalls(new ethers.Wallet(privateKey, ethersProvider), walletActions)
   } else {
     let networkVersion
     if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {

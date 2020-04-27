@@ -7,7 +7,7 @@ function getComplianceServiceContract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getComplianceServiceIsWhitelisted(contractAddress, account) {
-  const contract = getComplianceServiceContract(constants.httpProvider, contractAddress)
+  const contract = getComplianceServiceContract(constants.ethersProvider, contractAddress)
   return contract.isWhitelisted(account)
 }
 

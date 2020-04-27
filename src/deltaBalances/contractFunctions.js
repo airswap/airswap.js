@@ -7,12 +7,12 @@ function getDeltaBalancesContract(provider) {
   return new ethers.Contract(constants.DELTA_BALANCES_CONTRACT_ADDRESS, abi, provider)
 }
 function getDeltaBalancesAllBalancesForManyAccounts(users, tokens) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.allBalancesForManyAccounts(users, tokens)
 }
 
 function getDeltaBalancesTokenBalance(user, token) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.tokenBalance(user, token)
 }
 
@@ -22,7 +22,7 @@ function submitDeltaBalancesDestruct(signer, options = {}) {
 }
 
 function getDeltaBalancesWalletAllowances(user, spender, tokens) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.walletAllowances(user, spender, tokens)
 }
 
@@ -32,12 +32,12 @@ function submitDeltaBalancesWithdraw(signer, options = {}) {
 }
 
 function getDeltaBalancesWalletBalances(user, tokens) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.walletBalances(user, tokens)
 }
 
 function getDeltaBalancesTokenAllowance(user, spender, token) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.tokenAllowance(user, spender, token)
 }
 
@@ -47,17 +47,17 @@ function submitDeltaBalancesWithdrawToken(token, amount, signer, options = {}) {
 }
 
 function getDeltaBalancesAllWETHbalances(wethAddress, users) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.allWETHbalances(wethAddress, users)
 }
 
 function getDeltaBalancesAllAllowancesForManyAccounts(users, spender, tokens) {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.allAllowancesForManyAccounts(users, spender, tokens)
 }
 
 function getDeltaBalancesAdmin() {
-  const contract = getDeltaBalancesContract(constants.httpProvider)
+  const contract = getDeltaBalancesContract(constants.ethersProvider)
   return contract.admin()
 }
 

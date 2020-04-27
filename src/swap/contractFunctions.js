@@ -7,27 +7,27 @@ function getSwapContract(provider) {
   return new ethers.Contract(constants.SWAP_CONTRACT_ADDRESS, abi, provider)
 }
 function getSwapRegistry() {
-  const contract = getSwapContract(constants.httpProvider)
+  const contract = getSwapContract(constants.ethersProvider)
   return contract.registry()
 }
 
 function getSwapSenderAuthorizations(authorizerAddress, authorizedSender) {
-  const contract = getSwapContract(constants.httpProvider)
+  const contract = getSwapContract(constants.ethersProvider)
   return contract.senderAuthorizations(authorizerAddress, authorizedSender)
 }
 
 function getSwapSignerAuthorizations(authorizerAddress, authorizedSigner) {
-  const contract = getSwapContract(constants.httpProvider)
+  const contract = getSwapContract(constants.ethersProvider)
   return contract.signerAuthorizations(authorizerAddress, authorizedSigner)
 }
 
 function getSwapSignerMinimumNonce(signer) {
-  const contract = getSwapContract(constants.httpProvider)
+  const contract = getSwapContract(constants.ethersProvider)
   return contract.signerMinimumNonce(signer)
 }
 
 function getSwapSignerNonceStatus(signer, nonce) {
-  const contract = getSwapContract(constants.httpProvider)
+  const contract = getSwapContract(constants.ethersProvider)
   return contract.signerNonceStatus(signer, nonce)
 }
 

@@ -7,7 +7,7 @@ function getERC20Contract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getERC20Name(contractAddress) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.name()
 }
 
@@ -17,7 +17,7 @@ function submitERC20Approve(contractAddress, spender, value, signer, options = {
 }
 
 function getERC20TotalSupply(contractAddress) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.totalSupply()
 }
 
@@ -27,22 +27,22 @@ function submitERC20TransferFrom(contractAddress, from, to, value, signer, optio
 }
 
 function getERC20Decimals(contractAddress) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.decimals()
 }
 
 function getERC20Version(contractAddress) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.version()
 }
 
 function getERC20BalanceOf(contractAddress, owner) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.balanceOf(owner)
 }
 
 function getERC20Symbol(contractAddress) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.symbol()
 }
 
@@ -57,7 +57,7 @@ function submitERC20ApproveAndCall(contractAddress, spender, value, extraData, s
 }
 
 function getERC20Allowance(contractAddress, owner, spender) {
-  const contract = getERC20Contract(constants.httpProvider, contractAddress)
+  const contract = getERC20Contract(constants.ethersProvider, contractAddress)
   return contract.allowance(owner, spender)
 }
 

@@ -7,22 +7,22 @@ function getIndexContract(provider, contractAddress) {
   return new ethers.Contract(contractAddress, abi, provider)
 }
 function getIndexEntries(contractAddress, identifier) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.entries(identifier)
 }
 
 function getIndexIsOwner(contractAddress) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.isOwner()
 }
 
 function getIndexLength(contractAddress) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.length()
 }
 
 function getIndexOwner(contractAddress) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.owner()
 }
 
@@ -52,17 +52,17 @@ function submitIndexUpdateLocator(contractAddress, identifier, score, locator, s
 }
 
 function getIndexGetScore(contractAddress, identifier) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.getScore(identifier)
 }
 
 function getIndexGetLocator(contractAddress, identifier) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.getLocator(identifier)
 }
 
 function getIndexGetLocators(contractAddress, cursor, limit) {
-  const contract = getIndexContract(constants.httpProvider, contractAddress)
+  const contract = getIndexContract(constants.ethersProvider, contractAddress)
   return contract.getLocators(cursor, limit)
 }
 

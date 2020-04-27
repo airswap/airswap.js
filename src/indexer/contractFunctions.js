@@ -7,22 +7,22 @@ function getIndexerContract(provider) {
   return new ethers.Contract(constants.INDEXER_CONTRACT_ADDRESS, abi, provider)
 }
 function getIndexerIndexes(signerToken, senderToken, protocol) {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.indexes(signerToken, senderToken, protocol)
 }
 
 function getIndexerIsOwner() {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.isOwner()
 }
 
 function getIndexerLocatorWhitelists(protocol) {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.locatorWhitelists(protocol)
 }
 
 function getIndexerOwner() {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.owner()
 }
 
@@ -32,12 +32,12 @@ function submitIndexerRenounceOwnership(signer, options = {}) {
 }
 
 function getIndexerStakingToken() {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.stakingToken()
 }
 
 function getIndexerTokenBlacklist(token) {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.tokenBlacklist(token)
 }
 
@@ -77,12 +77,12 @@ function submitIndexerUnsetIntent(signerToken, senderToken, protocol, signer, op
 }
 
 function getIndexerGetLocators(signerToken, senderToken, protocol, cursor, limit) {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.getLocators(signerToken, senderToken, protocol, cursor, limit)
 }
 
 function getIndexerGetStakedAmount(user, signerToken, senderToken, protocol) {
-  const contract = getIndexerContract(constants.httpProvider)
+  const contract = getIndexerContract(constants.ethersProvider)
   return contract.getStakedAmount(user, signerToken, senderToken, protocol)
 }
 

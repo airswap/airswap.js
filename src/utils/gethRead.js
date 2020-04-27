@@ -1,12 +1,12 @@
 const _ = require('lodash')
 //  ethers = require('ethers')
-const { alchemyWeb3, httpProvider, NO_ALCHEMY_WEBSOCKETS } = require('../constants')
+const { web3Provider, ethersProvider, NO_ALCHEMY_WEBSOCKETS } = require('../constants')
 
 async function send({ method, params }, provider) {
   if (provider) {
     return provider.send(method, params)
   }
-  return NO_ALCHEMY_WEBSOCKETS ? httpProvider.send(method, params) : alchemyWeb3.currentProvider.send(method, params)
+  return NO_ALCHEMY_WEBSOCKETS ? ethersProvider.send(method, params) : web3Provider.currentProvider.send(method, params)
 }
 
 function fetchBlock(blockNumber, includeFullTransactions = true) {
@@ -14,7 +14,7 @@ function fetchBlock(blockNumber, includeFullTransactions = true) {
   //   method: 'eth_getBlockByNumber',
   //   params: [ethers.utils.hexlify(blockNumber), includeFullTransactions], // [hex block number, include full transactions boolean]
   // }
-  return alchemyWeb3.eth.getBlock(blockNumber, includeFullTransactions) // send(method).then(parseBlock)
+  return web3Provider.eth.getBlock(blockNumber, includeFullTransactions) // send(method).then(parseBlock)
 }
 
 function fetchLatestBlock(includeFullTransactions = true) {
@@ -22,7 +22,7 @@ function fetchLatestBlock(includeFullTransactions = true) {
   //   method: 'eth_getBlockByNumber',
   //   params: ['latest', includeFullTransactions], // [hex block number, include full transactions boolean]
   // }
-  return alchemyWeb3.eth.getBlock('latest', includeFullTransactions) // send(method).then(parseBlock)
+  return web3Provider.eth.getBlock('latest', includeFullTransactions) // send(method).then(parseBlock)
 }
 
 function fetchCurrentBlockNumber() {
@@ -30,7 +30,7 @@ function fetchCurrentBlockNumber() {
   //   method: 'eth_blockNumber',
   //   params: [],
   // }
-  return alchemyWeb3.eth.getBlockNumber()
+  return web3Provider.eth.getBlockNumber()
   // send(method)
   //   .then(res => hexToInt(res))
   //   .catch(res => res)
@@ -72,7 +72,7 @@ function getLogs([params]) {
   //   method: 'eth_getLogs',
   //   params,
   // }
-  return alchemyWeb3.eth.getPastLogs(params) // send(method)
+  return web3Provider.eth.getPastLogs(params) // send(method)
 }
 
 function hexToInt(hexInt) {
@@ -94,7 +94,7 @@ module.exports = {
   call,
   fetchPendingBlock,
   fetchCurrentBlockNumber,
-  alchemyWeb3,
+  web3Provider,
 }
 
 fetchCurrentBlockNumber()
