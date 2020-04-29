@@ -127,7 +127,7 @@ async function routeDelegateCall(receiver, request, tradeWallet, signerWallet) {
         // calculate the price of the maxQuote using the original amount, and multiply it by the alternativeMaxSenderAmount to get the alternativeMaxSignerAmount
         const alternativeMaxSignerAmount = bn(formattedResp.signerAmount)
           .div(formattedResp.senderAmount)
-          .mul(alternativeMaxSenderAmount)
+          .times(alternativeMaxSenderAmount)
           .floor()
           .toString()
 

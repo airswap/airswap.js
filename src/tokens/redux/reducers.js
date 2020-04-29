@@ -122,7 +122,7 @@ const makeFormatBySymbol = createSelector(getTokensBySymbol, getTokensSymbols, (
       const power = window.Math.pow(10, Number(decimals))
       return {
         display: value => new BigNumber(value).div(power).toString(),
-        full: value => new BigNumber(value).mul(power).toString(),
+        full: value => new BigNumber(value).times(power).toString(),
       }
     }),
   ),
@@ -161,7 +161,7 @@ const makeAtomicByToken = createSelector(getTokens, tokens => (tokenQuery, displ
   if (!Number(token.decimals)) return displayAmount
 
   const power = window.Math.pow(10, Number(token.decimals))
-  return new BigNumber(displayAmount).mul(power).toString()
+  return new BigNumber(displayAmount).times(power).toString()
 })
 
 const makeDisplayByToken = createSelector(
