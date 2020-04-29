@@ -29,11 +29,11 @@ function getDisplayAmountsFromDisplayPrice(params) {
     if (baseToken === senderToken) {
       signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
     } else if (baseToken === signerToken) {
-      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).times(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
       signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).div(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
-      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).mul(priceDisplayValue))
+      signerAmountDisplayValue = precision(bn(senderAmountDisplayValue).times(priceDisplayValue))
     } else {
       throw new Error('unable to calculate baseAsset')
     }
@@ -44,11 +44,11 @@ function getDisplayAmountsFromDisplayPrice(params) {
     let senderAmountDisplayValue
 
     if (baseToken === senderToken) {
-      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).times(priceDisplayValue))
     } else if (baseToken === signerToken) {
       senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(senderToken, [senderToken, signerToken])) {
-      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).mul(priceDisplayValue))
+      senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).times(priceDisplayValue))
     } else if (tokenMetadata.isBaseAsset(signerToken, [senderToken, signerToken])) {
       senderAmountDisplayValue = precision(bn(signerAmountDisplayValue).div(priceDisplayValue))
     } else {
@@ -147,7 +147,7 @@ function getAtomicPriceFromContractPrice({ senderToken, signerToken, maxSenderAm
 
 function getAtomicAmountsFromAtomicPrice({ senderToken, signerToken, senderAmountAtomic, atomicPrice }) {
   const signerAmountAtomic = bn(senderAmountAtomic)
-    .mul(atomicPrice)
+    .times(atomicPrice)
     .toFixed(0)
     .toString()
   return { senderToken, signerToken, senderAmountAtomic, signerAmountAtomic }
