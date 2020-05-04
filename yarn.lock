@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@airswap/constants@^0.3.9":
+"@airswap/constants@0.3.9", "@airswap/constants@^0.3.9":
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/@airswap/constants/-/constants-0.3.9.tgz#d3acd776be2779bb5ee7b497c0abb8967d8aac5a"
   integrity sha512-3FmUaMixWwDnH/1nCVHxn8vM6zkBb0MnaA8RdUjJ1YYXgq/GyNoTNDOsETVvVEpSZ4ezkgZRMsbDVUo6N8HS1A==
@@ -22,6 +22,17 @@
   integrity sha512-F7vN+uWX7qJB1qtegaXmYVjpEULlRWoAwE1D8kmwVdVo2Zw7KW8Y/qwPM67RqIJ6QYYlAFxbQfsTh0ik3IiURg==
   dependencies:
     openzeppelin-solidity "2.4"
+
+"@airswap/metadata@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-0.1.9.tgz#fbe5ec7b39bcffa60b3517c3c17f5a555fecbd89"
+  integrity sha512-vNkLdr8KQ6ekhVjerwEsw9dM18OIqANDIijEacij+85eMnQicX0pTNDH5ymGnAR0OtHxhdtjkJVQ++fKR5Eu5w==
+  dependencies:
+    "@airswap/constants" "0.3.9"
+    "@airswap/types" "3.5.11"
+    axios "^0.19.2"
+    eth-contract-metadata "^1.12.1"
+    ethers "^4.0.45"
 
 "@airswap/order-utils@^0.3.20":
   version "0.3.20"
@@ -61,6 +72,13 @@
   version "3.5.10"
   resolved "https://registry.yarnpkg.com/@airswap/types/-/types-3.5.10.tgz#87a85cc6b308dfab17cb9b7391e5b6c4b9e14f64"
   integrity sha512-sgxaxXKWiIk3Cm4zEwqjID240Q80wr2Ca8Q1gAvuhH8Z/MXxldTtgoyE4dCYj3vJ3v7R46kG1Hc1Rembg7Pk+w==
+  dependencies:
+    openzeppelin-solidity "2.4"
+
+"@airswap/types@3.5.11":
+  version "3.5.11"
+  resolved "https://registry.yarnpkg.com/@airswap/types/-/types-3.5.11.tgz#314dbbc670f72b9e4a9ea62457aba3ff6e2d00a6"
+  integrity sha512-IkAkMpNsMZsu7/HB36BI5baDEDUasmNUliEJep6kUG2JVOn4hr/r1rSYeqfLCpUEpN20jt4lUt36+CrQZh2g2g==
   dependencies:
     openzeppelin-solidity "2.4"
 
@@ -1264,6 +1282,13 @@ axios@^0.18.0:
   dependencies:
     follow-redirects "^1.3.0"
     is-buffer "^1.1.5"
+
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
 
 axobject-query@^0.1.0:
   version "0.1.0"
@@ -2669,6 +2694,13 @@ debug@2.6.9, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
+debug@=3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
+
 debug@^3.1.0, debug@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
@@ -3402,6 +3434,11 @@ eth-block-tracker@^3.0.0:
     pify "^2.3.0"
     tape "^4.6.3"
 
+eth-contract-metadata@^1.12.1:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/eth-contract-metadata/-/eth-contract-metadata-1.13.0.tgz#9819d0e556ea2187da91d6b49ce96abc5fce2a73"
+  integrity sha512-9CjXHX8IdXysUEvOHdbCsjdAwM1E98jaeK2HeOqm/9S/vOZ8YryaBBt/YSiBq3MkpCwf+d1pEQ53p96rsdy52w==
+
 eth-eip712-util@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/eth-eip712-util/-/eth-eip712-util-2.3.0.tgz#efdd21ca9a0fa129861002e5e98cea88deafa853"
@@ -3683,6 +3720,21 @@ ethers@4.0.0-beta.3:
     hash.js "1.1.3"
     js-sha3 "0.5.7"
     scrypt-js "2.0.3"
+    setimmediate "1.0.4"
+    uuid "2.0.1"
+    xmlhttprequest "1.8.0"
+
+ethers@^4.0.45:
+  version "4.0.47"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.47.tgz#91b9cd80473b1136dd547095ff9171bd1fc68c85"
+  integrity sha512-hssRYhngV4hiDNeZmVU/k5/E8xmLG8UpcNUzg6mb7lqhgpFPH/t7nuv20RjRrEf0gblzvi2XwR5Te+V3ZFc9pQ==
+  dependencies:
+    aes-js "3.0.0"
+    bn.js "^4.4.0"
+    elliptic "6.5.2"
+    hash.js "1.1.3"
+    js-sha3 "0.5.7"
+    scrypt-js "2.0.4"
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
@@ -4139,6 +4191,13 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     rimraf "~2.6.2"
     write "^0.2.1"
+
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
 
 follow-redirects@^1.3.0:
   version "1.7.0"
