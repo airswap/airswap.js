@@ -138,7 +138,11 @@ function connectWeb3(store, walletType = 'web3', walletSubtype) {
     const addressPromise = signer.getAddress()
     addressPromise.then(address => store.dispatch(connectedWallet(walletType, address.toLowerCase())))
   } else {
-    store.dispatch(errorConnectingWallet('No enabled web3 found in browser'))
+    store.dispatch(
+      errorConnectingWallet(
+        'This browser does not support ethereum wallets. Please use a web3 enabled mobile browser or try the desktop version of this website.',
+      ),
+    )
   }
 }
 
