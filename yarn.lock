@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@airswap/constants@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@airswap/constants/-/constants-0.3.9.tgz#d3acd776be2779bb5ee7b497c0abb8967d8aac5a"
+  integrity sha512-3FmUaMixWwDnH/1nCVHxn8vM6zkBb0MnaA8RdUjJ1YYXgq/GyNoTNDOsETVvVEpSZ4ezkgZRMsbDVUo6N8HS1A==
+
 "@airswap/delegate@2.6.9", "@airswap/delegate@^2.6.9":
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/@airswap/delegate/-/delegate-2.6.9.tgz#b5ee752f84b6b3fd3f64dddeaab6836a1dba9885"

@@ -1,24 +1,13 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
+const TokenMetadata = require('@airswap/metadata').default
+const { tokenKindNames } = require('@airswap/constants')
+
 const { NETWORK, RINKEBY_ID, MAIN_ID, GOERLI_ID, KOVAN_ID, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
-
-const OPENSEA_API_URL = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'https://rinkeby-api.opensea.io/api/v1'
-    case MAIN_ID:
-      return 'https://api.opensea.io/api/v1'
-    case GOERLI_ID:
-      return 'https://goerli-api.opensea.io/api/v1'
-    case KOVAN_ID:
-      return 'https://kovan-api.opensea.io/api/v1'
-    default:
-  }
-})(NETWORK)
 
 const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${(N => {
   switch (N) {
@@ -34,17 +23,7 @@ const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${(N => {
   }
 })(NETWORK)}`
 
-const MAX_DISPLAY_DECIMALS = 8
-const makeCrawlTokenUrl = (address, forceAirswapUIApproved) =>
-  `${TOKEN_METADATA_BASE_URL}/crawlTokenData?address=${address}${NETWORK === 4 ? '&test=true' : ''}${
-    forceAirswapUIApproved ? '&forceAirswapUIApproved=true' : ''
-  }`
-const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
-
-BigNumber.config({ ERRORS: false })
-BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
-
-function fetchTokens() {
+function fetchAirswapTokens() {
   return new Promise((resolve, reject) => {
     fetch(TOKEN_LIST_URL, {
       method: 'get',
@@ -60,21 +39,25 @@ function fetchTokens() {
   })
 }
 
-function crawlToken(tokenAddress, forceUIApproval) {
-  return new Promise((resolve, reject) => {
-    fetch(makeCrawlTokenUrl(tokenAddress, forceUIApproval), {
-      method: 'get',
-      mode: 'cors',
-    })
-      .then(response => {
-        if (!response.ok) {
-          reject(response.statusText)
-        }
-        return response.json()
-      })
-      .then(resolve)
-  })
-}
+const OPENSEA_API_URL = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 'https://rinkeby-api.opensea.io/api/v1'
+    case MAIN_ID:
+      return 'https://api.opensea.io/api/v1'
+    case GOERLI_ID:
+      return 'https://goerli-api.opensea.io/api/v1'
+    case KOVAN_ID:
+      return 'https://kovan-api.opensea.io/api/v1'
+    default:
+  }
+})(NETWORK)
+
+const MAX_DISPLAY_DECIMALS = 8
+const makeCrawlNFTItemUrl = (address, id) => `${OPENSEA_API_URL}/asset/${address}/${id}`
+
+BigNumber.config({ ERRORS: false })
+BigNumber.config({ EXPONENTIAL_AT: 1e9 }) //eslint-disable-line
 
 function crawlNFTItem(tokenAddress, tokenId) {
   return new Promise((resolve, reject) => {
@@ -97,14 +80,53 @@ function parseAmount(amount, precision) {
   return Number(num.toFixed(precision, BigNumber.ROUND_FLOOR))
 }
 
-class TokenMetadata {
+function mapToOldMetadataSchema(metadata) {
+  return {
+    ...metadata,
+    airswapUI: 'yes',
+    banned: false,
+    colors: [],
+    airswap_img_url: metadata.image,
+  }
+}
+
+function getDefaultTokens() {
+  // @airswap/metadata doesn't include ETH since it isn't a token
+  let tokens = [
+    {
+      airswapUI: 'yes',
+      colors: [],
+      symbol: 'ETH',
+      decimals: '18',
+      address: '0x0000000000000000000000000000000000000000',
+    },
+  ]
+  // persistent cache for the frontend only
+  if (window.localStorage) {
+    try {
+      tokens = _.get(JSON.parse(window.localStorage['@airswap'] || '{}'), 'tokens.data', tokens)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  return tokens
+}
+
+class OldTokenMetadata {
   constructor() {
-    this.tokens = []
+    const metadataPkg = new TokenMetadata(NETWORK)
+    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
+      const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
+      this.setTokens(newTokens)
+      return this.tokens
+    })
+    this.tokens = getDefaultTokens()
     this.nftItems = []
-    this.ready = fetchTokens().then(tokens => this.setTokens(tokens))
+    this.metadataPkg = metadataPkg
   }
   setTokens(tokens) {
-    this.tokens = tokens
+    this.tokens = _.uniqBy([...this.tokens, ...tokens], 'address')
     this.airswapUITokens = _.filter(tokens, { airswapUI: 'yes' })
     this.tokensByAddress = _.keyBy(tokens, 'address')
     this.tokenSymbolsByAddress = _.mapValues(this.tokensByAddress, t => t.symbol)
@@ -114,7 +136,12 @@ class TokenMetadata {
     return tokens
   }
   crawlToken(address, forceUIApproval = false) {
-    return crawlToken(address, forceUIApproval).then(token => {
+    return this.metadataPkg.fetchToken(address).then(tokenSrc => {
+      const token = {
+        ...tokenSrc,
+        kind: tokenKindNames[tokenSrc.kind],
+        airswapUI: forceUIApproval,
+      }
       this.tokens.push(token)
       return token
     })
@@ -442,4 +469,4 @@ class TokenMetadata {
   }
 }
 
-module.exports = new TokenMetadata()
+module.exports = new OldTokenMetadata()

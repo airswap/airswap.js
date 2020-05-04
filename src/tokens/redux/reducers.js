@@ -47,7 +47,13 @@ const data = (state = defaultState, action) => {
         )
       }
       return state
+    case 'ADD_TOKEN_METADATA':
+      const newMetadata = action.metadata.map(token => ({
+        ...token,
+        network: NETWORK,
+      }))
 
+      return _.uniqBy([...newMetadata, ...state], ({ address, network }) => `${address}${network}`)
     default:
       return state
   }
