@@ -91,6 +91,7 @@ function mapToOldMetadataSchema(metadata) {
 }
 
 function getDefaultTokens() {
+  // @airswap/metadata doesn't include ETH since it isn't a token
   let tokens = [
     {
       airswapUI: 'yes',
@@ -100,7 +101,7 @@ function getDefaultTokens() {
       address: '0x0000000000000000000000000000000000000000',
     },
   ]
-
+  // persistent cache for the frontend only
   if (window.localStorage) {
     try {
       tokens = _.get(JSON.parse(window.localStorage['@airswap'] || '{}'), 'tokens.data', tokens)
