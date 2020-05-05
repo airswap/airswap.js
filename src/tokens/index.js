@@ -119,6 +119,9 @@ class OldTokenMetadata {
     this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
       const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
       this.setTokens(newTokens)
+      console.log(NETWORK)
+      console.log(tokens)
+      console.log(airswapTokens)
       return this.tokens
     })
     this.tokens = getDefaultTokens()

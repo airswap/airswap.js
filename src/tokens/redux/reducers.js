@@ -24,7 +24,7 @@ const data = (state = defaultState, action) => {
       if (action.tokens) {
         const newTokens = action.tokens.map(token => ({
           ...token,
-          network: NETWORK,
+          network: token.network || NETWORK,
         }))
         const intersection = _.intersection(_.map(state, 'address'), _.map(newTokens, 'address'))
         const intersectionOverwrite = _.map(intersection, address =>
@@ -39,7 +39,7 @@ const data = (state = defaultState, action) => {
           [
             {
               ...action.token,
-              network: NETWORK,
+              network: action.token.network || NETWORK,
             },
             ...state,
           ],
@@ -50,7 +50,7 @@ const data = (state = defaultState, action) => {
     case 'ADD_TOKEN_METADATA':
       const newMetadata = action.metadata.map(token => ({
         ...token,
-        network: NETWORK,
+        network: token.network || NETWORK,
       }))
 
       return _.uniqBy([...newMetadata, ...state], ({ address, network }) => `${address}${network}`)
@@ -96,7 +96,11 @@ export default combineReducers({
 // Tokens
 const getNFTItems = state => _.filter(state.tokens.nftItems, { network: NETWORK })
 const getTokens = createSelector(
-  state => _.filter(state.tokens.data, { network: NETWORK }),
+  state => {
+    const filteredTokens = _.filter(state.tokens.data, { network: NETWORK })
+    console.log(_.filter(filteredTokens, { symbol: 'WETH' }))
+    return filteredTokens
+  },
   getNFTItems,
   (tokens, nfts) => ({ ...tokens, ...nfts }),
 )
