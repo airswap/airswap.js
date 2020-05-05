@@ -96,11 +96,7 @@ export default combineReducers({
 // Tokens
 const getNFTItems = state => _.filter(state.tokens.nftItems, { network: NETWORK })
 const getTokens = createSelector(
-  state => {
-    const filteredTokens = _.filter(state.tokens.data, { network: NETWORK })
-    console.log(_.filter(filteredTokens, { symbol: 'WETH' }))
-    return filteredTokens
-  },
+  state => _.filter(state.tokens.data, { network: NETWORK }),
   getNFTItems,
   (tokens, nfts) => ({ ...tokens, ...nfts }),
 )
