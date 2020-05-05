@@ -102,7 +102,7 @@ function getDefaultTokens() {
     },
   ]
   // persistent cache for the frontend only
-  if (window.localStorage) {
+  if (typeof window !== 'undefined' && window.localStorage) {
     try {
       tokens = _.get(JSON.parse(window.localStorage['@airswap'] || '{}'), 'tokens.data', tokens)
     } catch (e) {
