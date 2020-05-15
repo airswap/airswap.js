@@ -116,11 +116,13 @@ function getDefaultTokens() {
 class OldTokenMetadata {
   constructor() {
     const metadataPkg = new TokenMetadata(NETWORK)
-    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
-      const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
-      this.setTokens(newTokens)
-      return this.tokens
-    })
+    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()])
+      .then(([tokens, airswapTokens]) => {
+        const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
+        this.setTokens(newTokens)
+        return this.tokens
+      })
+      .catch(e => console.log(e))
     this.tokens = getDefaultTokens()
     this.nftItems = []
     this.metadataPkg = metadataPkg
@@ -142,7 +144,9 @@ class OldTokenMetadata {
         kind: tokenKindNames[tokenSrc.kind],
         airswapUI: forceUIApproval,
       }
+
       this.tokens.push(token)
+      this.tokensByAddress[token.address] = token
       return token
     })
   }
@@ -468,5 +472,8 @@ class OldTokenMetadata {
     }
   }
 }
+const t = new OldTokenMetadata()
 
-module.exports = new OldTokenMetadata()
+t.crawlToken('0x63877825a2dbd9d0297931bc161ebe118d4d8c5a')
+
+module.exports = t
