@@ -116,13 +116,12 @@ function getDefaultTokens() {
 class OldTokenMetadata {
   constructor() {
     const metadataPkg = new TokenMetadata(NETWORK)
-    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()])
-      .then(([tokens, airswapTokens]) => {
-        const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
-        this.setTokens(newTokens)
-        return this.tokens
-      })
-      .catch(e => console.log(e))
+    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
+      const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
+      this.setTokens(newTokens)
+      return this.tokens
+    })
+
     this.tokens = getDefaultTokens()
     this.nftItems = []
     this.metadataPkg = metadataPkg
