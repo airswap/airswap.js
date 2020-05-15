@@ -471,8 +471,5 @@ class OldTokenMetadata {
     }
   }
 }
-const t = new OldTokenMetadata()
 
-t.crawlToken('0x63877825a2dbd9d0297931bc161ebe118d4d8c5a')
-
-module.exports = t
+module.exports = new OldTokenMetadata()
