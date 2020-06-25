@@ -1,8 +1,6 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@0.1.1
-  datadog: airswap/datadog@volatile
 
 defaults: &defaults
   working_directory: ~/repo
@@ -55,8 +53,6 @@ jobs:
               echo "Updating NPM..." # this is where we deploy the code to npm
               npm publish
             fi
-      - slack/status
-      - datadog/deploy
 
 workflows:
   test-deploy:
