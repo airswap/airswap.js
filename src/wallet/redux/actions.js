@@ -22,7 +22,7 @@ export const initLedger = () => connectWallet({ walletType: 'metamask', walletSu
 
 export const initTrezor = () => connectWallet({ walletType: 'metamask', walletSubtype: 'trezor' })
 
-export const initWalletLink = ({ walletAppLogo, walletAppName }) =>
+export const initWalletLink = ({ walletAppLogo, walletAppName } = {}) =>
   connectWallet({ walletType: 'walletLink', walletAppLogo, walletAppName })
 
 export const clearWallet = () => ({

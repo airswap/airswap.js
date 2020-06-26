@@ -121,6 +121,7 @@ class OldTokenMetadata {
       this.setTokens(newTokens)
       return this.tokens
     })
+
     this.tokens = getDefaultTokens()
     this.nftItems = []
     this.metadataPkg = metadataPkg
@@ -142,7 +143,9 @@ class OldTokenMetadata {
         kind: tokenKindNames[tokenSrc.kind],
         airswapUI: forceUIApproval,
       }
+
       this.tokens.push(token)
+      this.tokensByAddress[token.address] = token
       return token
     })
   }
