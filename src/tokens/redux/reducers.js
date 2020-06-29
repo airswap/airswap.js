@@ -13,6 +13,7 @@ const defaultState = Object.keys(NETWORK_MAPPING).map(network => ({
   symbol: 'ETH',
   decimals: '18',
   network: Number(network),
+  airswap_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png',
   address: '0x0000000000000000000000000000000000000000',
 }))
 
