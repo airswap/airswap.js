@@ -10,7 +10,7 @@ import filter from 'redux-storage-decorator-filter'
 import { middleware, rootReducerObj } from './state'
 import { waitForStateMiddleware } from '../utils/redux/waitForState'
 
-const storageKey = '@airswap'
+const storageKey = '@airswapjs'
 const qs = queryString.parse(_.trimStart(window.location.search, '?'))
 
 if (qs.hardReset) localStorage.removeItem(storageKey)

@@ -9,11 +9,11 @@ import tokenMetadata from '../index'
 
 const defaultState = Object.keys(NETWORK_MAPPING).map(network => ({
   airswapUI: 'yes',
-  colors: [],
+  colors: ['#343434', '#7f7f7c', '#8c8c8c', '#939493', '#d4d6d4'],
   symbol: 'ETH',
   decimals: '18',
   network: Number(network),
-  airswap_img_url: 'https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png',
+  airswap_img_url: 'https://s3.amazonaws.com/airswap-token-images/ETH.png',
   address: '0x0000000000000000000000000000000000000000',
 }))
 
