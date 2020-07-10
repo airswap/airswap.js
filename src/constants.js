@@ -192,6 +192,20 @@ const DAI_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
+const USDC_CONTRACT_ADDRESS = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return '0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b'
+    case MAIN_ID:
+      return '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+    case GOERLI_ID:
+      return '0x8dd75bbf55e8c68678643388d79309e70c130f3f'
+    case KOVAN_ID:
+      return '0xdcfab8057d08634279f8201b55d311c2a67897d2'
+    default:
+  }
+})(NETWORK)
+
 const DEXINDEX_URL = (N => {
   switch (N) {
     case RINKEBY_ID:
@@ -589,4 +603,5 @@ module.exports = {
   ALCHEMY_ID,
   RADAR_DEPLOY_URL,
   RADAR_DEPLOY_WEBSOCKET,
+  USDC_CONTRACT_ADDRESS,
 }
