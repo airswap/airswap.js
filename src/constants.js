@@ -60,7 +60,7 @@ let NETWORK = (N => {
     case 'production':
       return MAIN_ID
     default:
-      return RINKEBY_ID
+      return MAIN_ID
   }
 })(ENV)
 
