@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.1.189",
+  "version": "0.1.190",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "author": "Sam Walker <sam.walker@fluidity.io>",
@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "@airswap/constants": "^0.3.9",
-    "@airswap/metadata": "^0.1.9",
+    "@airswap/metadata": "^0.1.11",
     "@airswap/order-utils": "^0.3.20",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",

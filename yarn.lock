@@ -23,10 +23,10 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/metadata@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-0.1.9.tgz#fbe5ec7b39bcffa60b3517c3c17f5a555fecbd89"
-  integrity sha512-vNkLdr8KQ6ekhVjerwEsw9dM18OIqANDIijEacij+85eMnQicX0pTNDH5ymGnAR0OtHxhdtjkJVQ++fKR5Eu5w==
+"@airswap/metadata@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-0.1.11.tgz#941a1dd629e53918f2383a29c369531c90ae7aab"
+  integrity sha512-k7hg8Ftsg/jo/zkj8/N41fYt7kvISSUKqgLPwWaSXV9QpnkpP6uU7skZybgBskZGLqUGxSdbzJqX4FG0SqtF7w==
   dependencies:
     "@airswap/constants" "0.3.9"
     "@airswap/types" "3.5.11"
