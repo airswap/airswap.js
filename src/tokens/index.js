@@ -90,30 +90,6 @@ function mapToOldMetadataSchema(metadata) {
   }
 }
 
-function getDefaultTokens() {
-  // @airswap/metadata doesn't include ETH since it isn't a token
-  let tokens = [
-    {
-      airswapUI: 'yes',
-      colors: ['#343434', '#7f7f7c', '#8c8c8c', '#939493', '#d4d6d4'],
-      symbol: 'ETH',
-      decimals: '18',
-      address: '0x0000000000000000000000000000000000000000',
-      airswap_img_url: 'https://s3.amazonaws.com/airswap-token-images/ETH.png',
-    },
-  ]
-  // persistent cache for the frontend only
-  if (typeof window !== 'undefined' && window.localStorage) {
-    try {
-      tokens = _.get(JSON.parse(window.localStorage['@airswapjs'] || '{}'), 'tokens.data', tokens)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  return tokens
-}
-
 class OldTokenMetadata {
   constructor() {
     const metadataPkg = new TokenMetadata(NETWORK)
@@ -123,7 +99,6 @@ class OldTokenMetadata {
       return this.tokens
     })
 
-    this.tokens = getDefaultTokens()
     this.nftItems = []
     this.metadataPkg = metadataPkg
   }
