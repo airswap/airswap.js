@@ -103,7 +103,7 @@ class OldTokenMetadata {
     this.metadataPkg = metadataPkg
   }
   setTokens(tokens) {
-    this.tokens = _.uniqBy([...this.tokens, ...tokens], 'address')
+    this.tokens = _.uniqBy([...(this.tokens || []), ...tokens], 'address')
     this.airswapUITokens = _.filter(tokens, { airswapUI: 'yes' })
     this.tokensByAddress = _.keyBy(tokens, 'address')
     this.tokenSymbolsByAddress = _.mapValues(this.tokensByAddress, t => t.symbol)
