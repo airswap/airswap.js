@@ -10,12 +10,10 @@ const {
   ETH_ADDRESS,
 } = require('../constants')
 
-const defaultProvider = ethersProvider
-
 const deltaBalancesContract = new ethers.Contract(
   DELTA_BALANCES_CONTRACT_ADDRESS,
   abis[DELTA_BALANCES_CONTRACT_ADDRESS],
-  defaultProvider,
+  ethersProvider,
 )
 
 function getManyBalancesManyAddresses(tokens, addresses) {

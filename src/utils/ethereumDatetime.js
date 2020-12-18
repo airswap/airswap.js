@@ -1,7 +1,7 @@
 const ethers = require('ethers')
-const { JSON_RPC_URL } = require('../constants')
+const { ETH_NODE_HTTP } = require('../constants')
 
-const provider = new ethers.providers.JsonRpcProvider(JSON_RPC_URL)
+const provider = new ethers.providers.JsonRpcProvider(ETH_NODE_HTTP)
 
 const blocks = {}
 
