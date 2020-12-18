@@ -1,8 +1,4 @@
-const { NETWORK_NAME } = require('../constants')
-
-const ethers = require('ethers')
-
-const provider = new ethers.getDefaultProvider(NETWORK_NAME || 'homestead')
+const { ethersProvider } = require('../constants')
 
 function hex_to_ascii(str1) {
   const hex = str1.toString()
@@ -14,11 +10,11 @@ function hex_to_ascii(str1) {
 }
 
 async function getRevertReason(hash) {
-  const tx = await provider.getTransaction(hash)
+  const tx = await ethersProvider.getTransaction(hash)
   if (!tx) {
     console.log('tx not found')
   } else {
-    const code = await provider.call(tx, tx.blockNumber)
+    const code = await ethersProvider.call(tx, tx.blockNumber)
     return hex_to_ascii(code.substr(138))
   }
 }

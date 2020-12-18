@@ -4,7 +4,15 @@ const _ = require('lodash')
 const TokenMetadata = require('@airswap/metadata').default
 const { tokenKindNames } = require('@airswap/constants')
 
-const { NETWORK, RINKEBY_ID, MAIN_ID, GOERLI_ID, KOVAN_ID, BASE_ASSET_TOKEN_ADDRESSES } = require('../constants')
+const {
+  ethersProvider,
+  NETWORK,
+  RINKEBY_ID,
+  MAIN_ID,
+  GOERLI_ID,
+  KOVAN_ID,
+  BASE_ASSET_TOKEN_ADDRESSES,
+} = require('../constants')
 const { flatten } = require('../swap/utils')
 
 const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
@@ -92,7 +100,7 @@ function mapToOldMetadataSchema(metadata) {
 
 class OldTokenMetadata {
   constructor() {
-    const metadataPkg = new TokenMetadata(NETWORK)
+    const metadataPkg = new TokenMetadata(ethersProvider)
     this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
       const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
       this.setTokens(newTokens)

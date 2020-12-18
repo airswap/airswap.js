@@ -1,9 +1,7 @@
 const ethers = require('ethers')
-const { NETWORK_NAME, ethersProvider } = require('../constants')
+const { ethersProvider } = require('../constants')
 const { poll } = require('ethers/utils/web')
 // const { checkProperties, defineReadOnly, resolveProperties, shallowCopy } = require('ethers/utils/properties')
-
-const provider = new ethers.getDefaultProvider(NETWORK_NAME || 'homestead')
 
 // from: https://github.com/ethers-io/ethers.js/issues/340#issuecomment-447512944
 class UncheckedJsonRpcSigner extends ethers.Signer {
@@ -24,11 +22,6 @@ class UncheckedJsonRpcSigner extends ethers.Signer {
       poll(
         async () => {
           let tx
-          tx = await provider.getTransaction(hash)
-          if (tx) {
-            console.log('ethers default provider found transaction')
-            return tx
-          }
           tx = await this.signer.provider.getTransaction(hash)
           if (tx) {
             console.log('window.web3 injected provider found transaction')
@@ -36,7 +29,7 @@ class UncheckedJsonRpcSigner extends ethers.Signer {
           }
           tx = await ethersProvider.getTransaction(hash)
           if (tx) {
-            console.log('airswap found transaction')
+            console.log('ethers provider found transaction')
             return tx
           }
           console.log(`failed to find ${hash}`)
