@@ -86,7 +86,7 @@ const NETWORK_NAME = NAME_MAPPING[NETWORK]
 let ETH_NODE_HTTP
 let ethersProvider = ethers.getDefaultProvider(NETWORK)
 
-// If set, expects URL in the form e.g. https://{NETWORK}.infura.io/v3/...
+// If set, expects a URL e.g. "https://{NETWORK}.infura.io/v3/..."
 if (process.env.ETH_NODE_HTTP || process.env.REACT_APP_ETH_NODE_HTTP) {
   let node_url = process.env.ETH_NODE_HTTP
   if (process.env.REACT_APP_ETH_NODE_HTTP) {
@@ -107,6 +107,7 @@ if (process.env.ETH_NODE_HTTP || process.env.REACT_APP_ETH_NODE_HTTP) {
 let ETH_NODE_WEBSOCKET
 let web3Provider = new Web3(Web3.givenProvider)
 
+// If set, expects a URL e.g. "wss://{NETWORK}.infura.io/ws/v3/..."
 if (process.env.ETH_NODE_WEBSOCKET || process.env.REACT_APP_ETH_NODE_WEBSOCKET) {
   let node_url = process.env.ETH_NODE_WEBSOCKET
   if (process.env.REACT_APP_ETH_NODE_WEBSOCKET) {
@@ -123,7 +124,6 @@ if (process.env.ETH_NODE_WEBSOCKET || process.env.REACT_APP_ETH_NODE_WEBSOCKET) 
   ETH_NODE_WEBSOCKET = node_url
   web3Provider = new Web3(
     new Web3.providers.WebsocketProvider(node_url, {
-      // Enable auto reconnection
       reconnect: {
         auto: true,
         delay: 5000, // ms
@@ -132,14 +132,11 @@ if (process.env.ETH_NODE_WEBSOCKET || process.env.REACT_APP_ETH_NODE_WEBSOCKET) 
       },
     }),
   )
-  // this doesn't appear to work for some reason, will investigate another time
-  // call to deltabalances contracts were never sent in the websocket when I tried to use the web3 websocket as the provider for ethers
-  // no errors were thrown, the calls just never showed up in the network tab even though the functions were being called
-  // const ethersProvider = new ethers.providers.Web3Provider(web3Provider.currentProvider)
 }
 
 if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
   ethersProvider = new RetryProvider('http://localhost:8545', NETWORK)
+  web3Provider = new Web3('http://localhost:8545')
 }
 
 const SWAP_CONTRACT_ADDRESS = contractConstants.swap[String(NETWORK)]
