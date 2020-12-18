@@ -39,6 +39,7 @@
     "no-plusplus": "off",
     "no-case-declarations": "off",
     "no-continue": "off",
+    "no-new": "off",
     "new-cap": "off",
     "import/no-named-as-default": "off",
     "react/require-default-props": "off",

@@ -1,5 +1,6 @@
 require('dotenv').config({ path: `${__dirname}/../.env` })
 const _ = require('lodash')
+const ethers = require('ethers')
 const Web3 = require('web3')
 const queryString = require('querystring')
 const ERC20abi = require('human-standard-token-abi')
@@ -39,6 +40,7 @@ const NETWORK_MAPPING = {
 }
 
 const NAME_MAPPING = {
+  [MAIN_ID]: 'mainnet',
   [RINKEBY_ID]: 'rinkeby',
   [KOVAN_ID]: 'kovan',
   [GOERLI_ID]: 'goerli',
@@ -80,6 +82,62 @@ if (typeof window !== 'undefined') {
 }
 
 const NETWORK_NAME = NAME_MAPPING[NETWORK]
+
+let ETH_NODE_HTTP
+let ethersProvider = ethers.getDefaultProvider(NETWORK)
+
+// If set, expects a URL e.g. "https://{NETWORK}.infura.io/v3/..."
+if (process.env.ETH_NODE_HTTP || process.env.REACT_APP_ETH_NODE_HTTP) {
+  let node_url = process.env.ETH_NODE_HTTP
+  if (process.env.REACT_APP_ETH_NODE_HTTP) {
+    node_url = process.env.REACT_APP_ETH_NODE_HTTP
+  }
+  node_url = node_url.replace(/{NETWORK}/g, NETWORK_NAME)
+
+  try {
+    new URL(node_url)
+  } catch (e) {
+    throw new Error('Invalid HTTP URL for Ethereum node (ETH_NODE_HTTP)')
+  }
+
+  ETH_NODE_HTTP = node_url
+  ethersProvider = new RetryProvider(node_url, NETWORK)
+}
+
+let ETH_NODE_WEBSOCKET
+let web3Provider = new Web3(Web3.givenProvider)
+
+// If set, expects a URL e.g. "wss://{NETWORK}.infura.io/ws/v3/..."
+if (process.env.ETH_NODE_WEBSOCKET || process.env.REACT_APP_ETH_NODE_WEBSOCKET) {
+  let node_url = process.env.ETH_NODE_WEBSOCKET
+  if (process.env.REACT_APP_ETH_NODE_WEBSOCKET) {
+    node_url = process.env.REACT_APP_ETH_NODE_WEBSOCKET
+  }
+  node_url = node_url.replace(/{NETWORK}/g, NETWORK_NAME)
+
+  try {
+    new URL(node_url)
+  } catch (e) {
+    throw new Error('Invalid Websocket URL for Ethereum node (ETH_NODE_WEBSOCKET)')
+  }
+
+  ETH_NODE_WEBSOCKET = node_url
+  web3Provider = new Web3(
+    new Web3.providers.WebsocketProvider(node_url, {
+      reconnect: {
+        auto: true,
+        delay: 5000, // ms
+        maxAttempts: 100,
+        onTimeout: false,
+      },
+    }),
+  )
+}
+
+if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
+  ethersProvider = new RetryProvider('http://localhost:8545', NETWORK)
+  web3Provider = new Web3('http://localhost:8545')
+}
 
 const SWAP_CONTRACT_ADDRESS = contractConstants.swap[String(NETWORK)]
 
@@ -230,131 +288,6 @@ const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
     default:
   }
 })(NETWORK)
-
-const ALCHEMY_RINKEBY_ID = process.env.REACT_APP_ALCHEMY_RINKEBY_ID || process.env.ALCHEMY_RINKEBY_ID
-const ALCHEMY_MAINNET_ID = process.env.REACT_APP_ALCHEMY_MAINNET_ID || process.env.ALCHEMY_MAINNET_ID
-const ALCHEMY_GOERLI_ID = process.env.REACT_APP_ALCHEMY_GOERLI_ID || process.env.ALCHEMY_GOERLI_ID
-const ALCHEMY_KOVAN_ID = process.env.REACT_APP_ALCHEMY_KOVAN_ID || process.env.ALCHEMY_KOVAN_ID
-
-const ALCHEMY_ID = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return ALCHEMY_RINKEBY_ID
-    case MAIN_ID:
-      return ALCHEMY_MAINNET_ID
-    case GOERLI_ID:
-      return ALCHEMY_GOERLI_ID
-    case KOVAN_ID:
-      return ALCHEMY_KOVAN_ID
-    default:
-  }
-})(NETWORK)
-
-const RADAR_DEPLOY_ID = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'a488753ac102fd75b2124ed4ef7f80d91f34aa42ac6edd1a'
-    case MAIN_ID:
-      return '728fe3acec3dab0d119020f8afad5b4977283091eac1218a'
-    case GOERLI_ID:
-      return ''
-    case KOVAN_ID:
-      return ''
-    default:
-  }
-})(NETWORK)
-
-const RADAR_DEPLOY_NODE = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'gethrinkeby1586077392610'
-    case MAIN_ID:
-      return 'gethmainnet1586077331438'
-    case GOERLI_ID:
-      return ''
-    case KOVAN_ID:
-      return ''
-    default:
-  }
-})(NETWORK)
-
-const RADAR_DEPLOY_URL = RADAR_DEPLOY_ID
-  ? `https://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/?apikey=${RADAR_DEPLOY_ID}`
-  : ''
-
-const RADAR_DEPLOY_WEBSOCKET = RADAR_DEPLOY_ID
-  ? `wss://${RADAR_DEPLOY_NODE}.nodes.deploy.radar.tech/ws?apikey=${RADAR_DEPLOY_ID}`
-  : ''
-
-const ALCHEMY_WEBSOCKET_URL = ALCHEMY_ID
-  ? `wss://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.ws.alchemyapi.io/v2/${ALCHEMY_ID}`
-  : ''
-
-const INFURA_ID = '9882544d7b8f441b8e5a6890b837f6e9'
-
-const INFURA_GETH_NODE = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return `https://rinkeby.infura.io/v3/${INFURA_ID}`
-    case MAIN_ID:
-      return `https://mainnet.infura.io/v3/${INFURA_ID}`
-    case GOERLI_ID:
-      return `https://goerli.infura.io/v3/${INFURA_ID}`
-    case KOVAN_ID:
-      return `https://kovan.infura.io/v3/${INFURA_ID}`
-    default:
-  }
-})(NETWORK)
-
-const INFURA_WEBSOCKET = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return `wss://rinkeby.infura.io/ws/v3/${INFURA_ID}`
-    case MAIN_ID:
-      return `wss://mainnet.infura.io/ws/v3/${INFURA_ID}`
-    case GOERLI_ID:
-      return `wss://goerli.infura.io/ws/v3/${INFURA_ID}`
-    case KOVAN_ID:
-      return `wss://kovan.infura.io/ws/v3/${INFURA_ID}`
-    default:
-  }
-})(NETWORK)
-
-const websocketOptions = {
-  // Enable auto reconnection
-  reconnect: {
-    auto: true,
-    delay: 5000, // ms
-    maxAttempts: 100,
-    onTimeout: false,
-  },
-}
-
-const web3Provider = ALCHEMY_ID
-  ? new Web3(new Web3.providers.WebsocketProvider(ALCHEMY_WEBSOCKET_URL, websocketOptions))
-  : new Web3(new Web3.providers.WebsocketProvider(INFURA_WEBSOCKET, websocketOptions))
-// this doesn't appear to work for some reason, will investigate another time
-// call to deltabalances contracts were never sent in the websocket when I tried to use the web3 websocket as the provider for ethers
-// no errors were thrown, the calls just never showed up in the network tab even though the functions were being called
-// const ethersProvider = new ethers.providers.Web3Provider(web3Provider.currentProvider)
-
-let JSON_RPC_URL = ALCHEMY_ID
-  ? `https://eth-${NETWORK_MAPPING[NETWORK].toLowerCase()}.alchemyapi.io/v2/${ALCHEMY_ID}`
-  : INFURA_GETH_NODE
-
-if (process.env.JSON_RPC_URL) {
-  JSON_RPC_URL = process.env.JSON_RPC_URL
-}
-
-if (process.env.REACT_APP_JSON_RPC_URL) {
-  JSON_RPC_URL = process.env.REACT_APP_JSON_RPC_URL
-}
-
-if (process.env.MOCHA_IS_TESTING || process.env.REACT_APP_TESTING) {
-  JSON_RPC_URL = 'http://localhost:8545'
-}
-
-const ethersProvider = new RetryProvider(JSON_RPC_URL, NETWORK)
 
 const INDEXER_ADDRESS = ETH_ADDRESS
 
@@ -535,7 +468,8 @@ const PROTOCOL_1 = '0x0001'
 const PROTOCOL_2 = '0x0002'
 
 module.exports = {
-  JSON_RPC_URL,
+  ETH_NODE_HTTP,
+  ETH_NODE_WEBSOCKET,
   ENV,
   MAIN_ID,
   RINKEBY_ID,
@@ -558,7 +492,6 @@ module.exports = {
   WETH_CONTRACT_ADDRESS,
   DAI_CONTRACT_ADDRESS,
   DELTA_BALANCES_CONTRACT_ADDRESS,
-  INFURA_GETH_NODE,
   abis,
   TOKEN_APPROVAL_AMOUNT,
   TOKEN_APPROVAL_CHECK_AMOUNT,
@@ -589,7 +522,6 @@ module.exports = {
   ethersProvider,
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
-  ALCHEMY_WEBSOCKET_URL,
   web3Provider,
   INDEXER_CONTRACT_ADDRESS,
   DELEGATE_FACTORY_CONTRACT_ADDRESS,
@@ -600,8 +532,5 @@ module.exports = {
   PROTOCOL_1,
   PROTOCOL_2,
   NO_ALCHEMY_WEBSOCKETS,
-  ALCHEMY_ID,
-  RADAR_DEPLOY_URL,
-  RADAR_DEPLOY_WEBSOCKET,
   USDC_CONTRACT_ADDRESS,
 }

@@ -6,12 +6,10 @@ const ethers = require('ethers')
 const rlp = require('rlp')
 const keccak = require('keccak')
 const _ = require('lodash')
-const { NETWORK_NAME } = require('../constants')
-
-const provider = ethers.getDefaultProvider(NETWORK_NAME)
+const { ethersProvider } = require('../constants')
 
 async function findDeployedContractsForSender(sender, bytecode) {
-  const transactionCount = await provider.getTransactionCount(sender)
+  const transactionCount = await ethersProvider.getTransactionCount(sender)
   const nonces = _.range(0, transactionCount)
   const contracts = []
   // now I iterate over it
@@ -26,7 +24,7 @@ async function findDeployedContractsForSender(sender, bytecode) {
         .digest('hex')
 
       const contract_address = `0x${contract_address_long.substring(24)}` // Trim the first 24 characters.
-      const code = await provider.getCode(contract_address)
+      const code = await ethersProvider.getCode(contract_address)
       if (code.replace(/^\s+|\s+$/g, '') === bytecode) {
         contracts.push({ intNonce, address: contract_address })
       }
