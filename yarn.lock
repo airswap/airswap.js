@@ -2,7 +2,12 @@
 # yarn lockfile v1
 
 
-"@airswap/constants@0.3.9", "@airswap/constants@^0.3.9":
+"@airswap/constants@0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@airswap/constants/-/constants-0.3.10.tgz#29d4d44dbdd36c98034f8b76ba21a779da5c5051"
+  integrity sha512-74kT4lncU++lyXDUJC6j1V8uasMshyhRDhiSKnV/88Ll6S0d2MyvjARaKkCfp8JqFnMbcbWl5zUyzMmSoimuIA==
+
+"@airswap/constants@^0.3.9":
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/@airswap/constants/-/constants-0.3.9.tgz#d3acd776be2779bb5ee7b497c0abb8967d8aac5a"
   integrity sha512-3FmUaMixWwDnH/1nCVHxn8vM6zkBb0MnaA8RdUjJ1YYXgq/GyNoTNDOsETVvVEpSZ4ezkgZRMsbDVUo6N8HS1A==
@@ -32,14 +37,14 @@
     "@airswap/types" "3.5.14"
     "@openzeppelin/contracts" "^3.3.0"
 
-"@airswap/metadata@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-0.2.0.tgz#c663797ba3692fe9ee5370ffc649f47cc7e540ca"
-  integrity sha512-GnrSYzlin5Td/9T221oCBCtZtE4n1rqrLxMLgYf+Y6163URNisuGJZ72ci6ZTqLhRqE4RmCq22KmlzNJ6vsaBQ==
+"@airswap/metadata@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-0.2.1.tgz#50ba3a2e24b4dd6892e822d3b9d6f2d48573015d"
+  integrity sha512-IJRrakBwRvbCxWeOFxn8xckaILsjNjZ4Ogs0asd+qJNkOfthowfhQWb19cR4DTr93lH0rHEZ3TX1BTEJWo/RfA==
   dependencies:
-    "@airswap/constants" "0.3.9"
-    "@airswap/types" "3.5.11"
-    axios "^0.19.2"
+    "@airswap/constants" "0.3.10"
+    "@airswap/types" "3.5.14"
+    axios "^0.21.1"
     eth-contract-metadata "^1.12.1"
     ethers "^4.0.45"
 
@@ -81,13 +86,6 @@
   version "3.5.10"
   resolved "https://registry.yarnpkg.com/@airswap/types/-/types-3.5.10.tgz#87a85cc6b308dfab17cb9b7391e5b6c4b9e14f64"
   integrity sha512-sgxaxXKWiIk3Cm4zEwqjID240Q80wr2Ca8Q1gAvuhH8Z/MXxldTtgoyE4dCYj3vJ3v7R46kG1Hc1Rembg7Pk+w==
-  dependencies:
-    openzeppelin-solidity "2.4"
-
-"@airswap/types@3.5.11":
-  version "3.5.11"
-  resolved "https://registry.yarnpkg.com/@airswap/types/-/types-3.5.11.tgz#314dbbc670f72b9e4a9ea62457aba3ff6e2d00a6"
-  integrity sha512-IkAkMpNsMZsu7/HB36BI5baDEDUasmNUliEJep6kUG2JVOn4hr/r1rSYeqfLCpUEpN20jt4lUt36+CrQZh2g2g==
   dependencies:
     openzeppelin-solidity "2.4"
 
@@ -1616,12 +1614,12 @@ axios@^0.18.0:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
 
-axios@^0.19.2:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
-    follow-redirects "1.5.10"
+    follow-redirects "^1.10.0"
 
 axobject-query@^0.1.0:
   version "0.1.0"
@@ -4655,6 +4653,11 @@ follow-redirects@1.5.10:
   integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
   dependencies:
     debug "=3.1.0"
+
+follow-redirects@^1.10.0:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
+  integrity sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==
 
 for-each@~0.3.3:
   version "0.3.3"
