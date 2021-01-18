@@ -357,6 +357,11 @@ const modules = [
   //   namespace: 'complianceService',
   //   contractKey: '',
   // },
+  {
+    abiLocation: 'abis/swapLight.json',
+    namespace: 'swapLight',
+    contractKey: 'SWAP_LIGHT_CONTRACT_ADDRESS',
+  },
 ]
 
 modules.map(createSubmodules)
