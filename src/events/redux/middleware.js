@@ -10,6 +10,7 @@ import websocketEventTracker from '../websocketEventTracker'
 import { trackSwapSwap } from '../../swap/redux/eventTrackingActions'
 import DebouncedQueue from '../../utils/debouncedQueue'
 import { fetchedHistoricalEvents, fetchingHistoricalEvents } from './actions'
+import { trackSwapLightSwap } from '../../swaplight/redux/eventTrackingActions'
 
 const eventTracker = websocketEventTracker
 
@@ -33,6 +34,12 @@ const initPollExchangeFills = _.once(store => {
   if (IS_INSTANT || IS_EXPLORER) {
     eventTracker.trackEvent(
       trackSwapSwap({
+        callback,
+        ...(IS_EXPLORER ? { backFillBlockCount: 7000 * 30 } : {}),
+      }),
+    )
+    eventTracker.trackEvent(
+      trackSwapLightSwap({
         callback,
         ...(IS_EXPLORER ? { backFillBlockCount: 7000 * 30 } : {}),
       }),

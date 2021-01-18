@@ -203,6 +203,22 @@ const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
 
 const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[String(NETWORK)]
 
+const SWAP_LIGHT_CONTRACT_ADDRESS = contractConstants.swapLight[String(NETWORK)]
+
+const SWAP_LIGHT_CONTRACT_DEPLOY_BLOCK = (N => {
+  switch (N) {
+    case RINKEBY_ID:
+      return 7854047
+    case MAIN_ID:
+      return 11646873
+    case GOERLI_ID:
+      return 0
+    case KOVAN_ID:
+      return 0
+    default:
+  }
+})(NETWORK)
+
 const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
   switch (N) {
     case RINKEBY_ID:
@@ -533,4 +549,6 @@ module.exports = {
   PROTOCOL_2,
   NO_ALCHEMY_WEBSOCKETS,
   USDC_CONTRACT_ADDRESS,
+  SWAP_LIGHT_CONTRACT_ADDRESS,
+  SWAP_LIGHT_CONTRACT_DEPLOY_BLOCK,
 }

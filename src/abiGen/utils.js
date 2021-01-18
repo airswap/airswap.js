@@ -4,6 +4,7 @@ const fs = require('fs')
 
 const getContractFunctionName = (type, name, eventNamespace) => {
   const prefix = type === 'call' ? 'get' : 'submit'
+
   if (_.upperFirst(eventNamespace) === _.upperFirst(name)) {
     return `${prefix}${_.upperFirst(name)}`
   }
