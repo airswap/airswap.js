@@ -292,71 +292,71 @@ ${selectorTextArray.join('\n')}
 }
 
 const modules = [
-  {
-    abiLocation: 'abis/WETH_ABI.json',
-    namespace: 'weth',
-    contractKey: 'WETH_CONTRACT_ADDRESS',
-  },
+  // {
+  //   abiLocation: 'abis/WETH_ABI.json',
+  //   namespace: 'weth',
+  //   contractKey: 'WETH_CONTRACT_ADDRESS',
+  // },
   {
     abiLocation: 'abis/hst.json',
     namespace: 'ERC20',
     contractKey: '',
   },
-  {
-    abiLocation: 'abis/swap.json',
-    namespace: 'swap',
-    contractKey: 'SWAP_CONTRACT_ADDRESS',
-  },
-  {
-    abiLocation: 'abis/indexer.json',
-    namespace: 'indexer',
-    contractKey: 'INDEXER_CONTRACT_ADDRESS',
-  },
-  {
-    abiLocation: 'abis/deltaBalancesABI.json',
-    namespace: 'deltaBalances',
-    contractKey: 'DELTA_BALANCES_CONTRACT_ADDRESS',
-  },
-  {
-    abiLocation: 'abis/wrapper.json',
-    namespace: 'wrapper',
-    contractKey: 'WRAPPER_CONTRACT_ADDRESS',
-  },
-  {
-    abiLocation: 'abis/erc721.json',
-    namespace: 'ERC721',
-    contractKey: '',
-  },
-  {
-    abiLocation: 'abis/erc1155.json',
-    namespace: 'ERC1155',
-    contractKey: '',
-  },
-  {
-    abiLocation: 'abis/delegate.json',
-    namespace: 'delegate',
-    contractKey: '',
-  },
-  {
-    abiLocation: 'abis/index.json',
-    namespace: 'index',
-    contractKey: '',
-  },
-  {
-    abiLocation: 'abis/delegateFactory.json',
-    namespace: 'delegateFactory',
-    contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
-  },
-  {
-    abiLocation: 'abis/DSProtocolTokenInterface.json',
-    namespace: 'dsProtocol',
-    contractKey: '',
-  },
-  {
-    abiLocation: 'abis/complianceServiceWhitelist.json',
-    namespace: 'complianceService',
-    contractKey: '',
-  },
+  // {
+  //   abiLocation: 'abis/swap.json',
+  //   namespace: 'swap',
+  //   contractKey: 'SWAP_CONTRACT_ADDRESS',
+  // },
+  // {
+  //   abiLocation: 'abis/indexer.json',
+  //   namespace: 'indexer',
+  //   contractKey: 'INDEXER_CONTRACT_ADDRESS',
+  // },
+  // {
+  //   abiLocation: 'abis/deltaBalancesABI.json',
+  //   namespace: 'deltaBalances',
+  //   contractKey: 'DELTA_BALANCES_CONTRACT_ADDRESS',
+  // },
+  // {
+  //   abiLocation: 'abis/wrapper.json',
+  //   namespace: 'wrapper',
+  //   contractKey: 'WRAPPER_CONTRACT_ADDRESS',
+  // },
+  // {
+  //   abiLocation: 'abis/erc721.json',
+  //   namespace: 'ERC721',
+  //   contractKey: '',
+  // },
+  // {
+  //   abiLocation: 'abis/erc1155.json',
+  //   namespace: 'ERC1155',
+  //   contractKey: '',
+  // },
+  // {
+  //   abiLocation: 'abis/delegate.json',
+  //   namespace: 'delegate',
+  //   contractKey: '',
+  // },
+  // {
+  //   abiLocation: 'abis/index.json',
+  //   namespace: 'index',
+  //   contractKey: '',
+  // },
+  // {
+  //   abiLocation: 'abis/delegateFactory.json',
+  //   namespace: 'delegateFactory',
+  //   contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
+  // },
+  // {
+  //   abiLocation: 'abis/DSProtocolTokenInterface.json',
+  //   namespace: 'dsProtocol',
+  //   contractKey: '',
+  // },
+  // {
+  //   abiLocation: 'abis/complianceServiceWhitelist.json',
+  //   namespace: 'complianceService',
+  //   contractKey: '',
+  // },
 ]
 
 modules.map(createSubmodules)
