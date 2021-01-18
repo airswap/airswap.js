@@ -15,7 +15,7 @@ function buildContractFunctionParams(inputs, type, payable, contractKey) {
     parameters.push('signer')
     parameters.push('options = {}')
   }
-  if (payable) {
+  if (payable && type === 'transaction') {
     parameters = ['ethAmount', ...parameters]
   }
 
@@ -37,7 +37,9 @@ function generateEthersTransactionOptions(payable, type) {
 function generateContractFunctions(abiLocation, contractKey, eventNamespace = '') {
   const abi = require(`../${abiLocation}`)
   const contractFunctions = _.uniq(_.values(getInterface(abi).functions))
-  const functionArray = contractFunctions.map(({ inputs, payable, type, name }) => {
+  const functionArray = contractFunctions.map(params => {
+    const { inputs, payable, type, name } = params
+    console.log({ payable, type, name })
     const parameters = buildContractFunctionParams(inputs, type, payable, contractKey)
     const functionArgs = parameters.length ? `${parameters.join(', ')}` : ''
     const getContract = type === 'transaction' ? 'signer' : 'constants.ethersProvider'
