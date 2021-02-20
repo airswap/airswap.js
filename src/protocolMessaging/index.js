@@ -93,7 +93,12 @@ class Router {
       const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
       const callServer = function(request, callback) {
         axios
-          .post(locator, request)
+          .post(locator, request, {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          })
           .then(response => {
             if (response.status === 200) {
               callback(response.data.error, response.data.result)
