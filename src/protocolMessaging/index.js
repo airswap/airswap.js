@@ -101,7 +101,7 @@ class Router {
           })
           .then(response => {
             if (response.status === 200) {
-              callback(response.data.error, response.data.result)
+              callback(null, JSON.stringify(response.data))
             } else {
               callback(response.status)
             }
