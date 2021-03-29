@@ -88,15 +88,15 @@ export default function swapLightMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'FETCH_SWAP_LIGHT_ORDER_TYPEHASH':
+      case 'FETCH_SWAP_LIGHT_FEE_DIVISOR':
         contractFunctions
-          .getSwapLightORDER_TYPEHASH(action.ethAmount)
+          .getSwapLightFEE_DIVISOR(action.ethAmount)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
               response: resolveBigNumbers(response),
               namespace: 'swapLight',
-              name: 'ORDER_TYPEHASH',
+              name: 'FEE_DIVISOR',
               timestamp: Date.now(),
               parameters: { ethAmount: action.ethAmount },
             })
@@ -104,21 +104,124 @@ export default function swapLightMiddleware(store) {
           })
           .catch(action.reject)
         break
-      case 'FETCH_SWAP_LIGHT_SIGNER_MINIMUM_NONCE':
+      case 'FETCH_SWAP_LIGHT_LIGHT_ORDER_TYPEHASH':
         contractFunctions
-          .getSwapLightSignerMinimumNonce(action.ethAmount, action.nonce)
+          .getSwapLightLIGHT_ORDER_TYPEHASH(action.ethAmount)
           .then(response => {
             store.dispatch({
               type: 'GOT_CALL_RESPONSE',
               response: resolveBigNumbers(response),
               namespace: 'swapLight',
-              name: 'signerMinimumNonce',
+              name: 'LIGHT_ORDER_TYPEHASH',
               timestamp: Date.now(),
-              parameters: { ethAmount: action.ethAmount, nonce: action.nonce },
+              parameters: { ethAmount: action.ethAmount },
             })
             action.resolve(response)
           })
           .catch(action.reject)
+        break
+      case 'FETCH_SWAP_LIGHT_AUTHORIZED':
+        contractFunctions
+          .getSwapLightAuthorized(action.ethAmount, action.authorizedAddress)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'swapLight',
+              name: 'authorized',
+              timestamp: Date.now(),
+              parameters: { ethAmount: action.ethAmount, authorizedAddress: action.authorizedAddress },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_SWAP_LIGHT_FEE_WALLET':
+        contractFunctions
+          .getSwapLightFeeWallet(action.ethAmount)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'swapLight',
+              name: 'feeWallet',
+              timestamp: Date.now(),
+              parameters: { ethAmount: action.ethAmount },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'FETCH_SWAP_LIGHT_OWNER':
+        contractFunctions
+          .getSwapLightOwner(action.ethAmount)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'swapLight',
+              name: 'owner',
+              timestamp: Date.now(),
+              parameters: { ethAmount: action.ethAmount },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'SUBMIT_SWAP_LIGHT_RENOUNCE_OWNERSHIP':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightRenounceOwnership(
+            action.ethAmount,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'renounceOwnership',
+            parameters: { ethAmount: action.ethAmount },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'FETCH_SWAP_LIGHT_SIGNER_FEE':
+        contractFunctions
+          .getSwapLightSignerFee(action.ethAmount)
+          .then(response => {
+            store.dispatch({
+              type: 'GOT_CALL_RESPONSE',
+              response: resolveBigNumbers(response),
+              namespace: 'swapLight',
+              name: 'signerFee',
+              timestamp: Date.now(),
+              parameters: { ethAmount: action.ethAmount },
+            })
+            action.resolve(response)
+          })
+          .catch(action.reject)
+        break
+      case 'SUBMIT_SWAP_LIGHT_TRANSFER_OWNERSHIP':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightTransferOwnership(
+            action.ethAmount,
+            action.newOwner,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'transferOwnership',
+            parameters: { ethAmount: action.ethAmount, newOwner: action.newOwner },
+          })
+          action.resolve(id)
+        })
         break
       case 'SUBMIT_SWAP_LIGHT_SWAP':
         store.dispatch(getSigner()).then(signer => {
@@ -126,11 +229,14 @@ export default function swapLightMiddleware(store) {
             action.ethAmount,
             action.nonce,
             action.expiry,
+            action.signerWallet,
             action.signerToken,
             action.signerAmount,
             action.senderToken,
             action.senderAmount,
-            action.signature,
+            action.v,
+            action.r,
+            action.s,
             signer,
             action.options,
           )
@@ -145,12 +251,137 @@ export default function swapLightMiddleware(store) {
               ethAmount: action.ethAmount,
               nonce: action.nonce,
               expiry: action.expiry,
+              signerWallet: action.signerWallet,
               signerToken: action.signerToken,
               signerAmount: action.signerAmount,
               senderToken: action.senderToken,
               senderAmount: action.senderAmount,
-              signature: action.signature,
+              v: action.v,
+              r: action.r,
+              s: action.s,
             },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_LIGHT_SWAP_WITH_RECIPIENT':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightSwapWithRecipient(
+            action.ethAmount,
+            action.recipient,
+            action.nonce,
+            action.expiry,
+            action.signerWallet,
+            action.signerToken,
+            action.signerAmount,
+            action.senderToken,
+            action.senderAmount,
+            action.v,
+            action.r,
+            action.s,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'swapWithRecipient',
+            parameters: {
+              ethAmount: action.ethAmount,
+              recipient: action.recipient,
+              nonce: action.nonce,
+              expiry: action.expiry,
+              signerWallet: action.signerWallet,
+              signerToken: action.signerToken,
+              signerAmount: action.signerAmount,
+              senderToken: action.senderToken,
+              senderAmount: action.senderAmount,
+              v: action.v,
+              r: action.r,
+              s: action.s,
+            },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_LIGHT_SET_FEE_WALLET':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightSetFeeWallet(
+            action.ethAmount,
+            action.newFeeWallet,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'setFeeWallet',
+            parameters: { ethAmount: action.ethAmount, newFeeWallet: action.newFeeWallet },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_LIGHT_SET_FEE':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightSetFee(
+            action.ethAmount,
+            action.newSignerFee,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'setFee',
+            parameters: { ethAmount: action.ethAmount, newSignerFee: action.newSignerFee },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_LIGHT_AUTHORIZE':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightAuthorize(
+            action.ethAmount,
+            action.signerAddress,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'authorize',
+            parameters: { ethAmount: action.ethAmount, signerAddress: action.signerAddress },
+          })
+          action.resolve(id)
+        })
+        break
+      case 'SUBMIT_SWAP_LIGHT_REVOKE':
+        store.dispatch(getSigner()).then(signer => {
+          const contractFunctionPromise = contractFunctions.submitSwapLightRevoke(
+            action.ethAmount,
+            signer,
+            action.options,
+          )
+          const id = Date.now().toString()
+          store.dispatch({
+            type: 'ADD_TRACKED_TRANSACTION',
+            contractFunctionPromise,
+            id,
+            namespace: 'swapLight',
+            name: 'revoke',
+            parameters: { ethAmount: action.ethAmount },
           })
           action.resolve(id)
         })
@@ -171,26 +402,6 @@ export default function swapLightMiddleware(store) {
             namespace: 'swapLight',
             name: 'cancel',
             parameters: { ethAmount: action.ethAmount, nonces: action.nonces },
-          })
-          action.resolve(id)
-        })
-        break
-      case 'SUBMIT_SWAP_LIGHT_CANCEL_UP_TO':
-        store.dispatch(getSigner()).then(signer => {
-          const contractFunctionPromise = contractFunctions.submitSwapLightCancelUpTo(
-            action.ethAmount,
-            action.minimumNonce,
-            signer,
-            action.options,
-          )
-          const id = Date.now().toString()
-          store.dispatch({
-            type: 'ADD_TRACKED_TRANSACTION',
-            contractFunctionPromise,
-            id,
-            namespace: 'swapLight',
-            name: 'cancelUpTo',
-            parameters: { ethAmount: action.ethAmount, minimumNonce: action.minimumNonce },
           })
           action.resolve(id)
         })

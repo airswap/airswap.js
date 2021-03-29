@@ -7,10 +7,29 @@ const overwrites = [
   {
     inputs: [
       {
-        name: 'nonce',
+        name: 'signerAddress',
+      },
+      {
+        name: 'signerWallet',
       },
     ],
-    name: 'signerMinimumNonce',
+    name: 'Authorize',
+  },
+  {
+    inputs: [
+      {
+        name: 'authorizedAddress',
+      },
+    ],
+    name: 'authorized',
+  },
+  {
+    inputs: [
+      {
+        name: 'signerAddress',
+      },
+    ],
+    name: 'authorize',
   },
 ]
 

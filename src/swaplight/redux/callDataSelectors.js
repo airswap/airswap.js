@@ -34,14 +34,38 @@ export const getSwapLightDOMAIN_VERSION = createSelector(getCallData, values => 
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
-export const getSwapLightORDER_TYPEHASH = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'ORDER_TYPEHASH', namespace: 'swapLight' })
+export const getSwapLightFEE_DIVISOR = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'FEE_DIVISOR', namespace: 'swapLight' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })
 
-export const getSwapLightSignerMinimumNonce = createSelector(getCallData, values => {
-  const filteredValues = _.filter(values, { name: 'signerMinimumNonce', namespace: 'swapLight' })
+export const getSwapLightLIGHT_ORDER_TYPEHASH = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'LIGHT_ORDER_TYPEHASH', namespace: 'swapLight' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
+export const getSwapLightAuthorized = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'authorized', namespace: 'swapLight' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
+export const getSwapLightFeeWallet = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'feeWallet', namespace: 'swapLight' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
+export const getSwapLightOwner = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'owner', namespace: 'swapLight' })
+  const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
+  return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
+})
+
+export const getSwapLightSignerFee = createSelector(getCallData, values => {
+  const filteredValues = _.filter(values, { name: 'signerFee', namespace: 'swapLight' })
   const sortedValues = _.sortBy(filteredValues, 'timestamp').reverse()
   return _.uniqBy(sortedValues, v => JSON.stringify(v.parameters))
 })

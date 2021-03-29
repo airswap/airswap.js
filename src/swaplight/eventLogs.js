@@ -3,6 +3,17 @@ const { fetchLogs, getEventTopics } = require('../events/utils')
 const abi = require('../abis/swapLight.json')
 const constants = require('../constants')
 
+const fetchSwapLightAuthorizeLogs = ({ signerAddress, signerWallet, fromBlock, toBlock, parser, provider } = {}) =>
+  fetchLogs(
+    constants.SWAP_LIGHT_CONTRACT_ADDRESS,
+    abi,
+    getEventTopics({ abi, name: 'Authorize', params: { signerAddress, signerWallet } }),
+    fromBlock,
+    toBlock,
+    parser,
+    provider,
+  )
+
 const fetchSwapLightCancelLogs = ({ nonce, signerWallet, fromBlock, toBlock, parser, provider } = {}) =>
   fetchLogs(
     constants.SWAP_LIGHT_CONTRACT_ADDRESS,
@@ -14,11 +25,29 @@ const fetchSwapLightCancelLogs = ({ nonce, signerWallet, fromBlock, toBlock, par
     provider,
   )
 
-const fetchSwapLightCancelUpToLogs = ({ nonce, signerWallet, fromBlock, toBlock, parser, provider } = {}) =>
+const fetchSwapLightOwnershipTransferredLogs = ({
+  previousOwner,
+  newOwner,
+  fromBlock,
+  toBlock,
+  parser,
+  provider,
+} = {}) =>
   fetchLogs(
     constants.SWAP_LIGHT_CONTRACT_ADDRESS,
     abi,
-    getEventTopics({ abi, name: 'CancelUpTo', params: { nonce, signerWallet } }),
+    getEventTopics({ abi, name: 'OwnershipTransferred', params: { previousOwner, newOwner } }),
+    fromBlock,
+    toBlock,
+    parser,
+    provider,
+  )
+
+const fetchSwapLightRevokeLogs = ({ signer, signerWallet, fromBlock, toBlock, parser, provider } = {}) =>
+  fetchLogs(
+    constants.SWAP_LIGHT_CONTRACT_ADDRESS,
+    abi,
+    getEventTopics({ abi, name: 'Revoke', params: { signer, signerWallet } }),
     fromBlock,
     toBlock,
     parser,
@@ -36,4 +65,10 @@ const fetchSwapLightSwapLogs = ({ nonce, signerWallet, senderWallet, fromBlock, 
     provider,
   )
 
-module.exports = { fetchSwapLightCancelLogs, fetchSwapLightCancelUpToLogs, fetchSwapLightSwapLogs }
+module.exports = {
+  fetchSwapLightAuthorizeLogs,
+  fetchSwapLightCancelLogs,
+  fetchSwapLightOwnershipTransferredLogs,
+  fetchSwapLightRevokeLogs,
+  fetchSwapLightSwapLogs,
+}
