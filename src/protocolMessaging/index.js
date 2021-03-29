@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const ethers = require('ethers')
 const jaysonBrowserClient = require('jayson/lib/client/browser')
-const fetch = require('node-fetch')
+const axios = require('axios')
 const uuid = require('uuid4')
 const { nest, flatten, mapNested22OrderTo20Order, mapNested22QuoteTo20Quote } = require('../swap/utils')
 const { routeDelegateCall } = require('../delegate')
@@ -92,21 +92,22 @@ class Router {
     if (locatorType && _.includes(['http', 'https'], locatorType)) {
       const timeout = setTimeout(() => reject({ message: `Request timed out.`, code: -1 }), this.timeout)
       const callServer = function(request, callback) {
-        const options = {
-          method: 'POST',
-          body: request,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-
-        fetch(locator, options)
-          .then(res => res.text())
-          .then(text => {
-            callback(null, text)
+        axios
+          .post(locator, request, {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
           })
-          .catch(err => {
-            callback(err)
+          .then(response => {
+            if (response.status === 200) {
+              callback(null, JSON.stringify(response.data))
+            } else {
+              callback(response.status)
+            }
+          })
+          .catch(error => {
+            callback(error)
           })
       }
 
