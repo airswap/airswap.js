@@ -8,6 +8,26 @@ import {
   getFetchedHistoricalEvents,
 } from '../../events/redux/reducers'
 
+export const getSwapLightAuthorizeEvents = createSelector(getFetchedTrackedEvents, events =>
+  _.filter(events, {
+    topic: '0x30468de898bda644e26bab66e5a2241a3aa6aaf527257f5ca54e0f65204ba14a',
+    address: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
+  }),
+)
+
+export const getSwapLightAuthorizeHistoricalFetchStatus = createSelector(
+  getFetchingHistoricalEvents,
+  getFetchedHistoricalEvents,
+  (fetchingValues, fetchedValues) => {
+    const fetching = fetchingValues.swapLightAuthorize
+    const fetched = fetchedValues.swapLightAuthorize
+    return {
+      fetching,
+      fetched,
+    }
+  },
+)
+
 export const getSwapLightCancelEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
     topic: '0x8dd3c361eb2366ff27c2db0eb07b9261f1d052570742ab8c9a0c326f37aa576d',
@@ -28,19 +48,39 @@ export const getSwapLightCancelHistoricalFetchStatus = createSelector(
   },
 )
 
-export const getSwapLightCancelUpToEvents = createSelector(getFetchedTrackedEvents, events =>
+export const getSwapLightOwnershipTransferredEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0x863123978d9b13946753a916c935c0688a01802440d3ffc668d04d2720c4e110',
+    topic: '0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0',
     address: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
   }),
 )
 
-export const getSwapLightCancelUpToHistoricalFetchStatus = createSelector(
+export const getSwapLightOwnershipTransferredHistoricalFetchStatus = createSelector(
   getFetchingHistoricalEvents,
   getFetchedHistoricalEvents,
   (fetchingValues, fetchedValues) => {
-    const fetching = fetchingValues.swapLightCancelUpTo
-    const fetched = fetchedValues.swapLightCancelUpTo
+    const fetching = fetchingValues.swapLightOwnershipTransferred
+    const fetched = fetchedValues.swapLightOwnershipTransferred
+    return {
+      fetching,
+      fetched,
+    }
+  },
+)
+
+export const getSwapLightRevokeEvents = createSelector(getFetchedTrackedEvents, events =>
+  _.filter(events, {
+    topic: '0xd7426110292f20fe59e73ccf52124e0f5440a756507c91c7b0a6c50e1eb1a23a',
+    address: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
+  }),
+)
+
+export const getSwapLightRevokeHistoricalFetchStatus = createSelector(
+  getFetchingHistoricalEvents,
+  getFetchedHistoricalEvents,
+  (fetchingValues, fetchedValues) => {
+    const fetching = fetchingValues.swapLightRevoke
+    const fetched = fetchedValues.swapLightRevoke
     return {
       fetching,
       fetched,
@@ -50,7 +90,7 @@ export const getSwapLightCancelUpToHistoricalFetchStatus = createSelector(
 
 export const getSwapLightSwapEvents = createSelector(getFetchedTrackedEvents, events =>
   _.filter(events, {
-    topic: '0x9f1d00aae6343e4c7249c1b2a238d90e17da251781cc060e008a0dcf7ee0e725',
+    topic: '0x06dfeb25e76d44e08965b639a9d9307df8e1c3dbe2a6364194895e9c3992f033',
     address: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
   }),
 )

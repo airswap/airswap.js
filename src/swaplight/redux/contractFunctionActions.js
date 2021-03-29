@@ -49,22 +49,85 @@ export const fetchSwapLightDOMAIN_VERSION = ({ ethAmount }) => dispatch =>
     }),
   )
 
-export const fetchSwapLightORDER_TYPEHASH = ({ ethAmount }) => dispatch =>
+export const fetchSwapLightFEE_DIVISOR = ({ ethAmount }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
       ethAmount,
-      type: 'FETCH_SWAP_LIGHT_ORDER_TYPEHASH',
+      type: 'FETCH_SWAP_LIGHT_FEE_DIVISOR',
       resolve,
       reject,
     }),
   )
 
-export const fetchSwapLightSignerMinimumNonce = ({ nonce, ethAmount }) => dispatch =>
+export const fetchSwapLightLIGHT_ORDER_TYPEHASH = ({ ethAmount }) => dispatch =>
   new Promise((resolve, reject) =>
     dispatch({
-      nonce,
       ethAmount,
-      type: 'FETCH_SWAP_LIGHT_SIGNER_MINIMUM_NONCE',
+      type: 'FETCH_SWAP_LIGHT_LIGHT_ORDER_TYPEHASH',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapLightAuthorized = ({ authorizedAddress, ethAmount }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      authorizedAddress,
+      ethAmount,
+      type: 'FETCH_SWAP_LIGHT_AUTHORIZED',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapLightFeeWallet = ({ ethAmount }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      ethAmount,
+      type: 'FETCH_SWAP_LIGHT_FEE_WALLET',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapLightOwner = ({ ethAmount }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      ethAmount,
+      type: 'FETCH_SWAP_LIGHT_OWNER',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightRenounceOwnership = ({ ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_RENOUNCE_OWNERSHIP',
+      resolve,
+      reject,
+    }),
+  )
+
+export const fetchSwapLightSignerFee = ({ ethAmount }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      ethAmount,
+      type: 'FETCH_SWAP_LIGHT_SIGNER_FEE',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightTransferOwnership = ({ newOwner, ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      newOwner,
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_TRANSFER_OWNERSHIP',
       resolve,
       reject,
     }),
@@ -73,11 +136,14 @@ export const fetchSwapLightSignerMinimumNonce = ({ nonce, ethAmount }) => dispat
 export const submitSwapLightSwap = ({
   nonce,
   expiry,
+  signerWallet,
   signerToken,
   signerAmount,
   senderToken,
   senderAmount,
-  signature,
+  v,
+  r,
+  s,
   ethAmount,
   options,
 }) => dispatch =>
@@ -85,14 +151,100 @@ export const submitSwapLightSwap = ({
     dispatch({
       nonce,
       expiry,
+      signerWallet,
       signerToken,
       signerAmount,
       senderToken,
       senderAmount,
-      signature,
+      v,
+      r,
+      s,
       ethAmount,
       options,
       type: 'SUBMIT_SWAP_LIGHT_SWAP',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightSwapWithRecipient = ({
+  recipient,
+  nonce,
+  expiry,
+  signerWallet,
+  signerToken,
+  signerAmount,
+  senderToken,
+  senderAmount,
+  v,
+  r,
+  s,
+  ethAmount,
+  options,
+}) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      recipient,
+      nonce,
+      expiry,
+      signerWallet,
+      signerToken,
+      signerAmount,
+      senderToken,
+      senderAmount,
+      v,
+      r,
+      s,
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_SWAP_WITH_RECIPIENT',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightSetFeeWallet = ({ newFeeWallet, ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      newFeeWallet,
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_SET_FEE_WALLET',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightSetFee = ({ newSignerFee, ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      newSignerFee,
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_SET_FEE',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightAuthorize = ({ signerAddress, ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      signerAddress,
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_AUTHORIZE',
+      resolve,
+      reject,
+    }),
+  )
+
+export const submitSwapLightRevoke = ({ ethAmount, options }) => dispatch =>
+  new Promise((resolve, reject) =>
+    dispatch({
+      ethAmount,
+      options,
+      type: 'SUBMIT_SWAP_LIGHT_REVOKE',
       resolve,
       reject,
     }),
@@ -105,18 +257,6 @@ export const submitSwapLightCancel = ({ nonces, ethAmount, options }) => dispatc
       ethAmount,
       options,
       type: 'SUBMIT_SWAP_LIGHT_CANCEL',
-      resolve,
-      reject,
-    }),
-  )
-
-export const submitSwapLightCancelUpTo = ({ minimumNonce, ethAmount, options }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      minimumNonce,
-      ethAmount,
-      options,
-      type: 'SUBMIT_SWAP_LIGHT_CANCEL_UP_TO',
       resolve,
       reject,
     }),
