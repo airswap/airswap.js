@@ -104,8 +104,11 @@ const finishWalletAction = (store, actionType, params) =>
 let web3PollingInterval
 function pollWeb3Address(address) {
   web3PollingInterval = window.setInterval(async () => {
-    if (window.web3.eth && window.web3.eth.defaultAccount && window.web3.eth.defaultAccount !== address) {
-      window.location.reload()
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      if ((await provider.getSigner().getAddress()).toLowerCase() !== address.toLowerCase()) {
+        window.location.reload()
+      }
     }
   }, 3000) // If someone changes their account in metaMask, clear the app
 }
@@ -207,32 +210,27 @@ function connectWalletLink(store, walletAppLogo, walletAppName) {
 
 const detectWeb3Wallets = async store => {
   const prevWalletsAvailable = walletSelectors.getAvailableWalletState(store.getState())
-  if (window && !window.web3) {
-    // No web3 wallets;
-    return null
-  }
   const walletsAvailable = {}
   web3WalletTypes.map(type => {
     let isAvailable = false
     switch (type) {
       case 'metamask':
-        isAvailable =
-          !!window.web3.currentProvider.isMetaMask && !isMobile.any && !window.web3.currentProvider.isEQLWallet
+        isAvailable = !!window.ethereum.isMetaMask && !isMobile.any
         break
       case 'trust':
-        isAvailable = !!window.web3.currentProvider.isTrust
+        isAvailable = !!window.web3 && !!window.web3.currentProvider.isTrust
         break
       case 'cipher':
-        isAvailable = window.web3.currentProvider.constructor.name === 'CipherProvider'
+        isAvailable = !!window.web3 && window.web3.currentProvider.constructor.name === 'CipherProvider'
         break
       case 'status':
-        isAvailable = !!window.web3.currentProvider.isStatus
+        isAvailable = !!window.web3 && !!window.web3.currentProvider.isStatus
         break
       case 'imtoken':
         isAvailable = !!window.imToken
         break
       case 'coinbase':
-        isAvailable = !!window.web3.currentProvider.isToshi
+        isAvailable = !!window.web3 && !!window.web3.currentProvider.isToshi
         break
       case 'opera':
         isAvailable =
@@ -242,7 +240,7 @@ const detectWeb3Wallets = async store => {
           window.web3.currentProvider.isConnected()
         break
       case 'equal':
-        isAvailable = !!window.web3.currentProvider.isEQLWallet
+        isAvailable = !!window.web3 && !!window.web3.currentProvider.isEQLWallet
         break
       case 'walletLink':
         isAvailable = !!window.WalletLink && !!window.WalletLinkProvider

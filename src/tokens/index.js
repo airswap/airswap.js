@@ -1,7 +1,8 @@
 const fetch = require('isomorphic-fetch')
 const BigNumber = require('bignumber.js')
 const _ = require('lodash')
-const TokenMetadata = require('@airswap/metadata').default
+
+const { fetchTokens, scrapeToken } = require('@airswap/metadata')
 const { tokenKindNames } = require('@airswap/constants')
 
 const {
@@ -14,38 +15,6 @@ const {
   BASE_ASSET_TOKEN_ADDRESSES,
 } = require('../constants')
 const { flatten } = require('../swap/utils')
-
-const TOKEN_METADATA_BASE_URL = 'https://token-metadata.airswap.io'
-
-const TOKEN_LIST_URL = `${TOKEN_METADATA_BASE_URL}/${(N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'rinkebyTokens'
-    case MAIN_ID:
-      return 'tokens'
-    case GOERLI_ID:
-      return 'goerliTokens'
-    case KOVAN_ID:
-      return 'kovanTokens'
-    default:
-  }
-})(NETWORK)}`
-
-function fetchAirswapTokens() {
-  return new Promise((resolve, reject) => {
-    fetch(TOKEN_LIST_URL, {
-      method: 'get',
-      mode: 'cors',
-    })
-      .then(response => {
-        if (!response.ok) {
-          reject(response.statusText)
-        }
-        return response.json()
-      })
-      .then(resolve)
-  })
-}
 
 const OPENSEA_API_URL = (N => {
   switch (N) {
@@ -94,21 +63,18 @@ function mapToOldMetadataSchema(metadata) {
     airswapUI: 'yes',
     banned: false,
     colors: [],
-    airswap_img_url: metadata.image,
+    airswap_img_url: metadata.logoURI,
   }
 }
 
 class OldTokenMetadata {
   constructor() {
-    const metadataPkg = new TokenMetadata(ethersProvider)
-    this.ready = Promise.all([metadataPkg.ready, fetchAirswapTokens()]).then(([tokens, airswapTokens]) => {
-      const newTokens = _.uniqBy([...airswapTokens, ...tokens.map(mapToOldMetadataSchema)], 'address')
-      this.setTokens(newTokens)
+    this.ready = fetchTokens(ethersProvider.network.chainId).then(result => {
+      this.setTokens([...result.tokens.map(mapToOldMetadataSchema)])
       return this.tokens
     })
 
     this.nftItems = []
-    this.metadataPkg = metadataPkg
   }
   setTokens(tokens) {
     this.tokens = _.uniqBy([...(this.tokens || []), ...tokens], 'address')
@@ -121,7 +87,7 @@ class OldTokenMetadata {
     return tokens
   }
   crawlToken(address, forceUIApproval = false) {
-    return this.metadataPkg.fetchToken(address).then(tokenSrc => {
+    return scrapeToken(address, ethersProvider).then(tokenSrc => {
       const token = {
         ...tokenSrc,
         kind: tokenKindNames[tokenSrc.kind],
