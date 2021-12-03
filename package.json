@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "contributors": [
@@ -87,7 +87,7 @@
   "dependencies": {
     "@airswap/constants": "^0.3.9",
     "@airswap/light": "^2.2.0",
-    "@airswap/metadata": "1.0.0",
+    "@airswap/metadata": "1.0.1",
     "@airswap/order-utils": "^0.3.20",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",

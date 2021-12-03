@@ -37,13 +37,13 @@
     "@airswap/types" "3.5.16"
     "@openzeppelin/contracts" "^3.3.0"
 
-"@airswap/metadata@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-1.0.0.tgz#1a42ac0344cf755e298c5ac0cbadeb1780e11da2"
-  integrity sha512-5sqVMFox7RH9Oghm9dwYwZMd/FPzb5u8UmLZGhGZh8FgXsGwuVCjsS7kHNuRRWkoTxsPQd6DyP+K5ZhL5YKkqA==
+"@airswap/metadata@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-1.0.1.tgz#b780aa9b20df8d4d1889c10d14a4daef728b3b03"
+  integrity sha512-ldQsL6SHlD+TJ5ocGSP+QNDvd7/EB2laUXVISIazjLBrR8JtcuGmumdwbV9idgDv8i1utFlsh4lSIWV77tAxkw==
   dependencies:
     "@airswap/constants" "1.0.0"
-    "@airswap/typescript" "1.0.0"
+    "@airswap/typescript" "1.0.1"
     "@uniswap/token-lists" "^1.0.0-beta.24"
     axios "^0.21.3"
     eth-contract-metadata "^1.12.1"
@@ -98,10 +98,10 @@
   dependencies:
     openzeppelin-solidity "2.4"
 
-"@airswap/typescript@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@airswap/typescript/-/typescript-1.0.0.tgz#52c7250a822aa3396897e64a5f2b79ef69d8d3c1"
-  integrity sha512-UPytDGOzNwNh/b0rvdIcuHhMY51Id5R1ioCRNFC0O0p492sDQUOQlg6E2MW5QHUwNlZc8PHXVAO3tLcYUSvjaA==
+"@airswap/typescript@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@airswap/typescript/-/typescript-1.0.1.tgz#4b9de505a23371a10ee21f0c5881fa586509cead"
+  integrity sha512-9neKyO0kWw3CKXYhT/xTZK63ExtCL9uMVFKxEHomL04yz7Wwdc9vvjpZKPNKqahitge3NK89+U19yb9cNynicw==
   dependencies:
     "@airswap/constants" "1.0.0"
     "@uniswap/token-lists" "^1.0.0-beta.26"

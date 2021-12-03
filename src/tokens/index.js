@@ -7,6 +7,7 @@ const { tokenKindNames } = require('@airswap/constants')
 
 const {
   ethersProvider,
+  ETH_NODE_HTTP,
   NETWORK,
   RINKEBY_ID,
   MAIN_ID,
@@ -87,7 +88,7 @@ class OldTokenMetadata {
     return tokens
   }
   crawlToken(address, forceUIApproval = false) {
-    return scrapeToken(address, ethersProvider).then(tokenSrc => {
+    return scrapeToken(address, ETH_NODE_HTTP).then(tokenSrc => {
       const token = {
         ...tokenSrc,
         kind: tokenKindNames[tokenSrc.kind],
