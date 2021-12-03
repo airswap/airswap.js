@@ -3,7 +3,7 @@ const BigNumber = require('bignumber.js')
 const _ = require('lodash')
 
 const { fetchTokens, scrapeToken } = require('@airswap/metadata')
-const { tokenKindNames } = require('@airswap/constants')
+const { tokenKindNames, TokenKinds } = require('@airswap/constants')
 
 const {
   ethersProvider,
@@ -91,7 +91,7 @@ class OldTokenMetadata {
     return scrapeToken(address, ETH_NODE_HTTP).then(tokenSrc => {
       const token = {
         ...tokenSrc,
-        kind: tokenKindNames[tokenSrc.kind],
+        kind: tokenKindNames[tokenSrc.kind || TokenKinds.ERC20],
         airswapUI: forceUIApproval,
       }
 
