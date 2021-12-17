@@ -91,7 +91,7 @@ class OldTokenMetadata {
     return scrapeToken(address, ETH_NODE_HTTP).then(tokenSrc => {
       const token = {
         ...tokenSrc,
-        kind: tokenKindNames[tokenSrc.kind || TokenKinds.ERC20],
+        kind: tokenKindNames[tokenSrc.extensions?.kind || TokenKinds.ERC20],
         airswapUI: forceUIApproval,
       }
 
