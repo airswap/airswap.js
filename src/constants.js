@@ -75,7 +75,7 @@ if (process.env.REACT_APP_TEST_NETWORK) {
 }
 
 if (typeof window !== 'undefined') {
-  const qs = queryString.parse(_.trimStart(window.location.search, '?'))
+  const qs = queryString.parse(_.trimStart(window.location.hash, '#'))
   if (qs.network) {
     NETWORK = Number(qs.network)
   }
