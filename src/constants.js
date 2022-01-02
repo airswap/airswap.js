@@ -409,10 +409,6 @@ const MAX_DISPLAY_DECIMALS = 8
 
 const IPFS_URL = 'https://ipfs.infura.io:5001'
 
-const SLS_PGP_URL =
-  process.env.REACT_APP_SLS_PGP_URL ||
-  (_.includes(['development', 'sandbox'], ENV) ? `https://pgp.${ENV}.airswap.io` : 'https://pgp.airswap.io')
-
 const GAS_URL = 'https://ethgasstation.airswap.io/ethgasAPI.json'
 
 const AIRSWAP_LOGO_URL = 'https://www.airswap.io/favicon.png'
@@ -520,7 +516,6 @@ module.exports = {
   AIRSWAP_API_URL,
   DEXINDEX_URL,
   IPFS_URL,
-  SLS_PGP_URL,
   INDEXER_ADDRESS,
   ETH_BASE_ADDRESSES,
   GET_TOKEN_PRICE_URL,

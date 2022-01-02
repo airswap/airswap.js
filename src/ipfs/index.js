@@ -1,14 +1,8 @@
 const _ = require('lodash')
-const { SLS_PGP_URL } = require('../constants')
 const IPFS = require('ipfs-mini')
 const axios = require('axios')
 
 const ipfsInfura = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-
-const pinJSONToIPFSPinata = JSONBody => {
-  const url = `${SLS_PGP_URL}/storePinata`
-  return axios.post(url, JSONBody).then(resp => resp.data.IpfsHash)
-}
 
 async function ipfsStoreJSON(obj) {
   const storeString = _.isString(obj) ? JSON.stringify(JSON.parse(obj)) : JSON.stringify(obj)
@@ -25,8 +19,6 @@ async function ipfsStoreJSON(obj) {
           reject(e)
         }
       })
-
-    pinJSONToIPFSPinata(JSON.parse(storeString)) // pinata will always take the longest to resolve since they don't support reads
   })
 }
 
