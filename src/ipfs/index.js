@@ -4,7 +4,6 @@ const IPFS = require('ipfs-mini')
 const axios = require('axios')
 
 const ipfsInfura = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-const ipfsAirSwap = new IPFS({ host: 'ipfs.airswap.io', port: 443, protocol: 'https' })
 
 const pinJSONToIPFSPinata = JSONBody => {
   const url = `${SLS_PGP_URL}/storePinata`
@@ -17,15 +16,6 @@ async function ipfsStoreJSON(obj) {
   return new Promise((resolve, reject) => {
     // this "resolved" syntax is required since there isn't a Promise.none()
     let resolved = 0
-    ipfsAirSwap
-      .add(storeString)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 2) {
-          reject(e)
-        }
-      })
     ipfsInfura
       .add(storeString)
       .then(resolve)
@@ -51,15 +41,6 @@ async function ipfsFetchJSONFromCID(cid) {
     }
     // this "resolved" syntax is required since there isn't a Promise.none()
     let resolved = 0
-    ipfsAirSwap
-      .cat(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
     ipfsInfura
       .cat(cid)
       .then(resolve)
