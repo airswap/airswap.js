@@ -280,17 +280,6 @@ const USDC_CONTRACT_ADDRESS = (N => {
   }
 })(NETWORK)
 
-const DEXINDEX_URL = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'https://ethereum-dex-prices-service.development.airswap.io'
-    case MAIN_ID:
-      return 'https://ethereum-dex-prices-service.production.airswap.io'
-    default:
-      return 'https://ethereum-dex-prices-service.production.airswap.io'
-  }
-})(NETWORK)
-
 const DELTA_BALANCES_CONTRACT_ADDRESS = (N => {
   switch (N) {
     case RINKEBY_ID:
@@ -328,16 +317,6 @@ const abis = new Proxy(baseAbis, {
 const TOKEN_APPROVAL_AMOUNT = '90071992547409910000000000'
 
 const TOKEN_APPROVAL_CHECK_AMOUNT = '50071992547409910000000000'
-
-const ENV_URL_SNIPPET = ENV === 'production' ? '' : `.${ENV}`
-
-const DEFAULT_SERVER_URL = ENV_URL_SNIPPET ? `//connect${ENV_URL_SNIPPET}.airswap.io/` : `//connect.airswap.io/`
-
-const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL || DEFAULT_SERVER_URL
-
-const AIRSWAP_API_URL = `https://api${ENV_URL_SNIPPET}.airswap.io/`
-
-const MAKER_STATS_URL = `https://maker-stats${ENV_URL_SNIPPET}.airswap.io/`
 
 const STABLECOIN_TOKEN_ADDRESSES = (N => {
   switch (N) {
@@ -409,9 +388,9 @@ const MAX_DISPLAY_DECIMALS = 8
 
 const IPFS_URL = 'https://ipfs.infura.io:5001'
 
-const GAS_URL = 'https://ethgasstation.airswap.io/ethgasAPI.json'
+const GAS_URL = 'https://ethgasstation.info/api/ethgasAPI.json'
 
-const AIRSWAP_LOGO_URL = 'https://www.airswap.io/favicon.png'
+const AIRSWAP_LOGO_URL = 'https://www.airswap.io/favicon.ico'
 
 /**
  * @constant
@@ -450,11 +429,6 @@ const FIAT_CURRENCIES = {
   CAD: 'C$',
   CHF: 'Fr.',
 }
-
-const GET_TOKEN_PRICE_URL = `${MAKER_STATS_URL}getEthPrices`
-
-const AIRSWAP_HEADLESS_API = `https://headless${ENV_URL_SNIPPET}.airswap.io/`
-const AIRSWAP_HEADLESS_API_SSE = `${AIRSWAP_HEADLESS_API}stream/`
 
 const PORTIS_ID = '691c65e3-ef26-4e6a-9a91-cdc772ed2298'
 
@@ -512,21 +486,14 @@ module.exports = {
   STABLECOIN_TOKEN_ADDRESSES,
   MAX_DISPLAY_DECIMALS,
   ERC20abi,
-  REACT_APP_SERVER_URL,
-  AIRSWAP_API_URL,
-  DEXINDEX_URL,
   IPFS_URL,
   INDEXER_ADDRESS,
   ETH_BASE_ADDRESSES,
-  GET_TOKEN_PRICE_URL,
   GAS_URL,
   GAS_LEVELS,
   GAS_LIMITS,
   FIAT_CURRENCIES,
-  AIRSWAP_HEADLESS_API,
-  AIRSWAP_HEADLESS_API_SSE,
   PORTIS_ID,
-  MAKER_STATS_URL,
   FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
