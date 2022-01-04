@@ -1,6 +1,6 @@
 {
   "name": "airswap.js",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "description": "JavaScript Modules for AirSwap Developers",
   "repository": "https://github.com/airswap/AirSwap.js",
   "contributors": [
@@ -81,14 +81,14 @@
     "reselect": "^3.0.1"
   },
   "dependencies": {
+    "@airswap/constants": "^0.3.9",
     "@airswap/delegate": "^2.6.9",
     "@airswap/indexer": "^3.6.9",
-    "@airswap/swap": "^5.4.8",
-    "@airswap/wrapper": "^3.6.9",
-    "@airswap/constants": "^0.3.9",
     "@airswap/light": "^2.2.0",
     "@airswap/metadata": "1.0.5",
     "@airswap/order-utils": "^0.3.20",
+    "@airswap/swap": "^5.4.8",
+    "@airswap/wrapper": "^3.6.9",
     "@portis/web3": "^2.0.0-beta.16",
     "axios": "^0.18.0",
     "dotenv": "^8.2.0",
