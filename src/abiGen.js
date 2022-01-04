@@ -61,7 +61,7 @@ export const get${_.upperFirst(eventNamespace)}${_.upperFirst(name)}HistoricalFe
     const fetching = fetchingValues.${eventNamespace}${name}
     const fetched = fetchedValues.${eventNamespace}${name}
     return {
-      fetching, 
+      fetching,
       fetched,
     }
   }
@@ -213,7 +213,7 @@ function generateContractFunctionMiddleware(abiLocation, contractKey, eventNames
 import * as contractFunctions from '../contractFunctions'
 import resolveBigNumbers from '../../utils/resolveBigNumbers'
 
-${getSigner}  
+${getSigner}
 export default function ${eventNamespace}Middleware(store) {
   return next => action => {
     switch (action.type) {
@@ -223,7 +223,7 @@ export default function ${eventNamespace}Middleware(store) {
     return next(action)
   }
 }
-  
+
 `
 }
 
@@ -331,21 +331,6 @@ const modules = [
   //   abiLocation: 'abis/erc1155.json',
   //   namespace: 'ERC1155',
   //   contractKey: '',
-  // },
-  // {
-  //   abiLocation: 'abis/delegate.json',
-  //   namespace: 'delegate',
-  //   contractKey: '',
-  // },
-  // {
-  //   abiLocation: 'abis/index.json',
-  //   namespace: 'index',
-  //   contractKey: '',
-  // },
-  // {
-  //   abiLocation: 'abis/delegateFactory.json',
-  //   namespace: 'delegateFactory',
-  //   contractKey: 'DELEGATE_FACTORY_CONTRACT_ADDRESS',
   // },
   // {
   //   abiLocation: 'abis/DSProtocolTokenInterface.json',

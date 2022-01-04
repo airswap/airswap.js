@@ -4,7 +4,6 @@ import { combineReducers } from 'redux'
 import { createSelector } from 'reselect'
 import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
-import { selectors as fiatSelectors } from '../../fiat/redux'
 
 const defaultState = {}
 
@@ -89,32 +88,6 @@ export const getConnectedBalancesFormatted = createSelector(
   (balances, displayByToken) => _.mapValues(balances, (balance, address) => displayByToken({ address }, balance)),
 )
 
-/**
- * Returns the fiat string representation of all connected balances, ex: {[tokenAddress]: '$12.45'}
- * @function getConnectedBalancesInFiat
- * @memberof deltaBalances
- * @param {Object} state Redux store state
- * @returns {Object}
- */
-export const getConnectedBalancesInFiat = createSelector(
-  getConnectedBalancesFormatted,
-  fiatSelectors.makeGetTokenInFiatFromDisplayValue,
-  (balances, getTokenInFiatFromDisplayValue) =>
-    _.mapValues(balances, (balance, address) => getTokenInFiatFromDisplayValue({ address }, balance)),
-)
-/**
- * Returns the unsigned fiat string representation of all connected balances, ex: {[tokenAddress]: '12.45'}
- * @function getConnectedBalancesInFiatUnisgned
- * @memberof deltaBalances
- * @param {Object} state Redux store state
- * @returns {Object}
- */
-export const getConnectedBalancesInFiatUnisgned = createSelector(
-  getConnectedBalancesInFiat,
-  fiatSelectors.getSelectedCurrencySymbolAscii,
-  (balances, symbol) => _.mapValues(balances, balance => Number(_.trimStart(balance, symbol))),
-)
-
 export const getApprovals = state => state.deltaBalances.approvals
 export const getSwapApprovals = state => state.deltaBalances.swapApprovals
 export const getConnectedApprovals = createSelector(
@@ -166,8 +139,6 @@ export const selectors = {
   getConnectedApprovals,
   getSwapApprovals,
   getConnectedSwapApprovals,
-  getConnectedBalancesInFiat,
-  getConnectedBalancesInFiatUnisgned,
   getTrackedAddresses,
   getTrackedTokensByAddress,
   getTrackedWalletAddresses,

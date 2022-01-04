@@ -3,26 +3,17 @@ import * as tokens from '../tokens/redux'
 import * as wallet from '../wallet/redux'
 import * as deltaBalances from '../deltaBalances/redux'
 import * as events from '../events/redux'
-import * as api from '../api/redux'
 import * as ens from '../ens/redux'
 import * as erc20 from '../erc20/redux'
 import * as erc721 from '../erc721/redux'
 import * as erc1155 from '../erc1155/redux'
-import * as dexIndex from '../dexIndex/redux'
-import * as protocolMessaging from '../protocolMessaging/redux'
 import * as swap from '../swap/redux'
-import * as swapLegacy from '../swapLegacy/redux'
 import * as gas from '../gas/redux'
-import * as fiat from '../fiat/redux'
 import * as blockTracker from '../blockTracker/redux'
 import * as transactionTracker from '../transactionTracker/redux'
 import * as wrapper from '../wrapper/redux'
 import * as callData from '../callData/redux'
 import * as abis from '../abis/redux'
-import * as indexer from '../indexer/redux'
-import * as index from '../index/redux'
-import * as delegateFactory from '../delegateFactory/redux'
-import * as delegate from '../delegate/redux'
 import * as weth from '../weth/redux'
 import * as securitize from '../dsProtocol/redux'
 import * as complianceService from '../complianceService/redux'
@@ -34,25 +25,16 @@ const state = {
   wallet,
   deltaBalances,
   events,
-  api,
   ens,
   erc20,
   erc721,
-  dexIndex,
-  protocolMessaging,
   swap,
-  swapLegacy,
   gas,
-  fiat,
   blockTracker,
   transactionTracker,
   wrapper,
   callData,
   abis,
-  indexer,
-  index,
-  delegateFactory,
-  delegate,
   weth,
   securitize,
   erc1155,

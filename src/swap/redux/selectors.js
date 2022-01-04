@@ -3,9 +3,6 @@ import { createSelector } from 'reselect'
 import { getSwapCancelEvents, getSwapSwapEvents } from './eventTrackingSelectors'
 import { selectors as blockTrackerSelectors } from '../../blockTracker/redux'
 import { makeGetReadableSwapOrder } from '../../tokens/redux/reducers'
-import * as callDataSelectors from './callDataSelectors'
-import { getConnectedWalletAddress } from '../../wallet/redux/reducers'
-import { WRAPPER_CONTRACT_ADDRESS } from '../../constants'
 import { mapFlat22OrderTo20Order } from '../../swap/utils'
 
 export const getFormattedSwapFills = createSelector(
@@ -35,28 +32,6 @@ export const getFormattedSwapCancels = createSelector(
       ...mapFlat22OrderTo20Order(values),
       timestamp: _.get(blockObj, `${blockNumber}.timestamp`),
     })),
-)
-
-export const getSwapDelegateApprovals = createSelector(callDataSelectors.getSwapSenderAuthorizations, approvals =>
-  _.reduce(
-    approvals,
-    (agg, val) => {
-      const approved = val.response
-      const { authorizerAddress, authorizedSender } = val.parameters
-      return _.merge({}, agg, { [authorizerAddress]: { [authorizedSender]: approved } })
-    },
-    {},
-  ),
-)
-
-export const getConnectedDelegateApprovals = createSelector(
-  getSwapDelegateApprovals,
-  getConnectedWalletAddress,
-  (approvals, walletAddress) => _.get(approvals, walletAddress),
-)
-
-export const getConnectedWrapperDelegateApproval = createSelector(getConnectedDelegateApprovals, connectedApprovals =>
-  _.get(connectedApprovals, WRAPPER_CONTRACT_ADDRESS),
 )
 
 const getFetchedTrackedEvents = state => state.events.trackedEvents.fetched

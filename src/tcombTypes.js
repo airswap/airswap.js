@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const t = require('tcomb-validation')
 const validator = require('validator')
-const { GAS_LEVELS, FIAT_CURRENCIES } = require('./constants')
+const { GAS_LEVELS } = require('./constants')
 
 function isAddress(str) {
   return /^0x[a-f0-9]{40}$/.test(str)
@@ -27,8 +27,6 @@ const stringLiteral = str => t.refinement(t.String, val => val === str)
 
 const gasLevel = t.refinement(t.String, s => _.includes(GAS_LEVELS, s))
 
-const Currency = t.refinement(t.String, s => _.includes(Object.keys(FIAT_CURRENCIES), s))
-
 const throwTypeError = type => value => {
   const validation = t.validate(value, type)
   if (validation.isValid()) {
@@ -37,4 +35,4 @@ const throwTypeError = type => value => {
   throw new Error(validation.firstError().message)
 }
 
-module.exports = { Address, gasLevel, Currency, AtomicAmount, stringLiteral, UUID, throwTypeError }
+module.exports = { Address, gasLevel, AtomicAmount, stringLiteral, UUID, throwTypeError }

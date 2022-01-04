@@ -179,8 +179,6 @@ function getTransactionDescription(
     return 'Delete Rule'
   } else if (name === 'setRuleAndIntent') {
     return 'Create Rule'
-  } else if (name === 'createDelegate') {
-    return 'Create Delegate'
   }
   return _.startCase(name)
 }

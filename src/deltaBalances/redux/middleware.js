@@ -7,8 +7,6 @@ import { makeEventActionTypes } from '../../utils/redux/templates/event'
 import { addTrackedAddresses } from './actions'
 import { selectors as deltaBalancesSelectors } from './reducers'
 import DebouncedQueue from '../../utils/debouncedQueue'
-import { getAirSwapApprovedAvailableTokens } from '../../redux/combinedSelectors'
-import { waitForState } from '../../utils/redux/waitForState'
 
 export const gotTokenBalances = balances => ({
   type: 'GOT_TOKEN_BALANCES',
@@ -123,19 +121,8 @@ function initializeTrackedAddresses(store) {
 }
 
 async function addConnectedAddressToTrackedAddresses(store) {
-  if (process.env.REACT_APP_INSTANT) {
-    await store.dispatch(
-      waitForState({
-        selector: state => !!getAirSwapApprovedAvailableTokens(state).length,
-        result: true,
-      }),
-    )
-  }
-  const availableTokens = getAirSwapApprovedAvailableTokens(store.getState())
   const allTokens = tokenSelectors.getAirSwapApprovedTokens(store.getState())
-  const tokens = process.env.REACT_APP_INSTANT ? availableTokens : allTokens
-
-  const approvedTokens = _.filter(tokens, t => t.kind !== 'ERC721')
+  const approvedTokens = _.filter(allTokens, t => t.kind !== 'ERC721')
   const connectedAddress = getConnectedWalletAddress(store.getState())
 
   if (approvedTokens.length && connectedAddress) {

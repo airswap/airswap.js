@@ -28,16 +28,3 @@ export const submitWrapperSwap = ({ order, ethAmount, options }) => dispatch =>
       reject,
     }),
   )
-
-export const submitWrapperProvideDelegateOrder = ({ order, delegate, ethAmount, options }) => dispatch =>
-  new Promise((resolve, reject) =>
-    dispatch({
-      order,
-      delegate,
-      ethAmount,
-      options,
-      type: 'SUBMIT_WRAPPER_PROVIDE_DELEGATE_ORDER',
-      resolve,
-      reject,
-    }),
-  )

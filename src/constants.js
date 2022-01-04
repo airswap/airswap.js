@@ -9,8 +9,6 @@ const wethAbi = require('./abis/WETH_ABI.json')
 const deltaBalancesABI = require('./abis/deltaBalancesABI.json')
 const pgpABI = require('./abis/pgpABI.json')
 const swap = require('./abis/swap.json')
-const swapLegacy = require('./abis/SwapLegacy.json')
-const delegateFactoryABI = require('./abis/delegateFactory.json')
 const wrapperABI = require('./abis/wrapper.json')
 const RetryProvider = require('./utils/retryProvider')
 const contractConstants = require('./contractConstants.json')
@@ -185,24 +183,6 @@ const PGP_CONTRACT_ADDRESS = (N => {
 
 const WRAPPER_CONTRACT_ADDRESS = contractConstants.wrapper[String(NETWORK)]
 
-const INDEXER_CONTRACT_ADDRESS = contractConstants.indexer[String(NETWORK)]
-
-const INDEXER_CONTRACT_DEPLOY_BLOCK = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 5626023
-    case MAIN_ID:
-      return 9005083
-    case GOERLI_ID:
-      return 2322078
-    case KOVAN_ID:
-      return 17298088
-    default:
-  }
-})(NETWORK)
-
-const DELEGATE_FACTORY_CONTRACT_ADDRESS = contractConstants.delegateFactory[String(NETWORK)]
-
 const SWAP_LIGHT_CONTRACT_ADDRESS = contractConstants.swapLight[String(NETWORK)]
 
 const SWAP_LIGHT_CONTRACT_DEPLOY_BLOCK = (N => {
@@ -215,20 +195,6 @@ const SWAP_LIGHT_CONTRACT_DEPLOY_BLOCK = (N => {
       return 0
     case KOVAN_ID:
       return 0
-    default:
-  }
-})(NETWORK)
-
-const DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 5626024
-    case MAIN_ID:
-      return 9006065
-    case GOERLI_ID:
-      return 2322078
-    case KOVAN_ID:
-      return 17298088
     default:
   }
 })(NETWORK)
@@ -300,11 +266,9 @@ const baseAbis = {
   [WETH_CONTRACT_ADDRESS]: wethAbi,
   [AST_CONTRACT_ADDRESS]: astAbi.abi,
   [SWAP_CONTRACT_ADDRESS]: swap,
-  [SWAP_LEGACY_CONTRACT_ADDRESS]: swapLegacy.abi,
   [DELTA_BALANCES_CONTRACT_ADDRESS]: deltaBalancesABI,
   [PGP_CONTRACT_ADDRESS]: pgpABI,
   [WRAPPER_CONTRACT_ADDRESS]: wrapperABI,
-  [DELEGATE_FACTORY_CONTRACT_ADDRESS]: delegateFactoryABI,
 }
 
 const abis = new Proxy(baseAbis, {
@@ -406,30 +370,6 @@ const GAS_LIMITS = {
   approve: '160000',
 }
 
-/**
- * @typedef currencySymbol
- * @description Symbol of currency with which to display prices in the application
- * @memberof fiat
- * @type {('USD'|'EUR'|'GBP'|'CNY')}
- */
-
-/**
- * @constant fiatCurrencies
- * @description To add new currencies to libraries, add them here with the abbreviation as the key ('USD') and the symbol as the value ('$')
- * @memberOf fiat
- * @default
- */
-const FIAT_CURRENCIES = {
-  USD: '$',
-  EUR: '€',
-  GBP: '£',
-  CNY: '¥',
-  JPY: '¥',
-  AUD: 'A$',
-  CAD: 'C$',
-  CHF: 'Fr.',
-}
-
 const PORTIS_ID = '691c65e3-ef26-4e6a-9a91-cdc772ed2298'
 
 const FORTMATIC_ID = (N => {
@@ -448,7 +388,6 @@ const IS_EXPLORER = process.env.REACT_APP_EXPLORER
 
 const INFINITE_EXPIRY = 253395176400 // 10/10/9999
 
-const INDEX_HEAD = '0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF'
 const PROTOCOL_0 = '0x0000'
 const PROTOCOL_1 = '0x0001'
 const PROTOCOL_2 = '0x0002'
@@ -492,7 +431,6 @@ module.exports = {
   GAS_URL,
   GAS_LEVELS,
   GAS_LIMITS,
-  FIAT_CURRENCIES,
   PORTIS_ID,
   FORTMATIC_ID,
   IS_INSTANT,
@@ -501,11 +439,6 @@ module.exports = {
   WRAPPER_CONTRACT_ADDRESS,
   INFINITE_EXPIRY,
   web3Provider,
-  INDEXER_CONTRACT_ADDRESS,
-  DELEGATE_FACTORY_CONTRACT_ADDRESS,
-  INDEXER_CONTRACT_DEPLOY_BLOCK,
-  INDEX_HEAD,
-  DELEGATE_FACTORY_CONTRACT_DEPLOY_BLOCK,
   PROTOCOL_0,
   PROTOCOL_1,
   PROTOCOL_2,
