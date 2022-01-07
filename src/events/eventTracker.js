@@ -98,10 +98,17 @@ class EventTracker {
         `${name} not an abi event, possible events are ${_.uniq(_.map(_.values(events), 'name')).join(', ')}`,
       )
     }
-    const paramsArray = abiEvent.inputs.map(
-      ({ name: inputName }) => (_.isUndefined(params[inputName]) ? null : params[inputName]),
-    )
-    return abiEvent.encodeTopics(paramsArray)
+    const paramsArray = abiEvent.inputs.filter(input => input.indexed).map(input => {
+      const { name: inputName, type: inputType } = input
+      if (inputType === 'address') {
+        return ethers.utils.defaultAbiCoder.encode(
+          [input],
+          [params[inputName] || '0x0000000000000000000000000000000000000000'],
+        )
+      }
+      return ethers.utils.defaultAbiCoder.encode([input], [params[inputName] || '0x0'])
+    })
+    return paramsArray
   }
 }
 

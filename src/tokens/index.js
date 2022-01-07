@@ -70,12 +70,14 @@ function mapToOldMetadataSchema(metadata) {
 
 class OldTokenMetadata {
   constructor() {
-    this.ready = fetchTokens(ethersProvider.network.chainId).then(result => {
+    this.nftItems = []
+  }
+  async ready() {
+    const network = await ethersProvider.getNetwork()
+    return fetchTokens(network.chainId).then(result => {
       this.setTokens([...result.tokens.map(mapToOldMetadataSchema)])
       return this.tokens
     })
-
-    this.nftItems = []
   }
   setTokens(tokens) {
     this.tokens = _.uniqBy([...(this.tokens || []), ...tokens], 'address')

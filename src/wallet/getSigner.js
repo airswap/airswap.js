@@ -69,31 +69,7 @@ function traceMethodCalls(obj, { startWalletAction, finishWalletAction }, wallet
             const result = (type => {
               switch (type) {
                 case 'metamask':
-                  return new Promise((resolve, reject) => {
-                    target.provider._web3Provider.sendAsync(
-                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
-                      (err, resp) => {
-                        if (err) {
-                          reject(err)
-                        } else {
-                          resolve(_.get(resp, 'result'))
-                        }
-                      },
-                    )
-                  })
-                case 'fortmatic':
-                  return new Promise((resolve, reject) => {
-                    target.provider._web3Provider.sendAsync(
-                      { id: uuid(), method: 'eth_signTypedData_v3', params: [from, JSON.stringify(data)], from },
-                      (err, resp) => {
-                        if (err) {
-                          reject(err)
-                        } else {
-                          resolve(_.get(resp, 'result'))
-                        }
-                      },
-                    )
-                  })
+                  return target.signer.provider.send('eth_signTypedData_v4', [from, JSON.stringify(data)], from)
                 default:
                   return Promise.reject(`signTypedData not supported by ${walletType}`)
               }
@@ -124,7 +100,7 @@ function getSigner(params, walletActions = {}, walletType, walletSubtype) {
     return traceMethodCalls(new ethers.Wallet(privateKey, ethersProvider), walletActions)
   } else {
     let networkVersion
-    if (web3Provider.isPortis || web3Provider.isLedger || web3Provider.isFortmatic) {
+    if (web3Provider.isPortis || web3Provider.isLedger) {
       networkVersion = NETWORK
     } else if (web3Provider.networkVersion) {
       networkVersion = Number(web3Provider.networkVersion)

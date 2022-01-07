@@ -23,7 +23,6 @@ export const makeMiddlewareEthersTransactionsFn = async (transactionFn, transact
     txn = await transactionFn(store, action)
   } catch (err) {
     store.dispatch(errorSubmitting(formatErrorMessage(err), uniqueId))
-    return
   }
   const formattedTxn = stringBNValues(txn)
   const abis = getAbis(store.getState())

@@ -4,7 +4,7 @@ const abi = require('../../abis/erc721.json')
 export const trackERC721Transfer = ({ callback, from, to, tokenId, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
-  name: 'Transfer',
+  name: 'Transfer(address,address,uint256)',
   params: { from, to, tokenId },
   fromBlock,
   backFillBlockCount,
@@ -15,7 +15,7 @@ export const trackERC721Transfer = ({ callback, from, to, tokenId, fromBlock, ba
 export const trackERC721Approval = ({ callback, owner, approved, tokenId, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
-  name: 'Approval',
+  name: 'Approval(address,address,uint256)',
   params: { owner, approved, tokenId },
   fromBlock,
   backFillBlockCount,

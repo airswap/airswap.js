@@ -6,7 +6,7 @@ const fetchERC20TransferLogs = ({ from, to, contractAddress, fromBlock, toBlock,
   fetchLogs(
     contractAddress,
     abi,
-    getEventTopics({ abi, name: 'Transfer', params: { from, to, contractAddress } }),
+    getEventTopics({ abi, name: 'Transfer(address,address,uint256)', params: { from, to, contractAddress } }),
     fromBlock,
     toBlock,
     parser,
@@ -17,7 +17,7 @@ const fetchERC20ApprovalLogs = ({ owner, spender, contractAddress, fromBlock, to
   fetchLogs(
     contractAddress,
     abi,
-    getEventTopics({ abi, name: 'Approval', params: { owner, spender, contractAddress } }),
+    getEventTopics({ abi, name: 'Approval(address,address,uint256)', params: { owner, spender, contractAddress } }),
     fromBlock,
     toBlock,
     parser,

@@ -10,8 +10,6 @@ export const initMetamask = () => connectWallet({ walletType: 'metamask' })
 
 export const initPortis = () => connectWallet({ walletType: 'portis' })
 
-export const initFortmatic = () => connectWallet({ walletType: 'fortmatic' })
-
 export const initEqual = () => connectWallet({ walletType: 'equal' })
 
 export const initMobileWallet = () => connectWallet({ walletType: 'web3' })

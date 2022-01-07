@@ -4,7 +4,7 @@ const abi = require('../../abis/hst.json')
 export const trackERC20Transfer = ({ callback, from, to, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
-  name: 'Transfer',
+  name: 'Transfer(address,address,uint256)',
   params: { from, to },
   fromBlock,
   backFillBlockCount,
@@ -15,7 +15,7 @@ export const trackERC20Transfer = ({ callback, from, to, fromBlock, backFillBloc
 export const trackERC20Approval = ({ callback, owner, spender, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
-  name: 'Approval',
+  name: 'Approval(address,address,uint256)',
   params: { owner, spender },
   fromBlock,
   backFillBlockCount,

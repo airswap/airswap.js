@@ -107,7 +107,8 @@ function getParsedInputFromTransaction(transaction, abis = constantAbis) {
   const contractInterface = new ethers.utils.Interface(abi)
   const { data } = transaction
   const parsed = contractInterface.parseTransaction({ data })
-  const name = parsed.name
+  const name = parsed.signature
+
   const parameterKeys = _.map(contractInterface.functions[name].inputs, 'name')
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())
   const parameters = _.zipObject(parameterKeys, parameterValues)
@@ -135,7 +136,7 @@ function getTransactionDescription(
   const contractInterface = new ethers.utils.Interface(abis[to])
   const { data } = transaction
   const parsed = contractInterface.parseTransaction({ data })
-  const name = parsed.name
+  const name = parsed.signature
 
   const parameterKeys = _.map(contractInterface.functions[name].inputs, 'name')
   const parameterValues = _.map(parsed.args, s => (s.toString ? s.toString() : s).toLowerCase())

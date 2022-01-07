@@ -94,7 +94,6 @@
     "dotenv": "^8.2.0",
     "ethers": "^5.5.3",
     "eventsource": "^1.0.7",
-    "fortmatic": "^0.7.4",
     "human-standard-token-abi": "^2.0.0",
     "ipfs-mini": "^1.1.5",
     "ismobilejs": "^0.5.1",

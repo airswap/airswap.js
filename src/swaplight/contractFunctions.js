@@ -58,7 +58,7 @@ function getSwapLightOwner() {
 
 function submitSwapLightRenounceOwnership(ethAmount, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.renounceOwnership({ ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.renounceOwnership({ ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function getSwapLightSignerFee() {
@@ -68,7 +68,7 @@ function getSwapLightSignerFee() {
 
 function submitSwapLightTransferOwnership(ethAmount, newOwner, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.transferOwnership(newOwner, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.transferOwnership(newOwner, { ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function submitSwapLightSwap(
@@ -89,7 +89,7 @@ function submitSwapLightSwap(
   const contract = getSwapLightContract(signer)
   return contract.swap(nonce, expiry, signerWallet, signerToken, signerAmount, senderToken, senderAmount, v, r, s, {
     ...options,
-    value: ethers.utils.bigNumberify(ethAmount || '0'),
+    value: ethers.BigNumber.from(ethAmount || '0'),
   })
 }
 
@@ -122,33 +122,33 @@ function submitSwapLightSwapWithRecipient(
     v,
     r,
     s,
-    { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') },
+    { ...options, value: ethers.BigNumber.from(ethAmount || '0') },
   )
 }
 
 function submitSwapLightSetFeeWallet(ethAmount, newFeeWallet, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.setFeeWallet(newFeeWallet, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.setFeeWallet(newFeeWallet, { ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function submitSwapLightSetFee(ethAmount, newSignerFee, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.setFee(newSignerFee, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.setFee(newSignerFee, { ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function submitSwapLightAuthorize(ethAmount, signerAddress, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.authorize(signerAddress, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.authorize(signerAddress, { ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function submitSwapLightRevoke(ethAmount, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.revoke({ ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.revoke({ ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function submitSwapLightCancel(ethAmount, nonces, signer, options = {}) {
   const contract = getSwapLightContract(signer)
-  return contract.cancel(nonces, { ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.cancel(nonces, { ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function getSwapLightNonceUsed(signer, nonce) {

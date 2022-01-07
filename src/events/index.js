@@ -36,6 +36,7 @@ async function fetchLogs(contractAddress, abi, topic, fromBlock, toBlock) {
       toBlock: hexStripZeros(hexlify(toBlockOverride)),
     },
   ]
+  console.log(logParams)
   try {
     logs = await getLogs(logParams)
   } catch (e) {
@@ -87,7 +88,7 @@ function parseEventLogs(logs, abi) {
           address,
           topics,
           data,
-          blockNumber: ethers.utils.bigNumberify(blockNumber).toNumber(),
+          blockNumber: ethers.BigNumber.from(blockNumber).toNumber(),
           transactionHash,
           removed,
         },
@@ -173,12 +174,12 @@ async function fetchGlobalERC20Transfers(addresses, fromBlock, toBlock) {
 // EXAMPLES
 //
 // ** fetch all ERC20 Approvals **
-// fetchERC20Logs(null, 'Approval')
+// fetchERC20Logs(null, 'Approval(address,address,uint256)')
 //   .then(console.log)
 //   .catch(console.log)
 //
 // ** fetch all AST transfers **
-// fetchERC20Logs(AST_CONTRACT_ADDRESS, 'Transfer')
+// fetchERC20Logs(AST_CONTRACT_ADDRESS, 'Transfer(address,address,uint256)')
 //   .then(console.log)
 //   .catch(console.log)
 //

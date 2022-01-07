@@ -30,7 +30,7 @@ function transfer(tokenAddress, to, amount, signer) {
 
 function wrapWeth(amount, signer) {
   const contract = getWethContract(signer)
-  return contract.deposit({ value: ethers.utils.bigNumberify(amount) })
+  return contract.deposit({ value: ethers.BigNumber.from(amount) })
 }
 
 function unwrapWeth(amount, signer) {

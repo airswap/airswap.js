@@ -120,6 +120,7 @@ if (process.env.ETH_NODE_WEBSOCKET || process.env.REACT_APP_ETH_NODE_WEBSOCKET) 
   }
 
   ETH_NODE_WEBSOCKET = node_url
+  ethersProvider = new ethers.providers.WebSocketProvider(node_url)
   web3Provider = new Web3(
     new Web3.providers.WebsocketProvider(node_url, {
       reconnect: {
@@ -372,16 +373,6 @@ const GAS_LIMITS = {
 
 const PORTIS_ID = '691c65e3-ef26-4e6a-9a91-cdc772ed2298'
 
-const FORTMATIC_ID = (N => {
-  switch (N) {
-    case RINKEBY_ID:
-      return 'pk_test_8514D52FEE94B0E1'
-    case MAIN_ID:
-      return 'pk_live_C61C451FE2415771'
-    default:
-  }
-})(NETWORK)
-
 const IS_INSTANT = process.env.REACT_APP_INSTANT
 
 const IS_EXPLORER = process.env.REACT_APP_EXPLORER
@@ -432,7 +423,6 @@ module.exports = {
   GAS_LEVELS,
   GAS_LIMITS,
   PORTIS_ID,
-  FORTMATIC_ID,
   IS_INSTANT,
   IS_EXPLORER,
   ethersProvider,

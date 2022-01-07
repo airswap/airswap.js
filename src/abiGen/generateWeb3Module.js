@@ -28,7 +28,7 @@ function buildContractFunctionParams(inputs, type, payable, contractKey) {
 
 function generateEthersTransactionOptions(payable, type) {
   if (type === 'transaction') {
-    const payableString = payable ? " value: ethers.utils.bigNumberify(ethAmount || '0')" : ''
+    const payableString = payable ? " value: ethers.BigNumber.from(ethAmount || '0')" : ''
     return `{ ...options, ${payableString} }`
   }
   return ''
@@ -62,7 +62,7 @@ function get${_.upperFirst(eventNamespace)}Contract(provider${passedInContractAd
   return new ethers.Contract(${contractAddress}, abi, provider)
 }
  ${functionArray.join('\n')}
- 
+
  module.exports = { ${contractFunctions.map(
    ({ name, type }) => `${getContractFunctionName(type, name, eventNamespace)} `,
  )} }

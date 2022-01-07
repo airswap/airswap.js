@@ -98,17 +98,6 @@
     "desktop": false
   },
   {
-    "type": "fortmatic",
-    "label": "Fortmatic",
-    "button_label": "Connect using Fortmatic",
-    "logo": "",
-    "button": "",
-    "web3": false,
-    "mobile": true,
-    "desktop": true,
-    "supportsSignTypedData": true
-  },
-  {
     "type": "portis",
     "label": "Portis",
     "button_label": "Connect using Portis",

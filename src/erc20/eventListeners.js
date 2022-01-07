@@ -15,7 +15,7 @@ const trackERC20Transfer = ({
   eventTracker.trackEvent({
     callback,
     abi,
-    name: 'Transfer',
+    name: 'Transfer(address,address,uint256)',
     params: { from, to },
     fromBlock,
     backFillBlockCount,
@@ -39,7 +39,7 @@ const trackERC20Approval = ({
   eventTracker.trackEvent({
     callback,
     abi,
-    name: 'Approval',
+    name: 'Approval(address,address,uint256)',
     params: { owner, spender },
     fromBlock,
     backFillBlockCount,

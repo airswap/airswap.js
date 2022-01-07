@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import isMobile from 'ismobilejs'
 import Portis from '@portis/web3'
-import Fortmatic from 'fortmatic'
 import WalletLink from 'walletlink'
 import { ethers } from 'ethers'
 import { selectors as tokenSelectors } from '../../tokens/redux'
@@ -9,7 +8,7 @@ import { selectors as gasSelectors } from '../../gas/redux'
 import { selectors as walletSelectors } from './reducers'
 import getSigner from '../getSigner'
 import { formatErrorMessage, getParsedInputFromTransaction } from '../../utils/transformations'
-import { PORTIS_ID, AIRSWAP_LOGO_URL, ETH_NODE_HTTP, NETWORK, FORTMATIC_ID } from '../../constants'
+import { PORTIS_ID, AIRSWAP_LOGO_URL, ETH_NODE_HTTP, NETWORK } from '../../constants'
 
 import { web3WalletTypes } from '../static/constants'
 import { connectWallet } from './actions'
@@ -166,20 +165,6 @@ function connectPortis(store) {
     })
   })
   portis.showPortis()
-}
-
-function connectFortmatic(store) {
-  const fm = new Fortmatic(FORTMATIC_ID)
-  const provider = fm.getProvider()
-  provider.enable().then(() => {
-    signer = getSigner({ web3Provider: provider }, walletActions)
-    const addressPromise = signer.getAddress()
-    addressPromise
-      .then(address => {
-        store.dispatch(connectedWallet('fortmatic', address.toLowerCase()))
-      })
-      .catch(e => store.dispatch(errorConnectingWallet(e)))
-  })
 }
 
 function connectWalletLink(store, walletAppLogo, walletAppName) {
@@ -344,9 +329,6 @@ export default function walletMiddleware(store) {
             break
           case 'portis':
             connectPortis(store)
-            break
-          case 'fortmatic':
-            connectFortmatic(store)
             break
           case 'equal':
             connectWeb3(store, 'equal')

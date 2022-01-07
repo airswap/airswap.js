@@ -68,9 +68,9 @@ function parseEventLog(log, abiInterface) {
       address,
       topics,
       data,
-      blockNumber: ethers.utils.bigNumberify(blockNumber).toNumber(),
-      transactionIndex: ethers.utils.bigNumberify(transactionIndex).toNumber(),
-      logIndex: ethers.utils.bigNumberify(logIndex).toNumber(),
+      blockNumber: ethers.BigNumber.from(blockNumber).toNumber(),
+      transactionIndex: ethers.BigNumber.from(transactionIndex).toNumber(),
+      logIndex: ethers.BigNumber.from(logIndex).toNumber(),
       transactionHash,
       removed,
     },
@@ -86,7 +86,6 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
     txn = await contractFunctionPromise
   } catch (err) {
     store.dispatch(errorSubmitting({ id, namespace, name, error: formatErrorMessage(err) }))
-    return
   }
 
   const transaction = stringBNValues(txn)
@@ -149,7 +148,7 @@ async function trackTransaction({ contractFunctionPromise, namespace, name, id, 
 //     transactionIndex: 7,
 //     logIndex: 7,
 //     transactionHash: '0x83de8d44a545c37daf57158ba4eb8b5b744e34582b25e0477436d03191794480',
-//     name: 'Deposit',
+//     name: 'Deposit(address,uint256)',
 //     signature: 'Deposit(address,uint256)',
 //     topic: '0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c',
 //     values: {

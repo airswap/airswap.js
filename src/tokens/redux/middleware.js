@@ -5,7 +5,7 @@ import { waitForState } from '../../utils/redux/waitForState'
 import { crawlToken } from './actions'
 
 async function dispatchTokenInit(store) {
-  const tokens = await tokenMetadata.ready
+  const tokens = await tokenMetadata.ready()
   store.dispatch(addTokens([...tokens]))
   store.dispatch({ type: 'TOKENS_LOADED' })
 }

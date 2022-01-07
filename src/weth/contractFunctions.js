@@ -53,7 +53,7 @@ function submitWethTransfer(to, amount, signer, options = {}) {
 
 function submitWethDeposit(ethAmount, signer, options = {}) {
   const contract = getWethContract(signer)
-  return contract.deposit({ ...options, value: ethers.utils.bigNumberify(ethAmount || '0') })
+  return contract.deposit({ ...options, value: ethers.BigNumber.from(ethAmount || '0') })
 }
 
 function getWethAllowance(owner, spender) {

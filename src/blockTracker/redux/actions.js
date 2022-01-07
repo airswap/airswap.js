@@ -10,8 +10,8 @@ export const gotBlock = block => ({
   type: 'GOT_BLOCK',
   block: trimBlockForLocalStorage({
     ...block,
-    timestamp: ethers.utils.bigNumberify(block.timestamp).toNumber(),
-    number: ethers.utils.bigNumberify(block.number).toNumber(),
+    timestamp: ethers.BigNumber.from(block.timestamp).toNumber(),
+    number: ethers.BigNumber.from(block.number).toNumber(),
   }),
 })
 
@@ -19,8 +19,8 @@ export const gotLatestBlock = block => ({
   type: 'GOT_LATEST_BLOCK',
   block: trimBlockForLocalStorage({
     ...block,
-    timestamp: ethers.utils.bigNumberify(block.timestamp).toNumber(),
-    number: ethers.utils.bigNumberify(block.number).toNumber(),
+    timestamp: ethers.BigNumber.from(block.timestamp).toNumber(),
+    number: ethers.BigNumber.from(block.number).toNumber(),
   }),
 })
 
@@ -29,8 +29,8 @@ export const gotBlocks = blocks => ({
   blocks: blocks.map(block =>
     trimBlockForLocalStorage({
       ...block,
-      timestamp: ethers.utils.bigNumberify(block.timestamp).toNumber(),
-      number: ethers.utils.bigNumberify(block.number).toNumber(),
+      timestamp: ethers.BigNumber.from(block.timestamp).toNumber(),
+      number: ethers.BigNumber.from(block.number).toNumber(),
     }),
   ),
 })
