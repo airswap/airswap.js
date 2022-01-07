@@ -400,7 +400,7 @@ export default function swapLightMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swapLight',
-            name: 'cancel',
+            name: 'Cancel(uint256,address)',
             parameters: { ethAmount: action.ethAmount, nonces: action.nonces },
           })
           action.resolve(id)

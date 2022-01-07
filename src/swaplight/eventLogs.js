@@ -18,7 +18,7 @@ const fetchSwapLightCancelLogs = ({ nonce, signerWallet, fromBlock, toBlock, par
   fetchLogs(
     constants.SWAP_LIGHT_CONTRACT_ADDRESS,
     abi,
-    getEventTopics({ abi, name: 'Cancel', params: { nonce, signerWallet } }),
+    getEventTopics({ abi, name: 'Cancel(uint256,address)', params: { nonce, signerWallet } }),
     fromBlock,
     toBlock,
     parser,
@@ -58,7 +58,12 @@ const fetchSwapLightSwapLogs = ({ nonce, signerWallet, senderWallet, fromBlock, 
   fetchLogs(
     constants.SWAP_LIGHT_CONTRACT_ADDRESS,
     abi,
-    getEventTopics({ abi, name: 'Swap', params: { nonce, signerWallet, senderWallet } }),
+    getEventTopics({
+      abi,
+      name:
+        'Swap(uint256,uint256,address,uint256,uint256,address,address,uint256,uint256,address,address,uint256,uint256,address)',
+      params: { nonce, signerWallet, senderWallet },
+    }),
     fromBlock,
     toBlock,
     parser,

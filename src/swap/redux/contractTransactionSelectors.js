@@ -12,37 +12,37 @@ export const getSwapTransactions = createSelector(getTransactions, transactions 
 })
 
 export const getSwapCancelTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'cancel', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'Cancel(uint256,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
 export const getSwapCancelUpToTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'cancelUpTo', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'CancelUpTo(uint256,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
 export const getSwapAuthorizeSenderTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'authorizeSender', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'AuthorizeSender(address,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
 export const getSwapAuthorizeSignerTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'authorizeSigner', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'AuthorizeSigner(address,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
 export const getSwapRevokeSenderTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'revokeSender', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'RevokeSender(address,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })
 
 export const getSwapRevokeSignerTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'revokeSigner', namespace: 'swap' })
+  const filteredValues = _.filter(transactions, { name: 'RevokeSigner(address,address)', namespace: 'swap' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })

@@ -171,7 +171,7 @@ function getTransactionDescription(
         : `${order.makerAmountFormatted} ${makerToken.symbol}`
 
     return `Fill order for ${takerSide} for ${makerSide}`
-  } else if (name === 'authorizeSender') {
+  } else if (name === 'AuthorizeSender(address,address)') {
     return 'Authorize Sender'
   } else if (name === 'authorizedSigner') {
     return 'Authorize Signer'

@@ -1,10 +1,9 @@
-const { JsonRpcProvider } = require('ethers/providers')
-const { poll } = require('ethers/utils/web')
+const { ethers } = require('ethers')
 const axios = require('axios')
 
 const MAX_ATTEMPTS = 5
 
-class RetryProvider extends JsonRpcProvider {
+class RetryProvider extends ethers.providers.JsonRpcProvider {
   constructor(url, network) {
     super(url, network)
     this.url = url
@@ -13,7 +12,7 @@ class RetryProvider extends JsonRpcProvider {
 
   send(method, params) {
     let attempts = 0
-    return poll(() => {
+    return ethers.utils.poll(() => {
       attempts++
       return axios
         .post(this.url, {

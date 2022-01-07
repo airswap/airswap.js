@@ -111,7 +111,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'cancel',
+            name: 'Cancel(uint256,address)',
             parameters: { nonces: action.nonces },
           })
           action.resolve(id)
@@ -130,7 +130,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'cancelUpTo',
+            name: 'CancelUpTo(uint256,address)',
             parameters: { minimumNonce: action.minimumNonce },
           })
           action.resolve(id)
@@ -149,7 +149,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'authorizeSender',
+            name: 'AuthorizeSender(address,address)',
             parameters: { authorizedSender: action.authorizedSender },
           })
           action.resolve(id)
@@ -168,7 +168,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'authorizeSigner',
+            name: 'AuthorizeSigner(address,address)',
             parameters: { authorizedSigner: action.authorizedSigner },
           })
           action.resolve(id)
@@ -187,7 +187,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'revokeSender',
+            name: 'RevokeSender(address,address)',
             parameters: { authorizedSender: action.authorizedSender },
           })
           action.resolve(id)
@@ -206,7 +206,7 @@ export default function swapMiddleware(store) {
             contractFunctionPromise,
             id,
             namespace: 'swap',
-            name: 'revokeSigner',
+            name: 'RevokeSigner(address,address)',
             parameters: { authorizedSigner: action.authorizedSigner },
           })
           action.resolve(id)

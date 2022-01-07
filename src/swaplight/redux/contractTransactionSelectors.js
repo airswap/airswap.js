@@ -54,7 +54,7 @@ export const getSwapLightRevokeTransactions = createSelector(getTransactions, tr
 })
 
 export const getSwapLightCancelTransactions = createSelector(getTransactions, transactions => {
-  const filteredValues = _.filter(transactions, { name: 'cancel', namespace: 'swapLight' })
+  const filteredValues = _.filter(transactions, { name: 'Cancel(uint256,address)', namespace: 'swapLight' })
   const sortedValues = _.sortBy(filteredValues, 'id')
   return sortedValues
 })

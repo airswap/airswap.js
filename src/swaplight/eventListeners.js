@@ -42,7 +42,7 @@ const trackSwapLightCancel = ({
     callback,
     contract: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
     abi,
-    name: 'Cancel',
+    name: 'Cancel(uint256,address)',
     params: { nonce, signerWallet },
     fromBlock,
     backFillBlockCount,
@@ -118,7 +118,8 @@ const trackSwapLightSwap = ({
     callback,
     contract: constants.SWAP_LIGHT_CONTRACT_ADDRESS,
     abi,
-    name: 'Swap',
+    name:
+      'Swap(uint256,uint256,address,uint256,uint256,address,address,uint256,uint256,address,address,uint256,uint256,address)',
     params: { nonce, signerWallet, senderWallet },
     fromBlock,
     backFillBlockCount,

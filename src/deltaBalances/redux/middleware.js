@@ -200,7 +200,10 @@ export default function balancesMiddleware(store) {
         break
       case makeEventActionTypes('trackedEvents').got:
         const response = _.get(action, 'response', [])
-        const swapLogs = _.filter(response, { name: 'Swap' })
+        const swapLogs = _.filter(response, {
+          name:
+            'Swap(uint256,uint256,address,uint256,uint256,address,address,uint256,uint256,address,address,uint256,uint256,address)',
+        })
         const swapTokenAddressMap = filterTokenAddressMapByTrackedAddresses(
           reduceSwapFillsLogsToTokenAddressMap(swapLogs),
           store,

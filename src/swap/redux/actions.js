@@ -67,7 +67,8 @@ export const trackSwapAllContracts = ({
 } = {}) => ({
   callback,
   abi,
-  name: 'Swap',
+  name:
+    'Swap(uint256,uint256,address,uint256,uint256,address,address,uint256,uint256,address,address,uint256,uint256,address)',
   params: { nonce, signerWallet, senderWallet },
   fromBlock,
   backFillBlockCount,
@@ -78,7 +79,7 @@ export const trackSwapAllContracts = ({
 export const trackSwapCancelAllContracts = ({ callback, nonce, signerWallet, fromBlock, backFillBlockCount } = {}) => ({
   callback,
   abi,
-  name: 'Cancel',
+  name: 'Cancel(uint256,address)',
   params: { nonce, signerWallet },
   fromBlock,
   backFillBlockCount,
