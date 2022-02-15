@@ -85,7 +85,7 @@
     "@airswap/delegate": "^2.6.9",
     "@airswap/indexer": "^3.6.9",
     "@airswap/light": "^2.2.0",
-    "@airswap/metadata": "1.0.5",
+    "@airswap/metadata": "1.0.7",
     "@airswap/order-utils": "^0.3.20",
     "@airswap/swap": "^5.4.8",
     "@airswap/wrapper": "^3.6.9",

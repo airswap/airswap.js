@@ -37,10 +37,10 @@
     "@airswap/types" "3.5.16"
     "@openzeppelin/contracts" "^3.3.0"
 
-"@airswap/metadata@1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-1.0.5.tgz#c347b3bdf21031a924cf3cbf8ff74e6c19e6469f"
-  integrity sha512-8lg+sykFXDGjiYjF3W4Y98EYDARkYhIJVGvazAcOQ3FMrqApoWXOVknVjXi4h8yN2GRG1R8UepaOjR4SjdmAQA==
+"@airswap/metadata@1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@airswap/metadata/-/metadata-1.0.7.tgz#a19c6b1df2d0d698cba4cc3365207bbbaf3bc827"
+  integrity sha512-35z8nxME/TRb8r2T44tkkUUGnzpYUNHluC9oa4aeJ9rKJ/2cdcSlAEIMA2gAgSlw+ED7RgbhcPeFFNruY2hEWQ==
   dependencies:
     "@airswap/constants" "1.0.0"
     "@airswap/typescript" "1.0.1"
