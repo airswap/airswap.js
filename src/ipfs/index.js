@@ -27,7 +27,6 @@ async function ipfsStoreJSON(obj) {
   })
 }
 
-const ipfsFetchJSONFromCID = cid =>
-  axios.get(`https://airswap.infura-ipfs.io/ipfs/${cid}`).then(resp => JSON.stringify(resp.data))
+const ipfsFetchJSONFromCID = cid => axios.get(`https://airswap.infura-ipfs.io/ipfs/${cid}`).then(resp => resp.data)
 
 module.exports = { ipfsStoreJSON, ipfsFetchJSONFromCID }
