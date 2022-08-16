@@ -96,7 +96,6 @@
     "eventsource": "^1.0.7",
     "fortmatic": "^0.7.4",
     "human-standard-token-abi": "^2.0.0",
-    "ipfs-mini": "^1.1.5",
     "ismobilejs": "^0.5.1",
     "isomorphic-fetch": "^2.2.1",
     "jayson": "^3.1.2",

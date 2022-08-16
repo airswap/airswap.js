@@ -1,8 +1,13 @@
 const _ = require('lodash')
-const IPFS = require('ipfs-mini')
+const IPFS = require('../ipfs-mini')
 const axios = require('axios')
 
-const ipfsInfura = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+const ipfsInfura = new IPFS({
+  host: 'ipfs.infura.io',
+  port: 5001,
+  protocol: 'https',
+  auth: 'Basic MkRQRHlRWUJBUUVaM21uZW0zNm5uS003ZlM2OjJiNGM3NzYzZjQwMjc1ZjJjMzQ0ODdkNDAwNzRjZTJm',
+})
 
 async function ipfsStoreJSON(obj) {
   const storeString = _.isString(obj) ? JSON.stringify(JSON.parse(obj)) : JSON.stringify(obj)
@@ -22,37 +27,7 @@ async function ipfsStoreJSON(obj) {
   })
 }
 
-const fetchIPFSContentFromCloudfare = cid =>
-  axios.get(`https://cloudflare-ipfs.com/ipfs/${cid}`).then(resp => JSON.stringify(resp.data))
-
-async function ipfsFetchJSONFromCID(cid) {
-  const content = await new Promise((resolve, reject) => {
-    if (!cid) {
-      resolve(undefined)
-      return
-    }
-    // this "resolved" syntax is required since there isn't a Promise.none()
-    let resolved = 0
-    ipfsInfura
-      .cat(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
-
-    fetchIPFSContentFromCloudfare(cid)
-      .then(resolve)
-      .catch(e => {
-        resolved++
-        if (resolved === 3) {
-          reject(e)
-        }
-      })
-  })
-  return JSON.parse(content)
-}
+const ipfsFetchJSONFromCID = cid =>
+  axios.get(`https://airswap.infura-ipfs.io/ipfs/${cid}`).then(resp => JSON.stringify(resp.data))
 
 module.exports = { ipfsStoreJSON, ipfsFetchJSONFromCID }
